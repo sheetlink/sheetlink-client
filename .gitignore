@@ -41,3 +41,13 @@ coverage/
 .cache/
 temp/
 tmp/
+
+# Archive folder for unused or legacy files
+archive/
+archive/**
+
+# Editor backups
+*.old
+*.bak
+debug/
+scratch/
