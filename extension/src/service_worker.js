@@ -4,8 +4,6 @@ import { CONFIG } from '../config.js';
 
 // Handle extension installation
 chrome.runtime.onInstalled.addListener((details) => {
-  console.log('Extension installed:', details.reason);
-
   if (details.reason === 'install') {
     // Set default settings on first install
     chrome.storage.sync.set({
@@ -29,8 +27,6 @@ chrome.runtime.onInstalled.addListener((details) => {
 
 // Handle messages from popup or content scripts
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log('Received message:', message);
-
   switch (message.type) {
     case 'GET_AUTH_TOKEN':
       handleGetAuthToken(sendResponse);
@@ -57,7 +53,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return true;
 
     default:
-      console.warn('Unknown message type:', message.type);
       sendResponse({ error: 'Unknown message type' });
   }
 });
@@ -66,7 +61,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 async function handleExchangePublicToken(message, sendResponse) {
   try {
     const { publicToken, metadata } = message;
-    console.log('Exchanging public token...', metadata);
 
     // Get user ID from storage
     const userData = await chrome.storage.sync.get(['userId']);
@@ -91,7 +85,6 @@ async function handleExchangePublicToken(message, sendResponse) {
 
     // Store item_id
     await chrome.storage.sync.set({ itemId });
-    console.log('Item ID stored:', itemId);
 
     // Notify popup of success (if it's listening)
     chrome.runtime.sendMessage({
@@ -100,14 +93,12 @@ async function handleExchangePublicToken(message, sendResponse) {
     }, () => {
       // Ignore "no receiver" errors - popup might not be open
       if (chrome.runtime.lastError) {
-        console.log('No popup listening for PLAID_LINK_SUCCESS (expected)');
+        // Expected - popup might not be open
       }
     });
 
     sendResponse({ success: true, itemId });
   } catch (error) {
-    console.error('Error exchanging token:', error);
-
     // Notify popup of error (if it's listening)
     chrome.runtime.sendMessage({
       type: 'PLAID_LINK_ERROR',
@@ -115,7 +106,7 @@ async function handleExchangePublicToken(message, sendResponse) {
     }, () => {
       // Ignore "no receiver" errors - popup might not be open
       if (chrome.runtime.lastError) {
-        console.log('No popup listening for PLAID_LINK_ERROR (expected)');
+        // Expected - popup might not be open
       }
     });
 
@@ -131,24 +122,19 @@ async function handleGetAuthToken(sendResponse) {
       // Clear any expected errors from the non-interactive attempt
       if (chrome.runtime.lastError) {
         // This is expected when no token is cached - not a real error
-        console.log('No cached token available (expected on first run)');
       }
 
       if (cachedToken) {
         // Token was cached - no OAuth window opened
-        console.log('Using cached OAuth token');
         sendResponse({ token: cachedToken });
       } else {
         // No cached token - need interactive OAuth (will open window)
-        console.log('No cached token, requesting interactive OAuth...');
         chrome.identity.getAuthToken({ interactive: true }, (token) => {
           if (chrome.runtime.lastError) {
-            console.error('OAuth error:', chrome.runtime.lastError);
             sendResponse({ error: chrome.runtime.lastError.message });
           } else if (!token) {
             sendResponse({ error: 'No token returned from OAuth' });
           } else {
-            console.log('OAuth token obtained successfully via interactive flow');
             sendResponse({ token });
 
             // Auto-open popup after interactive OAuth (window was shown to user)
@@ -160,7 +146,6 @@ async function handleGetAuthToken(sendResponse) {
       }
     });
   } catch (error) {
-    console.error('Error getting auth token:', error);
     sendResponse({ error: error.message });
   }
 }
@@ -171,7 +156,6 @@ async function handleStoreSession(data, sendResponse) {
     await chrome.storage.local.set({ session: data });
     sendResponse({ success: true });
   } catch (error) {
-    console.error('Error storing session:', error);
     sendResponse({ error: error.message });
   }
 }
@@ -182,7 +166,6 @@ async function handleGetSession(sendResponse) {
     const result = await chrome.storage.local.get('session');
     sendResponse({ session: result.session || null });
   } catch (error) {
-    console.error('Error getting session:', error);
     sendResponse({ error: error.message });
   }
 }
@@ -193,7 +176,6 @@ async function handleClearSession(sendResponse) {
     await chrome.storage.local.remove('session');
     sendResponse({ success: true });
   } catch (error) {
-    console.error('Error clearing session:', error);
     sendResponse({ error: error.message });
   }
 }
@@ -201,22 +183,17 @@ async function handleClearSession(sendResponse) {
 // Helper function to open extension popup
 async function openExtensionPopup() {
   try {
-    console.log('Opening extension popup...');
-
     // Try to open the normal action popup first (like clicking the icon)
     try {
       await chrome.action.openPopup();
-      console.log('Action popup opened successfully');
     } catch (popupError) {
       // Check if error is because popup is already open
       const errorMsg = popupError.message.toLowerCase();
       if (errorMsg.includes('popup') && (errorMsg.includes('showing') || errorMsg.includes('open'))) {
-        console.log('Popup is already open, skipping...');
         return; // Don't open a new window if popup is already showing
       }
 
       // Fallback: Create a small centered window if action popup fails for other reasons
-      console.log('Action popup failed, using window fallback:', popupError.message);
 
       const width = 400;
       const height = 600;
@@ -235,11 +212,9 @@ async function openExtensionPopup() {
         top: top,
         focused: true
       });
-
-      console.log('Popup window opened successfully');
     }
   } catch (error) {
-    console.error('Error opening popup:', error);
+    // Error opening popup
   }
 }
 
@@ -251,8 +226,6 @@ async function handlePlaidConnected(sendResponse) {
   // Continue popup opening asynchronously
   (async () => {
     try {
-      console.log('Plaid connected - waiting for Plaid window to close...');
-
       // Wait for Plaid Link window to fully close before opening popup
       // This prevents the action popup from disappearing when the Plaid tab closes
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -260,15 +233,13 @@ async function handlePlaidConnected(sendResponse) {
       // Open popup using helper function
       await openExtensionPopup();
     } catch (error) {
-      console.error('Error opening popup after Plaid connection:', error);
+      // Error opening popup after Plaid connection
     }
   })();
 }
 
 // Handle extension uninstall
-chrome.runtime.setUninstallURL('https://forms.gle/feedback', () => {
-  console.log('Uninstall URL set');
-});
+chrome.runtime.setUninstallURL('https://forms.gle/feedback');
 
 // Periodic cleanup of old data (called manually, no auto-sync in MVP)
 async function cleanupOldData() {
@@ -277,26 +248,13 @@ async function cleanupOldData() {
     
     if (data.lastSync) {
       const daysSinceSync = (Date.now() - data.lastSync) / (1000 * 60 * 60 * 24);
-      
+
       if (daysSinceSync > 90) {
-        console.log('Last sync was over 90 days ago, consider notifying user');
-        // TODO: Show notification or badge
+        // Show notification or badge
       }
     }
   } catch (error) {
-    console.error('Error in cleanup:', error);
+    // Error in cleanup
   }
 }
 
-// Listen for storage changes (for debugging)
-chrome.storage.onChanged.addListener((changes, areaName) => {
-  console.log('Storage changed:', areaName, changes);
-});
-
-// TODO: Add alarm for periodic sync (post-MVP)
-// chrome.alarms.create('periodicSync', { periodInMinutes: 60 });
-// chrome.alarms.onAlarm.addListener((alarm) => {
-//   if (alarm.name === 'periodicSync') {
-//     // Trigger sync
-//   }
-// });
