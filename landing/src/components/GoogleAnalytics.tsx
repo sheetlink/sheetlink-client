@@ -5,11 +5,8 @@ const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 export default function GoogleAnalytics() {
   // Only load GA if measurement ID is configured
   if (!GA_MEASUREMENT_ID) {
-    console.log('Google Analytics not loaded: No measurement ID found');
     return null;
   }
-
-  console.log('Loading Google Analytics:', GA_MEASUREMENT_ID);
 
   return (
     <>
@@ -29,7 +26,6 @@ export default function GoogleAnalytics() {
               page_path: window.location.pathname,
               send_page_view: true
             });
-            console.log('Google Analytics initialized:', '${GA_MEASUREMENT_ID}');
           `,
         }}
       />

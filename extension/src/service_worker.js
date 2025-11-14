@@ -93,20 +93,30 @@ async function handleExchangePublicToken(message, sendResponse) {
     await chrome.storage.sync.set({ itemId });
     console.log('Item ID stored:', itemId);
 
-    // Notify popup of success
+    // Notify popup of success (if it's listening)
     chrome.runtime.sendMessage({
       type: 'PLAID_LINK_SUCCESS',
       itemId: itemId
+    }, () => {
+      // Ignore "no receiver" errors - popup might not be open
+      if (chrome.runtime.lastError) {
+        console.log('No popup listening for PLAID_LINK_SUCCESS (expected)');
+      }
     });
 
     sendResponse({ success: true, itemId });
   } catch (error) {
     console.error('Error exchanging token:', error);
 
-    // Notify popup of error
+    // Notify popup of error (if it's listening)
     chrome.runtime.sendMessage({
       type: 'PLAID_LINK_ERROR',
       error: error.message
+    }, () => {
+      // Ignore "no receiver" errors - popup might not be open
+      if (chrome.runtime.lastError) {
+        console.log('No popup listening for PLAID_LINK_ERROR (expected)');
+      }
     });
 
     sendResponse({ error: error.message });
@@ -116,20 +126,37 @@ async function handleExchangePublicToken(message, sendResponse) {
 // Get Google OAuth token using chrome.identity
 async function handleGetAuthToken(sendResponse) {
   try {
-    chrome.identity.getAuthToken({ interactive: true }, (token) => {
+    // First, try to get cached token (non-interactive)
+    chrome.identity.getAuthToken({ interactive: false }, (cachedToken) => {
+      // Clear any expected errors from the non-interactive attempt
       if (chrome.runtime.lastError) {
-        console.error('OAuth error:', chrome.runtime.lastError);
-        sendResponse({ error: chrome.runtime.lastError.message });
-      } else if (!token) {
-        sendResponse({ error: 'No token returned from OAuth' });
-      } else {
-        console.log('OAuth token obtained successfully');
-        sendResponse({ token });
+        // This is expected when no token is cached - not a real error
+        console.log('No cached token available (expected on first run)');
+      }
 
-        // Auto-open popup after successful auth (in case it was closed)
-        setTimeout(() => {
-          openExtensionPopup();
-        }, 1000);
+      if (cachedToken) {
+        // Token was cached - no OAuth window opened
+        console.log('Using cached OAuth token');
+        sendResponse({ token: cachedToken });
+      } else {
+        // No cached token - need interactive OAuth (will open window)
+        console.log('No cached token, requesting interactive OAuth...');
+        chrome.identity.getAuthToken({ interactive: true }, (token) => {
+          if (chrome.runtime.lastError) {
+            console.error('OAuth error:', chrome.runtime.lastError);
+            sendResponse({ error: chrome.runtime.lastError.message });
+          } else if (!token) {
+            sendResponse({ error: 'No token returned from OAuth' });
+          } else {
+            console.log('OAuth token obtained successfully via interactive flow');
+            sendResponse({ token });
+
+            // Auto-open popup after interactive OAuth (window was shown to user)
+            setTimeout(() => {
+              openExtensionPopup();
+            }, 1000);
+          }
+        });
       }
     });
   } catch (error) {
@@ -181,7 +208,14 @@ async function openExtensionPopup() {
       await chrome.action.openPopup();
       console.log('Action popup opened successfully');
     } catch (popupError) {
-      // Fallback: Create a small centered window if action popup fails
+      // Check if error is because popup is already open
+      const errorMsg = popupError.message.toLowerCase();
+      if (errorMsg.includes('popup') && (errorMsg.includes('showing') || errorMsg.includes('open'))) {
+        console.log('Popup is already open, skipping...');
+        return; // Don't open a new window if popup is already showing
+      }
+
+      // Fallback: Create a small centered window if action popup fails for other reasons
       console.log('Action popup failed, using window fallback:', popupError.message);
 
       const width = 400;
