@@ -17,8 +17,8 @@
   ],
   "host_permissions": [
     "https://www.googleapis.com/*",
-    "http://localhost:8000/*",
-    "https://cdn.plaid.com/*"
+    "https://cdn.plaid.com/*",
+    "https://api-sandbox.sheetlink.app/*"
   ],
   "homepage_url": "https://sheetlink.app",
   "action": {
