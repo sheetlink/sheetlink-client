@@ -98,12 +98,15 @@
         </div>
 
         <div class="sync-info">
-          <p>
-            Sheet: <span id="currentSheet">Not connected yet</span>
-            <button id="changeSheetBtn" class="btn btn-text hidden" style="margin-left: 8px; font-size: 12px; padding: 2px 8px;">
-              Change
+          <div class="sheet-row">
+            <div class="sheet-main">
+              <span class="sheet-label">Sheet:</span>
+              <span id="currentSheet" class="sheet-id">Not connected yet</span>
+            </div>
+            <button id="changeSheetBtn" class="sheet-change-btn hidden">
+              Change sheet
             </button>
-          </p>
+          </div>
           <p>Last sync: <span id="lastSync">Never</span></p>
         </div>
         <button id="syncNowBtn" class="btn btn-primary">

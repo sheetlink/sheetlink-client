@@ -213,6 +213,49 @@ main {
   font-weight: 500;
 }
 
+/* Sheet Row Layout */
+.sheet-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.sheet-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.sheet-label {
+  color: #6b7280;
+}
+
+.sheet-id {
+  color: #1f2937;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheet-change-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2563eb;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sheet-change-btn:hover {
+  text-decoration: underline;
+}
+
 /* Form Elements */
 label {
   display: block;
