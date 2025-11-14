@@ -1,0 +1,10 @@
+active,match_type,pattern,category_code
+true,contains,starbucks,Coffee
+true,contains,uber,Transportation
+true,contains,whole foods,Groceries
+true,contains,amazon,Online Shopping
+false,exact,Amazon Prime,Subscriptions
+false,regex,mcdonald.*|burger king|wendy,Fast Food
+false,signature,9.99:netflix,Subscriptions
+false,contains,payroll,Income
+false,contains,atm,Cash Withdrawal

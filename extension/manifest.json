@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "SheetLink (Sandbox Preview)",
+  "short_name": "SheetLink",
+  "version": "0.3.0",
+  "description": "Demo version using Plaid's sandbox environment. Connect to sample institutions and explore features. Real bank connections coming soon.",
+  "icons": {
+    "16": "icons/sheetlink-16.png",
+    "32": "icons/sheetlink-32.png",
+    "48": "icons/sheetlink-48.png",
+    "128": "icons/sheetlink-128.png"
+  },
+  "permissions": [
+    "storage",
+    "identity",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://www.googleapis.com/*",
+    "http://localhost:8000/*",
+    "https://cdn.plaid.com/*"
+  ],
+  "homepage_url": "https://sheetlink.app",
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_title": "SheetLink",
+    "default_icon": {
+      "16": "icons/sheetlink-16.png",
+      "32": "icons/sheetlink-32.png",
+      "48": "icons/sheetlink-48.png"
+    }
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "src/service_worker.js",
+    "type": "module"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/plaid_link.html",
+        "src/plaid_link.js",
+        "src/plaid-sdk.js",
+        "config.js",
+        "assets/brand/sheetlink-logo-horizontal.svg",
+        "assets/brand/sheetlink-logo-horizontal-white.svg",
+        "assets/brand/sheetlink-mark-current.svg",
+        "assets/brand/sheetlink-favicon.svg",
+        "assets/demo/transactions.json"
+      ],
+      "matches": ["https://sheetlink.app/*", "chrome-extension://*/*"]
+    }
+  ],
+  "oauth2": {
+    "client_id": "967710910027-racspdr4ac099e4ac7noai76aptbb1qk.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/spreadsheets",
+      "https://www.googleapis.com/auth/drive.file",
+      "https://www.googleapis.com/auth/userinfo.email"
+    ]
+  }
+}

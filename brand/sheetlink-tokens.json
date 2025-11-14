@@ -1,0 +1,13 @@
+{
+  "colors": {
+    "primary": "#023820",
+    "accent": "#0B703A",
+    "highlight": "#00C474",
+    "background": "#F6F7F5",
+    "text": "#1A1A1A"
+  },
+  "fonts": {
+    "header": "Space Grotesk SemiBold",
+    "body": "Inter Regular"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "sheetlink-extension",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "SheetLink Chrome Extension - Build tools for brand assets",
+  "private": true,
+  "scripts": {
+    "build:icons": "node brand-build.mjs",
+    "build": "echo 'No build step needed for MVP - load extension directly'",
+    "pack": "cd .. && zip -r extension.zip extension/ -x '*/node_modules/*' -x '*/.git/*' -x '*/package-lock.json'",
+    "lint": "echo 'Add ESLint for production'"
+  },
+  "keywords": [
+    "sheetlink",
+    "plaid",
+    "google-sheets",
+    "banking",
+    "chrome-extension"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "sharp": "^0.33.5"
+  }
+}

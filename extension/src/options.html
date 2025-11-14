@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SheetLink - Options</title>
+  <style>
+    /* SheetLink Brand Colors */
+    :root {
+      --sl-primary: #023820;
+      --sl-accent: #0B703A;
+      --sl-highlight: #00C474;
+      --sl-bg: #F6F7F5;
+      --sl-text: #1A1A1A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--sl-bg);
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 32px;
+    }
+
+    .page-header {
+      margin-bottom: 8px;
+    }
+
+    .brand-logo {
+      height: 48px;
+      width: auto;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: var(--sl-text);
+      margin: 0;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .section {
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid rgba(11, 112, 58, 0.2);
+    }
+
+    .section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h2 {
+      font-size: 18px;
+      color: #374151;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    .description {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--sl-accent);
+      box-shadow: 0 0 0 3px rgba(11, 112, 58, 0.1);
+    }
+
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #d1d5db;
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--sl-accent);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--sl-primary) 0%, var(--sl-accent) 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(11, 112, 58, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      margin-left: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .status-message {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .status-message.success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      display: block;
+    }
+
+    .status-message.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      display: block;
+    }
+
+    .actions {
+      margin-top: 32px;
+      display: flex;
+    }
+
+    /* Sandbox Info Section */
+    .sandbox-info {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 2px solid #a7f3d0;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .sandbox-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .sandbox-icon {
+      font-size: 28px;
+    }
+
+    .sandbox-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #065f46;
+    }
+
+    .sandbox-description {
+      color: #047857;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .sandbox-features {
+      margin-bottom: 24px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 12px;
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #a7f3d0;
+    }
+
+    .feature-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .feature-item strong {
+      display: block;
+      color: #065f46;
+      margin-bottom: 4px;
+    }
+
+    .feature-item p {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .sandbox-next {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #a7f3d0;
+      margin-bottom: 20px;
+    }
+
+    .sandbox-next h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #065f46;
+    }
+
+    .sandbox-next p {
+      margin: 0;
+      font-size: 14px;
+      color: #047857;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <img src="../assets/brand/sheetlink-logo-horizontal.svg" alt="SheetLink" class="brand-logo">
+      <h1>Settings</h1>
+    </div>
+    <p class="subtitle">Configure default options for SheetLink</p>
+
+    <!-- Sandbox Mode Banner -->
+    <div id="sandboxInfo" class="sandbox-info hidden">
+      <div class="sandbox-header">
+        <span class="sandbox-icon">🧪</span>
+        <h2>Sandbox Mode: Demo Data Only</h2>
+      </div>
+      <p class="sandbox-description">
+        You're using Plaid's sandbox for testing. Connect to sample banks and explore features with mock data.
+      </p>
+
+      <div class="sandbox-features">
+        <div class="feature-grid">
+          <div class="feature-item">
+            <div class="feature-icon">🔗</div>
+            <div>
+              <strong>Connect</strong>
+              <p>Link to any institution (e.g. Chase, Bank of America)</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <div>
+              <strong>Preview</strong>
+              <p>See sample transactions populate your Google Sheet</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🧹</div>
+            <div>
+              <strong>Reset</strong>
+              <p>Clear demo data anytime with the button below</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sandbox-next">
+        <h3>What's Next?</h3>
+        <p>We're awaiting Plaid approval to enable real bank connections. Early testers get lifetime free access.</p>
+      </div>
+
+      <!-- Sandbox Help Section -->
+      <div style="margin-top: 24px; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+        <h3 style="margin: 0 0 12px 0; font-size: 16px; color: #1a1a1a; display: flex; align-items: center; gap: 8px;">
+          🧪 Sandbox Help
+        </h3>
+        <p style="margin: 0 0 16px 0; font-size: 14px; color: #6b7280;">
+          Want to test again or forgot what to enter? Here's how to connect in Sandbox mode:
+        </p>
+        <ol style="margin: 0; padding-left: 20px; font-size: 14px; color: #374151; line-height: 1.8;">
+          <li>Click "Connect to Sandbox" in the extension</li>
+          <li>When Plaid opens, select any institution (for example, Chase or Bank of America)</li>
+          <li>You're in Sandbox mode. All data is simulated</li>
+          <li>When prompted for credentials, use:
+            <ul style="margin-top: 8px; list-style: none; padding-left: 0;">
+              <li><strong>Username:</strong> user_good</li>
+              <li><strong>Password:</strong> pass_good</li>
+              <li><strong>Phone:</strong> (415) 555-0123</li>
+              <li><strong>Code:</strong> 123456</li>
+            </ul>
+          </li>
+          <li>Once connected, click "Sync Sample Data" to populate your Sheet</li>
+          <li>You can reset anytime from the options page</li>
+        </ol>
+      </div>
+
+      <!-- About the Sandbox Section -->
+      <div style="margin-top: 16px; padding: 16px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+        <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #1e40af;">
+          About the Sandbox
+        </h3>
+        <p style="margin: 0; font-size: 13px; color: #1e40af; line-height: 1.6;">
+          This version of SheetLink uses Plaid's sandbox environment for safe demo testing.
+          Real bank connections will be available once production access is approved.
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 16px;">
+        <button id="replayWalkthroughBtn" class="btn btn-secondary">
+          Replay Walkthrough
+        </button>
+        <button id="resetSandboxBtn" class="btn btn-secondary">
+          Reset Sandbox Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Data Flow Transparency Section (PRD v0.4.0) -->
+    <div class="section">
+      <h2>🔒 How Your Data Flows</h2>
+      <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">
+        SheetLink is built privacy-first. Here's exactly where your data goes:
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+        <div style="display: flex; align-items: start; gap: 12px;">
+          <div style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #ecfdf5; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #065f46;">1</div>
+          <div style="flex: 1;">
+            <strong style="color: #1A1A1A;">Plaid → SheetLink API</strong>
+            <p style="font-size: 13px; color: #6b7280; margin: 4px 0 0 0;">Token exchange only, no transaction data stored</p>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: start; gap: 12px;">
+          <div style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #ecfdf5; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #065f46;">2</div>
+          <div style="flex: 1;">
+            <strong style="color: #1A1A1A;">SheetLink API → Plaid</strong>
+            <p style="font-size: 13px; color: #6b7280; margin: 4px 0 0 0;">Fetch your transactions using encrypted access token</p>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: start; gap: 12px;">
+          <div style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #ecfdf5; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #065f46;">3</div>
+          <div style="flex: 1;">
+            <strong style="color: #1A1A1A;">SheetLink API → Your Browser</strong>
+            <p style="font-size: 13px; color: #6b7280; margin: 4px 0 0 0;">Returns JSON, data deleted immediately after sending</p>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: start; gap: 12px;">
+          <div style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #ecfdf5; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #065f46;">4</div>
+          <div style="flex: 1;">
+            <strong style="color: #1A1A1A;">Your Browser → Your Google Sheet</strong>
+            <p style="font-size: 13px; color: #6b7280; margin: 4px 0 0 0;">Transaction data written directly to your spreadsheet</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+        <p style="margin: 0; font-size: 14px; color: #15803d; font-weight: 500;">
+          ✅ SheetLink never stores your transaction history
+        </p>
+        <p style="margin: 8px 0 0 0; font-size: 13px; color: #16a34a;">
+          We only store encrypted access tokens to enable syncing. All financial data stays in your Google Sheet.
+        </p>
+      </div>
+
+      <a href="https://sheetlink.app/privacy" target="_blank" class="btn btn-secondary" style="display: inline-block; text-decoration: none;">
+        View Full Privacy Policy →
+      </a>
+    </div>
+
+    <div class="section">
+      <h2>Sheet Defaults</h2>
+      
+      <div class="form-group">
+        <label for="accountsTabName">Accounts Tab Name</label>
+        <input type="text" id="accountsTabName" value="Accounts" placeholder="Accounts">
+        <p class="description">Name of the sheet tab where account balances will be written</p>
+      </div>
+
+      <div class="form-group">
+        <label for="transactionsTabName">Transactions Tab Name</label>
+        <input type="text" id="transactionsTabName" value="Transactions" placeholder="Transactions">
+        <p class="description">Name of the sheet tab where transaction data will be written</p>
+      </div>
+
+      <div class="form-group">
+        <label for="rulesTabName">Rules Tab Name</label>
+        <input type="text" id="rulesTabName" value="Rules" placeholder="Rules">
+        <p class="description">Name of the sheet tab for categorization rules (when enabled)</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Features</h2>
+      
+      <div class="form-group">
+        <div class="toggle-group">
+          <label class="toggle">
+            <input type="checkbox" id="enableRulesTab">
+            <span class="slider"></span>
+          </label>
+          <div>
+            <label for="enableRulesTab" style="cursor: pointer;">Enable Rules Tab</label>
+            <p class="description">Create a Rules tab for custom transaction categorization</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="toggle-group">
+          <label class="toggle">
+            <input type="checkbox" id="enableMLAssist">
+            <span class="slider"></span>
+          </label>
+          <div>
+            <label for="enableMLAssist" style="cursor: pointer;">Enable AI Categorization</label>
+            <p class="description">Use ML-based suggestions for uncategorized transactions (experimental)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="toggle-group">
+          <label class="toggle">
+            <input type="checkbox" id="appendOnly">
+            <span class="slider"></span>
+          </label>
+          <div>
+            <label for="appendOnly" style="cursor: pointer;">Append-Only Mode</label>
+            <p class="description">Only add new transactions, never update existing ones</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Backend Configuration</h2>
+      
+      <div class="form-group">
+        <label for="backendUrl">Backend URL</label>
+        <input type="text" id="backendUrl" value="https://api-sandbox.sheetlink.app" placeholder="https://api-sandbox.sheetlink.app">
+        <p class="description">URL of your backend server (sandbox default: https://api-sandbox.sheetlink.app)</p>
+      </div>
+    </div>
+
+    <div id="statusMessage" class="status-message"></div>
+
+    <div class="actions">
+      <button id="saveBtn" class="btn btn-primary">Save Settings</button>
+      <button id="resetBtn" class="btn btn-secondary">Reset to Defaults</button>
+    </div>
+
+    <!-- Domain Integration Footer -->
+    <footer style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(11, 112, 58, 0.2); text-align: center; font-size: 13px; color: #6b7280;">
+      <p style="margin: 0 0 12px 0;">
+        <a href="https://sheetlink.app" target="_blank" style="color: #0B703A; text-decoration: none; margin: 0 12px;">Home</a>
+        <a href="https://sheetlink.app/beta" target="_blank" style="color: #0B703A; text-decoration: none; margin: 0 12px;">Join Beta</a>
+        <a href="https://sheetlink.app/privacy" target="_blank" style="color: #0B703A; text-decoration: none; margin: 0 12px;">Privacy Policy</a>
+        <a href="https://sheetlink.app/terms" target="_blank" style="color: #0B703A; text-decoration: none; margin: 0 12px;">Terms</a>
+      </p>
+      <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+        SheetLink v0.3.0 (Sandbox Preview)
+      </p>
+    </footer>
+  </div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

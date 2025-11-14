@@ -1,0 +1,4 @@
+account_id,name,mask,type,subtype,current_balance,available_balance,institution,last_synced_at
+plaid_abc123,Plaid Checking,0000,depository,checking,1200.50,1150.00,Chase,2024-01-15T10:30:00Z
+plaid_def456,Plaid Savings,1111,depository,savings,5000.00,5000.00,Chase,2024-01-15T10:30:00Z
+plaid_ghi789,Plaid Credit Card,2222,credit,credit card,-250.75,-250.75,Chase,2024-01-15T10:30:00Z
