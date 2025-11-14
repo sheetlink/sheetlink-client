@@ -270,12 +270,6 @@ async function handleSaveSheet() {
 
     hideLoading();
     updateStatus('Sheet saved successfully!', true);
-
-    const { itemId } = await chrome.storage.sync.get(['itemId']);
-    if (itemId) {
-      showSheetSuccessModal();
-    }
-
     await loadState();
   } catch (error) {
     hideLoading();
@@ -288,11 +282,13 @@ async function handleSyncNow() {
   try {
     showLoading('Syncing data from Plaid...');
 
-    const { itemId, sheetId } = await chrome.storage.sync.get(['itemId', 'sheetId']);
+    const { itemId, sheetId, lastSync } = await chrome.storage.sync.get(['itemId', 'sheetId', 'lastSync']);
 
     if (!itemId || !sheetId) {
       throw new Error('Missing item ID or sheet ID');
     }
+
+    const isFirstSync = !lastSync;
 
     // Fetch data from backend
     const syncData = await fetchSyncData(itemId);
@@ -345,6 +341,10 @@ async function handleSyncNow() {
     // Show detailed success message
     const message = `Sync completed! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
     updateStatus(message, true);
+
+    if (isFirstSync) {
+      showSheetSuccessModal();
+    }
 
     await loadState();
   } catch (error) {
