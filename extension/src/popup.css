@@ -490,12 +490,26 @@ footer .btn {
 
 .modal-actions {
   display: flex;
-  gap: 8px;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
 }
 
-.modal-actions .btn {
-  flex: 1;
+.modal-actions .btn-primary {
+  width: 80%;
+  padding: 12px 0;
+  font-size: 15px;
+}
+
+.modal-actions .btn-text {
+  background: none;
+  border: none;
+  color: #5d6679;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 0;
 }
 
 /* Modal Pages */
