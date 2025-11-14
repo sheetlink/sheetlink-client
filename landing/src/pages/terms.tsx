@@ -21,6 +21,21 @@ export default function Terms() {
           <p className="mb-8 text-sm text-gray-500">Last updated: November 2025</p>
 
           <div className="prose prose-lg max-w-none text-gray-600">
+            {/* Plain-English Summary */}
+            <h3 className="text-2xl font-bold text-sheetlink-text">Plain-English Summary</h3>
+            <p>
+              These Terms explain what SheetLink is, how the sandbox demo works, and what responsibilities you agree to when using it. SheetLink is an early-stage product that helps you connect Plaid's Sandbox to Google Sheets. During this phase:
+            </p>
+            <ul className="space-y-2">
+              <li>You can only use fake sandbox data.</li>
+              <li>SheetLink does not store your transactions or banking activity.</li>
+              <li>You are responsible for how you use any data pulled into your own Google Sheets.</li>
+              <li>SheetLink is provided "as is" while we continue to build and improve the service.</li>
+            </ul>
+            <p>
+              The full legal terms below apply to all use of the SheetLink sandbox and Chrome extension.
+            </p>
+
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Acceptance of Terms</h2>
             <p>
               By accessing or using SheetLink ("the Service"), you agree to be bound by these Terms
@@ -29,16 +44,44 @@ export default function Terms() {
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Description of Service</h2>
             <p>
-              SheetLink is a Chrome extension that connects your bank accounts to Google Sheets via
-              Plaid's secure banking infrastructure. The Service allows you to automatically sync
-              transaction data from your financial institutions to your personal Google Sheets.
+              SheetLink is a browser extension and optional API service that helps users sync banking data from Plaid Sandbox into their own Google Sheets. It is a pass-through utility - SheetLink does not store transaction data, balances, categories, or bank account details on its servers. Only encrypted access tokens and minimal sync metadata are retained.
             </p>
 
-            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Beta Access</h2>
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Sandbox-Only Environment</h2>
             <p>
-              Early beta testers receive lifetime free access to SheetLink's core features. This
-              offer is subject to fair use policies and may be modified for future users after the
-              beta period ends.
+              SheetLink currently operates entirely in a sandbox environment. This means:
+            </p>
+            <ul className="space-y-2">
+              <li>You may only connect to Plaid's Sandbox test institutions.</li>
+              <li>All data returned is fake, for testing and demonstration purposes.</li>
+              <li>No real financial information can be accessed through SheetLink at this stage.</li>
+            </ul>
+            <p>
+              Any attempt to use real banking credentials is prohibited.
+            </p>
+
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">No Storage of Financial Data</h2>
+            <p>
+              SheetLink does not store, log, or archive any transaction data, balances, categories, or account details. All financial data flows directly:
+            </p>
+            <p>
+              Plaid → Your browser → Your Google Sheet.
+            </p>
+            <p>
+              Our servers only handle encrypted tokens needed for Plaid Link to function. You are solely responsible for any data once it enters your Google Sheet.
+            </p>
+
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Chrome Extension Permissions</h2>
+            <p>
+              The SheetLink extension requests the minimum permissions required to function:
+            </p>
+            <ul className="space-y-2">
+              <li>Access to Google Sheets and Drive APIs</li>
+              <li>Ability to open Plaid Link in a secure window</li>
+              <li>Access to your Sheet URL for writing data</li>
+            </ul>
+            <p>
+              The extension does not track your browsing behavior, does not monitor web activity, and does not inject scripts into other websites.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">User Responsibilities</h2>
@@ -49,6 +92,16 @@ export default function Terms() {
               <li>Use the Service only for lawful purposes</li>
               <li>Not attempt to reverse engineer, modify, or distribute the Service</li>
               <li>Not use the Service to violate any applicable laws or regulations</li>
+            </ul>
+
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Acceptable Use</h2>
+            <p>You agree not to:</p>
+            <ul className="space-y-2">
+              <li>Use the sandbox for any unlawful purpose</li>
+              <li>Attempt to connect real financial institutions</li>
+              <li>Interfere with or probe the underlying services</li>
+              <li>Misuse access tokens or attempt to extract real data</li>
+              <li>Resell or redistribute the extension without permission</li>
             </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Third-Party Services</h2>
@@ -65,20 +118,13 @@ export default function Terms() {
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
-              Limitation of Liability
+              Limitations of Liability
             </h2>
             <p>
-              SheetLink is provided "as is" without warranties of any kind. We strive for accuracy
-              and reliability, but we cannot guarantee that:
+              SheetLink is provided as an early-stage beta product. We do not guarantee that the service will be uninterrupted, accurate, or error-free. You agree that SheetLink is not responsible for any damage, loss, or issues that may arise from using the sandbox, the extension, or any data written to your Google Sheets.
             </p>
-            <ul className="space-y-2">
-              <li>The Service will be uninterrupted or error-free</li>
-              <li>All transaction data will be 100% accurate</li>
-              <li>Third-party services (Plaid, Google) will always be available</li>
-            </ul>
-            <p className="mt-4">
-              To the fullest extent permitted by law, SheetLink is not liable for any indirect,
-              incidental, or consequential damages arising from your use of the Service.
+            <p>
+              If you are not comfortable using an early product, please do not use SheetLink.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Data Accuracy</h2>
@@ -109,11 +155,12 @@ export default function Terms() {
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Contact</h2>
             <p>
-              Questions about these terms? Contact us at{' '}
-              <a href="mailto:legal@sheetlink.app" className="text-sheetlink-green-700 underline">
-                legal@sheetlink.app
+              If you have questions about these Terms or need help with the sandbox, contact us at:
+            </p>
+            <p>
+              <a href="mailto:support@sheetlink.app" className="text-sheetlink-green-700 underline">
+                support@sheetlink.app
               </a>
-              .
             </p>
 
             <div className="mt-16 rounded-lg border-2 border-gray-200 bg-gray-50 p-6 text-sm">
