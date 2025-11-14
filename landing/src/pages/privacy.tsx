@@ -31,6 +31,32 @@ export default function Privacy() {
           </div>
         </section>
 
+        {/* TL;DR Summary */}
+        <section className="mx-auto max-w-4xl px-4 py-8">
+          <div className="prose prose-lg max-w-none">
+            <h3 className="text-2xl font-bold text-sheetlink-text">In plain language (TL;DR)</h3>
+
+            <p className="text-gray-700">
+              SheetLink never sees, stores, or sells your banking data.
+            </p>
+
+            <p className="text-gray-700">
+              All sensitive data flows directly between Plaid, your browser, and your Google Sheet. Our servers only handle short-lived, encrypted token exchanges so the extension can communicate securely with your bank. Transaction data never touches our database.
+            </p>
+
+            <p className="text-gray-700">We:</p>
+            <ul className="list-disc pl-6 space-y-1 text-gray-700">
+              <li><strong>Do store</strong>: encrypted access tokens, institution name, minimal sync metadata, beta signup details.</li>
+              <li><strong>Do not store</strong>: transactions, balances, categories, or anything about your banking activity.</li>
+              <li><strong>Do not sell</strong> or share any data, ever.</li>
+            </ul>
+
+            <p className="text-gray-700">
+              You can delete all your data at any time.
+            </p>
+          </div>
+        </section>
+
         {/* Data Flow */}
         <section className="mx-auto max-w-4xl px-4 py-12">
           <h2 className="mb-4 text-3xl font-bold text-sheetlink-text">How your data flows</h2>
@@ -284,6 +310,22 @@ export default function Privacy() {
               </a>
               .
             </p>            
+          </div>
+        </section>
+
+        {/* Chrome Extension Disclosure */}
+        <section className="mx-auto max-w-4xl px-4 py-12">
+          <div className="prose prose-lg max-w-none text-gray-600">
+            <h3 className="text-xl font-semibold text-sheetlink-text">Chrome Extension Disclosure</h3>
+            <p>
+              The SheetLink Chrome extension does not collect browsing activity or track which websites you visit.
+            </p>
+            <p>
+              It does not inject scripts into web pages.
+            </p>
+            <p>
+              All data processing occurs locally in your browser and only uses permissions required for Google Sheets access and Plaid Link connectivity.
+            </p>
           </div>
         </section>
 
