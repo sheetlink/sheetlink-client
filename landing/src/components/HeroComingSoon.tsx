@@ -75,7 +75,7 @@ export default function HeroComingSoon() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mb-12 text-xl text-gray-600 md:text-2xl"
         >
-          SheetLink connects your bank to Google Sheets — live, private, and yours forever.
+          SheetLink connects your bank to Google Sheets. Live, private, and yours forever.
         </motion.p>
 
         {/* Beta Email Capture Form */}

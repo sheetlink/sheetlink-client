@@ -4,7 +4,7 @@ const SECURITY_POINTS = [
   {
     title: 'Powered by Plaid',
     description:
-      'Bank connections through Plaid — trusted by Venmo, Robinhood, and thousands of apps. Your credentials never touch our servers.',
+      'Bank connections through Plaid. Trusted by Venmo, Robinhood, and thousands of apps. Your credentials never touch our servers.',
   },
   {
     title: 'Read-Only Access',
