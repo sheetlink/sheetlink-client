@@ -192,28 +192,26 @@
       <div class="modal-overlay"></div>
       <div class="modal-content">
         <div class="modal-header">
-          <div class="modal-icon">✓</div>
-          <h2>You synced!</h2>
+          <div class="modal-icon">🎉</div>
+          <h2>You synced your first data!</h2>
         </div>
 
         <p class="modal-description">
-          Your Google Sheet is now linked to SheetLink. You're ready to pull in accounts and transactions from your sandbox bank.
+          Your Google Sheet is now live with sandbox transactions. Explore balances, transactions, and categories — updated instantly from your sandbox bank.
         </p>
 
-        <ol class="modal-steps">
-          <li>Your sheet will show <strong>Accounts</strong>, <strong>Transactions</strong>, and optional <strong>Rules</strong> tabs</li>
-          <li>Click <strong>Sync Now</strong> below to pull your latest sandbox data</li>
-          <li>Refresh anytime to see new test transactions</li>
-        </ol>
-
         <div class="modal-actions">
-          <button id="sheetSuccessPrimary" class="btn btn-primary">
-            Start Syncing Data
+          <button id="syncSuccessOpenSheet" class="btn btn-primary">
+            Open my Google Sheet
           </button>
-          <button id="sheetSuccessDismiss" class="btn btn-text">
-            Got it
+          <button id="syncSuccessViewAccounts" class="btn btn-text">
+            View my accounts in SheetLink
           </button>
         </div>
+
+        <p class="modal-footer" style="margin-top: 16px; font-size: 12px; color: #666; text-align: center;">
+          You're currently using Plaid Sandbox demo data. Real bank support is coming soon.
+        </p>
       </div>
     </div>
   </div>

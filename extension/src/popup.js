@@ -10,7 +10,7 @@ let connectBankBtn, connectSandboxBtn, saveSheetBtn, syncNowBtn, disconnectBtn, 
 let sheetUrlInput, statusText, errorMessage, loadingMessage;
 let connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection;
 let sandboxBadge, sandboxLink, privacyLink, welcomeTitle, welcomeSubtitle, welcomeDescription, headerSubtitle;
-let sheetSuccessModal, sheetSuccessPrimaryBtn, sheetSuccessDismissBtn;
+let sheetSuccessModal, syncSuccessOpenSheetBtn, syncSuccessViewAccountsBtn;
 
 // Walkthrough modal
 let walkthroughModal;
@@ -72,8 +72,8 @@ function initializeElements() {
 
   // Sheet success modal elements
   sheetSuccessModal = document.getElementById('sheetSuccessModal');
-  sheetSuccessPrimaryBtn = document.getElementById('sheetSuccessPrimary');
-  sheetSuccessDismissBtn = document.getElementById('sheetSuccessDismiss');
+  syncSuccessOpenSheetBtn = document.getElementById('syncSuccessOpenSheet');
+  syncSuccessViewAccountsBtn = document.getElementById('syncSuccessViewAccounts');
 }
 
 function initializeSandboxMode() {
@@ -109,14 +109,20 @@ function attachEventListeners() {
   templatesBtn.addEventListener('click', handleShowTemplates);
 
   // Sheet success modal buttons
-  if (sheetSuccessPrimaryBtn) {
-    sheetSuccessPrimaryBtn.addEventListener('click', () => {
+  if (syncSuccessOpenSheetBtn) {
+    syncSuccessOpenSheetBtn.addEventListener('click', async () => {
+      const { sheetUrl } = await chrome.storage.sync.get(['sheetUrl']);
+      if (sheetUrl) {
+        chrome.tabs.create({ url: sheetUrl });
+        hideSheetSuccessModal();
+      }
+    });
+  }
+  if (syncSuccessViewAccountsBtn) {
+    syncSuccessViewAccountsBtn.addEventListener('click', () => {
       hideSheetSuccessModal();
       syncSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
-  }
-  if (sheetSuccessDismissBtn) {
-    sheetSuccessDismissBtn.addEventListener('click', hideSheetSuccessModal);
   }
 
   // Sandbox badge links
@@ -282,13 +288,13 @@ async function handleSyncNow() {
   try {
     showLoading('Syncing data from Plaid...');
 
-    const { itemId, sheetId, lastSync } = await chrome.storage.sync.get(['itemId', 'sheetId', 'lastSync']);
+    const { itemId, sheetId } = await chrome.storage.sync.get(['itemId', 'sheetId']);
 
     if (!itemId || !sheetId) {
       throw new Error('Missing item ID or sheet ID');
     }
 
-    const isFirstSync = !lastSync;
+    const hasShownSyncSuccess = localStorage.getItem('hasShownSyncSuccess');
 
     // Fetch data from backend
     const syncData = await fetchSyncData(itemId);
@@ -342,7 +348,8 @@ async function handleSyncNow() {
     const message = `Sync completed! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
     updateStatus(message, true);
 
-    if (isFirstSync) {
+    if (!hasShownSyncSuccess) {
+      localStorage.setItem('hasShownSyncSuccess', 'true');
       showSheetSuccessModal();
     }
 
@@ -762,8 +769,20 @@ function hideSuccessModal() {
 
 // ===== Sheet Success Modal Functions =====
 
-function showSheetSuccessModal() {
+async function showSheetSuccessModal() {
   if (sheetSuccessModal) {
+    const { sheetUrl } = await chrome.storage.sync.get(['sheetUrl']);
+
+    if (syncSuccessOpenSheetBtn) {
+      if (!sheetUrl) {
+        syncSuccessOpenSheetBtn.disabled = true;
+        syncSuccessOpenSheetBtn.title = 'Add your Google Sheet URL first';
+      } else {
+        syncSuccessOpenSheetBtn.disabled = false;
+        syncSuccessOpenSheetBtn.title = '';
+      }
+    }
+
     sheetSuccessModal.classList.remove('hidden');
   }
 }
