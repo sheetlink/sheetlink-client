@@ -50,8 +50,6 @@ async function copySheet(sourceSheetId, newName) {
       },
       body: JSON.stringify({
         name: newName,
-        // Optional: specify destination folder
-        // parents: [folderId]
       })
     });
 
@@ -68,7 +66,6 @@ async function copySheet(sourceSheetId, newName) {
       url: `https://docs.google.com/spreadsheets/d/${data.id}/edit`
     };
   } catch (error) {
-    console.error('Error copying sheet:', error);
     throw error;
   }
 }
@@ -92,7 +89,6 @@ async function installTemplate(template) {
     // Copy the sheet
     const result = await copySheet(sourceSheetId, copyName);
 
-    console.log('Template installed:', result);
 
     return {
       success: true,
@@ -101,7 +97,6 @@ async function installTemplate(template) {
       sheetName: result.name
     };
   } catch (error) {
-    console.error('Error installing template:', error);
     return {
       success: false,
       error: error.message
@@ -144,7 +139,6 @@ async function listUserSheets(maxResults = 10) {
     const data = await response.json();
     return data.files || [];
   } catch (error) {
-    console.error('Error listing sheets:', error);
     throw error;
   }
 }
@@ -186,7 +180,6 @@ async function createSheet(title) {
       url: `https://docs.google.com/spreadsheets/d/${data.id}/edit`
     };
   } catch (error) {
-    console.error('Error creating sheet:', error);
     throw error;
   }
 }

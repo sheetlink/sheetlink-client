@@ -117,7 +117,6 @@ async function readRules(sheetId, tabName) {
 
     return rules;
   } catch (error) {
-    console.error('Error reading rules:', error);
     return [];
   }
 }
@@ -179,7 +178,6 @@ function matchesRule(transaction, rule) {
         return false;
     }
   } catch (error) {
-    console.error(`Error matching rule:`, error, rule);
     return false;
   }
 }
@@ -234,7 +232,6 @@ async function applyRules(sheetId, transactions) {
 
     return categorizedTransactions;
   } catch (error) {
-    console.error('Error applying rules:', error);
     // On error, return transactions with empty final_category
     return transactions.map(txn => ({
       ...txn,
@@ -271,7 +268,6 @@ async function rulesTabExists(sheetId, tabName) {
 
     return sheets.some(sheet => sheet.properties.title === tabName);
   } catch (error) {
-    console.error('Error checking rules tab:', error);
     return false;
   }
 }
@@ -361,7 +357,6 @@ async function createRulesTab(sheetId, tabName) {
       throw new Error(`Failed to write example rules: ${exampleResponse.status} - ${errorData.error?.message || exampleResponse.statusText}`);
     }
   } catch (error) {
-    console.error('Error creating rules tab:', error);
     throw error;
   }
 }
@@ -396,7 +391,6 @@ async function applyMLSuggestions(transactions, confidenceThreshold = 0.7) {
     });
 
     if (!response.ok) {
-      console.warn('ML suggestions unavailable:', response.statusText);
       return transactions;
     }
 
@@ -404,7 +398,6 @@ async function applyMLSuggestions(transactions, confidenceThreshold = 0.7) {
 
     // If model not trained, return original transactions
     if (!data.model_trained || !data.suggestions || data.suggestions.length === 0) {
-      console.log('ML model not trained or no suggestions available');
       return transactions;
     }
 
@@ -430,7 +423,6 @@ async function applyMLSuggestions(transactions, confidenceThreshold = 0.7) {
 
     return result;
   } catch (error) {
-    console.error('Error applying ML suggestions:', error);
     return transactions;
   }
 }
@@ -456,7 +448,6 @@ async function applyRulesAndML(sheetId, transactions, useML = false) {
 
     return categorized;
   } catch (error) {
-    console.error('Error applying rules and ML:', error);
     return transactions.map(txn => ({
       ...txn,
       final_category: ''

@@ -77,7 +77,6 @@ async function handleReplayWalkthrough() {
     // Show success message
     showStatus('Walkthrough reset! Open the popup and click "Connect to Sandbox" to see it again.', 'success');
   } catch (error) {
-    console.error('Error resetting walkthrough:', error);
     showStatus('Error resetting walkthrough. Please try again.', 'error');
   }
 }
@@ -101,7 +100,6 @@ async function handleResetSandbox() {
       window.location.reload();
     }, 2000);
   } catch (error) {
-    console.error('Error resetting sandbox:', error);
     showStatus('Error resetting sandbox data. Please try again.', 'error');
   }
 }
@@ -123,7 +121,6 @@ async function loadSettings() {
     appendOnlyCheckbox.checked = mergedSettings.appendOnly;
     backendUrlInput.value = mergedSettings.backendUrl;
   } catch (error) {
-    console.error('Error loading settings:', error);
     showStatus('Failed to load settings', 'error');
   }
 }
@@ -160,7 +157,6 @@ async function handleSave() {
       hideStatus();
     }, 3000);
   } catch (error) {
-    console.error('Error saving settings:', error);
     showStatus('Failed to save settings: ' + error.message, 'error');
   }
 }
@@ -184,7 +180,6 @@ async function handleReset() {
       hideStatus();
     }, 3000);
   } catch (error) {
-    console.error('Error resetting settings:', error);
     showStatus('Failed to reset settings: ' + error.message, 'error');
   }
 }
