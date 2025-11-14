@@ -1,0 +1,8 @@
+transaction_id,account_id,date,description_raw,merchant_name,amount,pending,plaid_category,payment_channel,source_institution,synced_at,final_category
+txn_abc123,plaid_abc123,2024-01-14,STARBUCKS STORE #12345,Starbucks,5.75,FALSE,"Food and Drink, Restaurants, Coffee Shop",in store,Chase,2024-01-15T10:30:00Z,Coffee
+txn_def456,plaid_abc123,2024-01-13,UBER TRIP,Uber,18.50,FALSE,"Travel, Taxi",other,Chase,2024-01-15T10:30:00Z,Transportation
+txn_ghi789,plaid_abc123,2024-01-12,WHOLE FOODS MARKET,Whole Foods Market,85.23,FALSE,"Food and Drink, Groceries",in store,Chase,2024-01-15T10:30:00Z,Groceries
+txn_jkl012,plaid_abc123,2024-01-11,AMAZON PRIME MEMBERSHIP,Amazon,14.99,FALSE,"Service, Subscription",online,Chase,2024-01-15T10:30:00Z,
+txn_mno345,plaid_abc123,2024-01-10,MCDONALD'S #4567,McDonald's,12.34,FALSE,"Food and Drink, Restaurants, Fast Food",in store,Chase,2024-01-15T10:30:00Z,
+txn_pqr678,plaid_abc123,2024-01-09,PAYCHECK DEPOSIT,Acme Corp,-2500.00,FALSE,"Income, Payroll",other,Chase,2024-01-15T10:30:00Z,
+txn_stu901,plaid_abc123,2024-01-08,ATM WITHDRAWAL,ATM,100.00,FALSE,"Transfer, Withdrawal",atm,Chase,2024-01-15T10:30:00Z,
