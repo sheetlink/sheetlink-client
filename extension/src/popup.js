@@ -244,13 +244,14 @@ async function handleSaveSheet() {
       throw new Error('Invalid Google Sheets URL');
     }
 
-    // Verify access to sheet via Google Sheets API
+    // Save to storage FIRST (before OAuth potentially closes popup)
+    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
+
+    // Then verify access to sheet via Google Sheets API
+    // (this may trigger OAuth on first use, causing popup to close/reopen)
     if (window.SheetsAPI) {
       await window.SheetsAPI.verifySheetAccess(sheetId);
     }
-
-    // Save to storage
-    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
 
     hideLoading();
     updateStatus('Sheet saved successfully!', true);
