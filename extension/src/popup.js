@@ -10,6 +10,7 @@ let connectBankBtn, connectSandboxBtn, saveSheetBtn, syncNowBtn, disconnectBtn, 
 let sheetUrlInput, statusText, errorMessage, loadingMessage;
 let connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection;
 let sandboxBadge, sandboxLink, privacyLink, welcomeTitle, welcomeSubtitle, welcomeDescription, headerSubtitle;
+let sheetSuccessModal, sheetSuccessPrimaryBtn, sheetSuccessDismissBtn;
 
 // Walkthrough modal
 let walkthroughModal;
@@ -68,6 +69,11 @@ function initializeElements() {
   welcomeSubtitle = document.getElementById('welcomeSubtitle');
   welcomeDescription = document.getElementById('welcomeDescription');
   headerSubtitle = document.getElementById('headerSubtitle');
+
+  // Sheet success modal elements
+  sheetSuccessModal = document.getElementById('sheetSuccessModal');
+  sheetSuccessPrimaryBtn = document.getElementById('sheetSuccessPrimary');
+  sheetSuccessDismissBtn = document.getElementById('sheetSuccessDismiss');
 }
 
 function initializeSandboxMode() {
@@ -101,6 +107,17 @@ function attachEventListeners() {
   optionsBtn.addEventListener('click', () => chrome.runtime.openOptionsPage());
   retryBtn.addEventListener('click', handleRetry);
   templatesBtn.addEventListener('click', handleShowTemplates);
+
+  // Sheet success modal buttons
+  if (sheetSuccessPrimaryBtn) {
+    sheetSuccessPrimaryBtn.addEventListener('click', () => {
+      hideSheetSuccessModal();
+      syncSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+  if (sheetSuccessDismissBtn) {
+    sheetSuccessDismissBtn.addEventListener('click', hideSheetSuccessModal);
+  }
 
   // Sandbox badge links
   if (sandboxLink) {
@@ -253,6 +270,12 @@ async function handleSaveSheet() {
 
     hideLoading();
     updateStatus('Sheet saved successfully!', true);
+
+    const { itemId } = await chrome.storage.sync.get(['itemId']);
+    if (itemId) {
+      showSheetSuccessModal();
+    }
+
     await loadState();
   } catch (error) {
     hideLoading();
@@ -734,6 +757,20 @@ function hideSuccessModal() {
     const page2 = document.getElementById('modalPage2');
     if (page1) page1.classList.remove('hidden');
     if (page2) page2.classList.add('hidden');
+  }
+}
+
+// ===== Sheet Success Modal Functions =====
+
+function showSheetSuccessModal() {
+  if (sheetSuccessModal) {
+    sheetSuccessModal.classList.remove('hidden');
+  }
+}
+
+function hideSheetSuccessModal() {
+  if (sheetSuccessModal) {
+    sheetSuccessModal.classList.add('hidden');
   }
 }
 

@@ -186,6 +186,36 @@
         </div>
       </div>
     </div>
+
+    <!-- Sheet Success Modal -->
+    <div id="sheetSuccessModal" class="modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-icon">✓</div>
+          <h2>You synced!</h2>
+        </div>
+
+        <p class="modal-description">
+          Your Google Sheet is now linked to SheetLink. You're ready to pull in accounts and transactions from your sandbox bank.
+        </p>
+
+        <ol class="modal-steps">
+          <li>Your sheet will show <strong>Accounts</strong>, <strong>Transactions</strong>, and optional <strong>Rules</strong> tabs</li>
+          <li>Click <strong>Sync Now</strong> below to pull your latest sandbox data</li>
+          <li>Refresh anytime to see new test transactions</li>
+        </ol>
+
+        <div class="modal-actions">
+          <button id="sheetSuccessPrimary" class="btn btn-primary">
+            Start Syncing Data
+          </button>
+          <button id="sheetSuccessDismiss" class="btn btn-text">
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Configuration -->
