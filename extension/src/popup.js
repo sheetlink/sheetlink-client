@@ -119,10 +119,7 @@ function attachEventListeners() {
     });
   }
   if (syncSuccessViewAccountsBtn) {
-    syncSuccessViewAccountsBtn.addEventListener('click', () => {
-      hideSheetSuccessModal();
-      syncSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
+    syncSuccessViewAccountsBtn.addEventListener('click', hideSheetSuccessModal);
   }
 
   // Sandbox badge links
@@ -776,7 +773,7 @@ async function showSheetSuccessModal() {
     if (syncSuccessOpenSheetBtn) {
       if (!sheetUrl) {
         syncSuccessOpenSheetBtn.disabled = true;
-        syncSuccessOpenSheetBtn.title = 'Add your Google Sheet URL first';
+        syncSuccessOpenSheetBtn.title = 'Add a Google Sheet in settings before opening.';
       } else {
         syncSuccessOpenSheetBtn.disabled = false;
         syncSuccessOpenSheetBtn.title = '';
