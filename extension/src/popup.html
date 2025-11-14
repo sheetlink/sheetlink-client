@@ -50,21 +50,60 @@
 
       <!-- Sheet Selection Section -->
       <div id="sheetSection" class="section hidden">
-        <label for="sheetUrl">Google Sheet URL:</label>
-        <input 
-          type="text" 
-          id="sheetUrl" 
+        <h3 style="margin-bottom: 8px; font-size: 16px;">Update your Google Sheet</h3>
+        <p style="font-size: 13px; color: #666; margin-bottom: 12px;">
+          Paste the URL of the Google Sheet where you want SheetLink to send your data.
+        </p>
+
+        <!-- Inline error banner for sheet save failures -->
+        <div id="sheetErrorBanner" class="error-banner hidden" style="margin-bottom: 12px; padding: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
+          <div style="font-weight: 600; color: #991b1b; margin-bottom: 4px;">We could not access that Google Sheet</div>
+          <div style="font-size: 13px; color: #7f1d1d; margin-bottom: 8px;">
+            Double check that the link is correct and that you have edit access to the sheet.
+            If you pasted a shared link, try copying the full URL from your browser's address bar instead.
+          </div>
+          <div id="sheetErrorDetail" style="font-size: 11px; color: #991b1b; font-family: monospace;"></div>
+        </div>
+
+        <label for="sheetUrl">Google Sheet URL</label>
+        <input
+          type="text"
+          id="sheetUrl"
           placeholder="https://docs.google.com/spreadsheets/d/..."
         >
         <button id="saveSheetBtn" class="btn btn-secondary">
           Save Sheet
         </button>
+        <button id="removeSheetBtn" class="btn btn-text" style="margin-top: 8px;">
+          Remove Sheet
+        </button>
       </div>
 
       <!-- Sync Section -->
       <div id="syncSection" class="section hidden">
+        <!-- Sync error banner for sheet access issues -->
+        <div id="syncErrorBanner" class="error-banner hidden" style="margin-bottom: 12px; padding: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
+          <div style="font-weight: 600; color: #991b1b; margin-bottom: 4px;">We cannot access your Google Sheet</div>
+          <div style="font-size: 13px; color: #7f1d1d; margin-bottom: 8px;">
+            Check that the sheet still exists, that the link is correct, and that SheetLink has edit access.
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button id="changeSheetLinkBtn" class="btn btn-secondary" style="font-size: 13px; padding: 6px 12px;">
+              Change Sheet Link
+            </button>
+            <button id="retrySyncBtn" class="btn btn-text" style="font-size: 13px;">
+              Retry
+            </button>
+          </div>
+        </div>
+
         <div class="sync-info">
-          <p>Sheet: <span id="currentSheet">Not selected</span></p>
+          <p>
+            Sheet: <span id="currentSheet">Not connected yet</span>
+            <button id="changeSheetBtn" class="btn btn-text hidden" style="margin-left: 8px; font-size: 12px; padding: 2px 8px;">
+              Change
+            </button>
+          </p>
           <p>Last sync: <span id="lastSync">Never</span></p>
         </div>
         <button id="syncNowBtn" class="btn btn-primary">

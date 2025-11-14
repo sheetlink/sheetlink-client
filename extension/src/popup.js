@@ -7,10 +7,12 @@ const BACKEND_URL = CONFIG.BACKEND_URL;
 
 // DOM elements
 let connectBankBtn, connectSandboxBtn, saveSheetBtn, syncNowBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
+let removeSheetBtn, changeSheetBtn, changeSheetLinkBtn, retrySyncBtn;
 let sheetUrlInput, statusText, errorMessage, loadingMessage;
 let connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection;
 let sandboxBadge, sandboxLink, privacyLink, welcomeTitle, welcomeSubtitle, welcomeDescription, headerSubtitle;
 let sheetSuccessModal, syncSuccessOpenSheetBtn, syncSuccessViewAccountsBtn;
+let sheetErrorBanner, sheetErrorDetail, syncErrorBanner;
 
 // Walkthrough modal
 let walkthroughModal;
@@ -36,6 +38,10 @@ function initializeElements() {
   connectSandboxBtn = document.getElementById('connectSandboxBtn');
   learnMoreBtn = document.getElementById('learnMoreBtn');
   saveSheetBtn = document.getElementById('saveSheetBtn');
+  removeSheetBtn = document.getElementById('removeSheetBtn');
+  changeSheetBtn = document.getElementById('changeSheetBtn');
+  changeSheetLinkBtn = document.getElementById('changeSheetLinkBtn');
+  retrySyncBtn = document.getElementById('retrySyncBtn');
   syncNowBtn = document.getElementById('syncNowBtn');
   generateTestBtn = document.getElementById('generateTestBtn');
   disconnectBtn = document.getElementById('disconnectBtn');
@@ -74,6 +80,11 @@ function initializeElements() {
   sheetSuccessModal = document.getElementById('sheetSuccessModal');
   syncSuccessOpenSheetBtn = document.getElementById('syncSuccessOpenSheet');
   syncSuccessViewAccountsBtn = document.getElementById('syncSuccessViewAccounts');
+
+  // Error banners
+  sheetErrorBanner = document.getElementById('sheetErrorBanner');
+  sheetErrorDetail = document.getElementById('sheetErrorDetail');
+  syncErrorBanner = document.getElementById('syncErrorBanner');
 }
 
 function initializeSandboxMode() {
@@ -101,6 +112,10 @@ function attachEventListeners() {
   if (connectSandboxBtn) connectSandboxBtn.addEventListener('click', handleConnectSandbox);
   if (learnMoreBtn) learnMoreBtn.addEventListener('click', handleLearnMore);
   saveSheetBtn.addEventListener('click', handleSaveSheet);
+  if (removeSheetBtn) removeSheetBtn.addEventListener('click', handleRemoveSheet);
+  if (changeSheetBtn) changeSheetBtn.addEventListener('click', handleChangeSheet);
+  if (changeSheetLinkBtn) changeSheetLinkBtn.addEventListener('click', handleChangeSheet);
+  if (retrySyncBtn) retrySyncBtn.addEventListener('click', handleSyncNow);
   syncNowBtn.addEventListener('click', handleSyncNow);
   generateTestBtn.addEventListener('click', handleGenerateTestTransactions);
   disconnectBtn.addEventListener('click', handleDisconnect);
@@ -189,21 +204,26 @@ async function loadState() {
     disconnectBtn.classList.remove('hidden');
 
     if (data.sheetId) {
-      // Sheet configured
       showSection('sync');
       document.getElementById('currentSheet').textContent =
         data.sheetUrl ? new URL(data.sheetUrl).pathname.split('/')[3].substring(0, 20) + '...' : data.sheetId;
+
+      if (changeSheetBtn) {
+        changeSheetBtn.classList.remove('hidden');
+      }
 
       if (data.lastSync) {
         document.getElementById('lastSync').textContent = new Date(data.lastSync).toLocaleString();
       }
 
-      // Load auto-sync status
       await updateAutoSyncStatus();
       await loadRecentSyncs();
     } else {
-      // Need sheet selection
       showSection('sheet');
+      document.getElementById('currentSheet').textContent = 'Not connected yet';
+      if (changeSheetBtn) {
+        changeSheetBtn.classList.add('hidden');
+      }
     }
   } catch (error) {
     showError('Failed to load state');
@@ -247,36 +267,33 @@ async function handleConnectBank() {
 // Handle Save Sheet button
 async function handleSaveSheet() {
   const url = sheetUrlInput.value.trim();
-  
+
   if (!url) {
-    showError('Please enter a Google Sheets URL');
+    showSheetError('Please enter a Google Sheets URL');
     return;
   }
 
   try {
-    showLoading('Saving sheet...');
+    showLoading('Verifying sheet access...');
+    hideSheetError();
 
-    // Extract sheet ID from URL
     const sheetId = extractSheetId(url);
     if (!sheetId) {
       throw new Error('Invalid Google Sheets URL');
     }
 
-    // Save to storage FIRST (before OAuth potentially closes popup)
-    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
-
-    // Then verify access to sheet via Google Sheets API
-    // (this may trigger OAuth on first use, causing popup to close/reopen)
     if (window.SheetsAPI) {
       await window.SheetsAPI.verifySheetAccess(sheetId);
     }
+
+    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
 
     hideLoading();
     updateStatus('Sheet saved successfully!', true);
     await loadState();
   } catch (error) {
     hideLoading();
-    showError('Failed to save sheet: ' + error.message);
+    showSheetError('Sheets API error: ' + error.message);
   }
 }
 
@@ -351,9 +368,15 @@ async function handleSyncNow() {
     }
 
     await loadState();
+    hideSyncError();
   } catch (error) {
     hideLoading();
-    showError('Sync failed: ' + error.message);
+
+    if (error.message && (error.message.includes('404') || error.message.includes('Cannot access sheet') || error.message.includes('edit permissions'))) {
+      showSyncError();
+    } else {
+      showError('Sync failed: ' + error.message);
+    }
   }
 }
 
@@ -422,6 +445,37 @@ async function handleDisconnect() {
 function handleRetry() {
   hideError();
   loadState();
+}
+
+// Handle Change Sheet button
+async function handleChangeSheet() {
+  const { sheetUrl } = await chrome.storage.sync.get(['sheetUrl']);
+  if (sheetUrl) {
+    sheetUrlInput.value = sheetUrl;
+  }
+  hideSheetError();
+  hideSyncError();
+  showSection('sheet');
+}
+
+// Handle Remove Sheet button
+async function handleRemoveSheet() {
+  if (!confirm('Remove linked sheet?\n\nThis will unlink your current Google Sheet. You can link a new one any time.')) {
+    return;
+  }
+
+  try {
+    showLoading('Removing sheet...');
+
+    await chrome.storage.sync.remove(['sheetId', 'sheetUrl']);
+
+    hideLoading();
+    updateStatus('Sheet removed', true);
+    await loadState();
+  } catch (error) {
+    hideLoading();
+    showError('Failed to remove sheet: ' + error.message);
+  }
 }
 
 // Backend API calls
@@ -726,6 +780,33 @@ function updateStatus(message, isSuccess) {
   const statusIcon = document.getElementById('statusIcon');
   statusIcon.textContent = isSuccess ? '✓' : '⚠';
   statusIcon.style.color = isSuccess ? '#10b981' : '#f59e0b';
+}
+
+function showSheetError(message) {
+  if (sheetErrorDetail) {
+    sheetErrorDetail.textContent = message;
+  }
+  if (sheetErrorBanner) {
+    sheetErrorBanner.classList.remove('hidden');
+  }
+}
+
+function hideSheetError() {
+  if (sheetErrorBanner) {
+    sheetErrorBanner.classList.add('hidden');
+  }
+}
+
+function showSyncError() {
+  if (syncErrorBanner) {
+    syncErrorBanner.classList.remove('hidden');
+  }
+}
+
+function hideSyncError() {
+  if (syncErrorBanner) {
+    syncErrorBanner.classList.add('hidden');
+  }
 }
 
 // ===== Success Modal Functions =====
