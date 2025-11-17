@@ -68,7 +68,7 @@ export default function Success() {
                   Get Started in Sandbox
                 </Link>
                 <a
-                  href="https://github.com/sheetlink/sheetlink"
+                  href="https://github.com/sheetlink/sheetlink-client"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg border-2 border-sheetlink-green-700 px-6 py-3 font-semibold text-sheetlink-green-700 transition-all duration-200 hover:bg-sheetlink-green-700 hover:text-white"

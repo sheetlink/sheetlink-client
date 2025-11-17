@@ -1,0 +1,51 @@
+--- drive.js.backup	2025-11-14 14:32:37
++++ drive.js	2025-11-14 14:32:37
+@@ -50,8 +50,6 @@
+       },
+       body: JSON.stringify({
+         name: newName,
+-        // Optional: specify destination folder
+-        // parents: [folderId]
+       })
+     });
+ 
+@@ -68,7 +66,6 @@
+       url: `https://docs.google.com/spreadsheets/d/${data.id}/edit`
+     };
+   } catch (error) {
+-    console.error('Error copying sheet:', error);
+     throw error;
+   }
+ }
+@@ -92,7 +89,6 @@
+     // Copy the sheet
+     const result = await copySheet(sourceSheetId, copyName);
+ 
+-    console.log('Template installed:', result);
+ 
+     return {
+       success: true,
+@@ -101,7 +97,6 @@
+       sheetName: result.name
+     };
+   } catch (error) {
+-    console.error('Error installing template:', error);
+     return {
+       success: false,
+       error: error.message
+@@ -144,7 +139,6 @@
+     const data = await response.json();
+     return data.files || [];
+   } catch (error) {
+-    console.error('Error listing sheets:', error);
+     throw error;
+   }
+ }
+@@ -186,7 +180,6 @@
+       url: `https://docs.google.com/spreadsheets/d/${data.id}/edit`
+     };
+   } catch (error) {
+-    console.error('Error creating sheet:', error);
+     throw error;
+   }
+ }

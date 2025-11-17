@@ -14,7 +14,7 @@ export const BRAND = {
 
 export const URLS = {
   chromeStore: process.env.NEXT_PUBLIC_CHROME_STORE_URL || '#',
-  github: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/sheetlink/sheetlink',
+  github: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/sheetlink/sheetlink-client',
   docs: 'https://docs.sheetlink.app',
   support: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'mailto:support@sheetlink.app',
   privacy: '/privacy',

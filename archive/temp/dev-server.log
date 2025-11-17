@@ -1,0 +1,236 @@
+
+> sheetlink-landing@1.0.0 dev
+> next dev
+
+ ⚠ Invalid next.config.js options detected: 
+ ⚠     Unrecognized key(s) in object: 'swcMinify'
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/rudy/projects/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/rudy/projects/plaid-sheets-extension/landing/package-lock.json
+
+   ▲ Next.js 16.0.1 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.86.20:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 405ms
+ GET / 500 in 1535ms (compile: 1333ms, render: 202ms)
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/rudy/projects/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/rudy/projects/plaid-sheets-extension/landing/package-lock.json
+
+   ▲ Next.js 16.0.1 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.86.20:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 438ms
+ GET / 500 in 1218ms (compile: 1158ms, render: 60ms)
+ GET / 500 in 15ms (compile: 9ms, render: 7ms)
+ ✓ Compiled in 153ms
+ GET / 200 in 253ms (compile: 213ms, render: 40ms)
+ GET / 200 in 37ms (compile: 7ms, render: 30ms)
+ GET / 200 in 44ms (compile: 8ms, render: 36ms)
+ GET /sheetlink-favicon.svg 404 in 221ms (compile: 211ms, render: 10ms)
+ GET /sheetlink-favicon.svg 404 in 6ms (compile: 2ms, render: 4ms)
+ GET / 200 in 47ms (compile: 19ms, render: 28ms)
+ GET /sheetlink-favicon.svg 404 in 7ms (compile: 2ms, render: 4ms)
+ ✓ Compiled in 148ms
+   Reload env: .env.local
+ ✓ Compiled in 419ms
+ GET / 200 in 147ms (compile: 105ms, render: 43ms)
+ GET /apple-touch-icon-precomposed.png 404 in 58ms (compile: 45ms, render: 14ms)
+ GET /apple-touch-icon.png 404 in 9ms (compile: 1673µs, render: 7ms)
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/rudy/projects/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/rudy/projects/plaid-sheets-extension/landing/package-lock.json
+
+   ▲ Next.js 16.0.1 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.86.20:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 601ms
+   Reload env: .env.local
+node(69977) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /privacy 200 in 1476ms (compile: 1416ms, render: 61ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET / 200 in 452ms (compile: 430ms, render: 22ms)
+Error [PageNotFoundError]: Cannot find module for page: /docs/sandbox
+    at ignore-listed frames {
+  code: 'ENOENT'
+}
+Loading Google Analytics: G-DBJWMWCNFR
+React expects the `children` prop of <title> tags to be a string, number, bigint, or object with a novel `toString` method but found an Array with length 2 instead. Browsers treat all child Nodes of <title> tags as Text content and React expects to be able to convert `children` of <title> tags to a single string value which is why Arrays of length greater than 1 are not supported. When using JSX it can be common to combine text nodes and value nodes. For example: <title>hello {nameOfUser}</title>. While not immediately apparent, `children` in this case is an Array with length 2. If your `children` prop is using this form try rewriting it using a template string: <title>{`hello ${nameOfUser}`}</title>.
+ GET /docs/sandbox 404 in 152ms (compile: 125ms, render: 27ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /privacy 200 in 62ms (compile: 12ms, render: 50ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /docs 200 in 117ms (compile: 83ms, render: 33ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /beta 200 in 49ms (compile: 22ms, render: 27ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /sandbox 200 in 76ms (compile: 43ms, render: 33ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /docs 200 in 95ms (compile: 52ms, render: 43ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /privacy 200 in 69ms (compile: 11ms, render: 58ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /beta 200 in 53ms (compile: 14ms, render: 39ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /sandbox 200 in 50ms (compile: 10ms, render: 40ms)
+Error [PageNotFoundError]: Cannot find module for page: /docs/sandbox
+    at ignore-listed frames {
+  code: 'ENOENT'
+}
+Loading Google Analytics: G-DBJWMWCNFR
+React expects the `children` prop of <title> tags to be a string, number, bigint, or object with a novel `toString` method but found an Array with length 2 instead. Browsers treat all child Nodes of <title> tags as Text content and React expects to be able to convert `children` of <title> tags to a single string value which is why Arrays of length greater than 1 are not supported. When using JSX it can be common to combine text nodes and value nodes. For example: <title>hello {nameOfUser}</title>. While not immediately apparent, `children` in this case is an Array with length 2. If your `children` prop is using this form try rewriting it using a template string: <title>{`hello ${nameOfUser}`}</title>.
+ GET /docs/sandbox 404 in 66ms (compile: 12ms, render: 55ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /privacy 200 in 182ms (compile: 56ms, render: 126ms)
+Error [PageNotFoundError]: Cannot find module for page: /docs/sandbox
+    at ignore-listed frames {
+  code: 'ENOENT'
+}
+Loading Google Analytics: G-DBJWMWCNFR
+React expects the `children` prop of <title> tags to be a string, number, bigint, or object with a novel `toString` method but found an Array with length 2 instead. Browsers treat all child Nodes of <title> tags as Text content and React expects to be able to convert `children` of <title> tags to a single string value which is why Arrays of length greater than 1 are not supported. When using JSX it can be common to combine text nodes and value nodes. For example: <title>hello {nameOfUser}</title>. While not immediately apparent, `children` in this case is an Array with length 2. If your `children` prop is using this form try rewriting it using a template string: <title>{`hello ${nameOfUser}`}</title>.
+ GET /docs/sandbox 404 in 33ms (compile: 17ms, render: 16ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /privacy 200 in 45ms (compile: 6ms, render: 39ms)
+Error [PageNotFoundError]: Cannot find module for page: /docs/sandbox
+    at ignore-listed frames {
+  code: 'ENOENT'
+}
+Loading Google Analytics: G-DBJWMWCNFR
+React expects the `children` prop of <title> tags to be a string, number, bigint, or object with a novel `toString` method but found an Array with length 2 instead. Browsers treat all child Nodes of <title> tags as Text content and React expects to be able to convert `children` of <title> tags to a single string value which is why Arrays of length greater than 1 are not supported. When using JSX it can be common to combine text nodes and value nodes. For example: <title>hello {nameOfUser}</title>. While not immediately apparent, `children` in this case is an Array with length 2. If your `children` prop is using this form try rewriting it using a template string: <title>{`hello ${nameOfUser}`}</title>.
+ GET /docs/sandbox 404 in 39ms (compile: 9ms, render: 30ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /beta 200 in 32ms (compile: 6ms, render: 26ms)
+Error [PageNotFoundError]: Cannot find module for page: /docs/sandbox
+    at ignore-listed frames {
+  code: 'ENOENT'
+}
+Loading Google Analytics: G-DBJWMWCNFR
+React expects the `children` prop of <title> tags to be a string, number, bigint, or object with a novel `toString` method but found an Array with length 2 instead. Browsers treat all child Nodes of <title> tags as Text content and React expects to be able to convert `children` of <title> tags to a single string value which is why Arrays of length greater than 1 are not supported. When using JSX it can be common to combine text nodes and value nodes. For example: <title>hello {nameOfUser}</title>. While not immediately apparent, `children` in this case is an Array with length 2. If your `children` prop is using this form try rewriting it using a template string: <title>{`hello ${nameOfUser}`}</title>.
+ GET /docs/sandbox 404 in 30ms (compile: 19ms, render: 10ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /beta 200 in 26ms (compile: 6ms, render: 20ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /terms 200 in 305ms (compile: 293ms, render: 12ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /beta 200 in 26ms (compile: 6ms, render: 20ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /privacy 200 in 35ms (compile: 10ms, render: 25ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /beta 200 in 31ms (compile: 7ms, render: 24ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /docs 200 in 37ms (compile: 11ms, render: 26ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /docs 200 in 51ms (compile: 9ms, render: 43ms)
+ ✓ Compiled in 290ms
+ ✓ Compiled in 70ms
+ ✓ Compiled in 44ms
+ ✓ Compiled in 101ms
+ ✓ Compiled in 46ms
+ ✓ Compiled in 71ms
+ ✓ Compiled in 65ms
+ ✓ Compiled in 55ms
+ ✓ Compiled in 87ms
+ ✓ Compiled in 61ms
+ ✓ Compiled in 133ms
+ ✓ Compiled in 52ms
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /docs 200 in 108ms (compile: 69ms, render: 38ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /docs 200 in 40ms (compile: 8ms, render: 32ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /privacy 200 in 112ms (compile: 76ms, render: 36ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /beta 200 in 105ms (compile: 72ms, render: 33ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /sandbox 200 in 99ms (compile: 65ms, render: 34ms)
+ ✓ Compiled in 129ms
+ ✓ Compiled in 42ms
+ ✓ Compiled in 76ms
+ ✓ Compiled in 116ms
+ ✓ Compiled in 55ms
+ ✓ Compiled in 101ms
+ ✓ Compiled in 72ms
+ ✓ Compiled in 39ms
+ ✓ Compiled in 38ms
+ ✓ Compiled in 128ms
+ ✓ Compiled in 42ms
+ ✓ Compiled in 51ms
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /docs 200 in 51ms (compile: 23ms, render: 29ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /about 200 in 112ms (compile: 88ms, render: 23ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET / 200 in 48ms (compile: 21ms, render: 27ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET / 200 in 81ms (compile: 27ms, render: 54ms)
+ ✓ Compiled in 182ms
+ ✓ Compiled in 87ms
+Loading Google Analytics: G-DBJWMWCNFR
+ ✓ Compiled in 5ms
+ GET / 200 in 155ms (compile: 111ms, render: 44ms)
+ ✓ Compiled in 1ms
+ ✓ Compiled in 49ms
+ ✓ Compiled in 89ms
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /privacy 200 in 186ms (compile: 140ms, render: 46ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET / 200 in 116ms (compile: 92ms, render: 23ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET / 200 in 33ms (compile: 5ms, render: 28ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /about 200 in 94ms (compile: 73ms, render: 21ms)
+ ✓ Compiled in 115ms
+ ✓ Compiled in 86ms
+Loading Google Analytics: G-DBJWMWCNFR
+ GET / 200 in 114ms (compile: 89ms, render: 25ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET / 200 in 44ms (compile: 19ms, render: 25ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET / 200 in 33ms (compile: 11ms, render: 22ms)
+ ✓ Compiled in 326ms
+ ✓ Compiled in 46ms
+ ✓ Compiled in 41ms
+Loading Google Analytics: G-DBJWMWCNFR
+ GET / 200 in 85ms (compile: 41ms, render: 43ms)
+Loading Google Analytics: G-DBJWMWCNFR
+ GET /beta 200 in 108ms (compile: 84ms, render: 25ms)
+
+-----
+[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to /var/folders/m5/14gzg05s4hb66ksy9g4_z6200000gn/T/next-panic-44d29c2774a9f4d0c7ff44e933bb61b0.log.
+
+To help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Next.js%20package%20not%20found&body=Turbopack%20version%3A%20%60v16.0.1-canary.5-10-g406721415%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Next.js%20package%20not%20found%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+-----
+
+node(92077) MallocStackLogging: can't turn off malloc stack logging because it was not enabled.
+Error: Turbopack build failed with 1 errors:
+./plaid-sheets-extension/landing
+Error: Next.js inferred your workspace root, but it may not be correct.
+    We couldn't find the Next.js package (next/package.json) from the project directory: /Users/rudy/projects/plaid-sheets-extension/landing
+     To fix this, set turbopack.root in your Next.js config, or ensure the Next.js package is resolvable from this directory.
+    Note: For security and performance reasons, files outside of the project directory will not be compiled.
+    See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+
+    at ignore-listed frames
+[?25h

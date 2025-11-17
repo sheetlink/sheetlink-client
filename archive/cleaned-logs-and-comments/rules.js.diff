@@ -1,0 +1,74 @@
+--- rules.js.backup	2025-11-14 14:32:37
++++ rules.js	2025-11-14 14:32:37
+@@ -117,7 +117,6 @@
+ 
+     return rules;
+   } catch (error) {
+-    console.error('Error reading rules:', error);
+     return [];
+   }
+ }
+@@ -179,7 +178,6 @@
+         return false;
+     }
+   } catch (error) {
+-    console.error(`Error matching rule:`, error, rule);
+     return false;
+   }
+ }
+@@ -234,7 +232,6 @@
+ 
+     return categorizedTransactions;
+   } catch (error) {
+-    console.error('Error applying rules:', error);
+     // On error, return transactions with empty final_category
+     return transactions.map(txn => ({
+       ...txn,
+@@ -271,7 +268,6 @@
+ 
+     return sheets.some(sheet => sheet.properties.title === tabName);
+   } catch (error) {
+-    console.error('Error checking rules tab:', error);
+     return false;
+   }
+ }
+@@ -361,7 +357,6 @@
+       throw new Error(`Failed to write example rules: ${exampleResponse.status} - ${errorData.error?.message || exampleResponse.statusText}`);
+     }
+   } catch (error) {
+-    console.error('Error creating rules tab:', error);
+     throw error;
+   }
+ }
+@@ -396,7 +391,6 @@
+     });
+ 
+     if (!response.ok) {
+-      console.warn('ML suggestions unavailable:', response.statusText);
+       return transactions;
+     }
+ 
+@@ -404,7 +398,6 @@
+ 
+     // If model not trained, return original transactions
+     if (!data.model_trained || !data.suggestions || data.suggestions.length === 0) {
+-      console.log('ML model not trained or no suggestions available');
+       return transactions;
+     }
+ 
+@@ -430,7 +423,6 @@
+ 
+     return result;
+   } catch (error) {
+-    console.error('Error applying ML suggestions:', error);
+     return transactions;
+   }
+ }
+@@ -456,7 +448,6 @@
+ 
+     return categorized;
+   } catch (error) {
+-    console.error('Error applying rules and ML:', error);
+     return transactions.map(txn => ({
+       ...txn,
+       final_category: ''
