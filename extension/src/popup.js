@@ -274,7 +274,7 @@ async function handleSaveSheet() {
   }
 
   try {
-    showLoading('Verifying sheet access...');
+    showLoading('Saving sheet...');
     hideSheetError();
 
     const sheetId = extractSheetId(url);
@@ -282,16 +282,17 @@ async function handleSaveSheet() {
       throw new Error('Invalid Google Sheets URL');
     }
 
+    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
+
     if (window.SheetsAPI) {
       await window.SheetsAPI.verifySheetAccess(sheetId);
     }
-
-    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
 
     hideLoading();
     updateStatus('Sheet saved successfully!', true);
     await loadState();
   } catch (error) {
+    await chrome.storage.sync.remove(['sheetId', 'sheetUrl']);
     hideLoading();
     showSheetError('Sheets API error: ' + error.message);
   }

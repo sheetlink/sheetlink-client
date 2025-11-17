@@ -2,7 +2,7 @@
 
 **Plaid → Google Sheets Chrome Extension**
 
-*Last Updated: January 2025*
+*Last Updated: November 2025*
 
 ## Overview
 
@@ -318,7 +318,7 @@ We may update this Privacy Policy from time to time. Changes will be posted with
 
 **Questions or concerns about privacy?**
 
-- GitHub Issues: [https://github.com/rudymdc/plaid-sheets-extension/issues](https://github.com/rudymdc/plaid-sheets-extension/issues)
+- GitHub Issues: [https://github.com/sheetlink/sheetlink-client/issues](https://github.com/sheetlink/sheetlink-client/issues)
 - Email: [Create issue on GitHub]
 
 **Data deletion requests:**

@@ -1,6 +1,6 @@
 # SheetLink Technical Privacy Documentation
 
-**Last Updated:** November 10, 2025
+**Last Updated:** November 2025
 **For:** Developers, Security Researchers
 
 ## Architecture
