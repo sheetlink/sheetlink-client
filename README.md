@@ -114,9 +114,9 @@ npm run dev
 ## 📚 Documentation
 
 - **[Privacy Policy](./docs/PRIVACY.md)** - Full privacy documentation
-- **[Security](./docs/SECURITY.md)** - Security architecture and practices
-- **[Self-Hosting](./docs/self-host.md)** - Run your own backend
-- **[Templates](./docs/TEMPLATES.md)** - Pre-built sheet templates
+- **[Security](./SECURITY.md)** - Security architecture and practices
+- **Self-Hosting** - Run your own backend (documentation coming soon)
+- **Templates** - Pre-built sheet templates (coming soon)
 
 ---
 
