@@ -6,7 +6,7 @@ SheetLink is built with security and privacy as core principles. This document o
 
 ---
 
-## 🔐 Security Architecture
+## Security Architecture
 
 ### Client-Side Code (Public)
 
@@ -30,7 +30,7 @@ The backend is in a **separate private repository** for:
 
 ---
 
-## 🛡️ Security Measures
+## Security Measures
 
 ### 1. Data Handling
 
@@ -90,7 +90,7 @@ The Chrome extension requests minimal permissions:
 
 ---
 
-## 🔍 What You Can Audit
+## What You Can Audit
 
 ### ✅ Fully Auditable
 
@@ -124,7 +124,7 @@ The Chrome extension requests minimal permissions:
 
 ---
 
-## 🐛 Reporting a Vulnerability
+## Reporting a Vulnerability
 
 We take security seriously. If you discover a vulnerability:
 
@@ -154,7 +154,7 @@ We currently don't have a formal bug bounty program, but we:
 
 ---
 
-## 🔒 Security Best Practices for Users
+## Security Best Practices for Users
 
 ### 1. Extension Installation
 
@@ -182,7 +182,7 @@ We currently don't have a formal bug bounty program, but we:
 
 ---
 
-## 📜 Security Updates
+## Security Updates
 
 ### Current Version: 0.3.0 (Sandbox Preview)
 
@@ -200,7 +200,7 @@ Security updates will be communicated via:
 
 ---
 
-## 🏗️ Infrastructure Security
+## Infrastructure Security
 
 ### Hosting
 
@@ -217,7 +217,7 @@ Security updates will be communicated via:
 
 ---
 
-## 🎯 Compliance & Certifications
+## Compliance & Certifications
 
 ### Current Status (Sandbox)
 
@@ -237,7 +237,7 @@ Before launching production:
 
 ---
 
-## 📞 Contact
+## Contact
 
 - **Security Issues**: security@sheetlink.app (private, monitored 24/7)
 - **General Questions**: rudy@sheetlink.app
@@ -245,7 +245,7 @@ Before launching production:
 
 ---
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [Privacy Policy](./docs/PRIVACY.md)
 - [Backend Architecture](./README.md#backend-architecture)

@@ -200,7 +200,6 @@ Meta tags configured in `pages/index.tsx`:
 - OpenGraph (Facebook, LinkedIn)
 - Twitter Cards
 - Canonical URL
-- Structured data (JSON-LD) - *TODO*
 
 ## Security Headers
 
@@ -210,16 +209,6 @@ Security headers configured in `vercel.json`:
 - `X-Frame-Options: DENY`
 - `X-XSS-Protection: 1; mode=block`
 - `Referrer-Policy: strict-origin-when-cross-origin`
-
-## TODO
-
-- [ ] Replace placeholder SVG assets with production designs
-- [ ] Add extension screenshot images
-- [ ] Update Chrome Store URL once extension is published
-- [ ] Set up custom domain (sheetlink.app)
-- [ ] Add JSON-LD structured data for SEO
-- [ ] Consider converting og-image.svg to PNG for better social media compatibility
-- [ ] Add /privacy and /terms pages (currently linked but not created)
 
 ## License
 

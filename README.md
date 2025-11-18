@@ -8,7 +8,7 @@ SheetLink is a Chrome extension that connects your bank accounts (via Plaid) to 
 
 ---
 
-## 📦 What's in This Repo
+## What's in This Repo
 
 ```
 sheetlink-client/
@@ -28,7 +28,7 @@ The backend API is in a separate **private repository** (`sheetlink-api`). See "
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ### How SheetLink Works
 
@@ -60,7 +60,7 @@ The backend API is in a separate **private repository** (`sheetlink-api`). See "
 
 ---
 
-## 🔐 Privacy & Security
+## Privacy & Security
 
 ### What We Can See
 - Encrypted Plaid access tokens (AES-256-GCM)
@@ -84,7 +84,7 @@ The backend repository is private for:
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Extension Development
 
@@ -111,7 +111,7 @@ npm run dev
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 - **[Privacy Policy](./docs/PRIVACY.md)** - Full privacy documentation
 - **[Security](./SECURITY.md)** - Security architecture and practices
@@ -120,7 +120,7 @@ npm run dev
 
 ---
 
-## 🏛️ Backend Architecture
+## Backend Architecture
 
 While the backend code is private, here's what it does:
 
@@ -160,13 +160,13 @@ The backend stores:
 
 ---
 
-## 🎨 Brand Assets
+## Brand Assets
 
 All brand assets (logos, icons, color tokens) are in `/brand`. See [brand/README.md](./brand/README.md) for usage guidelines.
 
 ---
 
-## 🧪 Sandbox Mode
+## Sandbox Mode
 
 Currently, SheetLink operates in **Sandbox Mode** using Plaid's test environment. This means:
 - ✅ Fully functional demo with sample institutions
@@ -176,7 +176,7 @@ Currently, SheetLink operates in **Sandbox Mode** using Plaid's test environment
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Extension
 - Vanilla JavaScript (no frameworks)
@@ -193,7 +193,7 @@ Currently, SheetLink operates in **Sandbox Mode** using Plaid's test environment
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **Elastic License 2.0**.
 
@@ -207,7 +207,7 @@ See [LICENSE](./LICENSE) for full terms.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions to the client-side code:
 - Bug reports and feature requests: [GitHub Issues](https://github.com/sheetlink/sheetlink-client/issues)
@@ -219,7 +219,7 @@ We welcome contributions to the client-side code:
 
 ---
 
-## 📞 Contact
+## Contact
 
 - **Website**: [sheetlink.app](https://sheetlink.app)
 - **Email**: rudy@sheetlink.app
@@ -227,7 +227,7 @@ We welcome contributions to the client-side code:
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Plaid** - Bank connectivity infrastructure
 - **Google** - Sheets API and OAuth
