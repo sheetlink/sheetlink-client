@@ -229,7 +229,7 @@ In these cases, we can only share encrypted tokens and metadata, never raw trans
 
 ## Security Measures
 
-See [SECURITY.md](SECURITY.md) for detailed security documentation.
+See [SECURITY.md](../SECURITY.md) for detailed security documentation.
 
 **Key Protections:**
 - 🔒 **Encryption at rest**: Plaid tokens encrypted with Fernet (AES-256)
@@ -285,7 +285,7 @@ This Extension is not intended for users under 18 years old. We do not knowingly
 ## International Users
 
 **Data Location:**
-- Backend: Hosted in your region (self-hosted or cloud provider of choice)
+- Backend: US-based service
 - Plaid: US-based service (data processed in US)
 - Google Sheets: Stored in Google Cloud (location depends on your Google account settings)
 
@@ -326,7 +326,7 @@ We may update this Privacy Policy from time to time. Changes will be posted with
 - Or contact us via GitHub issue
 
 **Security issues:**
-- See [SECURITY.md](SECURITY.md) for responsible disclosure process
+- See [SECURITY.md](../SECURITY.md) for responsible disclosure process
 
 ---
 
@@ -353,7 +353,3 @@ We may update this Privacy Policy from time to time. Changes will be posted with
 | Usage analytics | ❌ No | N/A | N/A | N/A | N/A |
 
 *Google Sheets are encrypted by Google at rest and in transit.
-
----
-
-*This Privacy Policy applies to the open-source version of the extension. If you're using a hosted/modified version, please check with the operator for their privacy policy.*
