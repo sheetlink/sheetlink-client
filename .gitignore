@@ -51,3 +51,4 @@ archive/**
 *.bak
 debug/
 scratch/
+dist/

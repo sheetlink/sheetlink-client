@@ -57,15 +57,15 @@ export default function Success() {
               className="space-y-4"
             >
               <p className="text-lg font-semibold text-sheetlink-green-700">
-                In the meantime, try the Sandbox with test data.
+                Ready to get started? Follow our step-by-step installation guide.
               </p>
 
               <div className="flex flex-col items-center justify-center gap-4 pt-8 sm:flex-row">
                 <Link
-                  href="/sandbox"
+                  href="/get-started"
                   className="inline-flex items-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-3 font-semibold text-white transition-all duration-200 hover:shadow-lg"
                 >
-                  Get Started in Sandbox
+                  Get Started →
                 </Link>
                 <a
                   href="https://github.com/sheetlink/sheetlink-client"
@@ -93,19 +93,19 @@ export default function Success() {
               <ul className="space-y-2 text-left text-sm text-gray-600">
                 <li className="flex items-start gap-2">
                   <span className="text-sheetlink-green-700">✓</span>
-                  <span>Test the Sandbox today with sample data</span>
+                  <span>Download and install the Chrome extension</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-sheetlink-green-700">✓</span>
-                  <span>We'll email you when the beta launches with full features</span>
+                  <span>Connect to Plaid Sandbox with test data</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-sheetlink-green-700">✓</span>
-                  <span>Early access to connect your real bank accounts</span>
+                  <span>Sync transactions to your Google Sheets</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-sheetlink-green-700">✓</span>
-                  <span>Your feedback will help shape the product</span>
+                  <span>Provide feedback to help shape the product</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-sheetlink-green-700">✓</span>

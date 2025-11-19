@@ -1,6 +1,6 @@
 {
   "name": "sheetlink-extension",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "SheetLink Chrome Extension - Build tools for brand assets",
   "private": true,
