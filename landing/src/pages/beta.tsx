@@ -53,6 +53,10 @@ export default function Beta() {
 
       if (data.status === 'ok') {
         setStatus('success');
+        // Redirect to success page after a brief delay
+        setTimeout(() => {
+          router.push('/success');
+        }, 1000);
       } else {
         throw new Error('Unexpected response');
       }
