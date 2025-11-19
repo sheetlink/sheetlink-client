@@ -172,20 +172,20 @@ export default function GetStarted() {
                 <div className="mb-4 rounded-lg border-2 border-sheetlink-green-700 bg-sheetlink-bg p-6">
                   <div className="mb-3 grid grid-cols-2 gap-4">
                     <div>
-                      <p className="mb-1 text-sm font-semibold text-gray-600">Username</p>
-                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">user_good</code>
-                    </div>
-                    <div>
-                      <p className="mb-1 text-sm font-semibold text-gray-600">Password</p>
-                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">pass_good</code>
-                    </div>
-                    <div>
                       <p className="mb-1 text-sm font-semibold text-gray-600">Phone Number</p>
                       <code className="block rounded bg-white px-3 py-2 font-mono text-lg">415-555-0011</code>
                     </div>
                     <div>
                       <p className="mb-1 text-sm font-semibold text-gray-600">Verification Code</p>
                       <code className="block rounded bg-white px-3 py-2 font-mono text-lg">123456</code>
+                    </div>
+                    <div>
+                      <p className="mb-1 text-sm font-semibold text-gray-600">Username</p>
+                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">user_good</code>
+                    </div>
+                    <div>
+                      <p className="mb-1 text-sm font-semibold text-gray-600">Password</p>
+                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">pass_good</code>
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">
