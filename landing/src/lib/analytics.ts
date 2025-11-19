@@ -85,6 +85,11 @@ export const analytics = {
     }),
 
   // CTA clicks
+  ctaInstallClick: (location: string) =>
+    trackEvent('cta_install_click', {
+      event_category: 'cta',
+      button_location: location,
+    }),
   ctaGetStartedClick: (location: string) =>
     trackEvent('cta_get_started_click', {
       event_category: 'cta',

@@ -48,7 +48,7 @@ export default function Footer() {
               <li>
                 <a
                   href={URLS.github}
-                  onClick={() => analytics.githubClick()}
+                  onClick={() => analytics.githubClick('footer')}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                   target="_blank"
                   rel="noopener noreferrer"
