@@ -46,58 +46,85 @@ export const trackEvent = (eventName: string, params?: Record<string, any>) => {
 
 // Event helpers for common actions
 export const analytics = {
-  // Beta signup events
-  betaSignupStart: () => trackEvent('beta_signup_start'),
-  betaSignupSuccess: (email: string) =>
-    trackEvent('beta_signup_success', {
-      event_category: 'engagement',
-      event_label: 'beta_signup',
+  // Page view events (automatic via router, but can be called manually)
+  pageView: (pageName: string, path?: string) =>
+    trackEvent('page_view', {
+      page_title: pageName,
+      page_path: path || window.location.pathname,
     }),
-  betaSignupError: (error: string) =>
+
+  // Beta signup events
+  betaSignupFormView: (page: string) =>
+    trackEvent('view_beta_signup_form', {
+      event_category: 'engagement',
+      page_location: page,
+    }),
+  betaSignupStart: (page: string) =>
+    trackEvent('beta_signup_start', {
+      event_category: 'engagement',
+      page_location: page,
+    }),
+  betaSignupSuccess: (page: string) =>
+    trackEvent('beta_signup_success', {
+      event_category: 'conversion',
+      page_location: page,
+      value: 1,
+    }),
+  betaSignupError: (error: string, page: string) =>
     trackEvent('beta_signup_error', {
       event_category: 'error',
-      event_label: error,
+      error_message: error,
+      page_location: page,
+    }),
+
+  // Download & installation events
+  downloadExtensionClick: (location: string) =>
+    trackEvent('download_extension', {
+      event_category: 'engagement',
+      button_location: location,
     }),
 
   // CTA clicks
-  ctaInstallClick: (location: string) =>
-    trackEvent('cta_install_click', {
+  ctaGetStartedClick: (location: string) =>
+    trackEvent('cta_get_started_click', {
       event_category: 'cta',
-      event_label: location,
+      button_location: location,
+    }),
+  ctaJoinBetaClick: (location: string) =>
+    trackEvent('cta_join_beta_click', {
+      event_category: 'cta',
+      button_location: location,
     }),
 
   // Navigation
-  githubClick: () =>
+  githubClick: (location: string) =>
     trackEvent('github_click', {
       event_category: 'navigation',
-      event_label: 'github',
+      link_location: location,
     }),
   footerLinkClick: (link: string) =>
     trackEvent('footer_link_click', {
       event_category: 'navigation',
-      event_label: link,
+      link_text: link,
     }),
   headerNavClick: (page: string) =>
     trackEvent('header_nav_click', {
       event_category: 'navigation',
-      event_label: page,
+      destination: page,
     }),
 
-  // Page views
-  pageView: (pageName: string) =>
-    trackEvent('page_view', {
-      event_category: 'engagement',
-      page_name: pageName,
+  // External links
+  externalLinkClick: (url: string, text: string) =>
+    trackEvent('external_link_click', {
+      event_category: 'navigation',
+      link_url: url,
+      link_text: text,
     }),
 
-  // Pricing (legacy, keeping for compatibility)
-  pricingProClick: () =>
-    trackEvent('pricing_pro_click', {
-      event_category: 'pricing',
-    }),
-  stepView: (step: number) =>
-    trackEvent('step_view', {
+  // Feedback
+  feedbackEmailClick: (location: string) =>
+    trackEvent('feedback_email_click', {
       event_category: 'engagement',
-      step_number: step,
+      button_location: location,
     }),
 };

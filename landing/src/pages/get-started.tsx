@@ -1,15 +1,22 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
+import { analytics } from '@/lib/analytics';
 
 export default function GetStarted() {
   const seoTitle = `Get Started - ${BRAND.name}`;
   const seoDescription = 'Install the SheetLink Chrome extension and start syncing your bank transactions to Google Sheets.';
+
+  // Track page view on mount
+  useEffect(() => {
+    analytics.pageView('Get Started Guide', '/get-started');
+  }, []);
 
   return (
     <>
@@ -59,6 +66,7 @@ export default function GetStarted() {
             >
               <a
                 href="https://github.com/user-attachments/files/23621107/sheetlink-extension-v0.3.0-beta.zip"
+                onClick={() => analytics.downloadExtensionClick('hero')}
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -282,6 +290,7 @@ export default function GetStarted() {
             </p>
             <a
               href="mailto:support@sheetlink.app?subject=Beta Feedback"
+              onClick={() => analytics.feedbackEmailClick('/get-started')}
               className="inline-flex items-center gap-2 rounded-lg border-2 border-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-sheetlink-green-700 transition-all duration-200 hover:bg-sheetlink-green-700 hover:text-white"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

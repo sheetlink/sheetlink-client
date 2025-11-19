@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
+import { analytics } from '@/lib/analytics';
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -19,6 +20,12 @@ export default function Beta() {
   const [status, setStatus] = useState<FormStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Track page view on mount
+  useEffect(() => {
+    analytics.pageView('Beta Signup', '/beta');
+    analytics.betaSignupFormView('/beta');
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -27,6 +34,9 @@ export default function Beta() {
       setStatus('error');
       return;
     }
+
+    // Track signup start
+    analytics.betaSignupStart('/beta');
 
     setStatus('loading');
     setErrorMessage('');
@@ -52,12 +62,19 @@ export default function Beta() {
       const data = await response.json();
 
       if (data.status === 'ok') {
+        // Track successful signup
+        analytics.betaSignupSuccess('/beta');
+
         // Redirect immediately to success page
         router.push('/success');
       } else {
         throw new Error('Unexpected response');
       }
     } catch (error) {
+      // Track signup error
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      analytics.betaSignupError(errorMsg, '/beta');
+
       setStatus('error');
       setErrorMessage('Something went wrong. Please try again later.');
       console.error('Beta signup error:', error);
