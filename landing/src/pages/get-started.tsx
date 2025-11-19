@@ -179,6 +179,14 @@ export default function GetStarted() {
                       <p className="mb-1 text-sm font-semibold text-gray-600">Password</p>
                       <code className="block rounded bg-white px-3 py-2 font-mono text-lg">pass_good</code>
                     </div>
+                    <div>
+                      <p className="mb-1 text-sm font-semibold text-gray-600">Phone Number</p>
+                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">415-555-0011</code>
+                    </div>
+                    <div>
+                      <p className="mb-1 text-sm font-semibold text-gray-600">Verification Code</p>
+                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">123456</code>
+                    </div>
                   </div>
                   <p className="text-sm text-gray-600">
                     <strong>Note:</strong> This is test data from Plaid's Sandbox environment. No real banking credentials are used.
