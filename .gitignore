@@ -52,3 +52,4 @@ archive/**
 debug/
 scratch/
 dist/
+create-extension-zip.sh
