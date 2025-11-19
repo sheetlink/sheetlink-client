@@ -52,11 +52,8 @@ export default function Beta() {
       const data = await response.json();
 
       if (data.status === 'ok') {
-        setStatus('success');
-        // Redirect to success page after a brief delay
-        setTimeout(() => {
-          router.push('/success');
-        }, 1000);
+        // Redirect immediately to success page
+        router.push('/success');
       } else {
         throw new Error('Unexpected response');
       }
