@@ -17,9 +17,16 @@ export default function OAuthCallback() {
     }
 
     if (accessToken) {
-      // Extension will capture this via launchWebAuthFlow
-      // The window will close automatically
+      // launchWebAuthFlow should capture this and close the window
+      // Give it a moment, then force close if it hasn't closed
       console.log('OAuth successful, token received');
+      setTimeout(() => {
+        try {
+          window.close();
+        } catch (e) {
+          // Window might already be closed by launchWebAuthFlow
+        }
+      }, 500);
     }
   }, []);
 
