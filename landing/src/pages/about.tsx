@@ -54,7 +54,7 @@ export default function About() {
                 Join our beta and get lifetime free access.
               </p>
               <a
-                href="/"
+                href="/beta"
                 className="mt-4 inline-flex items-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-3 font-semibold text-white transition-all duration-200 hover:shadow-lg"
               >
                 Sign Up for Beta
