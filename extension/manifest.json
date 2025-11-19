@@ -20,6 +20,9 @@
     "https://cdn.plaid.com/*",
     "https://api-sandbox.sheetlink.app/*"
   ],
+  "externally_connectable": {
+    "matches": ["https://sheetlink.app/*"]
+  },
   "homepage_url": "https://sheetlink.app",
   "action": {
     "default_popup": "src/popup.html",
