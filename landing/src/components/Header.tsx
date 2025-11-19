@@ -56,7 +56,7 @@ export default function Header() {
             onClick={() => analytics.ctaJoinBetaClick('header')}
             className="hidden md:inline-flex items-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg"
           >
-            Join Beta
+            Add to Chrome
             <svg
               className="ml-2 h-4 w-4"
               fill="none"
@@ -135,7 +135,7 @@ export default function Header() {
               }}
               className="mt-4 flex items-center justify-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg"
             >
-              Join Beta
+              Add to Chrome
               <svg
                 className="ml-2 h-4 w-4"
                 fill="none"
