@@ -117,34 +117,65 @@ async function handleExchangePublicToken(message, sendResponse) {
 // Get Google OAuth token using chrome.identity
 async function handleGetAuthToken(sendResponse) {
   try {
-    // First, try to get cached token (non-interactive)
-    chrome.identity.getAuthToken({ interactive: false }, (cachedToken) => {
-      // Clear any expected errors from the non-interactive attempt
-      if (chrome.runtime.lastError) {
-        // This is expected when no token is cached - not a real error
-      }
+    // Check if we have a cached token in storage
+    const result = await chrome.storage.local.get(['googleAccessToken', 'googleTokenExpiry']);
+    const now = Date.now();
 
-      if (cachedToken) {
-        // Token was cached - no OAuth window opened
-        sendResponse({ token: cachedToken });
-      } else {
-        // No cached token - need interactive OAuth (will open window)
-        chrome.identity.getAuthToken({ interactive: true }, (token) => {
-          if (chrome.runtime.lastError) {
-            sendResponse({ error: chrome.runtime.lastError.message });
-          } else if (!token) {
-            sendResponse({ error: 'No token returned from OAuth' });
-          } else {
-            sendResponse({ token });
+    // Return cached token if valid and not expired
+    if (result.googleAccessToken && result.googleTokenExpiry && result.googleTokenExpiry > now) {
+      sendResponse({ token: result.googleAccessToken });
+      return;
+    }
 
-            // Auto-open popup after interactive OAuth (window was shown to user)
-            setTimeout(() => {
-              openExtensionPopup();
-            }, 1000);
-          }
+    // No valid cached token - launch OAuth flow
+    const scopes = CONFIG.GOOGLE_SCOPES.join(' ');
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+      `client_id=${CONFIG.GOOGLE_CLIENT_ID}&` +
+      `response_type=token&` +
+      `redirect_uri=${encodeURIComponent(CONFIG.GOOGLE_REDIRECT_URI)}&` +
+      `scope=${encodeURIComponent(scopes)}`;
+
+    chrome.identity.launchWebAuthFlow(
+      {
+        url: authUrl,
+        interactive: true
+      },
+      (responseUrl) => {
+        if (chrome.runtime.lastError) {
+          sendResponse({ error: chrome.runtime.lastError.message });
+          return;
+        }
+
+        if (!responseUrl) {
+          sendResponse({ error: 'No response from OAuth' });
+          return;
+        }
+
+        // Extract access token from URL fragment
+        const urlParams = new URLSearchParams(responseUrl.split('#')[1]);
+        const accessToken = urlParams.get('access_token');
+        const expiresIn = parseInt(urlParams.get('expires_in') || '3600');
+
+        if (!accessToken) {
+          sendResponse({ error: 'No access token in response' });
+          return;
+        }
+
+        // Cache the token with expiry
+        const expiry = now + (expiresIn * 1000);
+        chrome.storage.local.set({
+          googleAccessToken: accessToken,
+          googleTokenExpiry: expiry
         });
+
+        sendResponse({ token: accessToken });
+
+        // Auto-open popup after interactive OAuth
+        setTimeout(() => {
+          openExtensionPopup();
+        }, 1000);
       }
-    });
+    );
   } catch (error) {
     sendResponse({ error: error.message });
   }

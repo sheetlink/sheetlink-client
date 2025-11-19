@@ -11,6 +11,15 @@ export const CONFIG = {
   // Backend URL (sandbox backend deployed on Railway with custom domain)
   BACKEND_URL: "https://api-sandbox.sheetlink.app",
 
+  // Google OAuth (Web Application client for dynamic extension IDs)
+  GOOGLE_CLIENT_ID: "967710910027-qq2tuel7vsi2i06h4h096hbvok8kfmhk.apps.googleusercontent.com",
+  GOOGLE_REDIRECT_URI: "https://sheetlink.app/oauth/callback",
+  GOOGLE_SCOPES: [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/userinfo.email"
+  ],
+
   // Sandbox Mode Labels
   SANDBOX_LABEL: "🧪 Sandbox Mode",
   SANDBOX_TAGLINE: "Demo Data Only",
