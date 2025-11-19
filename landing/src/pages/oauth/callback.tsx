@@ -3,8 +3,6 @@ import Head from 'next/head';
 
 export default function OAuthCallback() {
   useEffect(() => {
-    console.log('[Callback] Page loaded');
-
     // Extract the OAuth token from the URL fragment
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
@@ -13,14 +11,11 @@ export default function OAuthCallback() {
     const error = params.get('error');
 
     if (error) {
-      console.error('[Callback] OAuth error:', error);
       alert('OAuth error: ' + error);
       return;
     }
 
     if (accessToken) {
-      console.log('[Callback] Token received, sending to extension...');
-
       // Get extension ID from the state parameter (passed through by Google OAuth)
       const state = params.get('state');
       let extensionId = null;
@@ -29,9 +24,8 @@ export default function OAuthCallback() {
         try {
           const stateData = JSON.parse(state);
           extensionId = stateData.extension_id;
-          console.log('[Callback] Extension ID from state:', extensionId);
         } catch (e) {
-          console.error('[Callback] Failed to parse state:', e);
+          // Failed to parse state
         }
       }
 
@@ -41,7 +35,6 @@ export default function OAuthCallback() {
           // @ts-ignore - chrome is available in extension context
           window.chrome?.runtime &&
           extensionId) {
-        console.log('[Callback] Sending to extension:', extensionId);
         // @ts-ignore - chrome is available in extension context
         window.chrome.runtime.sendMessage(
           extensionId,
@@ -51,11 +44,10 @@ export default function OAuthCallback() {
             expiresIn: expiresIn
           },
           (response: any) => {
-            console.log('[Callback] Response from extension:', response);
             // @ts-ignore
             if (window.chrome.runtime.lastError) {
-              // @ts-ignore
-              console.error('[Callback] Error:', window.chrome.runtime.lastError);
+              // Communication error - show message to user
+              alert('Could not communicate with extension. Please try again.');
             } else {
               // Success - show success message
               document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui"><div style="text-align:center"><h1 style="color:#10b981;font-size:24px">✓ Authentication Successful</h1><p style="color:#6b7280">You can close this window now</p></div></div>';
@@ -63,7 +55,6 @@ export default function OAuthCallback() {
           }
         );
       } else {
-        console.error('[Callback] Missing chrome.runtime or extension ID');
         alert('OAuth completed, but could not communicate with extension. Please close this window and try again.');
       }
     }

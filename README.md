@@ -54,9 +54,22 @@ The backend API is in a separate **private repository** (`sheetlink-api`). See "
 1. **User connects bank** → Extension opens Plaid Link
 2. **Plaid returns token** → Extension sends to backend
 3. **Backend exchanges token** → Stores encrypted access token
-4. **User syncs** → Backend fetches transactions from Plaid
-5. **Backend writes to Sheet** → Uses Google Sheets API
-6. **No data retention** → Transactions never stored, only passed through
+4. **User authorizes Google** → Extension opens OAuth flow, callback page at sheetlink.app/oauth/callback sends token to extension
+5. **User syncs** → Backend fetches transactions from Plaid
+6. **Backend writes to Sheet** → Uses Google Sheets API
+7. **No data retention** → Transactions never stored, only passed through
+
+### OAuth Flow (Beta)
+
+The extension uses a **dynamic OAuth flow** that works with any extension ID:
+
+1. Extension opens Google OAuth in a popup window
+2. User authorizes Google Sheets access
+3. Google redirects to `https://sheetlink.app/oauth/callback` with access token
+4. Callback page sends token back to extension via `chrome.runtime.sendMessage`
+5. Extension caches token locally and closes OAuth window
+
+This approach allows beta testers to load the extension manually (which assigns random extension IDs) without requiring OAuth client reconfiguration.
 
 ---
 

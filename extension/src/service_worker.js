@@ -126,7 +126,6 @@ async function handleGetAuthToken(sendResponse) {
 
     // Return cached token if valid and not expired
     if (result.googleAccessToken && result.googleTokenExpiry && result.googleTokenExpiry > now) {
-      console.log('[OAuth] Using cached token');
       sendResponse({ token: result.googleAccessToken });
       return;
     }
@@ -143,9 +142,6 @@ async function handleGetAuthToken(sendResponse) {
       `scope=${encodeURIComponent(scopes)}&` +
       `state=${encodeURIComponent(state)}`;
 
-    console.log('[OAuth] Opening OAuth window:', authUrl);
-    console.log('[OAuth] Extension ID:', extensionId);
-
     // Store the callback for later when the OAuth page sends us the token
     pendingOAuthCallback = sendResponse;
 
@@ -156,24 +152,17 @@ async function handleGetAuthToken(sendResponse) {
       width: 500,
       height: 600,
       focused: true
-    }, (window) => {
-      console.log('[OAuth] Window opened:', window.id);
     });
 
   } catch (error) {
-    console.error('[OAuth] Error:', error);
     sendResponse({ error: error.message });
   }
 }
 
 // Handle OAuth callback from the callback page
 chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
-  console.log('[OAuth] Received external message:', message, 'from:', sender);
-
   if (message.type === 'OAUTH_SUCCESS') {
     const { accessToken, expiresIn } = message;
-
-    console.log('[OAuth] Received token from callback page');
 
     // Cache the token with expiry
     const expiry = Date.now() + (parseInt(expiresIn) * 1000);
@@ -181,8 +170,6 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
       googleAccessToken: accessToken,
       googleTokenExpiry: expiry
     });
-
-    console.log('[OAuth] Token cached, expiry:', new Date(expiry));
 
     // Call the pending callback if it exists
     if (pendingOAuthCallback) {
