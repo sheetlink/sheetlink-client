@@ -3,14 +3,62 @@ import Head from 'next/head';
 
 export default function OAuthCallback() {
   useEffect(() => {
-    console.log('[Callback] Page loaded with hash:', window.location.hash);
+    console.log('[Callback] Page loaded');
 
-    // Close the window after a short delay
-    // This triggers launchWebAuthFlow callback with the current URL
-    setTimeout(() => {
-      console.log('[Callback] Closing window...');
-      window.close();
-    }, 500);
+    // Extract the OAuth token from the URL fragment
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+    const expiresIn = params.get('expires_in');
+    const error = params.get('error');
+
+    if (error) {
+      console.error('[Callback] OAuth error:', error);
+      alert('OAuth error: ' + error);
+      return;
+    }
+
+    if (accessToken) {
+      console.log('[Callback] Token received, sending to extension...');
+
+      // Get extension ID from the state parameter (passed through by Google OAuth)
+      const state = params.get('state');
+      let extensionId = null;
+
+      if (state) {
+        try {
+          const stateData = JSON.parse(state);
+          extensionId = stateData.extension_id;
+          console.log('[Callback] Extension ID from state:', extensionId);
+        } catch (e) {
+          console.error('[Callback] Failed to parse state:', e);
+        }
+      }
+
+      if (typeof chrome !== 'undefined' && chrome.runtime && extensionId) {
+        console.log('[Callback] Sending to extension:', extensionId);
+        chrome.runtime.sendMessage(
+          extensionId,
+          {
+            type: 'OAUTH_SUCCESS',
+            accessToken: accessToken,
+            expiresIn: expiresIn
+          },
+          (response) => {
+            console.log('[Callback] Response from extension:', response);
+            if (chrome.runtime.lastError) {
+              console.error('[Callback] Error:', chrome.runtime.lastError);
+            } else {
+              // Success - show success message
+              document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui"><div style="text-align:center"><h1 style="color:#10b981;font-size:24px">✓ Authentication Successful</h1><p style="color:#6b7280">You can close this window now</p></div></div>';
+            }
+          }
+        );
+      } else {
+        console.error('[Callback] Missing chrome.runtime or extension ID');
+        alert('OAuth completed, but could not communicate with extension. Please close this window and try again.');
+      }
+    }
   }, []);
 
   return (
