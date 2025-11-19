@@ -114,7 +114,10 @@ async function handleExchangePublicToken(message, sendResponse) {
   }
 }
 
-// Get Google OAuth token using chrome.identity
+// Store pending OAuth callback
+let pendingOAuthCallback = null;
+
+// Get Google OAuth token using manual OAuth flow
 async function handleGetAuthToken(sendResponse) {
   try {
     // Check if we have a cached token in storage
@@ -123,63 +126,84 @@ async function handleGetAuthToken(sendResponse) {
 
     // Return cached token if valid and not expired
     if (result.googleAccessToken && result.googleTokenExpiry && result.googleTokenExpiry > now) {
+      console.log('[OAuth] Using cached token');
       sendResponse({ token: result.googleAccessToken });
       return;
     }
 
-    // No valid cached token - launch OAuth flow
+    // No valid cached token - launch OAuth flow via regular window
     const scopes = CONFIG.GOOGLE_SCOPES.join(' ');
+    const extensionId = chrome.runtime.id;
+    // Add extension_id as state parameter so it gets passed through OAuth
+    const state = JSON.stringify({ extension_id: extensionId });
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
       `client_id=${CONFIG.GOOGLE_CLIENT_ID}&` +
       `response_type=token&` +
       `redirect_uri=${encodeURIComponent(CONFIG.GOOGLE_REDIRECT_URI)}&` +
-      `scope=${encodeURIComponent(scopes)}`;
+      `scope=${encodeURIComponent(scopes)}&` +
+      `state=${encodeURIComponent(state)}`;
 
-    chrome.identity.launchWebAuthFlow(
-      {
-        url: authUrl,
-        interactive: true
-      },
-      (responseUrl) => {
-        if (chrome.runtime.lastError) {
-          sendResponse({ error: chrome.runtime.lastError.message });
-          return;
-        }
+    console.log('[OAuth] Opening OAuth window:', authUrl);
+    console.log('[OAuth] Extension ID:', extensionId);
 
-        if (!responseUrl) {
-          sendResponse({ error: 'No response from OAuth' });
-          return;
-        }
+    // Store the callback for later when the OAuth page sends us the token
+    pendingOAuthCallback = sendResponse;
 
-        // Extract access token from URL fragment
-        const urlParams = new URLSearchParams(responseUrl.split('#')[1]);
-        const accessToken = urlParams.get('access_token');
-        const expiresIn = parseInt(urlParams.get('expires_in') || '3600');
+    // Open OAuth in a new window
+    chrome.windows.create({
+      url: authUrl,
+      type: 'popup',
+      width: 500,
+      height: 600,
+      focused: true
+    }, (window) => {
+      console.log('[OAuth] Window opened:', window.id);
+    });
 
-        if (!accessToken) {
-          sendResponse({ error: 'No access token in response' });
-          return;
-        }
-
-        // Cache the token with expiry
-        const expiry = now + (expiresIn * 1000);
-        chrome.storage.local.set({
-          googleAccessToken: accessToken,
-          googleTokenExpiry: expiry
-        });
-
-        sendResponse({ token: accessToken });
-
-        // Auto-open popup after interactive OAuth
-        setTimeout(() => {
-          openExtensionPopup();
-        }, 1000);
-      }
-    );
   } catch (error) {
+    console.error('[OAuth] Error:', error);
     sendResponse({ error: error.message });
   }
 }
+
+// Handle OAuth callback from the callback page
+chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+  console.log('[OAuth] Received external message:', message, 'from:', sender);
+
+  if (message.type === 'OAUTH_SUCCESS') {
+    const { accessToken, expiresIn } = message;
+
+    console.log('[OAuth] Received token from callback page');
+
+    // Cache the token with expiry
+    const expiry = Date.now() + (parseInt(expiresIn) * 1000);
+    chrome.storage.local.set({
+      googleAccessToken: accessToken,
+      googleTokenExpiry: expiry
+    });
+
+    console.log('[OAuth] Token cached, expiry:', new Date(expiry));
+
+    // Call the pending callback if it exists
+    if (pendingOAuthCallback) {
+      pendingOAuthCallback({ token: accessToken });
+      pendingOAuthCallback = null;
+    }
+
+    // Close the OAuth window
+    if (sender.tab && sender.tab.windowId) {
+      chrome.windows.remove(sender.tab.windowId);
+    }
+
+    // Respond to the callback page
+    sendResponse({ success: true });
+
+    // Auto-open popup after OAuth
+    setTimeout(() => {
+      openExtensionPopup();
+    }, 500);
+  }
+});
 
 // Store session data
 async function handleStoreSession(data, sendResponse) {
