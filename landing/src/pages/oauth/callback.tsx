@@ -3,31 +3,14 @@ import Head from 'next/head';
 
 export default function OAuthCallback() {
   useEffect(() => {
-    // Extract the OAuth token from the URL fragment
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    const accessToken = params.get('access_token');
-    const expiresIn = params.get('expires_in');
-    const error = params.get('error');
+    console.log('[Callback] Page loaded with hash:', window.location.hash);
 
-    if (error) {
-      // Send error back to extension
+    // Close the window after a short delay
+    // This triggers launchWebAuthFlow callback with the current URL
+    setTimeout(() => {
+      console.log('[Callback] Closing window...');
       window.close();
-      return;
-    }
-
-    if (accessToken) {
-      // launchWebAuthFlow should capture this and close the window
-      // Give it a moment, then force close if it hasn't closed
-      console.log('OAuth successful, token received');
-      setTimeout(() => {
-        try {
-          window.close();
-        } catch (e) {
-          // Window might already be closed by launchWebAuthFlow
-        }
-      }, 500);
-    }
+    }, 500);
   }, []);
 
   return (
