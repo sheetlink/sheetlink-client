@@ -53,13 +53,5 @@
       ],
       "matches": ["https://sheetlink.app/*", "chrome-extension://*/*"]
     }
-  ],
-  "oauth2": {
-    "client_id": "967710910027-racspdr4ac099e4ac7noai76aptbb1qk.apps.googleusercontent.com",
-    "scopes": [
-      "https://www.googleapis.com/auth/spreadsheets",
-      "https://www.googleapis.com/auth/drive.file",
-      "https://www.googleapis.com/auth/userinfo.email"
-    ]
-  }
+  ]
 }
