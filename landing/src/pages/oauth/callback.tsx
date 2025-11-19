@@ -35,19 +35,27 @@ export default function OAuthCallback() {
         }
       }
 
-      if (typeof chrome !== 'undefined' && chrome.runtime && extensionId) {
+      // Check if we're in a browser extension context
+      if (typeof window !== 'undefined' &&
+          'chrome' in window &&
+          // @ts-ignore - chrome is available in extension context
+          window.chrome?.runtime &&
+          extensionId) {
         console.log('[Callback] Sending to extension:', extensionId);
-        chrome.runtime.sendMessage(
+        // @ts-ignore - chrome is available in extension context
+        window.chrome.runtime.sendMessage(
           extensionId,
           {
             type: 'OAUTH_SUCCESS',
             accessToken: accessToken,
             expiresIn: expiresIn
           },
-          (response) => {
+          (response: any) => {
             console.log('[Callback] Response from extension:', response);
-            if (chrome.runtime.lastError) {
-              console.error('[Callback] Error:', chrome.runtime.lastError);
+            // @ts-ignore
+            if (window.chrome.runtime.lastError) {
+              // @ts-ignore
+              console.error('[Callback] Error:', window.chrome.runtime.lastError);
             } else {
               // Success - show success message
               document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui"><div style="text-align:center"><h1 style="color:#10b981;font-size:24px">✓ Authentication Successful</h1><p style="color:#6b7280">You can close this window now</p></div></div>';
