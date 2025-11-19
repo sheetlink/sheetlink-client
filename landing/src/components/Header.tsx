@@ -51,12 +51,12 @@ export default function Header() {
           </nav>
 
           {/* Desktop CTA */}
-          <a
-            href={URLS.chromeStore}
-            onClick={() => analytics.ctaInstallClick('header')}
+          <Link
+            href="/beta"
+            onClick={() => analytics.ctaJoinBetaClick('header')}
             className="hidden md:inline-flex items-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg"
           >
-            Add to Chrome
+            Join Beta
             <svg
               className="ml-2 h-4 w-4"
               fill="none"
@@ -70,7 +70,7 @@ export default function Header() {
                 d="M14 5l7 7m0 0l-7 7m7-7H3"
               />
             </svg>
-          </a>
+          </Link>
 
           {/* Mobile Menu Button */}
           <button
@@ -127,15 +127,15 @@ export default function Header() {
             >
               Beta
             </Link>
-            <a
-              href={URLS.chromeStore}
+            <Link
+              href="/beta"
               onClick={() => {
-                analytics.ctaInstallClick('header');
+                analytics.ctaJoinBetaClick('header');
                 setMobileMenuOpen(false);
               }}
               className="mt-4 flex items-center justify-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg"
             >
-              Add to Chrome
+              Join Beta
               <svg
                 className="ml-2 h-4 w-4"
                 fill="none"
@@ -149,7 +149,7 @@ export default function Header() {
                   d="M14 5l7 7m0 0l-7 7m7-7H3"
                 />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       )}
