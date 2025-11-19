@@ -39,7 +39,7 @@ export default function GetStarted() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-gray-700"
             >
-              You're early — thanks for helping shape the future of personal finance.
+              You're early. Thanks for helping shape the future of personal finance.
               This beta lets you sync Plaid Sandbox data directly into Google Sheets using our unreleased Chrome extension.
             </motion.p>
 
