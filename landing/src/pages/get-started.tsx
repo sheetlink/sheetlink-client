@@ -58,7 +58,7 @@ export default function GetStarted() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <a
-                href="https://github.com/sheetlink/sheetlink-client/releases/download/v0.3.0-beta/sheetlink-extension-v0.3.0-beta.zip"
+                href="https://github.com/user-attachments/files/23621107/sheetlink-extension-v0.3.0-beta.zip"
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
