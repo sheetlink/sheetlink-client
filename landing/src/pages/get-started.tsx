@@ -65,7 +65,7 @@ export default function GetStarted() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <a
-                href="https://github.com/user-attachments/files/23639797/sheetlink-extension-v0.3.1-beta.zip"
+                href="https://github.com/user-attachments/files/23640009/sheetlink-extension-v0.3.1-beta.zip"
                 onClick={() => analytics.downloadExtensionClick('hero')}
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
               >
