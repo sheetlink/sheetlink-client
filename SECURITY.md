@@ -158,7 +158,14 @@ We currently don't have a formal bug bounty program, but we:
 
 ### 1. Extension Installation
 
-- **Only install from Chrome Web Store** (official source)
+**During Beta (Current):**
+- Download only from official GitHub releases: [github.com/sheetlink/sheetlink-client/releases](https://github.com/sheetlink/sheetlink-client/releases)
+- Verify the release is published by the official SheetLink account
+- Review the source code (publicly available in this repository)
+- Load the extension manually in Developer Mode
+
+**After Production Launch:**
+- Install only from Chrome Web Store (official source)
 - Verify the publisher is "Rudy Martin Del Campo" or "SheetLink"
 - Check the extension ID matches our documentation
 
@@ -249,7 +256,6 @@ Before launching production:
 
 - [Privacy Policy](./docs/PRIVACY.md)
 - [Backend Architecture](./README.md#backend-architecture)
-- [Self-Hosting Guide](./docs/self-host.md)
 - [Plaid Security](https://plaid.com/security/)
 - [Google Security](https://safety.google/security/)
 
