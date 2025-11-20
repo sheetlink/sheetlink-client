@@ -184,7 +184,7 @@ We currently don't have a formal bug bounty program, but we:
 
 ## Security Updates
 
-### Current Version: 0.3.0 (Sandbox Preview)
+### Current Version: 0.3.1 (Sandbox Preview)
 
 Security updates will be communicated via:
 - Extension update notifications
@@ -256,7 +256,7 @@ Before launching production:
 ---
 
 **Last Updated**: November 2025
-**Version**: 0.3.0 (Sandbox Preview)
+**Version**: 0.3.1 (Sandbox Preview)
 
 **Built with security by design. Auditable by choice.**
 
