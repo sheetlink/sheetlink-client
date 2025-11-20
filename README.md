@@ -115,9 +115,9 @@ Sign up at [sheetlink.app/beta](https://sheetlink.app/beta) to get on the list. 
 
 #### Step 2: Download the Extension
 
-Download the latest beta extension (v0.3.0):
+Download the latest beta extension (v0.3.1):
 
-**[📦 Download Extension](https://github.com/user-attachments/files/23621107/sheetlink-extension-v0.3.0-beta.zip)**
+**[📦 Download Extension](https://github.com/user-attachments/files/23639797/sheetlink-extension-v0.3.1-beta.zip)**
 
 #### Step 3: Install in Chrome
 
@@ -170,11 +170,13 @@ Production launch will include:
 
 ## Roadmap
 
-### Current Version: v0.3.0 (Beta)
+### Current Version: v0.3.1 (Beta)
 - ✅ Plaid Sandbox integration
 - ✅ Google Sheets sync
 - ✅ Manual transaction sync
 - ✅ Basic account balance display
+- ✅ Dynamic OAuth flow (works with any extension ID)
+- ✅ OAuth token caching for faster syncs
 
 ### Coming Soon: v0.4.0
 - 🔄 Auto-sync scheduler

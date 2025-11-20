@@ -169,16 +169,51 @@ export default function Privacy() {
         </section>
         {/* PRD v0.7.4 section end: What we store vs don't store */}
 
+        {/* Google OAuth Flow */}
+        <section className="mx-auto max-w-4xl px-4 py-12">
+          <h2 className="mb-6 text-3xl font-bold text-sheetlink-text">Google OAuth & Callback Page</h2>
+          <div className="prose prose-lg max-w-none text-gray-600">
+            <p>
+              When you authorize Google Sheets access, SheetLink uses a <strong>client-side OAuth flow</strong> that keeps your token completely private:
+            </p>
+
+            <ol className="list-decimal pl-6 space-y-2">
+              <li>Extension opens Google OAuth in a popup window</li>
+              <li>You authorize Google Sheets access via Google's secure page</li>
+              <li>Google redirects to <code className="text-sm bg-gray-100 px-2 py-1 rounded">https://sheetlink.app/oauth/callback</code> with access token</li>
+              <li>Callback page sends token to extension via local Chrome messaging</li>
+              <li>Extension stores token locally for subsequent syncs</li>
+            </ol>
+
+            <div className="mt-6 rounded-lg border-2 border-sheetlink-accent bg-green-50 p-6">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">🔒</span>
+                <div>
+                  <strong className="text-lg text-sheetlink-text">OAuth Privacy Guarantee:</strong>
+                  <p className="mt-2 text-gray-700">
+                    The OAuth callback page at <code className="text-sm">sheetlink.app/oauth/callback</code> <strong>never sends your token to any server</strong>. It runs entirely client-side (JavaScript in your browser), extracts the token from the URL, and passes it directly to the extension using Chrome's local messaging API. No analytics, no logging, no server processing.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-4">
+              Your Google OAuth token is stored only in the extension's local storage (encrypted by Chrome) and never leaves your device.
+            </p>
+          </div>
+        </section>
+
         {/* Security */}
         <section className="mx-auto max-w-4xl px-4 py-12">
           <h2 className="mb-6 text-3xl font-bold text-sheetlink-text">Security Measures</h2>
           <div className="prose prose-md max-w-none text-gray-600">
             <p>🔒 All API communication over HTTPS (TLS/SSL)</p>
             <p>🔒 Plaid tokens encrypted at rest with Fernet (AES-256)</p>
+            <p>🔒 Google OAuth tokens never sent to servers (client-side only)</p>
             <p>🔒 CORS restricted to SheetLink domains and Chrome extension only</p>
             <p>🔒 Privacy middleware suppresses sensitive logs</p>
             <p>🔒 Client-side transaction processing (rules engine runs in your browser)</p>
-          </div>          
+          </div>
         </section> 
 
         {/* Technical Privacy section start: Encryption & Transparency */}
