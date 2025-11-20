@@ -117,7 +117,7 @@ Sign up at [sheetlink.app/beta](https://sheetlink.app/beta) to get on the list. 
 
 Download the latest beta extension (v0.3.1):
 
-**[📦 Download Extension](https://github.com/user-attachments/files/23639797/sheetlink-extension-v0.3.1-beta.zip)**
+**[📦 Download Extension](https://github.com/user-attachments/files/23640009/sheetlink-extension-v0.3.1-beta.zip)**
 
 #### Step 3: Install in Chrome
 
