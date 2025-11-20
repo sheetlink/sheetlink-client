@@ -43,7 +43,7 @@ export default function Beta() {
 
     try {
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiBaseUrl}/api/beta-signup`, {
+      const response = await fetch(`${apiBaseUrl}/beta/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
