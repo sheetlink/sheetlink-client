@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "SheetLink — Plaid Sandbox to Google Sheets",
   "short_name": "SheetLink",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Sync Plaid Sandbox data to your Google Sheets. A privacy-first demo showing secure data flow directly into your spreadsheet.",
   "icons": {
     "16": "icons/sheetlink-16.png",
