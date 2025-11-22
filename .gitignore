@@ -42,6 +42,9 @@ coverage/
 temp/
 tmp/
 
+# Development documentation (private until finalized)
+CONTRIBUTING.md
+
 # Archive folder for unused or legacy files
 archive/
 archive/**
