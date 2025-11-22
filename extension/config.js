@@ -6,6 +6,7 @@
 
 export const CONFIG = {
   // Environment: "sandbox" or "production"
+  // Change this manually for production builds or use build scripts
   ENV: "sandbox",
 
   // Backend URL (sandbox backend deployed on Railway with custom domain)
