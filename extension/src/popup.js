@@ -493,7 +493,10 @@ async function getLinkToken() {
   const response = await fetch(`${BACKEND_URL}/plaid/link-token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ client_user_id: userData.userId })
+    body: JSON.stringify({
+      client_user_id: userData.userId,
+      env: CONFIG.ENV
+    })
   });
 
   if (!response.ok) {
