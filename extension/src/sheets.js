@@ -244,6 +244,12 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
     throw new Error(`ID column '${idColumnName}' not found in headers`);
   }
 
+  // For transactions, use fuzzy deduplication to handle Plaid's duplicate IDs
+  if (tabName === 'Transactions') {
+    return await appendUniqueFuzzyRows(token, sheetId, tabName, rows, headers, allData);
+  }
+
+  // For other tabs, use simple ID-based deduplication
   // Extract existing IDs (skip header row)
   const existingIds = new Set();
   for (let i = 1; i < allData.length; i++) {
@@ -258,6 +264,62 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
   const newRows = rows.filter(row => {
     const rowId = row[idColumnIndex];
     return rowId && !existingIds.has(rowId);
+  });
+
+  // Append new rows
+  if (newRows.length > 0) {
+    await appendRows(token, sheetId, tabName, newRows);
+  }
+
+  return newRows.length;
+}
+
+/**
+ * Append unique transaction rows using fuzzy matching
+ * Plaid sometimes returns the same transaction with different IDs (sync vs backfill)
+ * We deduplicate by account_id + date + amount + description
+ * @param {string} token - OAuth token
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} tabName - Tab name
+ * @param {array} rows - Array of row arrays
+ * @param {array} headers - Header row
+ * @param {array} allData - Existing sheet data
+ * @returns {Promise<number>} Number of new rows added
+ */
+async function appendUniqueFuzzyRows(token, sheetId, tabName, rows, headers, allData) {
+  // Find column indices
+  const accountIdIndex = headers.indexOf('account_id');
+  const dateIndex = headers.indexOf('date');
+  const amountIndex = headers.indexOf('amount');
+  const descriptionIndex = headers.indexOf('description_raw');
+
+  if (accountIdIndex === -1 || dateIndex === -1 || amountIndex === -1 || descriptionIndex === -1) {
+    throw new Error('Missing required transaction columns for fuzzy deduplication');
+  }
+
+  // Build fuzzy key set from existing data (skip header row)
+  const existingKeys = new Set();
+  for (let i = 1; i < allData.length; i++) {
+    const row = allData[i];
+    const accountId = row[accountIdIndex] || '';
+    const date = row[dateIndex] || '';
+    const amount = row[amountIndex] || '';
+    const description = row[descriptionIndex] || '';
+
+    // Create composite key: account_id|date|amount|description
+    const fuzzyKey = `${accountId}|${date}|${amount}|${description}`;
+    existingKeys.add(fuzzyKey);
+  }
+
+  // Filter out duplicate rows
+  const newRows = rows.filter(row => {
+    const accountId = row[accountIdIndex] || '';
+    const date = row[dateIndex] || '';
+    const amount = row[amountIndex] || '';
+    const description = row[descriptionIndex] || '';
+
+    const fuzzyKey = `${accountId}|${date}|${amount}|${description}`;
+    return !existingKeys.has(fuzzyKey);
   });
 
   // Append new rows
