@@ -283,7 +283,7 @@ async function writeAccounts(sheetId, accountsData) {
   // Transform accounts data to rows
   const rows = accountsData.map(acc => [
     acc.account_id || '',
-    acc.name || '',
+    acc.label || acc.name || '',  // Use enriched label if available, fallback to name
     acc.mask || '',
     acc.type || '',
     acc.subtype || '',
