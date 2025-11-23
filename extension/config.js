@@ -7,7 +7,7 @@
 export const CONFIG = {
   // Environment: "sandbox" or "production"
   // Change this manually for production builds or use build scripts
-  ENV: "sandbox",
+  ENV: "production",
 
   // Backend URL (sandbox backend deployed on Railway with custom domain)
   BACKEND_URL: "https://api-sandbox.sheetlink.app",

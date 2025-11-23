@@ -404,8 +404,9 @@ async function handleBackfill() {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || 'Backfill failed');
+      const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
+      const errorMsg = typeof error.detail === 'string' ? error.detail : JSON.stringify(error);
+      throw new Error(errorMsg);
     }
 
     const result = await response.json();
