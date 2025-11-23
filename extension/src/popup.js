@@ -765,8 +765,10 @@ async function writeToSheets(sheetId, data) {
   }
 
   // Always write transactions tab (creates tab even if no transactions)
+  // Pass accounts data for enriching transactions with account_name and account_mask
   const transactionsData = data.transactions || [];
-  const newCount = await window.SheetsAPI.writeTransactions(sheetId, transactionsData);
+  const accountsData = data.accounts || [];
+  const newCount = await window.SheetsAPI.writeTransactions(sheetId, transactionsData, accountsData);
 
   return {
     accountsWritten: data.accounts?.length || 0,
