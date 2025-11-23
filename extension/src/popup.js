@@ -416,12 +416,24 @@ async function handleBackfill() {
       throw new Error(result.error || 'Backfill failed');
     }
 
+    showLoading('Fetching account data...');
+
+    // Fetch accounts data to enrich transactions
+    // Backfill only returns transactions, so we need to get accounts separately
+    let accountsData = [];
+    try {
+      const accountsSyncData = await fetchSyncData(itemId);
+      accountsData = accountsSyncData.accounts || [];
+    } catch (error) {
+      console.warn('Could not fetch accounts for enrichment:', error);
+      // Continue with empty accounts - transactions will have empty account_name/mask
+    }
+
     showLoading('Writing transactions to sheet...');
 
-    // Write transactions to sheet
-    // Transform the data to match the sync format expected by writeToSheets
+    // Write transactions to sheet with account enrichment
     const syncData = {
-      accounts: [], // Backfill doesn't return accounts, will be handled by regular sync
+      accounts: accountsData,
       transactions: result.transactions
     };
 
