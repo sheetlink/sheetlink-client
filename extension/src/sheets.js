@@ -23,6 +23,8 @@ const ACCOUNTS_HEADERS = [
 const TRANSACTIONS_HEADERS_BASE = [
   'transaction_id',
   'account_id',
+  'account_name',
+  'account_mask',
   'date',
   'description_raw',
   'merchant_name',
@@ -377,9 +379,10 @@ async function writeAccounts(sheetId, accountsData) {
  * Write transactions data to the Transactions tab with deduplication
  * @param {string} sheetId - Spreadsheet ID
  * @param {array} transactionsData - Array of transaction objects from backend
+ * @param {array} accountsData - Array of account objects for enriching transaction data (optional)
  * @returns {Promise<number>} Number of new transactions added
  */
-async function writeTransactions(sheetId, transactionsData) {
+async function writeTransactions(sheetId, transactionsData, accountsData = []) {
   const tabName = 'Transactions';
 
   // Check if rules are enabled to determine headers
@@ -390,12 +393,28 @@ async function writeTransactions(sheetId, transactionsData) {
   // Ensure tab exists with proper headers
   await ensureTab(sheetId, tabName, headers);
 
+  // Create account lookup map for enriching transactions
+  const accountMap = new Map();
+  if (accountsData && accountsData.length > 0) {
+    accountsData.forEach(acc => {
+      accountMap.set(acc.account_id, {
+        name: acc.label || acc.name || '',
+        mask: acc.mask || ''
+      });
+    });
+  }
+
   // Transform transactions data to rows
   const syncedAt = new Date().toISOString();
   const rows = transactionsData.map(txn => {
+    // Look up account info
+    const accountInfo = accountMap.get(txn.account_id) || { name: '', mask: '' };
+
     const baseRow = [
       txn.transaction_id || '',
       txn.account_id || '',
+      accountInfo.name,  // account_name (enriched label)
+      accountInfo.mask,  // account_mask (last 4 digits)
       txn.date || '',
       txn.description_raw || txn.name || '',
       txn.merchant_name || '',
