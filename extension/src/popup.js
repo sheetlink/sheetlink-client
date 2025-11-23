@@ -6,7 +6,7 @@ import { CONFIG } from '../config.js';
 const BACKEND_URL = CONFIG.BACKEND_URL;
 
 // DOM elements
-let connectBankBtn, connectSandboxBtn, saveSheetBtn, syncNowBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
+let connectBankBtn, connectSandboxBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
 let removeSheetBtn, changeSheetBtn, changeSheetLinkBtn, retrySyncBtn;
 let sheetUrlInput, statusText, errorMessage, loadingMessage;
 let connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection;
@@ -43,6 +43,7 @@ function initializeElements() {
   changeSheetLinkBtn = document.getElementById('changeSheetLinkBtn');
   retrySyncBtn = document.getElementById('retrySyncBtn');
   syncNowBtn = document.getElementById('syncNowBtn');
+  backfillBtn = document.getElementById('backfillBtn');
   generateTestBtn = document.getElementById('generateTestBtn');
   disconnectBtn = document.getElementById('disconnectBtn');
   optionsBtn = document.getElementById('optionsBtn');
@@ -117,6 +118,7 @@ function attachEventListeners() {
   if (changeSheetLinkBtn) changeSheetLinkBtn.addEventListener('click', handleChangeSheet);
   if (retrySyncBtn) retrySyncBtn.addEventListener('click', handleSyncNow);
   syncNowBtn.addEventListener('click', handleSyncNow);
+  if (backfillBtn) backfillBtn.addEventListener('click', handleBackfill);
   generateTestBtn.addEventListener('click', handleGenerateTestTransactions);
   disconnectBtn.addEventListener('click', handleDisconnect);
   optionsBtn.addEventListener('click', () => chrome.runtime.openOptionsPage());
@@ -378,6 +380,65 @@ async function handleSyncNow() {
     } else {
       showError('Sync failed: ' + error.message);
     }
+  }
+}
+
+// Handle Backfill button - Fetch full transaction history
+async function handleBackfill() {
+  try {
+    showLoading('Fetching full transaction history...');
+
+    const { itemId, sheetId } = await chrome.storage.sync.get(['itemId', 'sheetId']);
+
+    if (!itemId || !sheetId) {
+      throw new Error('Missing item ID or sheet ID');
+    }
+
+    // Call backfill endpoint
+    const response = await fetch(`${BACKEND_URL}/plaid/backfill`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ item_id: itemId })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Backfill failed');
+    }
+
+    const result = await response.json();
+
+    // Check if backfill was successful
+    if (!result.success) {
+      throw new Error(result.error || 'Backfill failed');
+    }
+
+    showLoading('Writing transactions to sheet...');
+
+    // Write transactions to sheet
+    // Transform the data to match the sync format expected by writeToSheets
+    const syncData = {
+      accounts: [], // Backfill doesn't return accounts, will be handled by regular sync
+      transactions: result.transactions
+    };
+
+    const writeResult = await writeToSheets(sheetId, syncData);
+
+    hideLoading();
+
+    // Show detailed success message
+    const daysAllowed = result.max_days_allowed || 90;
+    const tier = result.subscription_tier || 'free';
+    const message = `Backfill complete! Fetched ${result.total_transactions} transactions (${daysAllowed} days, ${tier} tier)`;
+
+    updateStatus(message, true);
+    await loadState();
+
+  } catch (error) {
+    hideLoading();
+    showError('Backfill failed: ' + error.message);
   }
 }
 
