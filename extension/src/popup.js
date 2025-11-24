@@ -591,7 +591,8 @@ async function exchangePublicToken(publicToken) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       public_token: publicToken,
-      client_user_id: userData.userId
+      client_user_id: userData.userId,
+      env: CONFIG.ENV
     })
   });
 

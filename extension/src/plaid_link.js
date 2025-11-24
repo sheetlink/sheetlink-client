@@ -1,5 +1,7 @@
 // plaid_link.js - Handles Plaid Link initialization with local SDK
 
+import { CONFIG } from '../config.js';
+
 const statusEl = document.getElementById('status');
 const loaderEl = document.getElementById('loader');
 const resultEl = document.getElementById('result');
@@ -65,7 +67,7 @@ async function initializePlaidLink(linkToken) {
           await chrome.storage.sync.set({
             sheetlink_connection_status: {
               status: 'connected',
-              mode: 'sandbox',
+              mode: CONFIG.ENV,
               institutionName: metadata.institution.name,
               justConnected: true
             }
