@@ -279,7 +279,7 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
 /**
  * Append unique transaction rows using fuzzy matching
  * Plaid sometimes returns the same transaction with different IDs (sync vs backfill)
- * We deduplicate by account_id + date + amount + description
+ * We deduplicate by date + amount + description (excluding account_id to catch duplicates across accounts)
  * @param {string} token - OAuth token
  * @param {string} sheetId - Spreadsheet ID
  * @param {string} tabName - Tab name
@@ -290,12 +290,11 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
  */
 async function appendUniqueFuzzyRows(token, sheetId, tabName, rows, headers, allData) {
   // Find column indices
-  const accountIdIndex = headers.indexOf('account_id');
   const dateIndex = headers.indexOf('date');
   const amountIndex = headers.indexOf('amount');
   const descriptionIndex = headers.indexOf('description_raw');
 
-  if (accountIdIndex === -1 || dateIndex === -1 || amountIndex === -1 || descriptionIndex === -1) {
+  if (dateIndex === -1 || amountIndex === -1 || descriptionIndex === -1) {
     throw new Error('Missing required transaction columns for fuzzy deduplication');
   }
 
@@ -303,24 +302,22 @@ async function appendUniqueFuzzyRows(token, sheetId, tabName, rows, headers, all
   const existingKeys = new Set();
   for (let i = 1; i < allData.length; i++) {
     const row = allData[i];
-    const accountId = row[accountIdIndex] || '';
     const date = row[dateIndex] || '';
     const amount = row[amountIndex] || '';
     const description = row[descriptionIndex] || '';
 
-    // Create composite key: account_id|date|amount|description
-    const fuzzyKey = `${accountId}|${date}|${amount}|${description}`;
+    // Create composite key: date|amount|description (no account_id to catch cross-account duplicates)
+    const fuzzyKey = `${date}|${amount}|${description}`;
     existingKeys.add(fuzzyKey);
   }
 
   // Filter out duplicate rows
   const newRows = rows.filter(row => {
-    const accountId = row[accountIdIndex] || '';
     const date = row[dateIndex] || '';
     const amount = row[amountIndex] || '';
     const description = row[descriptionIndex] || '';
 
-    const fuzzyKey = `${accountId}|${date}|${amount}|${description}`;
+    const fuzzyKey = `${date}|${amount}|${description}`;
     return !existingKeys.has(fuzzyKey);
   });
 
