@@ -253,9 +253,9 @@ async function handleConnectBank() {
   try {
     showLoading('Connecting to Plaid...');
 
-    const linkToken = await getLinkToken();
+    const linkData = await getLinkToken();
 
-    const result = await openPlaidLink(linkToken);
+    const result = await openPlaidLink(linkData);
 
     // For OAuth flow (production), result is publicToken that needs to be exchanged
     // For embedded flow (sandbox), result might be itemId (but currently returns publicToken too)
@@ -596,7 +596,7 @@ async function getLinkToken() {
   }
 
   const data = await response.json();
-  return data.link_token;
+  return data; // Return full response (includes link_token and hosted_link_url for OAuth)
 }
 
 async function exchangePublicToken(publicToken) {
@@ -749,17 +749,23 @@ function getTimeAgo(date) {
 }
 
 // Plaid Link integration - Opens in new tab to avoid CSP restrictions
-async function openPlaidLink(linkToken) {
+async function openPlaidLink(linkData) {
   return new Promise((resolve, reject) => {
     let linkUrl;
 
     if (CONFIG.isSandbox) {
       // Sandbox: Use embedded SDK in extension page (no CSP issues with sandbox)
-      linkUrl = chrome.runtime.getURL(`src/plaid_link.html?link_token=${encodeURIComponent(linkToken)}`);
+      linkUrl = chrome.runtime.getURL(`src/plaid_link.html?link_token=${encodeURIComponent(linkData.link_token)}`);
     } else {
-      // Production: Use Plaid OAuth redirect flow to avoid CSP issues with reCAPTCHA
-      const redirectUri = encodeURIComponent('https://sheetlink.app/oauth/plaid/callback');
-      linkUrl = `https://cdn.plaid.com/link/v2/stable/link.html?isOAuth=true&token=${encodeURIComponent(linkToken)}&receivedRedirectUri=${redirectUri}`;
+      // Production: Use Plaid's hosted_link_url for OAuth redirect flow
+      // This URL includes all necessary OAuth parameters (oauth_state_id, etc.)
+      if (linkData.hosted_link_url) {
+        linkUrl = linkData.hosted_link_url;
+      } else {
+        // Fallback to manual construction if hosted_link_url not available
+        const redirectUri = encodeURIComponent('https://sheetlink.app/oauth/plaid/callback');
+        linkUrl = `https://cdn.plaid.com/link/v2/stable/link.html?isOAuth=true&token=${encodeURIComponent(linkData.link_token)}&receivedRedirectUri=${redirectUri}`;
+      }
     }
 
     chrome.tabs.create({ url: linkUrl });
