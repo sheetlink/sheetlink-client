@@ -759,13 +759,20 @@ async function openPlaidLink(linkData) {
     } else {
       // Production: Use Plaid's hosted_link_url for OAuth redirect flow
       // This URL includes all necessary OAuth parameters (oauth_state_id, etc.)
+      console.log('[DEBUG] linkData:', JSON.stringify(linkData, null, 2));
+      console.log('[DEBUG] linkData.hosted_link_url:', linkData.hosted_link_url);
+
       if (linkData.hosted_link_url) {
+        console.log('[DEBUG] Using hosted_link_url from backend');
         linkUrl = linkData.hosted_link_url;
       } else {
+        console.log('[DEBUG] hosted_link_url not found, using fallback manual construction');
         // Fallback to manual construction if hosted_link_url not available
         const redirectUri = encodeURIComponent('https://sheetlink.app/oauth/plaid/callback');
         linkUrl = `https://cdn.plaid.com/link/v2/stable/link.html?isOAuth=true&token=${encodeURIComponent(linkData.link_token)}&receivedRedirectUri=${redirectUri}`;
       }
+
+      console.log('[DEBUG] Final linkUrl:', linkUrl);
     }
 
     chrome.tabs.create({ url: linkUrl });
