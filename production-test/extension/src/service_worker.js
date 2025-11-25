@@ -52,10 +52,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       handlePlaidConnected(sendResponse);
       return true;
 
-    case 'PLAID_OAUTH_SUCCESS':
-      handlePlaidOAuthSuccess(message, sendResponse);
-      return true;
-
     default:
       sendResponse({ error: 'Unknown message type' });
   }
@@ -262,86 +258,6 @@ async function openExtensionPopup() {
     }
   } catch (error) {
     // Error opening popup
-  }
-}
-
-// Handle Plaid OAuth callback success (production flow)
-async function handlePlaidOAuthSuccess(message, sendResponse) {
-  try {
-    const { publicToken, metadata } = message;
-
-    // Exchange the public token
-    const exchangeResult = await handleExchangePublicTokenAsync({ publicToken, metadata });
-
-    if (exchangeResult.error) {
-      sendResponse({ error: exchangeResult.error });
-      return;
-    }
-
-    // Notify popup of success
-    chrome.runtime.sendMessage({
-      type: 'PLAID_OAUTH_SUCCESS',
-      publicToken: publicToken
-    }, () => {
-      // Ignore "no receiver" errors
-      if (chrome.runtime.lastError) {
-        // Expected - popup might not be open
-      }
-    });
-
-    // Respond to callback page
-    sendResponse({ success: true, itemId: exchangeResult.itemId });
-
-    // Give the callback page time to show success message, then open popup
-    setTimeout(async () => {
-      await openExtensionPopup();
-    }, 2000);
-  } catch (error) {
-    sendResponse({ error: error.message });
-  }
-}
-
-// Async version of handleExchangePublicToken for internal use
-async function handleExchangePublicTokenAsync(message) {
-  try {
-    const { publicToken, metadata } = message;
-
-    // Get user ID from storage
-    const userData = await chrome.storage.sync.get(['userId']);
-
-    // Call backend to exchange token
-    const response = await fetch(`${CONFIG.BACKEND_URL}/plaid/exchange`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        public_token: publicToken,
-        client_user_id: userData.userId,
-        env: CONFIG.ENV
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Exchange failed: ${errorData.detail || response.statusText}`);
-    }
-
-    const data = await response.json();
-    const itemId = data.item_id;
-
-    // Store item_id and connection status
-    await chrome.storage.sync.set({
-      itemId,
-      sheetlink_connection_status: {
-        status: 'connected',
-        mode: CONFIG.ENV,
-        institutionName: data.institution_name || metadata?.institution?.name || 'Bank',
-        justConnected: true
-      }
-    });
-
-    return { success: true, itemId };
-  } catch (error) {
-    return { error: error.message };
   }
 }
 
