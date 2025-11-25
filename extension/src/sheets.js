@@ -4,34 +4,60 @@ const SHEETS_API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
 
 /**
  * Account headers schema for the Accounts tab
+ * Comprehensive schema with all Plaid account fields
  */
 const ACCOUNTS_HEADERS = [
   'account_id',
+  'persistent_account_id',
   'name',
+  'official_name',
   'mask',
   'type',
   'subtype',
   'current_balance',
   'available_balance',
+  'iso_currency_code',
   'institution',
   'last_synced_at'
 ];
 
 /**
  * Transaction headers schema for the Transactions tab (base)
+ * Comprehensive schema with all Plaid transaction fields
  */
 const TRANSACTIONS_HEADERS_BASE = [
   'transaction_id',
   'account_id',
+  'persistent_account_id',
   'account_name',
   'account_mask',
   'date',
+  'authorized_date',
+  'datetime',
+  'authorized_datetime',
   'description_raw',
   'merchant_name',
+  'merchant_entity_id',
   'amount',
+  'iso_currency_code',
+  'unofficial_currency_code',
   'pending',
+  'pending_transaction_id',
+  'check_number',
   'plaid_category',
+  'personal_finance_category',
   'payment_channel',
+  'transaction_type',
+  'transaction_code',
+  'location_address',
+  'location_city',
+  'location_region',
+  'location_postal_code',
+  'location_country',
+  'location_lat',
+  'location_lon',
+  'website',
+  'logo_url',
   'source_institution',
   'synced_at'
 ];
@@ -344,12 +370,15 @@ async function writeAccounts(sheetId, accountsData) {
   // Transform accounts data to rows
   const rows = accountsData.map(acc => [
     acc.account_id || '',
-    acc.label || acc.name || '',  // Use enriched label if available, fallback to name
+    acc.persistent_account_id || '',
+    acc.name || '',
+    acc.official_name || '',
     acc.mask || '',
     acc.type || '',
     acc.subtype || '',
-    acc.balances?.current || '',
-    acc.balances?.available || '',
+    acc.current_balance || acc.balances?.current || '',
+    acc.available_balance || acc.balances?.available || '',
+    acc.iso_currency_code || '',
     acc.institution_name || '',
     new Date().toISOString()
   ]);
@@ -396,7 +425,8 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
     accountsData.forEach(acc => {
       accountMap.set(acc.account_id, {
         name: acc.label || acc.name || '',
-        mask: acc.mask || ''
+        mask: acc.mask || '',
+        persistent_account_id: acc.persistent_account_id || ''
       });
     });
   }
@@ -405,21 +435,49 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
   const syncedAt = new Date().toISOString();
   const rows = transactionsData.map(txn => {
     // Look up account info
-    const accountInfo = accountMap.get(txn.account_id) || { name: '', mask: '' };
+    const accountInfo = accountMap.get(txn.account_id) || { name: '', mask: '', persistent_account_id: '' };
+
+    // Format personal_finance_category if it exists (it's an object with primary/detailed fields)
+    let pfcFormatted = '';
+    if (txn.personal_finance_category) {
+      const pfc = txn.personal_finance_category;
+      pfcFormatted = pfc.detailed || pfc.primary || '';
+    }
 
     const baseRow = [
       txn.transaction_id || '',
       txn.account_id || '',
+      accountInfo.persistent_account_id,  // persistent_account_id from account lookup
       accountInfo.name,  // account_name (enriched label)
       accountInfo.mask,  // account_mask (last 4 digits)
       txn.date || '',
+      txn.authorized_date || '',
+      txn.datetime || '',
+      txn.authorized_datetime || '',
       txn.description_raw || txn.name || '',
       txn.merchant_name || '',
+      txn.merchant_entity_id || '',
       txn.amount || '',
+      txn.iso_currency_code || '',
+      txn.unofficial_currency_code || '',
       txn.pending ? 'TRUE' : 'FALSE',
+      txn.pending_transaction_id || '',
+      txn.check_number || '',
       Array.isArray(txn.plaid_category) ? txn.plaid_category.join(', ') :
         (Array.isArray(txn.category) ? txn.category.join(', ') : ''),
+      pfcFormatted,
       txn.payment_channel || '',
+      txn.transaction_type || '',
+      txn.transaction_code || '',
+      txn.location?.address || '',
+      txn.location?.city || '',
+      txn.location?.region || '',
+      txn.location?.postal_code || '',
+      txn.location?.country || '',
+      txn.location?.lat || '',
+      txn.location?.lon || '',
+      txn.website || '',
+      txn.logo_url || '',
       txn.source_institution || txn.institution_name || '',
       syncedAt
     ];
