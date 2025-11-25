@@ -40,21 +40,20 @@ export default function PlaidOAuthCallback() {
         }
 
         // Check if we're in a browser extension context
-        // @ts-ignore - chrome is available when loaded from extension
-        if (typeof window !== 'undefined' && 'chrome' in window && typeof chrome !== 'undefined' && chrome.runtime) {
+        const chromeExt = typeof window !== 'undefined' && (window as any).chrome;
+        if (chromeExt && chromeExt.runtime) {
           try {
             // Send the public token to the extension
-            // @ts-ignore - chrome.runtime is available
             await new Promise<void>((resolve, reject) => {
-              chrome.runtime.sendMessage(
+              chromeExt.runtime.sendMessage(
                 {
                   type: 'PLAID_OAUTH_SUCCESS',
                   publicToken: publicToken,
                   metadata: metadataObj
                 },
                 (response: any) => {
-                  if (chrome.runtime.lastError) {
-                    reject(new Error(chrome.runtime.lastError.message));
+                  if (chromeExt.runtime.lastError) {
+                    reject(new Error(chromeExt.runtime.lastError.message));
                   } else if (response && response.error) {
                     reject(new Error(response.error));
                   } else {
