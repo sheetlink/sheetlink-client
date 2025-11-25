@@ -3,6 +3,21 @@
 const SHEETS_API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
 
 /**
+ * Convert column number to letter (A, B, ... Z, AA, AB, ...)
+ * @param {number} n - Column number (1-indexed)
+ * @returns {string} Column letter(s)
+ */
+function columnNumberToLetter(n) {
+  let result = '';
+  while (n > 0) {
+    const remainder = (n - 1) % 26;
+    result = String.fromCharCode(65 + remainder) + result;
+    n = Math.floor((n - 1) / 26);
+  }
+  return result;
+}
+
+/**
  * Account headers schema for the Accounts tab
  * Comprehensive schema with all Plaid account fields
  */
@@ -168,7 +183,8 @@ async function createTab(token, sheetId, tabName) {
  * @param {array} headers - Array of header strings
  */
 async function writeHeaders(token, sheetId, tabName, headers) {
-  const range = `${tabName}!A1:${String.fromCharCode(64 + headers.length)}1`;
+  const lastColumn = columnNumberToLetter(headers.length);
+  const range = `${tabName}!A1:${lastColumn}1`;
   const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
 
   const body = {
@@ -235,7 +251,8 @@ async function ensureTab(sheetId, tabName, headersArray) {
   }
 
   // Check if headers exist
-  const firstRow = await readRange(token, sheetId, `${tabName}!A1:${String.fromCharCode(64 + headersArray.length)}1`);
+  const lastColumn = columnNumberToLetter(headersArray.length);
+  const firstRow = await readRange(token, sheetId, `${tabName}!A1:${lastColumn}1`);
 
   if (firstRow.length === 0 || firstRow[0].length === 0) {
     // Write headers
