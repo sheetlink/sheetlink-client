@@ -6,7 +6,7 @@ import { CONFIG } from '../config.js';
 const BACKEND_URL = CONFIG.BACKEND_URL;
 
 // DOM elements
-let connectBankBtn, connectSandboxBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
+let connectBankBtn, connectSandboxBtn, saveSheetBtn, syncNowBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
 let removeSheetBtn, changeSheetBtn, changeSheetLinkBtn, retrySyncBtn;
 let sheetUrlInput, statusText, errorMessage, loadingMessage;
 let connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection;
@@ -43,7 +43,6 @@ function initializeElements() {
   changeSheetLinkBtn = document.getElementById('changeSheetLinkBtn');
   retrySyncBtn = document.getElementById('retrySyncBtn');
   syncNowBtn = document.getElementById('syncNowBtn');
-  backfillBtn = document.getElementById('backfillBtn');
   generateTestBtn = document.getElementById('generateTestBtn');
   disconnectBtn = document.getElementById('disconnectBtn');
   optionsBtn = document.getElementById('optionsBtn');
@@ -118,7 +117,6 @@ function attachEventListeners() {
   if (changeSheetLinkBtn) changeSheetLinkBtn.addEventListener('click', handleChangeSheet);
   if (retrySyncBtn) retrySyncBtn.addEventListener('click', handleSyncNow);
   syncNowBtn.addEventListener('click', handleSyncNow);
-  if (backfillBtn) backfillBtn.addEventListener('click', handleBackfill);
   generateTestBtn.addEventListener('click', handleGenerateTestTransactions);
   disconnectBtn.addEventListener('click', handleDisconnect);
   optionsBtn.addEventListener('click', () => chrome.runtime.openOptionsPage());
@@ -255,16 +253,7 @@ async function handleConnectBank() {
 
     const linkToken = await getLinkToken();
 
-    const result = await openPlaidLink(linkToken);
-
-    // For OAuth flow (production), result is publicToken that needs to be exchanged
-    // For embedded flow (sandbox), result might be itemId (but currently returns publicToken too)
-    // We'll always treat it as publicToken and exchange it
-    if (!CONFIG.isSandbox && result) {
-      showLoading('Exchanging token...');
-      const itemId = await exchangePublicToken(result);
-      await chrome.storage.sync.set({ itemId });
-    }
+    await openPlaidLink(linkToken);
 
     hideLoading();
     updateStatus('Bank connected successfully!', true);
@@ -392,78 +381,6 @@ async function handleSyncNow() {
   }
 }
 
-// Handle Backfill button - Fetch full transaction history
-async function handleBackfill() {
-  try {
-    showLoading('Fetching full transaction history...');
-
-    const { itemId, sheetId } = await chrome.storage.sync.get(['itemId', 'sheetId']);
-
-    if (!itemId || !sheetId) {
-      throw new Error('Missing item ID or sheet ID');
-    }
-
-    // Call backfill endpoint
-    const response = await fetch(`${BACKEND_URL}/plaid/backfill`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ item_id: itemId })
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-      const errorMsg = typeof error.detail === 'string' ? error.detail : JSON.stringify(error);
-      throw new Error(errorMsg);
-    }
-
-    const result = await response.json();
-
-    // Check if backfill was successful
-    if (!result.success) {
-      throw new Error(result.error || 'Backfill failed');
-    }
-
-    showLoading('Fetching account data...');
-
-    // Fetch accounts data to enrich transactions
-    // Backfill only returns transactions, so we need to get accounts separately
-    let accountsData = [];
-    try {
-      const accountsSyncData = await fetchSyncData(itemId);
-      accountsData = accountsSyncData.accounts || [];
-    } catch (error) {
-      console.warn('Could not fetch accounts for enrichment:', error);
-      // Continue with empty accounts - transactions will have empty account_name/mask
-    }
-
-    showLoading('Writing transactions to sheet...');
-
-    // Write transactions to sheet with account enrichment
-    const syncData = {
-      accounts: accountsData,
-      transactions: result.transactions
-    };
-
-    const writeResult = await writeToSheets(sheetId, syncData);
-
-    hideLoading();
-
-    // Show detailed success message
-    const daysAllowed = result.max_days_allowed || 90;
-    const tier = result.subscription_tier || 'free';
-    const message = `Backfill complete! Fetched ${result.total_transactions} transactions (${daysAllowed} days, ${tier} tier)`;
-
-    updateStatus(message, true);
-    await loadState();
-
-  } catch (error) {
-    hideLoading();
-    showError('Backfill failed: ' + error.message);
-  }
-}
-
 // Handle Generate Test Transactions button (sandbox only)
 async function handleGenerateTestTransactions() {
   try {
@@ -573,21 +490,13 @@ async function getLinkToken() {
     await chrome.storage.sync.set({ userId: userData.userId });
   }
 
-  // For production, use OAuth redirect flow to avoid CSP issues with reCAPTCHA
-  const requestBody = {
-    client_user_id: userData.userId,
-    env: CONFIG.ENV
-  };
-
-  // Add redirect_uri for production OAuth flow
-  if (!CONFIG.isSandbox) {
-    requestBody.redirect_uri = 'https://sheetlink.app/oauth/plaid/callback';
-  }
-
   const response = await fetch(`${BACKEND_URL}/plaid/link-token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestBody)
+    body: JSON.stringify({
+      client_user_id: userData.userId,
+      env: CONFIG.ENV
+    })
   });
 
   if (!response.ok) {
@@ -608,8 +517,7 @@ async function exchangePublicToken(publicToken) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       public_token: publicToken,
-      client_user_id: userData.userId,
-      env: CONFIG.ENV
+      client_user_id: userData.userId
     })
   });
 
@@ -751,24 +659,15 @@ function getTimeAgo(date) {
 // Plaid Link integration - Opens in new tab to avoid CSP restrictions
 async function openPlaidLink(linkToken) {
   return new Promise((resolve, reject) => {
-    let linkUrl;
-
-    if (CONFIG.isSandbox) {
-      // Sandbox: Use embedded SDK in extension page (no CSP issues with sandbox)
-      linkUrl = chrome.runtime.getURL(`src/plaid_link.html?link_token=${encodeURIComponent(linkToken)}`);
-    } else {
-      // Production: Use Plaid OAuth redirect flow to avoid CSP issues with reCAPTCHA
-      const redirectUri = encodeURIComponent('https://sheetlink.app/oauth/plaid/callback');
-      linkUrl = `https://cdn.plaid.com/link/v2/stable/link.html?isOAuth=true&token=${encodeURIComponent(linkToken)}&receivedRedirectUri=${redirectUri}`;
-    }
-
+    // Open Plaid Link in a new tab (avoids CSP issues in popup)
+    const linkUrl = chrome.runtime.getURL(`src/plaid_link.html?link_token=${encodeURIComponent(linkToken)}`);
     chrome.tabs.create({ url: linkUrl });
 
-    // Listen for completion message from service worker or callback page
+    // Listen for completion message from service worker
     const messageListener = (message) => {
-      if (message.type === 'PLAID_LINK_SUCCESS' || message.type === 'PLAID_OAUTH_SUCCESS') {
+      if (message.type === 'PLAID_LINK_SUCCESS') {
         chrome.runtime.onMessage.removeListener(messageListener);
-        resolve(message.itemId || message.publicToken);
+        resolve(message.itemId);
       } else if (message.type === 'PLAID_LINK_ERROR') {
         chrome.runtime.onMessage.removeListener(messageListener);
         reject(new Error(message.error));
@@ -804,10 +703,8 @@ async function writeToSheets(sheetId, data) {
   }
 
   // Always write transactions tab (creates tab even if no transactions)
-  // Pass accounts data for enriching transactions with account_name and account_mask
   const transactionsData = data.transactions || [];
-  const accountsData = data.accounts || [];
-  const newCount = await window.SheetsAPI.writeTransactions(sheetId, transactionsData, accountsData);
+  const newCount = await window.SheetsAPI.writeTransactions(sheetId, transactionsData);
 
   return {
     accountsWritten: data.accounts?.length || 0,
