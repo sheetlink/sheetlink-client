@@ -2,15 +2,15 @@
 # All pull requests to protected branches require approval from code owners
 
 # Default owner for everything in the repo
-* @rudy
+* @rudymdc
 
 # Extension source code
-/extension/** @rudy
+/extension/** @rudymdc
 
 # Landing page
-/landing/** @rudy
+/landing/** @rudymdc
 
 # Documentation and configuration
-/docs/** @rudy
-/README.md @rudy
-/.github/** @rudy
+/docs/** @rudymdc
+/README.md @rudymdc
+/.github/** @rudymdc
