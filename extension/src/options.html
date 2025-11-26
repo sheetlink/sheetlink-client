@@ -682,10 +682,10 @@
         <p class="description">Name of the sheet tab where transaction data will be written</p>
       </div>
 
-      <div class="form-group">
-        <label for="rulesTabName">Rules Tab Name</label>
-        <input type="text" id="rulesTabName" value="Rules" placeholder="Rules">
-        <p class="description">Name of the sheet tab for categorization rules (when enabled)</p>
+      <div class="form-group locked" id="rulesTabNameGroup">
+        <label for="rulesTabName">Rules Tab Name <span class="lock-icon">🔒</span></label>
+        <input type="text" id="rulesTabName" value="Rules" placeholder="Rules" disabled style="cursor: not-allowed; opacity: 0.6; background: #f9fafb;">
+        <p class="description locked-feature">Requires Pro plan - Name of the sheet tab for categorization rules</p>
       </div>
     </div>
 
