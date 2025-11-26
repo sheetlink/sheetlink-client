@@ -305,6 +305,156 @@
       font-size: 14px;
       color: #047857;
     }
+
+    /* Free Tier Card */
+    .tier-card {
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .tier-card.free-tier {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 2px solid #a7f3d0;
+    }
+
+    .tier-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .tier-icon {
+      font-size: 28px;
+    }
+
+    .tier-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #065f46;
+    }
+
+    .tier-description {
+      color: #047857;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .tier-benefits h3 {
+      font-size: 15px;
+      color: #065f46;
+      margin: 0 0 12px 0;
+      font-weight: 600;
+    }
+
+    .tier-benefits ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .tier-benefits li {
+      padding: 8px 0;
+      color: #047857;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Upgrade Tiers Section */
+    .upgrade-tiers {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      border: 2px solid #d1d5db;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .tier-card.basic-tier {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      border: 2px solid #93c5fd;
+    }
+
+    .tier-card.basic-tier h3 {
+      color: #1e40af;
+      margin: 0 0 4px 0;
+      font-size: 18px;
+    }
+
+    .tier-card.pro-tier {
+      background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+      border: 2px solid #c4b5fd;
+    }
+
+    .tier-card.pro-tier h3 {
+      color: #6d28d9;
+      margin: 0 0 4px 0;
+      font-size: 18px;
+    }
+
+    .tier-subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0 0 12px 0;
+      font-style: italic;
+    }
+
+    .tier-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .tier-card li {
+      padding: 6px 0;
+      font-size: 13px;
+      color: #374151;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .tier-card li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #10b981;
+      font-weight: bold;
+    }
+
+    .tier-card.pro-tier li:before {
+      color: #8b5cf6;
+    }
+
+    .upgrade-tiers .btn {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    /* Locked Features */
+    .form-group.locked {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .form-group.locked label {
+      cursor: not-allowed !important;
+    }
+
+    .description.locked-feature {
+      color: #9ca3af;
+      font-style: italic;
+    }
+
+    .lock-icon {
+      margin-left: 4px;
+    }
   </style>
 </head>
 <body>
@@ -314,6 +464,66 @@
       <h1>Settings</h1>
     </div>
     <p class="subtitle">Configure default options for SheetLink</p>
+
+    <!-- Free Tier Card -->
+    <div class="tier-card free-tier" id="freeTierCard">
+      <div class="tier-header">
+        <span class="tier-icon">🎁</span>
+        <h2>Free Plan (7 days)</h2>
+      </div>
+      <p class="tier-description">
+        You're using SheetLink's Free plan.
+      </p>
+      <div class="tier-benefits">
+        <h3>Your plan includes:</h3>
+        <ul>
+          <li>✅ 7 days of transaction history per bank</li>
+          <li>✅ Unlimited bank connections</li>
+          <li>✅ Unlimited manual syncs</li>
+          <li>✅ Direct-to-Google Sheets syncing</li>
+          <li>✅ Auto-enriched account labels</li>
+          <li>✅ Append-only mode (recommended)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Upgrade Tiers Section -->
+    <div class="upgrade-tiers" id="upgradeTiers">
+      <div class="tier-header">
+        <span class="tier-icon">🚀</span>
+        <h2>Upgrade Tiers (Coming Soon)</h2>
+      </div>
+
+      <div class="tier-grid">
+        <div class="tier-card basic-tier">
+          <h3>Basic – $1.99/month</h3>
+          <p class="tier-subtitle">(per institution)</p>
+          <ul>
+            <li>90 days of historical transactions</li>
+            <li>Auto-sync every 24 hours</li>
+          </ul>
+        </div>
+
+        <div class="tier-card pro-tier">
+          <h3>Pro – $15.99/month</h3>
+          <p class="tier-subtitle">(all institutions)</p>
+          <ul>
+            <li>24 months of history</li>
+            <li>Auto-sync hourly</li>
+            <li>Rules Tab</li>
+            <li>AI Categorization</li>
+            <li>Split Transactions</li>
+            <li>Tab-per-Institution</li>
+            <li>Multi-Institution Dashboards</li>
+            <li>Priority support</li>
+          </ul>
+        </div>
+      </div>
+
+      <button id="upgradeBtn" class="btn btn-secondary" disabled style="cursor: not-allowed; opacity: 0.7;">
+        🎁 Upgrade (coming soon)
+      </button>
+    </div>
 
     <!-- Sandbox Mode Banner -->
     <div id="sandboxInfo" class="sandbox-info hidden">
@@ -481,32 +691,6 @@
 
     <div class="section">
       <h2>Features</h2>
-      
-      <div class="form-group">
-        <div class="toggle-group">
-          <label class="toggle">
-            <input type="checkbox" id="enableRulesTab">
-            <span class="slider"></span>
-          </label>
-          <div>
-            <label for="enableRulesTab" style="cursor: pointer;">Enable Rules Tab</label>
-            <p class="description">Create a Rules tab for custom transaction categorization</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="toggle-group">
-          <label class="toggle">
-            <input type="checkbox" id="enableMLAssist">
-            <span class="slider"></span>
-          </label>
-          <div>
-            <label for="enableMLAssist" style="cursor: pointer;">Enable AI Categorization</label>
-            <p class="description">Use ML-based suggestions for uncategorized transactions (experimental)</p>
-          </div>
-        </div>
-      </div>
 
       <div class="form-group">
         <div class="toggle-group">
@@ -516,7 +700,46 @@
           </label>
           <div>
             <label for="appendOnly" style="cursor: pointer;">Append-Only Mode</label>
-            <p class="description">Only add new transactions, never update existing ones</p>
+            <p class="description">Only add new transactions, never update existing ones (Recommended)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group locked" id="rulesTabGroup">
+        <div class="toggle-group">
+          <label class="toggle">
+            <input type="checkbox" id="enableRulesTab" disabled>
+            <span class="slider"></span>
+          </label>
+          <div>
+            <label for="enableRulesTab">Enable Rules Tab <span class="lock-icon">🔒</span></label>
+            <p class="description locked-feature">Requires Pro plan</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group locked" id="aiCategorizationGroup">
+        <div class="toggle-group">
+          <label class="toggle">
+            <input type="checkbox" id="enableMLAssist" disabled>
+            <span class="slider"></span>
+          </label>
+          <div>
+            <label for="enableMLAssist">Enable AI Categorization <span class="lock-icon">🔒</span></label>
+            <p class="description locked-feature">Requires Pro plan</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group locked" id="splitTransactionsGroup">
+        <div class="toggle-group">
+          <label class="toggle">
+            <input type="checkbox" id="enableSplitTransactions" disabled>
+            <span class="slider"></span>
+          </label>
+          <div>
+            <label for="enableSplitTransactions">Enable Split Transactions <span class="lock-icon">🔒</span></label>
+            <p class="description locked-feature">Requires Pro plan (coming soon)</p>
           </div>
         </div>
       </div>
@@ -547,8 +770,8 @@
         <a href="https://sheetlink.app/privacy" target="_blank" style="color: #0B703A; text-decoration: none; margin: 0 12px;">Privacy Policy</a>
         <a href="https://sheetlink.app/terms" target="_blank" style="color: #0B703A; text-decoration: none; margin: 0 12px;">Terms</a>
       </p>
-      <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-        SheetLink v0.3.1 (Sandbox Preview)
+      <p id="footerVersion" style="margin: 0; font-size: 12px; color: #9ca3af;">
+        SheetLink v0.3.1
       </p>
     </footer>
   </div>
