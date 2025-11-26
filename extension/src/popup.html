@@ -110,14 +110,11 @@
           <p>Last sync: <span id="lastSync">Never</span></p>
           <p style="margin-top: 4px;">
             <span style="font-size: 12px; color: #666;">Plan:</span>
-            <span id="subscriptionTier" style="font-size: 12px; font-weight: 600; color: #1a73e8;">Free (90 days)</span>
+            <span id="subscriptionTier" style="font-size: 12px; font-weight: 600; color: #1a73e8;">Free (7 days)</span>
           </p>
         </div>
         <button id="syncNowBtn" class="btn btn-primary">
           Sync Now
-        </button>
-        <button id="backfillBtn" class="btn btn-secondary" style="margin-top: 8px;">
-          Fetch Full History
         </button>
         <button id="generateTestBtn" class="btn btn-secondary" style="margin-top: 8px;">
           Generate Test Transactions (Sandbox)
@@ -138,6 +135,19 @@
               Loading...
             </div>
           </details>
+        </div>
+
+        <!-- Upgrade Placeholder (Phase 3) -->
+        <div class="upgrade-placeholder" style="margin-top: 16px; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-align: center;">
+          <div style="font-size: 14px; font-weight: 600; color: white; margin-bottom: 8px;">
+            Want more history?
+          </div>
+          <div style="font-size: 12px; color: rgba(255, 255, 255, 0.9); margin-bottom: 12px;">
+            Upgrade to get 90 days (Basic) or 2 years (Pro) of transaction history, plus auto-sync.
+          </div>
+          <button id="upgradeBtn" class="btn btn-secondary" disabled style="opacity: 0.7; cursor: not-allowed;">
+            Upgrade (coming soon)
+          </button>
         </div>
       </div>
 
@@ -258,8 +268,8 @@
           </button>
         </div>
 
-        <p class="modal-footer" style="margin-top: 16px; font-size: 12px; color: #666; text-align: center;">
-          🧪 You are in Plaid Sandbox mode. This is demo data.
+        <p class="modal-footer" id="sheetSuccessFooter" style="margin-top: 16px; font-size: 12px; color: #666; text-align: center;">
+          <!-- Dynamically set based on CONFIG.ENV in popup.js -->
         </p>
       </div>
     </div>
