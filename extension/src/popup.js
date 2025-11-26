@@ -106,6 +106,21 @@ function initializeSandboxMode() {
   if (connectSandboxBtn) connectSandboxBtn.textContent = copy.connectButton;
   if (disconnectBtn) disconnectBtn.textContent = copy.resetButton;
   if (syncNowBtn) syncNowBtn.textContent = copy.syncButton;
+
+  // Set sheet success modal footer based on environment
+  const sheetSuccessFooter = document.getElementById('sheetSuccessFooter');
+  if (sheetSuccessFooter) {
+    if (CONFIG.isSandbox) {
+      sheetSuccessFooter.textContent = '🧪 You are in Plaid Sandbox mode. This is demo data.';
+    } else {
+      sheetSuccessFooter.textContent = '🔒 Your data is encrypted and secure.';
+    }
+  }
+
+  // Hide "Generate Test Transactions" button in production mode
+  if (generateTestBtn && !CONFIG.isSandbox) {
+    generateTestBtn.style.display = 'none';
+  }
 }
 
 function attachEventListeners() {
@@ -220,6 +235,7 @@ async function loadState() {
 
       await updateAutoSyncStatus();
       await loadRecentSyncs();
+      await updateTierDisplay();  // Phase 3: Update tier info
     } else {
       showSection('sheet');
       document.getElementById('currentSheet').textContent = 'Not connected yet';
@@ -229,6 +245,42 @@ async function loadState() {
     }
   } catch (error) {
     showError('Failed to load state');
+  }
+}
+
+// Update tier display from backend
+async function updateTierDisplay() {
+  try {
+    const response = await fetch(`${BACKEND_URL}/tier/status`);
+
+    if (!response.ok) {
+      // If endpoint fails, keep default "Free (7 days)"
+      return;
+    }
+
+    const data = await response.json();
+
+    // Format tier display
+    const tierName = data.tier.charAt(0).toUpperCase() + data.tier.slice(1);
+    const tierText = `${tierName} (${data.days_available} days)`;
+
+    // Update UI
+    const tierElement = document.getElementById('subscriptionTier');
+    if (tierElement) {
+      tierElement.textContent = tierText;
+
+      // Color based on tier
+      if (data.tier === 'free') {
+        tierElement.style.color = '#1a73e8';  // Blue
+      } else if (data.tier === 'basic') {
+        tierElement.style.color = '#0d9488';  // Teal
+      } else if (data.tier === 'pro') {
+        tierElement.style.color = '#7c3aed';  // Purple
+      }
+    }
+  } catch (error) {
+    // Silently fail - keep default "Free (7 days)"
+    console.log('Tier status check failed, using default');
   }
 }
 
