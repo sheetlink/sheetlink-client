@@ -1,0 +1,16 @@
+# CODEOWNERS file for SheetLink Client
+# All pull requests to protected branches require approval from code owners
+
+# Default owner for everything in the repo
+* @rudy
+
+# Extension source code
+/extension/** @rudy
+
+# Landing page
+/landing/** @rudy
+
+# Documentation and configuration
+/docs/** @rudy
+/README.md @rudy
+/.github/** @rudy
