@@ -51,9 +51,15 @@ function initializeElements() {
 }
 
 function initializeSandboxMode() {
-  // Show sandbox info section if in sandbox mode
-  if (CONFIG.isSandbox && sandboxInfo) {
-    sandboxInfo.classList.remove('hidden');
+  // Handle sandbox info section based on environment
+  if (sandboxInfo) {
+    if (CONFIG.isSandbox) {
+      // Show sandbox info in sandbox mode
+      sandboxInfo.classList.remove('hidden');
+    } else {
+      // Hide sandbox info in production mode
+      sandboxInfo.style.display = 'none';
+    }
   }
 
   // Update footer based on environment
@@ -64,6 +70,14 @@ function initializeSandboxMode() {
     } else {
       footerVersion.textContent = 'SheetLink v0.3.1';
     }
+  }
+
+  // Hide "Join Beta" link in production mode
+  if (!CONFIG.isSandbox) {
+    const betaLinks = document.querySelectorAll('a[href*="beta"]');
+    betaLinks.forEach(link => {
+      link.style.display = 'none';
+    });
   }
 
   // Lock backend URL in production mode
