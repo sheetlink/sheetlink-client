@@ -254,7 +254,11 @@ async function updateTierDisplay() {
     const response = await fetch(`${BACKEND_URL}/tier/status`);
 
     if (!response.ok) {
-      // If endpoint fails, keep default "Free (7 days)"
+      // If endpoint fails, keep default "Free (7 days)" and hide auto-sync
+      const autoSyncCard = document.querySelector('.auto-sync-card');
+      if (autoSyncCard) {
+        autoSyncCard.style.display = 'none';
+      }
       return;
     }
 
@@ -278,9 +282,23 @@ async function updateTierDisplay() {
         tierElement.style.color = '#7c3aed';  // Purple
       }
     }
+
+    // Phase 3: Hide auto-sync card for free tier (auto-sync is paid feature)
+    const autoSyncCard = document.querySelector('.auto-sync-card');
+    if (autoSyncCard) {
+      if (data.tier === 'free') {
+        autoSyncCard.style.display = 'none';
+      } else {
+        autoSyncCard.style.display = 'block';
+      }
+    }
   } catch (error) {
-    // Silently fail - keep default "Free (7 days)"
+    // Silently fail - keep default "Free (7 days)" and hide auto-sync
     console.log('Tier status check failed, using default');
+    const autoSyncCard = document.querySelector('.auto-sync-card');
+    if (autoSyncCard) {
+      autoSyncCard.style.display = 'none';
+    }
   }
 }
 
