@@ -55,6 +55,42 @@ function initializeSandboxMode() {
   if (CONFIG.isSandbox && sandboxInfo) {
     sandboxInfo.classList.remove('hidden');
   }
+
+  // Update footer based on environment
+  const footerVersion = document.getElementById('footerVersion');
+  if (footerVersion) {
+    if (CONFIG.isSandbox) {
+      footerVersion.textContent = 'SheetLink v0.3.1 (Sandbox Preview)';
+    } else {
+      footerVersion.textContent = 'SheetLink v0.3.1';
+    }
+  }
+
+  // Lock backend URL in production mode
+  if (!CONFIG.isSandbox && backendUrlInput) {
+    backendUrlInput.value = 'https://api.sheetlink.app';
+    backendUrlInput.readOnly = true;
+    backendUrlInput.style.cursor = 'not-allowed';
+    backendUrlInput.style.opacity = '0.7';
+    backendUrlInput.style.background = '#f9fafb';
+
+    // Update label to show lock icon
+    const label = document.querySelector('label[for="backendUrl"]');
+    if (label) {
+      label.innerHTML = 'Backend URL <span class="lock-icon">🔒</span>';
+    }
+
+    // Update description
+    const formGroup = backendUrlInput.closest('.form-group');
+    if (formGroup) {
+      const description = formGroup.querySelector('.description');
+      if (description) {
+        description.textContent = 'Locked in production mode';
+        description.style.color = '#9ca3af';
+        description.style.fontStyle = 'italic';
+      }
+    }
+  }
 }
 
 function attachEventListeners() {
