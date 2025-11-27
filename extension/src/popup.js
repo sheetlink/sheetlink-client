@@ -393,35 +393,35 @@ async function updateCloudSyncIndicator() {
 // Phase 3.8: Handle Google Sign-In
 async function handleGoogleSignIn() {
   try {
-    showLoading('Signing in with Google...');
-
     // Trigger Google OAuth flow via service worker
-    const response = await chrome.runtime.sendMessage({ type: 'GET_AUTH_TOKEN' });
+    // Note: This opens OAuth window and doesn't wait for response
+    // Service worker will reopen popup after OAuth completes
+    chrome.runtime.sendMessage({ type: 'GET_AUTH_TOKEN' }, async (response) => {
+      if (response && response.token) {
+        // OAuth completed successfully
+        // Get user info after successful OAuth
+        const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
 
-    if (response.error) {
-      throw new Error(response.error);
-    }
+        if (!userInfo || !userInfo.id) {
+          showError('Could not get Google user information');
+          return;
+        }
 
-    // Get user info after successful OAuth
-    const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
+        // Store Google user ID for backend
+        await chrome.storage.sync.set({
+          googleUserId: userInfo.id,
+          googleAuthenticated: true
+        });
 
-    if (!userInfo || !userInfo.id) {
-      throw new Error('Could not get Google user information');
-    }
-
-    // Store Google user ID for backend
-    await chrome.storage.sync.set({
-      googleUserId: userInfo.id,
-      googleAuthenticated: true
+        // Reload state to show next step (connect bank)
+        await loadState();
+      }
     });
 
-    hideLoading();
-
-    // Reload state to show next step (connect bank)
-    await loadState();
+    // Close popup immediately so OAuth window is visible
+    window.close();
 
   } catch (error) {
-    hideLoading();
     showError('Failed to sign in with Google: ' + error.message);
   }
 }
