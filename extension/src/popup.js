@@ -209,8 +209,16 @@ async function loadState() {
       });
     }
 
-    // No bank connected: show welcome screen with sandbox messaging
+    // No bank connected: try to restore from backend first (Phase 3.8)
     if (!data.itemId) {
+      // Try to restore Items from backend using Google user ID
+      const restored = await tryRestoreItems();
+      if (restored) {
+        // Items restored! Reload state with new itemId
+        return loadState();
+      }
+
+      // No Items to restore - show welcome screen
       showSection('welcome');
       return;
     }
@@ -236,6 +244,7 @@ async function loadState() {
       await updateAutoSyncStatus();
       await loadRecentSyncs();
       await updateTierDisplay();  // Phase 3: Update tier info
+      await updateCloudSyncIndicator();  // Phase 3.8: Show cloud sync status
     } else {
       showSection('sheet');
       document.getElementById('currentSheet').textContent = 'Not connected yet';
@@ -245,6 +254,51 @@ async function loadState() {
     }
   } catch (error) {
     showError('Failed to load state');
+  }
+}
+
+// Phase 3.8: Try to restore Items from backend using Google user ID
+async function tryRestoreItems() {
+  try {
+    // Get Google user ID
+    const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
+    if (!userInfo || !userInfo.id) {
+      console.log('No Google user ID available for restoration');
+      return false;
+    }
+
+    const googleUserId = userInfo.id;
+    console.log('Checking for Items to restore...');
+
+    // Call backend to get user's Items
+    const response = await fetch(`${BACKEND_URL}/plaid/items?user_id=${encodeURIComponent(googleUserId)}`);
+
+    if (!response.ok) {
+      console.log('Could not fetch Items from backend');
+      return false;
+    }
+
+    const data = await response.json();
+
+    if (!data.items || data.items.length === 0) {
+      console.log('No Items found to restore');
+      return false;
+    }
+
+    // Restore the most recently synced Item
+    const mostRecentItem = data.items[0];
+    console.log(`Restoring Item: ${mostRecentItem.institution_name}`);
+
+    await chrome.storage.sync.set({
+      itemId: mostRecentItem.item_id
+    });
+
+    console.log(`Item restored successfully: ${mostRecentItem.item_id}`);
+    return true;
+
+  } catch (error) {
+    console.error('Error restoring Items:', error);
+    return false; // Silent fail - user sees normal welcome screen
   }
 }
 
@@ -298,6 +352,30 @@ async function updateTierDisplay() {
     const autoSyncCard = document.querySelector('.auto-sync-card');
     if (autoSyncCard) {
       autoSyncCard.style.display = 'none';
+    }
+  }
+}
+
+// Phase 3.8: Update cloud sync indicator
+async function updateCloudSyncIndicator() {
+  try {
+    const indicator = document.getElementById('cloudSyncIndicator');
+    if (!indicator) return;
+
+    // Check if user has Google ID (if so, they're using cloud sync)
+    const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
+    if (userInfo && userInfo.id) {
+      // Show cloud sync indicator
+      indicator.style.display = 'block';
+    } else {
+      // Hide if no Google ID
+      indicator.style.display = 'none';
+    }
+  } catch (error) {
+    // Silently fail - hide indicator
+    const indicator = document.getElementById('cloudSyncIndicator');
+    if (indicator) {
+      indicator.style.display = 'none';
     }
   }
 }
