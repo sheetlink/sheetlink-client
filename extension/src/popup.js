@@ -6,7 +6,7 @@ import { CONFIG } from '../config.js';
 const BACKEND_URL = CONFIG.BACKEND_URL;
 
 // DOM elements
-let connectBankBtn, connectSandboxBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
+let connectBankBtn, connectSandboxBtn, signInGoogleBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
 let removeSheetBtn, changeSheetBtn, changeSheetLinkBtn, retrySyncBtn;
 let sheetUrlInput, statusText, errorMessage, loadingMessage;
 let connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection;
@@ -36,6 +36,7 @@ function initializeElements() {
   // Buttons
   connectBankBtn = document.getElementById('connectBankBtn');
   connectSandboxBtn = document.getElementById('connectSandboxBtn');
+  signInGoogleBtn = document.getElementById('signInGoogleBtn');
   learnMoreBtn = document.getElementById('learnMoreBtn');
   saveSheetBtn = document.getElementById('saveSheetBtn');
   removeSheetBtn = document.getElementById('removeSheetBtn');
@@ -126,6 +127,7 @@ function initializeSandboxMode() {
 function attachEventListeners() {
   if (connectBankBtn) connectBankBtn.addEventListener('click', handleConnectBank);
   if (connectSandboxBtn) connectSandboxBtn.addEventListener('click', handleConnectSandbox);
+  if (signInGoogleBtn) signInGoogleBtn.addEventListener('click', handleGoogleSignIn);
   if (learnMoreBtn) learnMoreBtn.addEventListener('click', handleLearnMore);
   saveSheetBtn.addEventListener('click', handleSaveSheet);
   if (removeSheetBtn) removeSheetBtn.addEventListener('click', handleRemoveSheet);
@@ -193,7 +195,14 @@ function handleLearnMore() {
 // Load current state from storage
 async function loadState() {
   try {
-    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status']);
+    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status', 'googleAuthenticated']);
+
+    // Phase 3.8: Check if user is authenticated with Google first
+    if (!data.googleAuthenticated) {
+      // User not authenticated - show welcome with "Sign in with Google" button
+      showSection('welcome');
+      return;
+    }
 
     // Check if we should show the success modal
     if (data.sheetlink_connection_status && data.sheetlink_connection_status.justConnected) {
@@ -218,8 +227,8 @@ async function loadState() {
         return loadState();
       }
 
-      // No Items to restore - show welcome screen
-      showSection('welcome');
+      // No Items to restore - show connect bank screen
+      showSection('connect');
       return;
     }
 
@@ -260,14 +269,14 @@ async function loadState() {
 // Phase 3.8: Try to restore Items from backend using Google user ID
 async function tryRestoreItems() {
   try {
-    // Get Google user ID
-    const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
-    if (!userInfo || !userInfo.id) {
+    // Get Google user ID from storage (set during sign-in)
+    const { googleUserId } = await chrome.storage.sync.get(['googleUserId']);
+
+    if (!googleUserId) {
       console.log('No Google user ID available for restoration');
       return false;
     }
 
-    const googleUserId = userInfo.id;
     console.log('Checking for Items to restore...');
 
     // Call backend to get user's Items
@@ -362,13 +371,14 @@ async function updateCloudSyncIndicator() {
     const indicator = document.getElementById('cloudSyncIndicator');
     if (!indicator) return;
 
-    // Check if user has Google ID (if so, they're using cloud sync)
-    const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
-    if (userInfo && userInfo.id) {
+    // Check if user has Google ID stored (if so, they're using cloud sync)
+    const { googleAuthenticated } = await chrome.storage.sync.get(['googleAuthenticated']);
+
+    if (googleAuthenticated) {
       // Show cloud sync indicator
       indicator.style.display = 'block';
     } else {
-      // Hide if no Google ID
+      // Hide if not authenticated
       indicator.style.display = 'none';
     }
   } catch (error) {
@@ -377,6 +387,42 @@ async function updateCloudSyncIndicator() {
     if (indicator) {
       indicator.style.display = 'none';
     }
+  }
+}
+
+// Phase 3.8: Handle Google Sign-In
+async function handleGoogleSignIn() {
+  try {
+    showLoading('Signing in with Google...');
+
+    // Trigger Google OAuth flow via service worker
+    const response = await chrome.runtime.sendMessage({ type: 'GET_AUTH_TOKEN' });
+
+    if (response.error) {
+      throw new Error(response.error);
+    }
+
+    // Get user info after successful OAuth
+    const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
+
+    if (!userInfo || !userInfo.id) {
+      throw new Error('Could not get Google user information');
+    }
+
+    // Store Google user ID for backend
+    await chrome.storage.sync.set({
+      googleUserId: userInfo.id,
+      googleAuthenticated: true
+    });
+
+    hideLoading();
+
+    // Reload state to show next step (connect bank)
+    await loadState();
+
+  } catch (error) {
+    hideLoading();
+    showError('Failed to sign in with Google: ' + error.message);
   }
 }
 
