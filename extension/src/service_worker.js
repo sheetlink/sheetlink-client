@@ -66,8 +66,18 @@ async function handleExchangePublicToken(message, sendResponse) {
   try {
     const { publicToken, metadata } = message;
 
-    // Get user ID from storage
-    const userData = await chrome.storage.sync.get(['userId']);
+    // Phase 3.8: Get Google user ID for rate limiting and cross-device sync
+    // This is a non-sensitive opaque identifier from Google
+    let googleUserId = null;
+    try {
+      const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
+      if (userInfo && userInfo.id) {
+        googleUserId = userInfo.id;
+      }
+    } catch (error) {
+      console.warn('Could not get Google user ID:', error);
+      // Continue without it - backend will generate a fallback ID
+    }
 
     // Call backend to exchange token
     const response = await fetch(`${CONFIG.BACKEND_URL}/plaid/exchange`, {
@@ -75,13 +85,19 @@ async function handleExchangePublicToken(message, sendResponse) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         public_token: publicToken,
-        client_user_id: userData.userId,
+        client_user_id: googleUserId || `anonymous_${Date.now()}`,
         env: CONFIG.ENV
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+
+      // Phase 3.8: Handle rate limiting (HTTP 429)
+      if (response.status === 429) {
+        throw new Error(errorData.detail || 'Rate limit exceeded');
+      }
+
       throw new Error(`Exchange failed: ${errorData.detail || response.statusText}`);
     }
 
