@@ -175,16 +175,29 @@ async function handleGetAuthToken(sendResponse) {
 }
 
 // Handle OAuth callback from the callback page
-chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessageExternal.addListener(async (message, sender, sendResponse) => {
   if (message.type === 'OAUTH_SUCCESS') {
     const { accessToken, expiresIn } = message;
 
     // Cache the token with expiry
     const expiry = Date.now() + (parseInt(expiresIn) * 1000);
-    chrome.storage.local.set({
+    await chrome.storage.local.set({
       googleAccessToken: accessToken,
       googleTokenExpiry: expiry
     });
+
+    // Phase 3.8: Get Google user ID and store it
+    try {
+      const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
+      if (userInfo && userInfo.id) {
+        await chrome.storage.sync.set({
+          googleUserId: userInfo.id,
+          googleAuthenticated: true
+        });
+      }
+    } catch (error) {
+      console.error('Failed to get Google user ID:', error);
+    }
 
     // Call the pending callback if it exists
     if (pendingOAuthCallback) {
