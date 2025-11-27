@@ -63,7 +63,34 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 - Transaction details (written directly to your Sheet)
 - Your Google OAuth token (managed by Chrome and stored locally in extension)
 
-### 3. Google OAuth Flow
+### 3. Google User Identity
+
+**What we store:**
+- Your Google user ID (an opaque identifier like `112233445566778899`)
+- Used to associate bank connections with your Google account
+
+**Why we store it:**
+- Prevent abuse: Enforce free tier limits (3 banks per 30 days)
+- Cross-device sync: Restore bank connections after extension reinstall or across devices
+- Upgrade path: Enable future subscription management
+
+**Where it's stored:**
+- Backend database (PostgreSQL)
+- Associated with your Plaid Items
+- No personally identifiable information (just the ID)
+
+**What we DON'T store:**
+- Your Google email address
+- Your Google profile information
+- Your Google OAuth tokens or access credentials
+
+**Privacy guarantees:**
+- Google user ID is obtained via `chrome.identity.getProfileUserInfo()`
+- This is a non-sensitive, public identifier provided by Chrome
+- Cannot be used to access your Google account or data
+- Used ONLY for rate limiting and Item restoration
+
+### 4. Google OAuth Flow
 
 **How authentication works:**
 - Extension opens OAuth flow in a popup window
@@ -84,7 +111,7 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 - Callback page runs entirely client-side (no server processing)
 - No analytics or tracking on callback page
 
-### 4. Google Sheets Access
+### 5. Google Sheets Access
 
 **What we can access:**
 - Only the specific Google Sheet(s) you explicitly select
@@ -101,7 +128,7 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 - Backend never touches Google Sheets API
 - Rules categorization runs in your browser
 
-### 5. Extension Storage
+### 6. Extension Storage
 
 **What's stored locally:**
 - Sheet ID and URL (for the selected Google Sheet)
