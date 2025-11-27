@@ -83,7 +83,13 @@ async function initializePlaidLink(linkToken) {
           window.close();
         } catch (error) {
           loaderEl.style.display = 'none';
-          showError('Failed to exchange token: ' + error.message + '. Please close this tab and try again from the extension popup.');
+
+          // Phase 3.8: Show user-friendly rate limit message
+          if (error.message && error.message.includes('Rate limit') || error.message.includes('Maximum 2 bank')) {
+            showError('Free tier limit reached: You can only connect 2 banks. Disconnect an existing bank from the extension popup to connect a new one, or upgrade to Pro (coming soon) for unlimited banks.');
+          } else {
+            showError('Failed to exchange token: ' + error.message + '. Please close this tab and try again from the extension popup.');
+          }
         }
       },
       onLoad: () => {
