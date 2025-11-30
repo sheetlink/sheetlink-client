@@ -493,7 +493,7 @@ async function handleSaveSheet() {
   }
 
   try {
-    showLoading('Saving sheet...');
+    showLoading('Verifying sheet access...');
     hideSheetError();
 
     const sheetId = extractSheetId(url);
@@ -501,19 +501,43 @@ async function handleSaveSheet() {
       throw new Error('Invalid Google Sheets URL');
     }
 
-    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
-
+    // Phase 3.9.2: Verify access BEFORE saving to prevent 403 errors
     if (window.SheetsAPI) {
-      await window.SheetsAPI.verifySheetAccess(sheetId);
+      try {
+        await window.SheetsAPI.verifySheetAccess(sheetId);
+      } catch (verifyError) {
+        // Parse error to detect account mismatch (403) vs not found (404)
+        const errorMsg = verifyError.message || '';
+
+        if (errorMsg.includes('403')) {
+          // Account mismatch - sheet exists but user can't access it
+          const { googleEmail } = await chrome.storage.sync.get(['googleEmail']);
+          const accountInfo = googleEmail ? ` (signed in as ${googleEmail})` : '';
+          throw new Error(
+            `Access denied. This sheet is not owned by or shared with your Google account${accountInfo}. ` +
+            `Make sure the sheet is owned by ${googleEmail || 'your Google account'} or that you have edit access.`
+          );
+        } else if (errorMsg.includes('404')) {
+          // Sheet not found
+          throw new Error(
+            'Sheet not found. Double check the URL is correct and that the sheet still exists.'
+          );
+        } else {
+          // Other error
+          throw new Error(`Cannot access sheet: ${errorMsg}`);
+        }
+      }
     }
+
+    // Only save if verification succeeds
+    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
 
     hideLoading();
     updateStatus('Sheet saved successfully!', true);
     await loadState();
   } catch (error) {
-    await chrome.storage.sync.remove(['sheetId', 'sheetUrl']);
     hideLoading();
-    showSheetError('Sheets API error: ' + error.message);
+    showSheetError(error.message);
   }
 }
 
@@ -592,10 +616,26 @@ async function handleSyncNow() {
   } catch (error) {
     hideLoading();
 
-    if (error.message && (error.message.includes('404') || error.message.includes('Cannot access sheet') || error.message.includes('edit permissions'))) {
+    // Phase 3.9.2 & 3.9.6: Enhanced error detection for sheet access issues
+    const errorMsg = error.message || '';
+    const isSheetAccessError = errorMsg.includes('403') ||
+                                errorMsg.includes('404') ||
+                                errorMsg.includes('Cannot access sheet') ||
+                                errorMsg.includes('edit permissions');
+
+    if (isSheetAccessError) {
       showSyncError();
     } else {
-      showError('Sync failed: ' + error.message);
+      // Phase 3.9.6: Improved generic error messages
+      let userFriendlyMsg = errorMsg;
+
+      if (errorMsg.includes('429') || errorMsg.toLowerCase().includes('rate limit')) {
+        userFriendlyMsg = 'Rate limit exceeded. Please wait a moment and try again.';
+      } else if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
+        userFriendlyMsg = 'Network error. Check your internet connection and try again.';
+      }
+
+      showError('Sync failed: ' + userFriendlyMsg);
     }
   }
 }
@@ -992,11 +1032,25 @@ async function writeToSheets(sheetId, data) {
     throw new Error('Sheets API not loaded');
   }
 
-  // Verify sheet access first
+  // Phase 3.9.2: Verify sheet access first with enhanced error messages
   try {
     await window.SheetsAPI.verifySheetAccess(sheetId);
   } catch (error) {
-    throw new Error(`Cannot access sheet. Make sure you have edit permissions: ${error.message}`);
+    const errorMsg = error.message || '';
+
+    if (errorMsg.includes('403')) {
+      // Account mismatch
+      const { googleEmail } = await chrome.storage.sync.get(['googleEmail']);
+      const accountInfo = googleEmail ? ` Your SheetLink account is signed in as ${googleEmail}.` : '';
+      throw new Error(
+        `Cannot access sheet - permission denied.${accountInfo} ` +
+        `Make sure the sheet is owned by ${googleEmail || 'your Google account'} or that SheetLink has edit access.`
+      );
+    } else if (errorMsg.includes('404')) {
+      throw new Error('Sheet not found. The sheet may have been deleted or the URL is incorrect.');
+    } else {
+      throw new Error(`Cannot access sheet: ${errorMsg}`);
+    }
   }
 
   // Write accounts data
