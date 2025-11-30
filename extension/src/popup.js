@@ -1171,6 +1171,45 @@ function hideSyncError() {
   }
 }
 
+// Phase 3.9.5: Cloud Sync Indicator
+async function updateCloudSyncIndicator() {
+  try {
+    const { googleUserId, itemId } = await chrome.storage.sync.get(['googleUserId', 'itemId']);
+
+    const cloudIndicator = document.getElementById('cloudSyncIndicator');
+    if (!cloudIndicator) return;
+
+    // Show cloud sync indicator if user is authenticated and has connected a bank
+    if (googleUserId && itemId) {
+      cloudIndicator.style.display = 'block';
+    } else {
+      cloudIndicator.style.display = 'none';
+    }
+  } catch (error) {
+    // Silently fail - non-critical feature
+    console.log('[Cloud Sync Indicator] Error:', error);
+  }
+}
+
+// Placeholder functions for updateAutoSyncStatus and updateTierDisplay
+async function updateAutoSyncStatus() {
+  // Placeholder - feature not yet implemented
+}
+
+async function updateTierDisplay() {
+  // Placeholder - feature not yet implemented
+}
+
+async function loadRecentSyncs() {
+  // Placeholder - feature not yet implemented
+}
+
+async function tryRestoreItems() {
+  // Phase 3.8: Try to restore items from backend using Google user ID
+  // Placeholder - feature may be enhanced later
+  return false;
+}
+
 // ===== Success Modal Functions =====
 
 function showSuccessModal() {
