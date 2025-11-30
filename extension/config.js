@@ -9,8 +9,8 @@ export const CONFIG = {
   // Change this manually for production builds or use build scripts
   ENV: "production",
 
-  // Backend URL (production backend deployed on Railway)
-  BACKEND_URL: "https://sheetlink-production.up.railway.app",
+  // Backend URL (production backend)
+  BACKEND_URL: "https://api.sheetlink.app",
 
   // Google OAuth (Web Application client for dynamic extension IDs)
   GOOGLE_CLIENT_ID: "967710910027-qq2tuel7vsi2i06h4h096hbvok8kfmhk.apps.googleusercontent.com",

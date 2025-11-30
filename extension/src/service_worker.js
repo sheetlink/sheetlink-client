@@ -176,7 +176,10 @@ async function handleGetAuthToken(sendResponse) {
 
 // Handle OAuth callback from the callback page
 chrome.runtime.onMessageExternal.addListener(async (message, sender, sendResponse) => {
+  console.log('[Service Worker] Received message from external:', message.type);
+
   if (message.type === 'OAUTH_SUCCESS') {
+    console.log('[Service Worker] Processing OAUTH_SUCCESS callback');
     const { accessToken, expiresIn } = message;
 
     // Cache the token with expiry
@@ -186,17 +189,34 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
       googleTokenExpiry: expiry
     });
 
-    // Phase 3.8: Get Google user ID and store it
+    // Phase 3.8: Get Google user ID from Google's API using the access token
     try {
-      const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
+      const response = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user info from Google');
+      }
+
+      const userInfo = await response.json();
+
       if (userInfo && userInfo.id) {
+        console.log('[Service Worker] Successfully fetched Google user ID:', userInfo.id);
+
         await chrome.storage.sync.set({
           googleUserId: userInfo.id,
           googleAuthenticated: true
         });
+
+        console.log('[Service Worker] Stored googleUserId and googleAuthenticated flag');
+      } else {
+        console.error('[Service Worker] No user ID in Google userinfo response:', userInfo);
       }
     } catch (error) {
-      console.error('Failed to get Google user ID:', error);
+      console.error('[Service Worker] Failed to get Google user ID:', error);
     }
 
     // Call the pending callback if it exists

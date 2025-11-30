@@ -195,14 +195,20 @@ function handleLearnMore() {
 // Load current state from storage
 async function loadState() {
   try {
-    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status', 'googleAuthenticated']);
+    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status', 'googleAuthenticated', 'googleUserId']);
+
+    console.log('[Popup] loadState - googleAuthenticated:', data.googleAuthenticated);
+    console.log('[Popup] loadState - googleUserId:', data.googleUserId);
 
     // Phase 3.8: Check if user is authenticated with Google first
     if (!data.googleAuthenticated) {
+      console.log('[Popup] User not authenticated - showing welcome screen');
       // User not authenticated - show welcome with "Sign in with Google" button
       showSection('welcome');
       return;
     }
+
+    console.log('[Popup] User is authenticated - continuing with flow');
 
     // Check if we should show the success modal
     if (data.sheetlink_connection_status && data.sheetlink_connection_status.justConnected) {
