@@ -195,10 +195,18 @@ function handleLearnMore() {
 // Load current state from storage
 async function loadState() {
   try {
-    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status', 'googleAuthenticated', 'googleUserId']);
+    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status', 'googleAuthenticated', 'googleUserId', 'googleEmail']);
 
     console.log('[Popup] loadState - googleAuthenticated:', data.googleAuthenticated);
     console.log('[Popup] loadState - googleUserId:', data.googleUserId);
+
+    // Phase 3.9: Update email displays throughout the UI
+    if (data.googleEmail) {
+      const emailElements = document.querySelectorAll('#connectedUserEmail, #sheetUserEmail');
+      emailElements.forEach(el => {
+        if (el) el.textContent = data.googleEmail;
+      });
+    }
 
     // Phase 3.8: Check if user is authenticated with Google first
     if (!data.googleAuthenticated) {
