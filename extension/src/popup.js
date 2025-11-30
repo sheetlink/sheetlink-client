@@ -276,7 +276,8 @@ async function loadState() {
       }
     }
   } catch (error) {
-    showError('Failed to load state');
+    console.error('[Popup] Failed to load state:', error);
+    showError('Failed to load state: ' + error.message);
   }
 }
 
@@ -1202,12 +1203,6 @@ async function updateTierDisplay() {
 
 async function loadRecentSyncs() {
   // Placeholder - feature not yet implemented
-}
-
-async function tryRestoreItems() {
-  // Phase 3.8: Try to restore items from backend using Google user ID
-  // Placeholder - feature may be enhanced later
-  return false;
 }
 
 // ===== Success Modal Functions =====
