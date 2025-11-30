@@ -208,10 +208,11 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
 
         await chrome.storage.sync.set({
           googleUserId: userInfo.id,
+          googleEmail: userInfo.email || null,
           googleAuthenticated: true
         });
 
-        console.log('[Service Worker] Stored googleUserId and googleAuthenticated flag');
+        console.log('[Service Worker] Stored googleUserId, googleEmail, and googleAuthenticated flag');
       } else {
         console.error('[Service Worker] No user ID in Google userinfo response:', userInfo);
       }

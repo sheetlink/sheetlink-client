@@ -17,6 +17,10 @@
     <main id="mainContent">
       <!-- Welcome Screen (First Time) -->
       <div id="welcomeSection" class="section hidden">
+        <div class="step-progress">
+          <div class="step-label">Step 1 of 3 — Sign In with Google</div>
+        </div>
+
         <h2 id="welcomeTitle">Welcome to SheetLink</h2>
         <p class="welcome-subtitle" id="welcomeSubtitle">Sandbox Preview</p>
         <p class="welcome-description" id="welcomeDescription">
@@ -46,13 +50,40 @@
 
       <!-- Connect Bank Section -->
       <div id="connectSection" class="section hidden">
+        <div class="step-progress">
+          <div class="step-label">Step 2 of 3 — Connect Your Bank</div>
+        </div>
+
+        <div class="signed-in-badge">
+          <span class="badge-icon">✓</span>
+          <span class="badge-text">Signed in as: <span id="connectedUserEmail">user@gmail.com</span></span>
+        </div>
+
+        <p style="font-size: 14px; color: #374151; margin: 16px 0; line-height: 1.6;">
+          SheetLink uses Plaid to securely connect to 12,000+ banks. Your credentials are encrypted and never stored by SheetLink.
+        </p>
+
         <button id="connectBankBtn" class="btn btn-primary">
           Connect Bank via Plaid
         </button>
+
+        <div class="security-badge" style="margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #6b7280;">
+          <span>🔒</span>
+          <span>Bank-level encryption</span>
+        </div>
       </div>
 
       <!-- Sheet Selection Section -->
       <div id="sheetSection" class="section hidden">
+        <div class="step-progress">
+          <div class="step-label">Step 3 of 3 — Link Your Google Sheet</div>
+        </div>
+
+        <div class="signed-in-badge" style="margin-bottom: 12px;">
+          <span class="badge-icon">✓</span>
+          <span class="badge-text">Use a sheet owned by <span id="sheetUserEmail">user@gmail.com</span></span>
+        </div>
+
         <h3 style="margin-bottom: 8px; font-size: 16px;">Update your Google Sheet</h3>
         <p style="font-size: 13px; color: #666; margin-bottom: 12px;">
           Paste the URL of the Google Sheet where you want SheetLink to send your data.
