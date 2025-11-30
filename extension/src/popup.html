@@ -89,14 +89,10 @@
           Paste the URL of the Google Sheet where you want SheetLink to send your data.
         </p>
 
-        <!-- Inline error banner for sheet save failures -->
-        <div id="sheetErrorBanner" class="error-banner hidden" style="margin-bottom: 12px; padding: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
-          <div style="font-weight: 600; color: #991b1b; margin-bottom: 4px;">We could not access that Google Sheet</div>
-          <div style="font-size: 13px; color: #7f1d1d; margin-bottom: 8px;">
-            Double check that the link is correct and that you have edit access to the sheet.
-            If you pasted a shared link, try copying the full URL from your browser's address bar instead.
-          </div>
-          <div id="sheetErrorDetail" style="font-size: 11px; color: #991b1b; font-family: monospace;"></div>
+        <!-- Inline error banner for sheet save failures (Phase 3.9.2: Enhanced error messaging) -->
+        <div id="sheetErrorBanner" class="error-banner hidden" style="margin-bottom: 12px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
+          <div style="font-weight: 600; color: #991b1b; margin-bottom: 6px; font-size: 14px;">Cannot Access Google Sheet</div>
+          <div id="sheetErrorDetail" style="font-size: 13px; color: #7f1d1d; line-height: 1.5;"></div>
         </div>
 
         <label for="sheetUrl">Google Sheet URL</label>
