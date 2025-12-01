@@ -219,8 +219,11 @@ async function loadState() {
     console.log('[Popup] User is authenticated - continuing with flow');
 
     // Check if we should show the success modal
-    if (data.sheetlink_connection_status && data.sheetlink_connection_status.justConnected) {
-      // Show success modal
+    // Only show for first-time connections, not for updates
+    if (data.sheetlink_connection_status &&
+        data.sheetlink_connection_status.justConnected &&
+        !data.sheetlink_connection_status.isUpdate) {
+      // Show success modal for first-time connection
       showSuccessModal();
 
       // Reset the justConnected flag
@@ -228,6 +231,15 @@ async function loadState() {
         sheetlink_connection_status: {
           ...data.sheetlink_connection_status,
           justConnected: false
+        }
+      });
+    } else if (data.sheetlink_connection_status && data.sheetlink_connection_status.justConnected) {
+      // For updates, just reset the flag without showing modal
+      await chrome.storage.sync.set({
+        sheetlink_connection_status: {
+          ...data.sheetlink_connection_status,
+          justConnected: false,
+          isUpdate: false
         }
       });
     }
@@ -281,7 +293,7 @@ async function loadState() {
       const updateBtn = document.getElementById('updateConnectionBtn');
       if (updateBtn) {
         updateBtn.classList.remove('hidden');
-        updateBtn.addEventListener('click', handleConnectBank);
+        updateBtn.addEventListener('click', () => handleConnectBank(true));
       }
 
       return;
@@ -567,8 +579,15 @@ async function handleConnectSandbox() {
 }
 
 // Handle Connect Bank button
-async function handleConnectBank() {
+async function handleConnectBank(isUpdate = false) {
   try {
+    // Mark if this is an update connection (not first-time)
+    if (isUpdate) {
+      await chrome.storage.sync.set({
+        isUpdatingConnection: true
+      });
+    }
+
     showLoading('Connecting to Plaid...');
 
     const linkData = await getLinkToken();
@@ -1286,6 +1305,16 @@ function hideSyncError() {
 function showSuccessModal() {
   const modal = document.getElementById('connectionSuccessModal');
   if (modal) {
+    // Set the modal description text based on environment
+    const descriptionEl = document.getElementById('connectionSuccessDescription');
+    if (descriptionEl) {
+      if (CONFIG.isSandbox) {
+        descriptionEl.textContent = 'Your Plaid sandbox account is now linked. You\'re ready to sync transactions to Google Sheets.';
+      } else {
+        descriptionEl.textContent = 'Your bank account is now linked. You\'re ready to sync transactions to Google Sheets.';
+      }
+    }
+
     // Reset to page 1
     const page1 = document.getElementById('modalPage1');
     const page2 = document.getElementById('modalPage2');
