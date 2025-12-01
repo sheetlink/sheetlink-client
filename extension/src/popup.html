@@ -22,12 +22,7 @@
         </div>
 
         <h2 id="welcomeTitle">Welcome to SheetLink</h2>
-        <p class="welcome-subtitle" id="welcomeSubtitle">Sandbox Preview</p>
         <p class="welcome-description" id="welcomeDescription">
-          This demo uses Plaid's sandbox environment.
-          You'll connect to sample institutions and see mock data, not your real bank.
-        </p>
-        <p style="font-size: 13px; color: #666; margin-top: 12px; line-height: 1.5;">
           Sign in with Google to connect your banks to Google Sheets.
         </p>
         <div class="welcome-actions">
@@ -79,14 +74,12 @@
           <div class="step-label">Step 3 of 3 — Link Your Google Sheet</div>
         </div>
 
-        <div class="signed-in-badge" style="margin-bottom: 12px;">
-          <span class="badge-icon">✓</span>
-          <span class="badge-text">Use a sheet owned by <span id="sheetUserEmail">user@gmail.com</span></span>
-        </div>
-
         <h3 style="margin-bottom: 8px; font-size: 16px;">Update your Google Sheet</h3>
-        <p style="font-size: 13px; color: #666; margin-bottom: 12px;">
+        <p style="font-size: 13px; color: #666; margin-bottom: 4px;">
           Paste the URL of the Google Sheet where you want SheetLink to send your data.
+        </p>
+        <p style="font-size: 12px; color: #9ca3af; margin-bottom: 12px;">
+          Use a sheet owned by <span id="sheetUserEmail" style="color: #6b7280; font-weight: 500;">user@gmail.com</span>
         </p>
 
         <!-- Inline error banner for sheet save failures (Phase 3.9.2: Enhanced error messaging) -->
@@ -143,10 +136,8 @@
             <span id="subscriptionTier" style="font-size: 12px; font-weight: 600; color: #1a73e8;">Free (7 days)</span>
           </p>
           <!-- Phase 3.9.5: Cloud sync indicator -->
-          <p id="cloudSyncIndicator" style="margin-top: 8px; padding: 8px; background: #f0fdf4; border-radius: 4px; font-size: 12px; color: #059669; display: none; border: 1px solid #d1fae5;">
-            <span style="font-weight: 500;">☁️ Cloud Sync Active</span>
-            <br>
-            <span style="font-size: 11px; opacity: 0.8; line-height: 1.5;">Your bank connection is securely stored and synced across devices</span>
+          <p id="cloudSyncIndicator" style="margin-top: 8px; font-size: 11px; color: #6b7280; display: none;">
+            <span style="opacity: 0.8;">☁️ Cloud sync enabled</span>
           </p>
         </div>
         <button id="syncNowBtn" class="btn btn-primary">
