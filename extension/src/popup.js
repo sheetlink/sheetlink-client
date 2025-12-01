@@ -380,28 +380,23 @@ async function updateTierDisplay() {
   }
 }
 
-// Phase 3.8: Update cloud sync indicator
+// Phase 3.9.5: Update cloud sync indicator (enhanced from 3.8)
 async function updateCloudSyncIndicator() {
   try {
-    const indicator = document.getElementById('cloudSyncIndicator');
-    if (!indicator) return;
+    const { googleUserId, itemId } = await chrome.storage.sync.get(['googleUserId', 'itemId']);
 
-    // Check if user has Google ID stored (if so, they're using cloud sync)
-    const { googleAuthenticated } = await chrome.storage.sync.get(['googleAuthenticated']);
+    const cloudIndicator = document.getElementById('cloudSyncIndicator');
+    if (!cloudIndicator) return;
 
-    if (googleAuthenticated) {
-      // Show cloud sync indicator
-      indicator.style.display = 'block';
+    // Show cloud sync indicator if user is authenticated and has connected a bank
+    if (googleUserId && itemId) {
+      cloudIndicator.style.display = 'block';
     } else {
-      // Hide if not authenticated
-      indicator.style.display = 'none';
+      cloudIndicator.style.display = 'none';
     }
   } catch (error) {
-    // Silently fail - hide indicator
-    const indicator = document.getElementById('cloudSyncIndicator');
-    if (indicator) {
-      indicator.style.display = 'none';
-    }
+    // Silently fail - non-critical feature
+    console.log('[Cloud Sync Indicator] Error:', error);
   }
 }
 
@@ -1170,39 +1165,6 @@ function hideSyncError() {
   if (syncErrorBanner) {
     syncErrorBanner.classList.add('hidden');
   }
-}
-
-// Phase 3.9.5: Cloud Sync Indicator
-async function updateCloudSyncIndicator() {
-  try {
-    const { googleUserId, itemId } = await chrome.storage.sync.get(['googleUserId', 'itemId']);
-
-    const cloudIndicator = document.getElementById('cloudSyncIndicator');
-    if (!cloudIndicator) return;
-
-    // Show cloud sync indicator if user is authenticated and has connected a bank
-    if (googleUserId && itemId) {
-      cloudIndicator.style.display = 'block';
-    } else {
-      cloudIndicator.style.display = 'none';
-    }
-  } catch (error) {
-    // Silently fail - non-critical feature
-    console.log('[Cloud Sync Indicator] Error:', error);
-  }
-}
-
-// Placeholder functions for updateAutoSyncStatus and updateTierDisplay
-async function updateAutoSyncStatus() {
-  // Placeholder - feature not yet implemented
-}
-
-async function updateTierDisplay() {
-  // Placeholder - feature not yet implemented
-}
-
-async function loadRecentSyncs() {
-  // Placeholder - feature not yet implemented
 }
 
 // ===== Success Modal Functions =====
