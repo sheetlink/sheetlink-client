@@ -203,7 +203,7 @@ async function loadState() {
 
     // Phase 3.9: Update email displays throughout the UI
     if (data.googleEmail) {
-      const emailElements = document.querySelectorAll('#connectedUserEmail, #sheetUserEmail');
+      const emailElements = document.querySelectorAll('#connectedUserEmail, #sheetUserEmail, #syncGoogleEmail');
       emailElements.forEach(el => {
         if (el) el.textContent = data.googleEmail;
       });
@@ -312,7 +312,7 @@ async function loadState() {
 }
 
 // Helper function to proceed to sheet setup after step 2
-function proceedToSheetSetup(data) {
+async function proceedToSheetSetup(data) {
     if (data.sheetId) {
       showSection('sync');
       document.getElementById('currentSheet').textContent =
@@ -326,10 +326,14 @@ function proceedToSheetSetup(data) {
         document.getElementById('lastSync').textContent = new Date(data.lastSync).toLocaleString();
       }
 
+      // Fetch and display bank name in status
+      if (data.itemId) {
+        await updateBankStatus(data.itemId);
+      }
+
       updateAutoSyncStatus();
       loadRecentSyncs();
       updateTierDisplay();  // Phase 3: Update tier info
-      updateCloudSyncIndicator();  // Phase 3.8: Show cloud sync status
     } else {
       showSection('sheet');
       document.getElementById('currentSheet').textContent = 'Not connected yet';
@@ -408,6 +412,29 @@ function showGenericBankStatus() {
       </div>
     `;
     statusEl.classList.remove('hidden');
+  }
+}
+
+// Update bank status on sync page
+async function updateBankStatus(itemId) {
+  try {
+    // Fetch item info to get institution name
+    const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
+
+    if (!response.ok) {
+      console.error('Failed to fetch item info for status:', response.status);
+      updateStatus('Connected', true);
+      return;
+    }
+
+    const itemInfo = await response.json();
+    const bankName = itemInfo.institution_name || 'Bank';
+
+    // Update status with bank name
+    updateStatus(`✓ ${bankName} connected`, true);
+  } catch (error) {
+    console.error('Error updating bank status:', error);
+    updateStatus('Connected', true);
   }
 }
 
