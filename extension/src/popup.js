@@ -418,23 +418,72 @@ function showGenericBankStatus() {
 // Update bank status on sync page
 async function updateBankStatus(itemId) {
   try {
-    // Fetch item info to get institution name
+    // Fetch item info to get institution name and accounts
     const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
 
     if (!response.ok) {
       console.error('Failed to fetch item info for status:', response.status);
-      updateStatus('Connected', true);
+      updateStatus('Plaid connected', true);
       return;
     }
 
     const itemInfo = await response.json();
-    const bankName = itemInfo.institution_name || 'Bank';
 
-    // Update status with bank name (no checkmark - already in status icon)
-    updateStatus(`${bankName} connected`, true);
+    // Update status to show "Plaid connected"
+    updateStatus('Plaid connected', true);
+
+    // Populate the collapsible details section
+    const detailsEl = document.getElementById('bankConnectionDetails');
+    const contentEl = document.getElementById('bankConnectionDetailsContent');
+
+    if (detailsEl && contentEl && itemInfo) {
+      // Build institution and accounts HTML
+      let accountsHTML = '';
+      if (itemInfo.accounts && itemInfo.accounts.length > 0) {
+        accountsHTML = '<div style="margin-bottom: 12px;">';
+        itemInfo.accounts.forEach(account => {
+          const accountName = account.official_name || account.name;
+          const mask = account.mask ? ` (****${account.mask})` : '';
+          accountsHTML += `<div style="margin-top: 6px; color: #374151;">• ${accountName}${mask}</div>`;
+        });
+        accountsHTML += '</div>';
+      }
+
+      contentEl.innerHTML = `
+        <div style="font-weight: 600; color: #166534; margin-bottom: 8px;">
+          ✓ ${itemInfo.institution_name}
+        </div>
+        ${accountsHTML}
+        <button id="updateConnectionFromDetails" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px;">
+          Update Connection
+        </button>
+      `;
+
+      // Show the details section
+      detailsEl.style.display = 'block';
+
+      // Add event listener for Update Connection button
+      const updateBtn = document.getElementById('updateConnectionFromDetails');
+      if (updateBtn) {
+        updateBtn.addEventListener('click', () => handleConnectBank(true));
+      }
+
+      // Add arrow rotation on toggle
+      const detailsElement = document.getElementById('bankConnectionDetails');
+      const arrow = document.getElementById('dropdownArrow');
+      if (detailsElement && arrow) {
+        detailsElement.addEventListener('toggle', () => {
+          if (detailsElement.open) {
+            arrow.style.transform = 'rotate(90deg)';
+          } else {
+            arrow.style.transform = 'rotate(0deg)';
+          }
+        });
+      }
+    }
   } catch (error) {
     console.error('Error updating bank status:', error);
-    updateStatus('Connected', true);
+    updateStatus('Plaid connected', true);
   }
 }
 
