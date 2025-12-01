@@ -54,12 +54,25 @@
           <span class="badge-text">Signed in as: <span id="connectedUserEmail">user@gmail.com</span></span>
         </div>
 
+        <!-- Connection Status (shown when bank already connected) -->
+        <div id="bankConnectionStatus" class="hidden" style="margin: 16px 0; padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #166534; font-weight: 500;">
+            <span>✓</span>
+            <span>Bank Connected</span>
+          </div>
+        </div>
+
         <p style="font-size: 14px; color: #374151; margin: 16px 0; line-height: 1.6;">
           SheetLink uses Plaid to securely connect to 12,000+ banks. Your credentials are encrypted and never stored by SheetLink.
         </p>
 
         <button id="connectBankBtn" class="btn btn-primary">
           Connect Bank via Plaid
+        </button>
+
+        <!-- Update Connection Button (shown when bank already connected) -->
+        <button id="updateConnectionBtn" class="btn btn-secondary hidden" style="margin-top: 8px;">
+          Update Connection
         </button>
 
         <div class="security-badge" style="margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #6b7280;">

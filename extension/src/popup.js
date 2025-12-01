@@ -258,9 +258,16 @@ async function loadState() {
       // Mark that we've shown step 2
       await chrome.storage.sync.set({ hasSeenConnectStep: true });
 
-      // Show connect screen with confirmation
+      // Show connect screen with connection status
       showSection('connect');
-      // Update connect button to "Next" to proceed manually
+
+      // Show "Bank Connected" status
+      const statusEl = document.getElementById('bankConnectionStatus');
+      if (statusEl) {
+        statusEl.classList.remove('hidden');
+      }
+
+      // Update primary button to "Next"
       const connectBtn = document.getElementById('connectBankBtn');
       if (connectBtn) {
         connectBtn.textContent = 'Next';
@@ -272,6 +279,14 @@ async function loadState() {
           proceedToSheetSetup(data);
         });
       }
+
+      // Show and wire up "Update Connection" button
+      const updateBtn = document.getElementById('updateConnectionBtn');
+      if (updateBtn) {
+        updateBtn.classList.remove('hidden');
+        updateBtn.addEventListener('click', handleConnectBank);
+      }
+
       return;
     }
 
