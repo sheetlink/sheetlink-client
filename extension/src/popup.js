@@ -261,11 +261,8 @@ async function loadState() {
       // Show connect screen with connection status
       showSection('connect');
 
-      // Show "Bank Connected" status
-      const statusEl = document.getElementById('bankConnectionStatus');
-      if (statusEl) {
-        statusEl.classList.remove('hidden');
-      }
+      // Fetch and display item info (institution name and accounts)
+      await displayItemInfo(data.itemId);
 
       // Update primary button to "Next"
       const connectBtn = document.getElementById('connectBankBtn');
@@ -324,6 +321,78 @@ function proceedToSheetSetup(data) {
         changeSheetBtn.classList.add('hidden');
       }
     }
+}
+
+// Phase 3.9: Fetch and display item info (institution and accounts)
+async function displayItemInfo(itemId) {
+  try {
+    if (!itemId) {
+      console.error('No item ID provided');
+      // Fall back to generic display
+      showGenericBankStatus();
+      return;
+    }
+
+    console.log(`Fetching item info for: ${itemId}`);
+
+    // Call backend to get item info
+    const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
+
+    if (!response.ok) {
+      console.error('Failed to fetch item info:', response.status);
+      // Fall back to generic display
+      showGenericBankStatus();
+      return;
+    }
+
+    const itemInfo = await response.json();
+    console.log('Item info received:', itemInfo);
+
+    // Update the bank connection status display with specific details
+    const statusEl = document.getElementById('bankConnectionStatus');
+    if (statusEl) {
+      // Build account list HTML
+      let accountsHTML = '';
+      if (itemInfo.accounts && itemInfo.accounts.length > 0) {
+        accountsHTML = '<div style="margin-top: 8px; font-size: 13px; color: #374151;">';
+        itemInfo.accounts.forEach(account => {
+          const accountName = account.official_name || account.name;
+          const mask = account.mask ? ` (****${account.mask})` : '';
+          accountsHTML += `<div style="margin-top: 4px;">• ${accountName}${mask}</div>`;
+        });
+        accountsHTML += '</div>';
+      }
+
+      // Update status element with institution name and accounts
+      statusEl.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #166534; font-weight: 500;">
+          <span>✓</span>
+          <span>${itemInfo.institution_name}</span>
+        </div>
+        ${accountsHTML}
+      `;
+      statusEl.classList.remove('hidden');
+    }
+
+  } catch (error) {
+    console.error('Error displaying item info:', error);
+    // Fall back to generic display
+    showGenericBankStatus();
+  }
+}
+
+// Helper function to show generic bank status (fallback)
+function showGenericBankStatus() {
+  const statusEl = document.getElementById('bankConnectionStatus');
+  if (statusEl) {
+    statusEl.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #166534; font-weight: 500;">
+        <span>✓</span>
+        <span>Bank Connected</span>
+      </div>
+    `;
+    statusEl.classList.remove('hidden');
+  }
 }
 
 // Phase 3.8: Try to restore Items from backend using Google user ID
