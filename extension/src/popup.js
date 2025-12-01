@@ -430,8 +430,8 @@ async function updateBankStatus(itemId) {
     const itemInfo = await response.json();
     const bankName = itemInfo.institution_name || 'Bank';
 
-    // Update status with bank name
-    updateStatus(`✓ ${bankName} connected`, true);
+    // Update status with bank name (no checkmark - already in status icon)
+    updateStatus(`${bankName} connected`, true);
   } catch (error) {
     console.error('Error updating bank status:', error);
     updateStatus('Connected', true);
