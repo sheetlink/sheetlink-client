@@ -195,10 +195,11 @@ function handleLearnMore() {
 // Load current state from storage
 async function loadState() {
   try {
-    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status', 'googleAuthenticated', 'googleUserId', 'googleEmail']);
+    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status', 'googleAuthenticated', 'googleUserId', 'googleEmail', 'hasProgressedToSheetSetup']);
 
     console.log('[Popup] loadState - googleAuthenticated:', data.googleAuthenticated);
     console.log('[Popup] loadState - googleUserId:', data.googleUserId);
+    console.log('[Popup] loadState - hasProgressedToSheetSetup:', data.hasProgressedToSheetSetup);
 
     // Phase 3.9: Update email displays throughout the UI
     if (data.googleEmail) {
@@ -264,8 +265,9 @@ async function loadState() {
     disconnectBtn.classList.remove('hidden');
 
     // Phase 3.9 UX: Show step 2 for returning users if they just authenticated
+    // BUT skip step 2 if user has already progressed to sheet setup
     // Check if user just signed in (first load after Google auth)
-    const shouldShowStep2 = !data.hasSeenConnectStep && data.googleAuthenticated;
+    const shouldShowStep2 = !data.hasSeenConnectStep && data.googleAuthenticated && !data.hasProgressedToSheetSetup;
     if (shouldShowStep2) {
       // Mark that we've shown step 2
       await chrome.storage.sync.set({ hasSeenConnectStep: true });
@@ -284,7 +286,9 @@ async function loadState() {
         // Remove old event listener and add new one for proceeding
         const newBtn = connectBtn.cloneNode(true);
         connectBtn.parentNode.replaceChild(newBtn, connectBtn);
-        newBtn.addEventListener('click', () => {
+        newBtn.addEventListener('click', async () => {
+          // Mark that user has progressed to sheet setup
+          await chrome.storage.sync.set({ hasProgressedToSheetSetup: true });
           proceedToSheetSetup(data);
         });
       }
