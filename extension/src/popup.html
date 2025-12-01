@@ -134,6 +134,12 @@
         </div>
 
         <div class="sync-info">
+          <!-- Google Account Badge -->
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 12px; padding: 8px; background: #f9fafb; border-radius: 6px; font-size: 12px; color: #374151;">
+            <span>👤</span>
+            <span id="syncGoogleEmail" style="font-weight: 500;">user@gmail.com</span>
+          </div>
+
           <div class="sheet-row">
             <div class="sheet-main">
               <span class="sheet-label">Sheet:</span>
@@ -147,10 +153,6 @@
           <p style="margin-top: 4px;">
             <span style="font-size: 12px; color: #666;">Plan:</span>
             <span id="subscriptionTier" style="font-size: 12px; font-weight: 600; color: #1a73e8;">Free (7 days)</span>
-          </p>
-          <!-- Phase 3.9.5: Cloud sync indicator -->
-          <p id="cloudSyncIndicator" style="margin-top: 8px; font-size: 11px; color: #6b7280; display: none;">
-            <span style="opacity: 0.8;">☁️ Cloud sync enabled</span>
           </p>
         </div>
         <button id="syncNowBtn" class="btn btn-primary">
