@@ -1356,6 +1356,16 @@ async function showSheetSuccessModal() {
   if (sheetSuccessModal) {
     const { sheetUrl } = await chrome.storage.sync.get(['sheetUrl']);
 
+    // Set modal description text based on environment
+    const descriptionEl = document.getElementById('sheetSuccessDescription');
+    if (descriptionEl) {
+      if (CONFIG.isSandbox) {
+        descriptionEl.textContent = 'Your Google Sheet is now live with sandbox transactions including balances, categories, and sample activity powered by SheetLink.';
+      } else {
+        descriptionEl.textContent = 'Your Google Sheet is now live with your transaction data including balances, categories, and account activity powered by SheetLink.';
+      }
+    }
+
     if (syncSuccessOpenSheetBtn) {
       if (!sheetUrl) {
         syncSuccessOpenSheetBtn.disabled = true;
