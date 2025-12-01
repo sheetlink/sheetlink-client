@@ -251,6 +251,39 @@ async function loadState() {
     updateStatus(CONFIG.isSandbox ? CONFIG.currentCopy.connectedInstitution(CONFIG.DEMO_INSTITUTION_NAME) : 'Connected', true);
     disconnectBtn.classList.remove('hidden');
 
+    // Phase 3.9 UX: Show step 2 briefly for returning users if they just authenticated
+    // Check if user just signed in (first load after Google auth)
+    const shouldShowStep2 = !data.hasSeenConnectStep && data.googleAuthenticated;
+    if (shouldShowStep2) {
+      // Mark that we've shown step 2
+      await chrome.storage.sync.set({ hasSeenConnectStep: true });
+
+      // Show connect screen briefly with confirmation
+      showSection('connect');
+      // Update connect button to show "Bank Connected"
+      const connectBtn = document.getElementById('connectBankBtn');
+      if (connectBtn) {
+        connectBtn.textContent = '✓ Bank Already Connected';
+        connectBtn.disabled = true;
+      }
+
+      // Auto-advance to step 3 after 1.5 seconds
+      setTimeout(() => {
+        proceedToSheetSetup(data);
+      }, 1500);
+      return;
+    }
+
+    // Normal flow - proceed to sheet setup
+    proceedToSheetSetup(data);
+  } catch (error) {
+    console.error('[Popup] Failed to load state:', error);
+    showError('Failed to load state: ' + error.message);
+  }
+}
+
+// Helper function to proceed to sheet setup after step 2
+function proceedToSheetSetup(data) {
     if (data.sheetId) {
       showSection('sync');
       document.getElementById('currentSheet').textContent =
@@ -264,10 +297,10 @@ async function loadState() {
         document.getElementById('lastSync').textContent = new Date(data.lastSync).toLocaleString();
       }
 
-      await updateAutoSyncStatus();
-      await loadRecentSyncs();
-      await updateTierDisplay();  // Phase 3: Update tier info
-      await updateCloudSyncIndicator();  // Phase 3.8: Show cloud sync status
+      updateAutoSyncStatus();
+      loadRecentSyncs();
+      updateTierDisplay();  // Phase 3: Update tier info
+      updateCloudSyncIndicator();  // Phase 3.8: Show cloud sync status
     } else {
       showSection('sheet');
       document.getElementById('currentSheet').textContent = 'Not connected yet';
@@ -275,10 +308,6 @@ async function loadState() {
         changeSheetBtn.classList.add('hidden');
       }
     }
-  } catch (error) {
-    console.error('[Popup] Failed to load state:', error);
-    showError('Failed to load state: ' + error.message);
-  }
 }
 
 // Phase 3.8: Try to restore Items from backend using Google user ID
