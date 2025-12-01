@@ -251,26 +251,27 @@ async function loadState() {
     updateStatus(CONFIG.isSandbox ? CONFIG.currentCopy.connectedInstitution(CONFIG.DEMO_INSTITUTION_NAME) : 'Connected', true);
     disconnectBtn.classList.remove('hidden');
 
-    // Phase 3.9 UX: Show step 2 briefly for returning users if they just authenticated
+    // Phase 3.9 UX: Show step 2 for returning users if they just authenticated
     // Check if user just signed in (first load after Google auth)
     const shouldShowStep2 = !data.hasSeenConnectStep && data.googleAuthenticated;
     if (shouldShowStep2) {
       // Mark that we've shown step 2
       await chrome.storage.sync.set({ hasSeenConnectStep: true });
 
-      // Show connect screen briefly with confirmation
+      // Show connect screen with confirmation
       showSection('connect');
-      // Update connect button to show "Bank Connected"
+      // Update connect button to "Next" to proceed manually
       const connectBtn = document.getElementById('connectBankBtn');
       if (connectBtn) {
-        connectBtn.textContent = '✓ Bank Already Connected';
-        connectBtn.disabled = true;
+        connectBtn.textContent = 'Next';
+        connectBtn.disabled = false;
+        // Remove old event listener and add new one for proceeding
+        const newBtn = connectBtn.cloneNode(true);
+        connectBtn.parentNode.replaceChild(newBtn, connectBtn);
+        newBtn.addEventListener('click', () => {
+          proceedToSheetSetup(data);
+        });
       }
-
-      // Auto-advance to step 3 after 1.5 seconds
-      setTimeout(() => {
-        proceedToSheetSetup(data);
-      }, 1500);
       return;
     }
 
