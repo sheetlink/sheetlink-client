@@ -214,6 +214,8 @@ async function loadState() {
       console.log('[Popup] User not authenticated - showing welcome screen');
       // User not authenticated - show welcome with "Sign in with Google" button
       showSection('welcome');
+      // Hide disconnect button on welcome screen
+      if (disconnectBtn) disconnectBtn.classList.add('hidden');
       return;
     }
 
@@ -256,6 +258,8 @@ async function loadState() {
 
       // No Items to restore - show connect bank screen
       showSection('connect');
+      // Hide disconnect button when no bank connected
+      if (disconnectBtn) disconnectBtn.classList.add('hidden');
       return;
     }
 
@@ -966,18 +970,44 @@ async function handleDisconnect() {
   try {
     showLoading('Disconnecting...');
 
-    const { itemId } = await chrome.storage.sync.get(['itemId']);
+    const { itemId, googleUserId, googleEmail, googleAuthenticated } = await chrome.storage.sync.get(['itemId', 'googleUserId', 'googleEmail', 'googleAuthenticated']);
 
+    // Call backend to remove item if it exists
     if (itemId) {
-      await deleteBackendTokens(itemId);
+      try {
+        const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}`, {
+          method: 'DELETE'
+        });
+
+        if (!response.ok) {
+          console.warn('Failed to delete item from backend:', response.status);
+          // Continue anyway - at least clear local storage
+        }
+      } catch (error) {
+        console.error('Error deleting item from backend:', error);
+        // Continue anyway - at least clear local storage
+      }
     }
-    
-    // Clear local storage
+
+    // Clear all local storage
     await chrome.storage.sync.clear();
-    
+
+    // Also clear local storage (Google access tokens)
+    await chrome.storage.local.clear();
+
+    // Restore Google auth information so user doesn't have to re-authenticate
+    if (googleUserId && googleEmail && googleAuthenticated) {
+      await chrome.storage.sync.set({
+        googleUserId,
+        googleEmail,
+        googleAuthenticated
+      });
+    }
+
     hideLoading();
     await loadState();
   } catch (error) {
+    hideLoading();
     showError('Failed to disconnect: ' + error.message);
   }
 }
