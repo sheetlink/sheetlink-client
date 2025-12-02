@@ -975,18 +975,25 @@ async function handleDisconnect() {
     // Call backend to remove item if it exists
     if (itemId) {
       try {
+        console.log(`[Disconnect] Calling DELETE /plaid/item/${itemId}`);
         const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}`, {
           method: 'DELETE'
         });
 
         if (!response.ok) {
-          console.warn('Failed to delete item from backend:', response.status);
+          const errorText = await response.text();
+          console.warn('Failed to delete item from backend:', response.status, errorText);
           // Continue anyway - at least clear local storage
+        } else {
+          const result = await response.json();
+          console.log('[Disconnect] Item deleted from backend successfully:', result);
         }
       } catch (error) {
         console.error('Error deleting item from backend:', error);
         // Continue anyway - at least clear local storage
       }
+    } else {
+      console.log('[Disconnect] No itemId found, skipping backend delete');
     }
 
     // Clear all local storage
