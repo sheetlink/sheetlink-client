@@ -186,16 +186,70 @@ header {
   max-width: 200px;
 }
 
+.user-tier-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  position: relative;
+}
+
 .user-tier {
   font-size: 11px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
-  margin-top: 2px;
-  padding: 2px 8px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  display: inline-block;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tier-info-icon {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: help;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.tier-info-icon:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tier-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.tier-info-icon:hover + .tier-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tier-tooltip-content {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tier-tooltip-content::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 12px;
+  width: 8px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.9);
+  transform: rotate(45deg);
 }
 
 .connection-indicators {

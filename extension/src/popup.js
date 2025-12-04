@@ -644,6 +644,12 @@ async function updateTierDisplay() {
       userTier.textContent = tierText;
     }
 
+    // Update tooltip days value
+    const tierDaysTooltip = document.getElementById('tierDaysTooltip');
+    if (tierDaysTooltip) {
+      tierDaysTooltip.textContent = `${data.days_available} days`;
+    }
+
     // Phase 3: Hide auto-sync card for free tier (auto-sync is paid feature)
     const autoSyncCard = document.querySelector('.auto-sync-card');
     if (autoSyncCard) {
