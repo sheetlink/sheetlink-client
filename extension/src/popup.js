@@ -141,18 +141,32 @@ function initializeElements() {
 
   // Add click handlers for indicators (navigate to respective footer nav pages)
   if (bankIndicator) {
-    bankIndicator.addEventListener('click', async () => {
+    bankIndicator.addEventListener('click', async (e) => {
+      console.log('[Indicator] Bank indicator clicked');
+      console.log('[Indicator] Footer nav:', footerNav);
+      console.log('[Indicator] Footer nav hidden?', footerNav?.classList.contains('hidden'));
+
       // Check if footer nav is visible (user is fully connected)
       if (footerNav && !footerNav.classList.contains('hidden')) {
+        console.log('[Indicator] Navigating to bank page');
         await switchTab('bank');
+      } else {
+        console.log('[Indicator] Footer nav not available, skipping navigation');
       }
     });
   }
   if (sheetIndicator) {
-    sheetIndicator.addEventListener('click', async () => {
+    sheetIndicator.addEventListener('click', async (e) => {
+      console.log('[Indicator] Sheet indicator clicked');
+      console.log('[Indicator] Footer nav:', footerNav);
+      console.log('[Indicator] Footer nav hidden?', footerNav?.classList.contains('hidden'));
+
       // Check if footer nav is visible (user is fully connected)
       if (footerNav && !footerNav.classList.contains('hidden')) {
+        console.log('[Indicator] Navigating to sheet page');
         await switchTab('sheet');
+      } else {
+        console.log('[Indicator] Footer nav not available, skipping navigation');
       }
     });
   }
