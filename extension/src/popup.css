@@ -145,7 +145,7 @@ header {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,6 +165,15 @@ header {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.user-picture.fallback-logo {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .user-initial {
@@ -205,7 +214,6 @@ header {
 .tier-info-icon {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
-  cursor: help;
   display: inline-flex;
   align-items: center;
   justify-content: center;

@@ -1417,17 +1417,22 @@ async function updateUserHeader(googleEmail, hasBank, hasSheet) {
   // Get profile picture from storage
   const { googlePicture } = await chrome.storage.sync.get(['googlePicture']);
 
-  // Update avatar - show picture if available, otherwise show initial
+  // Update avatar - show picture if available, otherwise show SheetLink logo
   if (googlePicture && userPicture) {
     userPicture.src = googlePicture;
+    userPicture.classList.remove('hidden', 'fallback-logo');
+    userInitial.classList.add('hidden');
+  } else if (userPicture) {
+    // Show SheetLink logo as fallback
+    userPicture.src = '../assets/brand/sheetlink-mark-green.svg';
     userPicture.classList.remove('hidden');
+    userPicture.classList.add('fallback-logo');
     userInitial.classList.add('hidden');
   } else {
-    // Show initial as fallback
+    // Last resort: show initial
     const initial = googleEmail ? googleEmail.charAt(0).toUpperCase() : 'U';
     userInitial.textContent = initial;
     userInitial.classList.remove('hidden');
-    if (userPicture) userPicture.classList.add('hidden');
   }
 
   // Update bank indicator
