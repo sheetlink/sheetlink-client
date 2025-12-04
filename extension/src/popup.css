@@ -574,3 +574,49 @@ footer .btn {
     transform: translateX(0);
   }
 }
+
+/* Phase 3.9: FTUE Polish - Step Progress Indicator */
+.step-progress {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.step-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a73e8;
+  letter-spacing: 0.3px;
+}
+
+/* Phase 3.9: Signed-In Badge */
+.signed-in-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #166534;
+}
+
+.badge-icon {
+  font-size: 14px;
+  color: #16a34a;
+}
+
+.badge-text {
+  font-weight: 500;
+}
+
+/* Phase 3.9: Security Badge */
+.security-badge {
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.security-badge:hover {
+  opacity: 1;
+}

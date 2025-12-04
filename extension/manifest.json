@@ -18,7 +18,8 @@
   "host_permissions": [
     "https://www.googleapis.com/*",
     "https://cdn.plaid.com/*",
-    "https://sheetlink-production.up.railway.app/*"
+    "https://sheetlink-production.up.railway.app/*",
+    "https://api.sheetlink.app/*"
   ],
   "externally_connectable": {
     "matches": ["https://sheetlink.app/*"]
