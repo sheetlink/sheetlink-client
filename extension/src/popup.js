@@ -17,6 +17,14 @@ let sheetErrorBanner, sheetErrorDetail, syncErrorBanner;
 // Walkthrough modal
 let walkthroughModal;
 
+// Phase 3.10: Post-onboarding navigation
+let footerNav, legacyFooter;
+let pageHome, pageBank, pageSheet;
+let homeSyncBtn, homeLastSync, homePlanTier, homeStatusPlaid, homeStatusSheet;
+let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn, disconnectBankBtn;
+let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBtn;
+let currentTab = 'home';
+
 // Initialize popup
 document.addEventListener('DOMContentLoaded', async () => {
   initializeElements();
@@ -87,6 +95,34 @@ function initializeElements() {
   sheetErrorBanner = document.getElementById('sheetErrorBanner');
   sheetErrorDetail = document.getElementById('sheetErrorDetail');
   syncErrorBanner = document.getElementById('syncErrorBanner');
+
+  // Phase 3.10: Post-onboarding navigation elements
+  footerNav = document.getElementById('footer-nav');
+  legacyFooter = document.getElementById('legacy-footer');
+  pageHome = document.getElementById('page-home');
+  pageBank = document.getElementById('page-bank');
+  pageSheet = document.getElementById('page-sheet');
+
+  // Home page elements
+  homeSyncBtn = document.getElementById('homeSyncBtn');
+  homeLastSync = document.getElementById('homeLastSync');
+  homePlanTier = document.getElementById('homePlanTier');
+  homeStatusPlaid = document.getElementById('homeStatusPlaid');
+  homeStatusSheet = document.getElementById('homeStatusSheet');
+
+  // Bank page elements
+  bankInstitutionName = document.getElementById('bankInstitutionName');
+  bankAccountsList = document.getElementById('bankAccountsList');
+  updateBankConnectionBtn = document.getElementById('updateBankConnectionBtn');
+  addBankBtn = document.getElementById('addBankBtn');
+  disconnectBankBtn = document.getElementById('disconnectBankBtn');
+
+  // Sheet page elements
+  sheetLink = document.getElementById('sheetLink');
+  sheetOwner = document.getElementById('sheetOwner');
+  sheetLastWrite = document.getElementById('sheetLastWrite');
+  changeSheetBtnPage = document.getElementById('changeSheetBtnPage');
+  disconnectSheetBtn = document.getElementById('disconnectSheetBtn');
 }
 
 function initializeSandboxMode() {
@@ -186,6 +222,9 @@ function attachEventListeners() {
   if (modalOverlay) {
     modalOverlay.addEventListener('click', hideSuccessModal);
   }
+
+  // Phase 3.10: Attach navigation event listeners
+  attachNavigationEventListeners();
 }
 
 function handleLearnMore() {
@@ -309,6 +348,9 @@ async function loadState() {
 
     // Normal flow - proceed to sheet setup
     proceedToSheetSetup(data);
+
+    // Phase 3.10: Initialize navigation after state is loaded
+    await initializeNavigation();
   } catch (error) {
     console.error('[Popup] Failed to load state:', error);
     showError('Failed to load state: ' + error.message);
@@ -1629,3 +1671,222 @@ async function handleInstallTemplate(templateId) {
     showError('Failed to install template: ' + error.message);
   }
 };
+
+// ================================================
+// Phase 3.10: Post-Onboarding Navigation System
+// ================================================
+
+/**
+ * Check if user is fully connected (Google + Plaid + Sheet)
+ */
+function isFullyConnected(state) {
+  return !!(state.googleUserId && state.itemId && state.sheetId);
+}
+
+/**
+ * Switch to a specific tab/page
+ */
+async function switchTab(tabName) {
+  console.log('[Nav] Switching to tab:', tabName);
+
+  // Special case: Options opens in new tab
+  if (tabName === 'options') {
+    chrome.runtime.openOptionsPage();
+    return;
+  }
+
+  // Hide all pages
+  const pages = [pageHome, pageBank, pageSheet];
+  pages.forEach(page => {
+    if (page) {
+      page.classList.remove('active');
+      page.classList.add('hidden');
+    }
+  });
+
+  // Show target page
+  let targetPage;
+  if (tabName === 'home') targetPage = pageHome;
+  if (tabName === 'bank') targetPage = pageBank;
+  if (tabName === 'sheet') targetPage = pageSheet;
+
+  if (targetPage) {
+    targetPage.classList.remove('hidden');
+    targetPage.classList.add('active');
+  }
+
+  // Update active tab UI
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  const activeTab = document.querySelector('.nav-tab[data-page="' + tabName + '"]');
+  if (activeTab) {
+    activeTab.classList.add('active');
+  }
+
+  // Store current tab
+  currentTab = tabName;
+  await chrome.storage.local.set({ currentTab });
+
+  // Load page-specific data
+  if (tabName === 'home') await loadHomePage();
+  if (tabName === 'bank') await loadBankPage();
+  if (tabName === 'sheet') await loadSheetPage();
+}
+
+/**
+ * Initialize navigation system
+ */
+async function initializeNavigation() {
+  const state = await chrome.storage.sync.get(['googleUserId', 'itemId', 'sheetId']);
+
+  if (!isFullyConnected(state)) {
+    // Hide footer nav during onboarding
+    if (footerNav) footerNav.classList.add('hidden');
+    if (legacyFooter) legacyFooter.style.display = '';
+    return;
+  }
+
+  // Show footer nav, hide legacy footer
+  if (footerNav) footerNav.classList.remove('hidden');
+  if (legacyFooter) legacyFooter.style.display = 'none';
+
+  // Hide all onboarding sections
+  const onboardingSections = [welcomeSection, connectSection, sheetSection, syncSection, statusSection];
+  onboardingSections.forEach(section => {
+    if (section) section.classList.add('hidden');
+  });
+
+  // Restore last tab or default to home
+  const { currentTab: savedTab } = await chrome.storage.local.get('currentTab');
+  await switchTab(savedTab || 'home');
+
+  // Attach tab click listeners
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const page = tab.dataset.page;
+      switchTab(page);
+    });
+  });
+}
+
+/**
+ * Load Home page data
+ */
+async function loadHomePage() {
+  const data = await chrome.storage.sync.get(['lastSync', 'itemId', 'sheetId']);
+
+  // Update last sync
+  if (homeLastSync && data.lastSync) {
+    const date = new Date(data.lastSync);
+    homeLastSync.textContent = formatRelativeTime(date);
+  }
+
+  // Update connection status
+  if (homeStatusPlaid) {
+    homeStatusPlaid.style.display = data.itemId ? 'flex' : 'none';
+  }
+  if (homeStatusSheet) {
+    homeStatusSheet.style.display = data.sheetId ? 'flex' : 'none';
+  }
+}
+
+/**
+ * Load Bank page data
+ */
+async function loadBankPage() {
+  const data = await chrome.storage.sync.get(['itemId', 'institutionName']);
+
+  if (!data.itemId) {
+    // Show empty state
+    if (bankAccountsList) {
+      bankAccountsList.innerHTML = '<div class="account-item" style="font-size: 13px; color: #9ca3af;">No bank connected</div>';
+    }
+    return;
+  }
+
+  // Update institution name
+  if (bankInstitutionName) {
+    bankInstitutionName.textContent = data.institutionName || 'Bank';
+  }
+
+  // Fetch accounts (for now, show placeholder)
+  if (bankAccountsList) {
+    bankAccountsList.innerHTML = '<div class="account-item" style="font-size: 13px; color: #6b7280;">Loading accounts...</div>';
+
+    // TODO: Fetch actual account data from backend
+    // For now, show placeholder
+    setTimeout(() => {
+      bankAccountsList.innerHTML = '<div class="account-item" style="font-size: 13px; color: #6b7280;">Accounts synced with Sheet</div>';
+    }, 500);
+  }
+}
+
+/**
+ * Load Sheet page data
+ */
+async function loadSheetPage() {
+  const data = await chrome.storage.sync.get(['sheetId', 'sheetUrl', 'googleEmail', 'lastSync']);
+
+  if (!data.sheetId) {
+    // Show empty state
+    return;
+  }
+
+  // Update sheet link
+  if (sheetLink && data.sheetUrl) {
+    sheetLink.href = data.sheetUrl;
+  }
+
+  // Update owner email
+  if (sheetOwner && data.googleEmail) {
+    sheetOwner.textContent = data.googleEmail;
+  }
+
+  // Update last write time
+  if (sheetLastWrite && data.lastSync) {
+    const date = new Date(data.lastSync);
+    sheetLastWrite.textContent = formatRelativeTime(date);
+  }
+}
+
+/**
+ * Format relative time (e.g., "2 hours ago")
+ */
+function formatRelativeTime(date) {
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return diffMins + ' minute' + (diffMins > 1 ? 's' : '') + ' ago';
+  if (diffHours < 24) return diffHours + ' hour' + (diffHours > 1 ? 's' : '') + ' ago';
+  return diffDays + ' day' + (diffDays > 1 ? 's' : '') + ' ago';
+}
+
+// Attach event listeners for new nav buttons
+function attachNavigationEventListeners() {
+  // Home page
+  if (homeSyncBtn) homeSyncBtn.addEventListener('click', handleSync);
+
+  // Bank page
+  if (updateBankConnectionBtn) updateBankConnectionBtn.addEventListener('click', handleConnectBank);
+  if (addBankBtn) addBankBtn.addEventListener('click', handleConnectBank);
+  if (disconnectBankBtn) disconnectBankBtn.addEventListener('click', handleDisconnect);
+
+  // Sheet page
+  if (changeSheetBtnPage) changeSheetBtnPage.addEventListener('click', () => {
+    // Show sheet input dialog (reuse existing logic)
+    switchTab('home'); // For now, just go home
+    // TODO: Implement inline sheet change UI
+  });
+  if (disconnectSheetBtn) disconnectSheetBtn.addEventListener('click', async () => {
+    if (confirm('Are you sure you want to disconnect your Google Sheet?')) {
+      await chrome.storage.sync.remove(['sheetId', 'sheetUrl']);
+      await loadState();
+    }
+  });
+}
+
