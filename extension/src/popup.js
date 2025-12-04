@@ -26,7 +26,7 @@ let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBt
 let currentTab = 'home';
 
 // User control panel header elements
-let defaultHeader, userHeader, userAvatar, userPicture, userInitial, userEmail;
+let defaultHeader, userHeader, userAvatar, userPicture, userInitial, userEmail, userTier;
 let bankIndicator, sheetIndicator;
 
 // Initialize popup
@@ -135,6 +135,7 @@ function initializeElements() {
   userPicture = document.getElementById('userPicture');
   userInitial = document.getElementById('userInitial');
   userEmail = document.getElementById('userEmail');
+  userTier = document.getElementById('userTier');
   bankIndicator = document.getElementById('bankIndicator');
   sheetIndicator = document.getElementById('sheetIndicator');
 }
@@ -279,6 +280,7 @@ async function loadState() {
     // Phase 3.10: After Google auth, show user control panel header
     toggleHeader(true);
     updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
+    updateTierDisplay();
 
     // Check if we should show the success modal
     // Only show for first-time connections, not for updates
@@ -635,6 +637,11 @@ async function updateTierDisplay() {
       } else if (data.tier === 'pro') {
         tierElement.style.color = '#7c3aed';  // Purple
       }
+    }
+
+    // Update user header tier
+    if (userTier) {
+      userTier.textContent = tierText;
     }
 
     // Phase 3: Hide auto-sync card for free tier (auto-sync is paid feature)
@@ -1888,6 +1895,9 @@ async function loadHomePage() {
 
   // Update user header
   updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
+
+  // Update tier display
+  updateTierDisplay();
 }
 
 /**
