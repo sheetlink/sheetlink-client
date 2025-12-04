@@ -121,6 +121,370 @@ header {
   animation: fadeInText 0.4s ease-out 0.25s forwards;
 }
 
+/* User Control Panel Header */
+.user-header {
+  background: linear-gradient(135deg, var(--sl-primary) 0%, var(--sl-accent) 100%);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0;
+  animation: slideInDown 0.4s ease-out 0.1s forwards;
+  position: relative;
+  z-index: 100;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.user-picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.user-picture.fallback-logo {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.user-initial {
+  position: relative;
+  z-index: 1;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-email {
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.user-tier-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  position: relative;
+}
+
+.user-tier {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tier-info-icon {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.tier-info-icon:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tier-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.tier-info-icon:hover + .tier-tooltip,
+.tier-info-icon:hover ~ .tier-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Ensure home page tier info icon is visible and hoverable */
+.plan-tier .tier-info-icon {
+  color: #9ca3af;
+}
+
+.plan-tier .tier-info-icon:hover {
+  color: #6b7280;
+}
+
+.tier-tooltip-content {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: normal;
+  min-width: 180px;
+  max-width: 260px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tier-tooltip-content::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 8px;
+  width: 8px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.9);
+  transform: rotate(45deg);
+}
+
+/* Info Icon Tooltips (for Sync buttons) */
+.button-with-tooltip {
+  position: relative;
+  width: 100%;
+}
+
+.info-icon-container {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 3px;
+}
+
+.info-icon {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: default;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.info-icon:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Grey button (secondary) needs different icon color */
+.btn-secondary .info-icon {
+  color: rgba(107, 114, 128, 0.8);
+}
+
+.btn-secondary .info-icon:hover {
+  color: rgba(75, 85, 99, 1);
+}
+
+.info-tooltip {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.info-tooltip.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.info-tooltip-content {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: normal;
+  min-width: 200px;
+  max-width: 280px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.info-tooltip-content::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: auto;
+  right: 20px;
+  transform: rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Sync Status Display */
+.sync-status {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.sync-status.success {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #065f46;
+}
+
+.sync-status.error {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.sync-status.loading {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+/* Spinner Animation */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.connection-indicators {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.indicator {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.indicator-icon {
+  font-size: 16px;
+  filter: grayscale(1) brightness(0.7);
+  transition: filter 0.3s ease;
+  pointer-events: none;
+}
+
+/* Connected state - green glow */
+.indicator.connected {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5),
+              0 0 16px rgba(16, 185, 129, 0.3);
+}
+
+.indicator.connected .indicator-icon {
+  filter: grayscale(0) brightness(1);
+}
+
+/* Disconnected state - red glow */
+.indicator.disconnected {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5),
+              0 0 16px rgba(239, 68, 68, 0.3);
+}
+
+.indicator.disconnected .indicator-icon {
+  filter: grayscale(0.5) brightness(0.9);
+}
+
+/* Indicator tooltip */
+.indicator-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 10000;
+  white-space: nowrap;
+}
+
+.indicator:hover .indicator-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.indicator-tooltip-content {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.indicator-tooltip-content::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.9);
+  transform: rotate(45deg);
+}
+
 @keyframes fadeInText {
   to {
     opacity: 0.9;
@@ -575,7 +939,37 @@ footer .btn {
   }
 }
 
-/* Phase 3.9: FTUE Polish - Step Progress Indicator */
+/* Phase 3.9: Minimal Progress Dots */
+.progress-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0;
+}
+
+.progress-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.progress-dots .dot.completed {
+  background: #10b981;
+}
+
+.progress-dots .dot.active {
+  background: #3b82f6;
+  width: 8px;
+  height: 8px;
+}
+
+.progress-dots .dot.upcoming {
+  background: #d1d5db;
+}
+
+/* Legacy Step Progress (if needed elsewhere) */
 .step-progress {
   margin-bottom: 16px;
   padding-bottom: 12px;
@@ -589,28 +983,6 @@ footer .btn {
   letter-spacing: 0.3px;
 }
 
-/* Phase 3.9: Signed-In Badge */
-.signed-in-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #166534;
-}
-
-.badge-icon {
-  font-size: 14px;
-  color: #16a34a;
-}
-
-.badge-text {
-  font-weight: 500;
-}
-
 /* Phase 3.9: Security Badge */
 .security-badge {
   opacity: 0.8;
@@ -619,4 +991,435 @@ footer .btn {
 
 .security-badge:hover {
   opacity: 1;
+}
+
+/* ========================================
+   Phase 3.10: Post-Onboarding Navigation
+   ======================================== */
+
+/* Page System */
+.page {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.page.active {
+  display: block;
+  opacity: 1;
+}
+
+.page.hidden {
+  display: none;
+}
+
+/* Card Component */
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  transition: box-shadow 0.2s;
+  overflow: visible;
+  position: relative;
+}
+
+.card:hover {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Compact Status Dots with Glow Effect */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+}
+
+.status-dot-connected {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+.status-dot-disconnected {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6), 0 0 4px rgba(239, 68, 68, 0.8);
+  animation: pulse-red 2s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.8), 0 0 6px rgba(16, 185, 129, 1);
+  }
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6), 0 0 4px rgba(239, 68, 68, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.8), 0 0 6px rgba(239, 68, 68, 1);
+  }
+}
+
+/* Footer Navigation */
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 0;
+  margin: 0;
+  position: sticky;
+  bottom: 0;
+  opacity: 0;
+  animation: slideInUp 0.4s ease-out 0.35s forwards;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer-nav.hidden {
+  display: none;
+}
+
+/* Nav Tabs */
+.nav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-tab:hover {
+  background: #f9fafb;
+}
+
+.nav-tab.active {
+  background: #f0f9ff;
+}
+
+.nav-tab.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #3b82f6;
+}
+
+.nav-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+  transition: transform 0.2s;
+}
+
+.nav-tab.active .nav-icon {
+  transform: scale(1.1);
+}
+
+.nav-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.nav-tab.active .nav-label {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+/* Toggle Switch Component */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1d5db;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #3b82f6;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.toggle-switch.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggle-switch.disabled .slider {
+  cursor: not-allowed;
+}
+
+/* Legacy Footer (during onboarding) */
+#legacy-footer {
+  /* Inherits existing footer styles */
+}
+
+/* Hide legacy footer when nav is active */
+.footer-nav:not(.hidden) ~ #legacy-footer {
+  display: none;
+}
+
+/* Page-specific styles */
+#page-home h2,
+#page-bank h2,
+#page-sheet h2 {
+  color: #1f2937;
+}
+
+/* Bank Page */
+.bank-card {
+  margin-bottom: 12px;
+}
+
+.bank-card:last-child {
+  margin-bottom: 0;
+}
+
+.bank-header {
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 8px;
+}
+
+.connection-status.active {
+  background: #d1fae5;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.account-item {
+  padding: 6px 0;
+  border-bottom: 1px solid #f9fafb;
+}
+
+.account-item:last-child {
+  border-bottom: none;
+}
+
+/* Sheet Page */
+.sheet-info a {
+  font-weight: 500;
+}
+
+.sheet-info a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 360px) {
+  .nav-label {
+    font-size: 10px;
+  }
+
+  .nav-icon {
+    font-size: 18px;
+  }
+}
+
+/* ========================================
+   Phase 3.10: Modern Welcome Page
+   ======================================== */
+
+/* Welcome Hero Section */
+.welcome-hero {
+  padding: 0 !important;
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  animation: welcomePageFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes welcomePageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.welcome-hero-bg {
+  background: transparent;
+  padding: 50px 20px 30px;
+  text-align: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.welcome-logo {
+  display: block;
+  margin: 0 auto 16px;
+}
+
+.welcome-tagline {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+/* Welcome Content Section */
+.welcome-content {
+  padding: 40px 24px 30px;
+  text-align: center;
+  background: transparent;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--sl-text);
+  margin: 0 0 8px;
+}
+
+.welcome-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 24px;
+}
+
+/* Google Sign In Button */
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 280px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-google:hover {
+  background: #f9fafb;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.btn-google:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.google-icon {
+  flex-shrink: 0;
+}
+
+/* Learn More Link */
+.welcome-learn-more {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.welcome-learn-more:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+/* Welcome Footer */
+.welcome-footer {
+  background: transparent;
+  padding: 16px 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Privacy Note */
+.welcome-privacy {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Hide default header and footer on welcome screen */
+body.welcome-active header,
+body.welcome-active footer {
+  display: none;
+}
+
+/* Green gradient background for entire popup on welcome screen */
+body.welcome-active {
+  background: linear-gradient(135deg, var(--sl-primary) 0%, var(--sl-accent) 100%);
+}
+
+body.welcome-active .container {
+  background: transparent;
 }
