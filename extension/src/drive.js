@@ -10,7 +10,22 @@ async function getAuthToken() {
       { type: 'GET_AUTH_TOKEN' },
       (response) => {
         if (response.error) {
-          reject(new Error(response.error));
+          // Phase 3.11: Check if it's an auth expiry error
+          if (response.error === 'AUTH_EXPIRED') {
+            // Use AuthenticationError from sheets.js
+            if (window.SheetsAPI && window.SheetsAPI.AuthenticationError) {
+              const authError = new window.SheetsAPI.AuthenticationError('Your session has expired. Please sign in again.');
+              reject(authError);
+            } else {
+              // Fallback if AuthenticationError not available
+              const error = new Error('Your session has expired. Please sign in again.');
+              error.name = 'AuthenticationError';
+              error.isAuthError = true;
+              reject(error);
+            }
+          } else {
+            reject(new Error(response.error));
+          }
         } else {
           resolve(response.token);
         }
