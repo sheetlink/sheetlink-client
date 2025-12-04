@@ -138,6 +138,24 @@ function initializeElements() {
   userTier = document.getElementById('userTier');
   bankIndicator = document.getElementById('bankIndicator');
   sheetIndicator = document.getElementById('sheetIndicator');
+
+  // Add click handlers for indicators (navigate to respective pages)
+  if (bankIndicator) {
+    bankIndicator.addEventListener('click', async () => {
+      const { itemId } = await chrome.storage.sync.get(['itemId']);
+      if (itemId && footerNav && !footerNav.classList.contains('hidden')) {
+        await switchTab('bank');
+      }
+    });
+  }
+  if (sheetIndicator) {
+    sheetIndicator.addEventListener('click', async () => {
+      const { sheetId } = await chrome.storage.sync.get(['sheetId']);
+      if (sheetId && footerNav && !footerNav.classList.contains('hidden')) {
+        await switchTab('sheet');
+      }
+    });
+  }
 }
 
 function initializeSandboxMode() {
@@ -1460,14 +1478,24 @@ async function updateUserHeader(googleEmail, hasBank, hasSheet) {
   if (bankIndicator) {
     bankIndicator.classList.remove('connected', 'disconnected');
     bankIndicator.classList.add(hasBank ? 'connected' : 'disconnected');
-    bankIndicator.title = hasBank ? 'Bank connected' : 'Bank not connected';
+
+    // Update tooltip text
+    const bankTooltip = document.getElementById('bankTooltipContent');
+    if (bankTooltip) {
+      bankTooltip.textContent = hasBank ? 'Bank connected - Click to manage' : 'Bank not connected';
+    }
   }
 
   // Update sheet indicator
   if (sheetIndicator) {
     sheetIndicator.classList.remove('connected', 'disconnected');
     sheetIndicator.classList.add(hasSheet ? 'connected' : 'disconnected');
-    sheetIndicator.title = hasSheet ? 'Sheet connected' : 'Sheet not connected';
+
+    // Update tooltip text
+    const sheetTooltip = document.getElementById('sheetTooltipContent');
+    if (sheetTooltip) {
+      sheetTooltip.textContent = hasSheet ? 'Sheet connected - Click to manage' : 'Sheet not connected';
+    }
   }
 }
 

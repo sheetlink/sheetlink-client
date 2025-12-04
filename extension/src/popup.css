@@ -279,13 +279,20 @@ header {
   background: rgba(255, 255, 255, 0.15);
   border: 2px solid rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
-  cursor: help;
+  cursor: pointer;
+  position: relative;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
 }
 
 .indicator-icon {
   font-size: 16px;
   filter: grayscale(1) brightness(0.7);
   transition: filter 0.3s ease;
+  pointer-events: none;
 }
 
 /* Connected state - green glow */
@@ -310,6 +317,45 @@ header {
 
 .indicator.disconnected .indicator-icon {
   filter: grayscale(0.5) brightness(0.9);
+}
+
+/* Indicator tooltip */
+.indicator-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 10000;
+  white-space: nowrap;
+}
+
+.indicator:hover .indicator-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.indicator-tooltip-content {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.indicator-tooltip-content::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.9);
+  transform: rotate(45deg);
 }
 
 @keyframes fadeInText {
