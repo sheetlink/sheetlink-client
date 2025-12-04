@@ -660,11 +660,14 @@ async function updateCloudSyncIndicator() {
 
 // Phase 3.8: Handle Google Sign-In
 async function handleGoogleSignIn() {
+  console.log('[Google Auth] Sign in button clicked');
   try {
     // Trigger Google OAuth flow via service worker
     // Note: This opens OAuth window and doesn't wait for response
     // Service worker will reopen popup after OAuth completes
+    console.log('[Google Auth] Sending GET_AUTH_TOKEN message to service worker');
     chrome.runtime.sendMessage({ type: 'GET_AUTH_TOKEN' }, async (response) => {
+      console.log('[Google Auth] Received response from service worker:', response);
       if (response && response.token) {
         // OAuth completed successfully
         // Get user info after successful OAuth
