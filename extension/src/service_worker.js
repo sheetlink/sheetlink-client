@@ -66,8 +66,12 @@ async function handleExchangePublicToken(message, sendResponse) {
   try {
     const { publicToken, metadata } = message;
 
-    // Get user ID from storage
-    const userData = await chrome.storage.sync.get(['userId']);
+    // Phase 3.8: Get Google user ID from storage (set during sign-in)
+    const { googleUserId } = await chrome.storage.sync.get(['googleUserId']);
+
+    if (!googleUserId) {
+      throw new Error('Not authenticated with Google. Please sign in first.');
+    }
 
     // Call backend to exchange token
     const response = await fetch(`${CONFIG.BACKEND_URL}/plaid/exchange`, {
@@ -75,13 +79,19 @@ async function handleExchangePublicToken(message, sendResponse) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         public_token: publicToken,
-        client_user_id: userData.userId,
+        client_user_id: googleUserId || `anonymous_${Date.now()}`,
         env: CONFIG.ENV
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+
+      // Phase 3.8: Handle rate limiting (HTTP 429)
+      if (response.status === 429) {
+        throw new Error(errorData.detail || 'Rate limit exceeded');
+      }
+
       throw new Error(`Exchange failed: ${errorData.detail || response.statusText}`);
     }
 
@@ -165,16 +175,50 @@ async function handleGetAuthToken(sendResponse) {
 }
 
 // Handle OAuth callback from the callback page
-chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessageExternal.addListener(async (message, sender, sendResponse) => {
+  console.log('[Service Worker] Received message from external:', message.type);
+
   if (message.type === 'OAUTH_SUCCESS') {
+    console.log('[Service Worker] Processing OAUTH_SUCCESS callback');
     const { accessToken, expiresIn } = message;
 
     // Cache the token with expiry
     const expiry = Date.now() + (parseInt(expiresIn) * 1000);
-    chrome.storage.local.set({
+    await chrome.storage.local.set({
       googleAccessToken: accessToken,
       googleTokenExpiry: expiry
     });
+
+    // Phase 3.8: Get Google user ID from Google's API using the access token
+    try {
+      const response = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user info from Google');
+      }
+
+      const userInfo = await response.json();
+
+      if (userInfo && userInfo.id) {
+        console.log('[Service Worker] Successfully fetched Google user ID:', userInfo.id);
+
+        await chrome.storage.sync.set({
+          googleUserId: userInfo.id,
+          googleEmail: userInfo.email || null,
+          googleAuthenticated: true
+        });
+
+        console.log('[Service Worker] Stored googleUserId, googleEmail, and googleAuthenticated flag');
+      } else {
+        console.error('[Service Worker] No user ID in Google userinfo response:', userInfo);
+      }
+    } catch (error) {
+      console.error('[Service Worker] Failed to get Google user ID:', error);
+    }
 
     // Call the pending callback if it exists
     if (pendingOAuthCallback) {
@@ -306,8 +350,12 @@ async function handleExchangePublicTokenAsync(message) {
   try {
     const { publicToken, metadata } = message;
 
-    // Get user ID from storage
-    const userData = await chrome.storage.sync.get(['userId']);
+    // Phase 3.8: Get Google user ID from storage (set during sign-in)
+    const { googleUserId } = await chrome.storage.sync.get(['googleUserId']);
+
+    if (!googleUserId) {
+      throw new Error('Not authenticated with Google. Please sign in first.');
+    }
 
     // Call backend to exchange token
     const response = await fetch(`${CONFIG.BACKEND_URL}/plaid/exchange`, {
@@ -315,7 +363,7 @@ async function handleExchangePublicTokenAsync(message) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         public_token: publicToken,
-        client_user_id: userData.userId,
+        client_user_id: googleUserId,
         env: CONFIG.ENV
       })
     });

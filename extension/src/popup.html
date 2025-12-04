@@ -17,15 +17,17 @@
     <main id="mainContent">
       <!-- Welcome Screen (First Time) -->
       <div id="welcomeSection" class="section hidden">
+        <div class="step-progress">
+          <div class="step-label">Step 1 of 3 — Sign In with Google</div>
+        </div>
+
         <h2 id="welcomeTitle">Welcome to SheetLink</h2>
-        <p class="welcome-subtitle" id="welcomeSubtitle">Sandbox Preview</p>
         <p class="welcome-description" id="welcomeDescription">
-          This demo uses Plaid's sandbox environment.
-          You'll connect to sample institutions and see mock data, not your real bank.
+          Sign in with Google to connect your banks to Google Sheets.
         </p>
         <div class="welcome-actions">
-          <button id="connectSandboxBtn" class="btn btn-primary">
-            Connect to Sandbox
+          <button id="signInGoogleBtn" class="btn btn-primary">
+            Sign in with Google
           </button>
           <button id="learnMoreBtn" class="btn btn-text">
             Learn More
@@ -39,30 +41,75 @@
           <div class="status-icon" id="statusIcon">✓</div>
           <div class="status-text" id="statusText">Not connected</div>
         </div>
+
+        <!-- Collapsible Bank Connection Details -->
+        <details id="bankConnectionDetails" class="bank-details" style="margin-top: 12px; display: none;">
+          <summary style="cursor: pointer; font-size: 13px; font-weight: 500; color: #1a73e8; padding: 8px; background: #f9fafb; border-radius: 6px; list-style: none; display: flex; align-items: center; gap: 6px;">
+            <span id="dropdownArrow" style="transition: transform 0.2s;">▶</span>
+            <span>View connection details</span>
+          </summary>
+          <div id="bankConnectionDetailsContent" style="margin-top: 8px; padding: 12px; background: #f9fafb; border-radius: 6px; font-size: 13px;">
+            <!-- Content will be populated by JavaScript -->
+          </div>
+        </details>
       </div>
 
       <!-- Connect Bank Section -->
       <div id="connectSection" class="section hidden">
+        <div class="step-progress">
+          <div class="step-label">Step 2 of 3 — Connect Your Bank</div>
+        </div>
+
+        <div class="signed-in-badge">
+          <span class="badge-icon">✓</span>
+          <span class="badge-text">Signed in as: <span id="connectedUserEmail">user@gmail.com</span></span>
+        </div>
+
+        <!-- Connection Status (shown when bank already connected) -->
+        <div id="bankConnectionStatus" class="hidden" style="margin: 16px 0; padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #166534; font-weight: 500;">
+            <span>✓</span>
+            <span>Bank Connected</span>
+          </div>
+        </div>
+
+        <p style="font-size: 14px; color: #374151; margin: 16px 0; line-height: 1.6;">
+          SheetLink uses Plaid to securely connect to 12,000+ banks. Your credentials are encrypted and never stored by SheetLink.
+        </p>
+
         <button id="connectBankBtn" class="btn btn-primary">
           Connect Bank via Plaid
         </button>
+
+        <!-- Update Connection Button (shown when bank already connected) -->
+        <button id="updateConnectionBtn" class="btn btn-secondary hidden" style="margin-top: 8px;">
+          Update Connection
+        </button>
+
+        <div class="security-badge" style="margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #6b7280;">
+          <span>🔒</span>
+          <span>Bank-level encryption</span>
+        </div>
       </div>
 
       <!-- Sheet Selection Section -->
       <div id="sheetSection" class="section hidden">
+        <div class="step-progress">
+          <div class="step-label">Step 3 of 3 — Link Your Google Sheet</div>
+        </div>
+
         <h3 style="margin-bottom: 8px; font-size: 16px;">Update your Google Sheet</h3>
-        <p style="font-size: 13px; color: #666; margin-bottom: 12px;">
+        <p style="font-size: 13px; color: #666; margin-bottom: 4px;">
           Paste the URL of the Google Sheet where you want SheetLink to send your data.
         </p>
+        <p style="font-size: 12px; color: #9ca3af; margin-bottom: 12px;">
+          Use a sheet owned by <span id="sheetUserEmail" style="color: #6b7280; font-weight: 500;">user@gmail.com</span>
+        </p>
 
-        <!-- Inline error banner for sheet save failures -->
-        <div id="sheetErrorBanner" class="error-banner hidden" style="margin-bottom: 12px; padding: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
-          <div style="font-weight: 600; color: #991b1b; margin-bottom: 4px;">We could not access that Google Sheet</div>
-          <div style="font-size: 13px; color: #7f1d1d; margin-bottom: 8px;">
-            Double check that the link is correct and that you have edit access to the sheet.
-            If you pasted a shared link, try copying the full URL from your browser's address bar instead.
-          </div>
-          <div id="sheetErrorDetail" style="font-size: 11px; color: #991b1b; font-family: monospace;"></div>
+        <!-- Inline error banner for sheet save failures (Phase 3.9.2: Enhanced error messaging) -->
+        <div id="sheetErrorBanner" class="error-banner hidden" style="margin-bottom: 12px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
+          <div style="font-weight: 600; color: #991b1b; margin-bottom: 6px; font-size: 14px;">Cannot Access Google Sheet</div>
+          <div id="sheetErrorDetail" style="font-size: 13px; color: #7f1d1d; line-height: 1.5;"></div>
         </div>
 
         <label for="sheetUrl">Google Sheet URL</label>
@@ -98,6 +145,12 @@
         </div>
 
         <div class="sync-info">
+          <!-- Google Account Badge -->
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 12px; padding: 8px; background: #f9fafb; border-radius: 6px; font-size: 12px; color: #374151;">
+            <span>👤</span>
+            <span id="syncGoogleEmail" style="font-weight: 500;">user@gmail.com</span>
+          </div>
+
           <div class="sheet-row">
             <div class="sheet-main">
               <span class="sheet-label">Sheet:</span>
@@ -121,7 +174,7 @@
         </button>
 
         <!-- Auto-Sync Status -->
-        <div class="auto-sync-card" style="margin-top: 16px; padding: 12px; background: #f5f5f5; border-radius: 8px;">
+        <div class="auto-sync-card" style="display: none; margin-top: 16px; padding: 12px; background: #f5f5f5; border-radius: 8px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
             <span style="font-weight: 600;">⏰ Auto-Sync</span>
             <span id="schedulerStatus" style="font-size: 12px; color: #666;">Checking...</span>
@@ -210,8 +263,8 @@
             <h2>You're connected!</h2>
           </div>
 
-          <p class="modal-description">
-            Your Plaid sandbox account is now linked. You're ready to sync transactions to Google Sheets.
+          <p class="modal-description" id="connectionSuccessDescription">
+            Your bank account is now linked. You're ready to sync transactions to Google Sheets.
           </p>
 
           <div class="modal-actions">
@@ -255,7 +308,7 @@
           <h2>You synced your first data!</h2>
         </div>
 
-        <p class="modal-description">
+        <p class="modal-description" id="sheetSuccessDescription">
           Your Google Sheet is now live with sandbox transactions including balances, categories, and sample activity powered by SheetLink.
         </p>
 
