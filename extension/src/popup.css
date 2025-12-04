@@ -235,20 +235,31 @@ header {
   z-index: 10000;
 }
 
-.tier-info-icon:hover + .tier-tooltip {
+.tier-info-icon:hover + .tier-tooltip,
+.tier-info-icon:hover ~ .tier-tooltip {
   opacity: 1;
   visibility: visible;
+}
+
+/* Ensure home page tier info icon is visible and hoverable */
+.plan-tier .tier-info-icon {
+  color: #9ca3af;
+}
+
+.plan-tier .tier-info-icon:hover {
+  color: #6b7280;
 }
 
 .tier-tooltip-content {
   background: rgba(0, 0, 0, 0.9);
   color: white;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 6px;
   font-size: 11px;
   line-height: 1.4;
   white-space: normal;
-  max-width: 220px;
+  min-width: 180px;
+  max-width: 260px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
@@ -261,6 +272,122 @@ header {
   height: 8px;
   background: rgba(0, 0, 0, 0.9);
   transform: rotate(45deg);
+}
+
+/* Info Icon Tooltips (for Sync buttons) */
+.button-with-tooltip {
+  position: relative;
+  width: 100%;
+}
+
+.info-icon-container {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 3px;
+}
+
+.info-icon {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: default;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.info-icon:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Grey button (secondary) needs different icon color */
+.btn-secondary .info-icon {
+  color: rgba(107, 114, 128, 0.8);
+}
+
+.btn-secondary .info-icon:hover {
+  color: rgba(75, 85, 99, 1);
+}
+
+.info-tooltip {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.info-tooltip.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.info-tooltip-content {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: normal;
+  min-width: 200px;
+  max-width: 280px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.info-tooltip-content::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: auto;
+  right: 20px;
+  transform: rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Sync Status Display */
+.sync-status {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.sync-status.success {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #065f46;
+}
+
+.sync-status.error {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.sync-status.loading {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+/* Spinner Animation */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .connection-indicators {
@@ -812,7 +939,37 @@ footer .btn {
   }
 }
 
-/* Phase 3.9: FTUE Polish - Step Progress Indicator */
+/* Phase 3.9: Minimal Progress Dots */
+.progress-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0;
+}
+
+.progress-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.progress-dots .dot.completed {
+  background: #10b981;
+}
+
+.progress-dots .dot.active {
+  background: #3b82f6;
+  width: 8px;
+  height: 8px;
+}
+
+.progress-dots .dot.upcoming {
+  background: #d1d5db;
+}
+
+/* Legacy Step Progress (if needed elsewhere) */
 .step-progress {
   margin-bottom: 16px;
   padding-bottom: 12px;
@@ -824,28 +981,6 @@ footer .btn {
   font-weight: 600;
   color: #1a73e8;
   letter-spacing: 0.3px;
-}
-
-/* Phase 3.9: Signed-In Badge */
-.signed-in-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #166534;
-}
-
-.badge-icon {
-  font-size: 14px;
-  color: #16a34a;
-}
-
-.badge-text {
-  font-weight: 500;
 }
 
 /* Phase 3.9: Security Badge */
@@ -885,10 +1020,51 @@ footer .btn {
   border-radius: 8px;
   padding: 16px;
   transition: box-shadow 0.2s;
+  overflow: visible;
+  position: relative;
 }
 
 .card:hover {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Compact Status Dots with Glow Effect */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+}
+
+.status-dot-connected {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+.status-dot-disconnected {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6), 0 0 4px rgba(239, 68, 68, 0.8);
+  animation: pulse-red 2s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.8), 0 0 6px rgba(16, 185, 129, 1);
+  }
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6), 0 0 4px rgba(239, 68, 68, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.8), 0 0 6px rgba(239, 68, 68, 1);
+  }
 }
 
 /* Footer Navigation */

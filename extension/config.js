@@ -49,7 +49,7 @@ export const CONFIG = {
       welcomeTitle: "Welcome to SheetLink",
       welcomeSubtitle: "Connect Your Bank",
       welcomeDescription: "SheetLink connects your bank to Google Sheets via Plaid. Your credentials are encrypted and never stored.",
-      connectButton: "Connect Bank via Plaid",
+      connectButton: "Add a Bank via Plaid",
       connectedInstitution: (name) => name,
       syncButton: "Sync Now",
       resetButton: "Disconnect Bank",

@@ -29,7 +29,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case 'GET_AUTH_TOKEN':
-      handleGetAuthToken(sendResponse);
+      handleGetAuthToken(sendResponse, message.forceAuth || false);
       return true; // Keep channel open for async response
 
     case 'EXCHANGE_PUBLIC_TOKEN':
@@ -132,44 +132,81 @@ async function handleExchangePublicToken(message, sendResponse) {
 // Store pending OAuth callback
 let pendingOAuthCallback = null;
 
+// Helper function to clear expired token
+async function clearExpiredToken() {
+  await chrome.storage.local.remove(['googleAccessToken', 'googleTokenExpiry']);
+  console.log('[Auth] Cleared expired token from storage');
+}
+
+// Launch OAuth flow via regular window
+async function launchOAuthFlow(sendResponse) {
+  const scopes = CONFIG.GOOGLE_SCOPES.join(' ');
+  const extensionId = chrome.runtime.id;
+  // Add extension_id as state parameter so it gets passed through OAuth
+  const state = JSON.stringify({ extension_id: extensionId });
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+    `client_id=${CONFIG.GOOGLE_CLIENT_ID}&` +
+    `response_type=token&` +
+    `redirect_uri=${encodeURIComponent(CONFIG.GOOGLE_REDIRECT_URI)}&` +
+    `scope=${encodeURIComponent(scopes)}&` +
+    `state=${encodeURIComponent(state)}`;
+
+  // Store the callback for later when the OAuth page sends us the token
+  pendingOAuthCallback = sendResponse;
+
+  // Open OAuth in a new window
+  chrome.windows.create({
+    url: authUrl,
+    type: 'popup',
+    width: 500,
+    height: 600,
+    focused: true
+  });
+}
+
 // Get Google OAuth token using manual OAuth flow
-async function handleGetAuthToken(sendResponse) {
+async function handleGetAuthToken(sendResponse, forceAuth = false) {
   try {
     // Check if we have a cached token in storage
     const result = await chrome.storage.local.get(['googleAccessToken', 'googleTokenExpiry']);
     const now = Date.now();
+    const bufferMs = 5 * 60 * 1000; // 5 minute buffer
 
-    // Return cached token if valid and not expired
-    if (result.googleAccessToken && result.googleTokenExpiry && result.googleTokenExpiry > now) {
+    // Return cached token if valid and not expiring soon (unless forcing auth)
+    if (!forceAuth &&
+        result.googleAccessToken &&
+        result.googleTokenExpiry &&
+        result.googleTokenExpiry > (now + bufferMs)) {
+      const minutesRemaining = Math.round((result.googleTokenExpiry - now) / 60000);
+      console.log('[Auth] Returning cached token (expires in', minutesRemaining, 'minutes)');
       sendResponse({ token: result.googleAccessToken });
       return;
     }
 
-    // No valid cached token - launch OAuth flow via regular window
-    const scopes = CONFIG.GOOGLE_SCOPES.join(' ');
-    const extensionId = chrome.runtime.id;
-    // Add extension_id as state parameter so it gets passed through OAuth
-    const state = JSON.stringify({ extension_id: extensionId });
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-      `client_id=${CONFIG.GOOGLE_CLIENT_ID}&` +
-      `response_type=token&` +
-      `redirect_uri=${encodeURIComponent(CONFIG.GOOGLE_REDIRECT_URI)}&` +
-      `scope=${encodeURIComponent(scopes)}&` +
-      `state=${encodeURIComponent(state)}`;
+    // Phase 3.11: Distinguish between first-time auth and re-authentication
+    // - forceAuth = true (user clicked button) → always launch OAuth
+    // - No token + no expiry = first-time auth → launch OAuth
+    // - Has token or expiry = re-authentication → return error (let UI handle)
+    const isFirstTimeAuth = !result.googleAccessToken && !result.googleTokenExpiry;
 
-    // Store the callback for later when the OAuth page sends us the token
-    pendingOAuthCallback = sendResponse;
+    if (forceAuth || isFirstTimeAuth) {
+      console.log('[Auth]', forceAuth ? 'User-initiated' : 'First-time', 'authentication, launching OAuth flow');
+      // Clear token before launching OAuth
+      await clearExpiredToken();
+      await launchOAuthFlow(sendResponse);
+    } else {
+      // Token expired during re-authentication
+      const minutesRemaining = result.googleTokenExpiry ?
+        Math.round((result.googleTokenExpiry - now) / 60000) : 0;
+      console.log('[Auth] Re-authentication needed (token expired', minutesRemaining, 'minutes ago), returning error');
 
-    // Open OAuth in a new window
-    chrome.windows.create({
-      url: authUrl,
-      type: 'popup',
-      width: 500,
-      height: 600,
-      focused: true
-    });
+      // DON'T clear token yet - keep it so subsequent calls also return error
+      // Token will be cleared when user clicks "Continue with Google"
+      sendResponse({ error: 'AUTH_EXPIRED' });
+    }
 
   } catch (error) {
+    console.error('[Auth] Error in handleGetAuthToken:', error);
     sendResponse({ error: error.message });
   }
 }
@@ -422,7 +459,7 @@ chrome.runtime.setUninstallURL('https://forms.gle/feedback');
 async function cleanupOldData() {
   try {
     const data = await chrome.storage.sync.get(['lastSync']);
-    
+
     if (data.lastSync) {
       const daysSinceSync = (Date.now() - data.lastSync) / (1000 * 60 * 60 * 24);
 
@@ -432,6 +469,79 @@ async function cleanupOldData() {
     }
   } catch (error) {
     // Error in cleanup
+  }
+}
+
+// ===== Phase 3.11: Background Token Monitoring =====
+
+// Token monitoring configuration
+const TOKEN_CHECK_INTERVAL = 10; // Check every 10 minutes
+const TOKEN_REFRESH_THRESHOLD = 15 * 60 * 1000; // Warn if < 15 minutes remaining
+
+// Start token monitoring on extension startup
+chrome.runtime.onStartup.addListener(() => {
+  console.log('[Service Worker] Starting token monitor');
+  scheduleTokenCheck();
+});
+
+// Start token monitoring on extension install/update
+chrome.runtime.onInstalled.addListener(() => {
+  console.log('[Service Worker] Extension installed, starting token monitor');
+  scheduleTokenCheck();
+});
+
+// Schedule periodic token checks using alarms
+function scheduleTokenCheck() {
+  chrome.alarms.create('tokenCheck', {
+    periodInMinutes: TOKEN_CHECK_INTERVAL
+  });
+  console.log('[Token Monitor] Scheduled token check every', TOKEN_CHECK_INTERVAL, 'minutes');
+}
+
+// Handle alarm events
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+  if (alarm.name === 'tokenCheck') {
+    await checkAndRefreshToken();
+  }
+});
+
+// Check token expiry and log warnings
+async function checkAndRefreshToken() {
+  try {
+    const result = await chrome.storage.local.get(['googleAccessToken', 'googleTokenExpiry']);
+    const { googleAuthenticated } = await chrome.storage.sync.get(['googleAuthenticated']);
+
+    // Only check if user is authenticated
+    if (!googleAuthenticated) {
+      console.log('[Token Monitor] User not authenticated, skipping check');
+      return;
+    }
+
+    if (!result.googleAccessToken || !result.googleTokenExpiry) {
+      console.log('[Token Monitor] No token found');
+      return;
+    }
+
+    const now = Date.now();
+    const timeRemaining = result.googleTokenExpiry - now;
+    const minutesRemaining = Math.round(timeRemaining / 60000);
+
+    console.log('[Token Monitor] Token check - time remaining:', minutesRemaining, 'minutes');
+
+    // If token expires in less than 15 minutes, log warning
+    if (timeRemaining < TOKEN_REFRESH_THRESHOLD && timeRemaining > 0) {
+      console.warn('[Token Monitor] Token expiring soon (', minutesRemaining, 'minutes)');
+      console.warn('[Token Monitor] User will need to re-authenticate on next API call');
+    }
+
+    // If already expired, clear it
+    if (timeRemaining <= 0) {
+      console.log('[Token Monitor] Token expired, clearing from storage');
+      await chrome.storage.local.remove(['googleAccessToken', 'googleTokenExpiry']);
+    }
+
+  } catch (error) {
+    console.error('[Token Monitor] Error checking token:', error);
   }
 }
 
