@@ -255,6 +255,8 @@ async function loadState() {
       showSection('welcome');
       // Hide disconnect button on welcome screen
       if (disconnectBtn) disconnectBtn.classList.add('hidden');
+      // Phase 3.10: Initialize navigation (will hide footer nav since not fully connected)
+      await initializeNavigation();
       return;
     }
 
@@ -299,6 +301,8 @@ async function loadState() {
       showSection('connect');
       // Hide disconnect button when no bank connected
       if (disconnectBtn) disconnectBtn.classList.add('hidden');
+      // Phase 3.10: Initialize navigation (will hide footer nav since not fully connected)
+      await initializeNavigation();
       return;
     }
 
@@ -343,6 +347,8 @@ async function loadState() {
         updateBtn.addEventListener('click', () => handleConnectBank(true));
       }
 
+      // Phase 3.10: Initialize navigation (will hide footer nav since not fully connected)
+      await initializeNavigation();
       return;
     }
 
