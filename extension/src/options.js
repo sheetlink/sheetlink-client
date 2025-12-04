@@ -51,9 +51,59 @@ function initializeElements() {
 }
 
 function initializeSandboxMode() {
-  // Show sandbox info section if in sandbox mode
-  if (CONFIG.isSandbox && sandboxInfo) {
-    sandboxInfo.classList.remove('hidden');
+  // Handle sandbox info section based on environment
+  if (sandboxInfo) {
+    if (CONFIG.isSandbox) {
+      // Show sandbox info in sandbox mode
+      sandboxInfo.classList.remove('hidden');
+    } else {
+      // Hide sandbox info in production mode
+      sandboxInfo.style.display = 'none';
+    }
+  }
+
+  // Update footer based on environment
+  const footerVersion = document.getElementById('footerVersion');
+  if (footerVersion) {
+    if (CONFIG.isSandbox) {
+      footerVersion.textContent = 'SheetLink v0.3.1 (Sandbox Preview)';
+    } else {
+      footerVersion.textContent = 'SheetLink v0.3.1';
+    }
+  }
+
+  // Hide "Join Beta" link in production mode
+  if (!CONFIG.isSandbox) {
+    const betaLinks = document.querySelectorAll('a[href*="beta"]');
+    betaLinks.forEach(link => {
+      link.style.display = 'none';
+    });
+  }
+
+  // Lock backend URL in production mode
+  if (!CONFIG.isSandbox && backendUrlInput) {
+    backendUrlInput.value = 'https://api.sheetlink.app';
+    backendUrlInput.readOnly = true;
+    backendUrlInput.style.cursor = 'not-allowed';
+    backendUrlInput.style.opacity = '0.7';
+    backendUrlInput.style.background = '#f9fafb';
+
+    // Update label to show lock icon
+    const label = document.querySelector('label[for="backendUrl"]');
+    if (label) {
+      label.innerHTML = 'Backend URL <span class="lock-icon">🔒</span>';
+    }
+
+    // Update description
+    const formGroup = backendUrlInput.closest('.form-group');
+    if (formGroup) {
+      const description = formGroup.querySelector('.description');
+      if (description) {
+        description.textContent = 'Locked in production mode';
+        description.style.color = '#9ca3af';
+        description.style.fontStyle = 'italic';
+      }
+    }
   }
 }
 

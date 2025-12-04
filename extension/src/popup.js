@@ -6,7 +6,7 @@ import { CONFIG } from '../config.js';
 const BACKEND_URL = CONFIG.BACKEND_URL;
 
 // DOM elements
-let connectBankBtn, connectSandboxBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
+let connectBankBtn, connectSandboxBtn, signInGoogleBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
 let removeSheetBtn, changeSheetBtn, changeSheetLinkBtn, retrySyncBtn;
 let sheetUrlInput, statusText, errorMessage, loadingMessage;
 let connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection;
@@ -36,6 +36,7 @@ function initializeElements() {
   // Buttons
   connectBankBtn = document.getElementById('connectBankBtn');
   connectSandboxBtn = document.getElementById('connectSandboxBtn');
+  signInGoogleBtn = document.getElementById('signInGoogleBtn');
   learnMoreBtn = document.getElementById('learnMoreBtn');
   saveSheetBtn = document.getElementById('saveSheetBtn');
   removeSheetBtn = document.getElementById('removeSheetBtn');
@@ -126,6 +127,7 @@ function initializeSandboxMode() {
 function attachEventListeners() {
   if (connectBankBtn) connectBankBtn.addEventListener('click', handleConnectBank);
   if (connectSandboxBtn) connectSandboxBtn.addEventListener('click', handleConnectSandbox);
+  if (signInGoogleBtn) signInGoogleBtn.addEventListener('click', handleGoogleSignIn);
   if (learnMoreBtn) learnMoreBtn.addEventListener('click', handleLearnMore);
   saveSheetBtn.addEventListener('click', handleSaveSheet);
   if (removeSheetBtn) removeSheetBtn.addEventListener('click', handleRemoveSheet);
@@ -193,11 +195,38 @@ function handleLearnMore() {
 // Load current state from storage
 async function loadState() {
   try {
-    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status']);
+    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status', 'googleAuthenticated', 'googleUserId', 'googleEmail', 'hasProgressedToSheetSetup']);
+
+    console.log('[Popup] loadState - googleAuthenticated:', data.googleAuthenticated);
+    console.log('[Popup] loadState - googleUserId:', data.googleUserId);
+    console.log('[Popup] loadState - hasProgressedToSheetSetup:', data.hasProgressedToSheetSetup);
+
+    // Phase 3.9: Update email displays throughout the UI
+    if (data.googleEmail) {
+      const emailElements = document.querySelectorAll('#connectedUserEmail, #sheetUserEmail, #syncGoogleEmail');
+      emailElements.forEach(el => {
+        if (el) el.textContent = data.googleEmail;
+      });
+    }
+
+    // Phase 3.8: Check if user is authenticated with Google first
+    if (!data.googleAuthenticated) {
+      console.log('[Popup] User not authenticated - showing welcome screen');
+      // User not authenticated - show welcome with "Sign in with Google" button
+      showSection('welcome');
+      // Hide disconnect button on welcome screen
+      if (disconnectBtn) disconnectBtn.classList.add('hidden');
+      return;
+    }
+
+    console.log('[Popup] User is authenticated - continuing with flow');
 
     // Check if we should show the success modal
-    if (data.sheetlink_connection_status && data.sheetlink_connection_status.justConnected) {
-      // Show success modal
+    // Only show for first-time connections, not for updates
+    if (data.sheetlink_connection_status &&
+        data.sheetlink_connection_status.justConnected &&
+        !data.sheetlink_connection_status.isUpdate) {
+      // Show success modal for first-time connection
       showSuccessModal();
 
       // Reset the justConnected flag
@@ -207,11 +236,30 @@ async function loadState() {
           justConnected: false
         }
       });
+    } else if (data.sheetlink_connection_status && data.sheetlink_connection_status.justConnected) {
+      // For updates, just reset the flag without showing modal
+      await chrome.storage.sync.set({
+        sheetlink_connection_status: {
+          ...data.sheetlink_connection_status,
+          justConnected: false,
+          isUpdate: false
+        }
+      });
     }
 
-    // No bank connected: show welcome screen with sandbox messaging
+    // No bank connected: try to restore from backend first (Phase 3.8)
     if (!data.itemId) {
-      showSection('welcome');
+      // Try to restore Items from backend using Google user ID
+      const restored = await tryRestoreItems();
+      if (restored) {
+        // Items restored! Reload state with new itemId
+        return loadState();
+      }
+
+      // No Items to restore - show connect bank screen
+      showSection('connect');
+      // Hide disconnect button when no bank connected
+      if (disconnectBtn) disconnectBtn.classList.add('hidden');
       return;
     }
 
@@ -220,6 +268,55 @@ async function loadState() {
     updateStatus(CONFIG.isSandbox ? CONFIG.currentCopy.connectedInstitution(CONFIG.DEMO_INSTITUTION_NAME) : 'Connected', true);
     disconnectBtn.classList.remove('hidden');
 
+    // Phase 3.9 UX: Show step 2 for returning users if they just authenticated
+    // BUT skip step 2 if user has already progressed to sheet setup
+    // Check if user just signed in (first load after Google auth)
+    const shouldShowStep2 = !data.hasSeenConnectStep && data.googleAuthenticated && !data.hasProgressedToSheetSetup;
+    if (shouldShowStep2) {
+      // Mark that we've shown step 2
+      await chrome.storage.sync.set({ hasSeenConnectStep: true });
+
+      // Show connect screen with connection status
+      showSection('connect');
+
+      // Fetch and display item info (institution name and accounts)
+      await displayItemInfo(data.itemId);
+
+      // Update primary button to "Next"
+      const connectBtn = document.getElementById('connectBankBtn');
+      if (connectBtn) {
+        connectBtn.textContent = 'Next';
+        connectBtn.disabled = false;
+        // Remove old event listener and add new one for proceeding
+        const newBtn = connectBtn.cloneNode(true);
+        connectBtn.parentNode.replaceChild(newBtn, connectBtn);
+        newBtn.addEventListener('click', async () => {
+          // Mark that user has progressed to sheet setup
+          await chrome.storage.sync.set({ hasProgressedToSheetSetup: true });
+          proceedToSheetSetup(data);
+        });
+      }
+
+      // Show and wire up "Update Connection" button
+      const updateBtn = document.getElementById('updateConnectionBtn');
+      if (updateBtn) {
+        updateBtn.classList.remove('hidden');
+        updateBtn.addEventListener('click', () => handleConnectBank(true));
+      }
+
+      return;
+    }
+
+    // Normal flow - proceed to sheet setup
+    proceedToSheetSetup(data);
+  } catch (error) {
+    console.error('[Popup] Failed to load state:', error);
+    showError('Failed to load state: ' + error.message);
+  }
+}
+
+// Helper function to proceed to sheet setup after step 2
+async function proceedToSheetSetup(data) {
     if (data.sheetId) {
       showSection('sync');
       document.getElementById('currentSheet').textContent =
@@ -233,9 +330,14 @@ async function loadState() {
         document.getElementById('lastSync').textContent = new Date(data.lastSync).toLocaleString();
       }
 
-      await updateAutoSyncStatus();
-      await loadRecentSyncs();
-      await updateTierDisplay();  // Phase 3: Update tier info
+      // Fetch and display bank name in status
+      if (data.itemId) {
+        await updateBankStatus(data.itemId);
+      }
+
+      updateAutoSyncStatus();
+      loadRecentSyncs();
+      updateTierDisplay();  // Phase 3: Update tier info
     } else {
       showSection('sheet');
       document.getElementById('currentSheet').textContent = 'Not connected yet';
@@ -243,8 +345,194 @@ async function loadState() {
         changeSheetBtn.classList.add('hidden');
       }
     }
+}
+
+// Phase 3.9: Fetch and display item info (institution and accounts)
+async function displayItemInfo(itemId) {
+  try {
+    if (!itemId) {
+      console.error('No item ID provided');
+      // Fall back to generic display
+      showGenericBankStatus();
+      return;
+    }
+
+    console.log(`Fetching item info for: ${itemId}`);
+
+    // Call backend to get item info
+    const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
+
+    if (!response.ok) {
+      console.error('Failed to fetch item info:', response.status);
+      // Fall back to generic display
+      showGenericBankStatus();
+      return;
+    }
+
+    const itemInfo = await response.json();
+    console.log('Item info received:', itemInfo);
+
+    // Update the bank connection status display with specific details
+    const statusEl = document.getElementById('bankConnectionStatus');
+    if (statusEl) {
+      // Build account list HTML
+      let accountsHTML = '';
+      if (itemInfo.accounts && itemInfo.accounts.length > 0) {
+        accountsHTML = '<div style="margin-top: 8px; font-size: 13px; color: #374151;">';
+        itemInfo.accounts.forEach(account => {
+          const accountName = account.official_name || account.name;
+          const mask = account.mask ? ` (****${account.mask})` : '';
+          accountsHTML += `<div style="margin-top: 4px;">• ${accountName}${mask}</div>`;
+        });
+        accountsHTML += '</div>';
+      }
+
+      // Update status element with institution name and accounts
+      statusEl.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #166534; font-weight: 500;">
+          <span>✓</span>
+          <span>${itemInfo.institution_name}</span>
+        </div>
+        ${accountsHTML}
+      `;
+      statusEl.classList.remove('hidden');
+    }
+
   } catch (error) {
-    showError('Failed to load state');
+    console.error('Error displaying item info:', error);
+    // Fall back to generic display
+    showGenericBankStatus();
+  }
+}
+
+// Helper function to show generic bank status (fallback)
+function showGenericBankStatus() {
+  const statusEl = document.getElementById('bankConnectionStatus');
+  if (statusEl) {
+    statusEl.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #166534; font-weight: 500;">
+        <span>✓</span>
+        <span>Bank Connected</span>
+      </div>
+    `;
+    statusEl.classList.remove('hidden');
+  }
+}
+
+// Update bank status on sync page
+async function updateBankStatus(itemId) {
+  try {
+    // Fetch item info to get institution name and accounts
+    const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
+
+    if (!response.ok) {
+      console.error('Failed to fetch item info for status:', response.status);
+      updateStatus('Plaid connected', true);
+      return;
+    }
+
+    const itemInfo = await response.json();
+
+    // Update status to show "Plaid connected"
+    updateStatus('Plaid connected', true);
+
+    // Populate the collapsible details section
+    const detailsEl = document.getElementById('bankConnectionDetails');
+    const contentEl = document.getElementById('bankConnectionDetailsContent');
+
+    if (detailsEl && contentEl && itemInfo) {
+      // Build institution and accounts HTML
+      let accountsHTML = '';
+      if (itemInfo.accounts && itemInfo.accounts.length > 0) {
+        accountsHTML = '<div style="margin-bottom: 12px;">';
+        itemInfo.accounts.forEach(account => {
+          const accountName = account.official_name || account.name;
+          const mask = account.mask ? ` (****${account.mask})` : '';
+          accountsHTML += `<div style="margin-top: 6px; color: #374151;">• ${accountName}${mask}</div>`;
+        });
+        accountsHTML += '</div>';
+      }
+
+      contentEl.innerHTML = `
+        <div style="font-weight: 600; color: #166534; margin-bottom: 8px;">
+          ✓ ${itemInfo.institution_name}
+        </div>
+        ${accountsHTML}
+        <button id="updateConnectionFromDetails" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px;">
+          Update Connection
+        </button>
+      `;
+
+      // Show the details section
+      detailsEl.style.display = 'block';
+
+      // Add event listener for Update Connection button
+      const updateBtn = document.getElementById('updateConnectionFromDetails');
+      if (updateBtn) {
+        updateBtn.addEventListener('click', () => handleConnectBank(true));
+      }
+
+      // Add arrow rotation on toggle
+      const detailsElement = document.getElementById('bankConnectionDetails');
+      const arrow = document.getElementById('dropdownArrow');
+      if (detailsElement && arrow) {
+        detailsElement.addEventListener('toggle', () => {
+          if (detailsElement.open) {
+            arrow.style.transform = 'rotate(90deg)';
+          } else {
+            arrow.style.transform = 'rotate(0deg)';
+          }
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error updating bank status:', error);
+    updateStatus('Plaid connected', true);
+  }
+}
+
+// Phase 3.8: Try to restore Items from backend using Google user ID
+async function tryRestoreItems() {
+  try {
+    // Get Google user ID from storage (set during sign-in)
+    const { googleUserId } = await chrome.storage.sync.get(['googleUserId']);
+
+    if (!googleUserId) {
+      console.log('No Google user ID available for restoration');
+      return false;
+    }
+
+    console.log('Checking for Items to restore...');
+
+    // Call backend to get user's Items
+    const response = await fetch(`${BACKEND_URL}/plaid/items?user_id=${encodeURIComponent(googleUserId)}`);
+
+    if (!response.ok) {
+      console.log('Could not fetch Items from backend');
+      return false;
+    }
+
+    const data = await response.json();
+
+    if (!data.items || data.items.length === 0) {
+      console.log('No Items found to restore');
+      return false;
+    }
+
+    // Restore the most recently synced Item
+    const mostRecentItem = data.items[0];
+    console.log(`Restoring Item: ${mostRecentItem.institution_name}`);
+
+    await chrome.storage.sync.set({
+      itemId: mostRecentItem.item_id
+    });
+
+    console.log(`Item restored successfully: ${mostRecentItem.item_id}`);
+    return true;
+
+  } catch (error) {
+    console.error('Error restoring Items:', error);
+    return false; // Silent fail - user sees normal welcome screen
   }
 }
 
@@ -302,6 +590,62 @@ async function updateTierDisplay() {
   }
 }
 
+// Phase 3.9.5: Update cloud sync indicator (enhanced from 3.8)
+async function updateCloudSyncIndicator() {
+  try {
+    const { googleUserId, itemId } = await chrome.storage.sync.get(['googleUserId', 'itemId']);
+
+    const cloudIndicator = document.getElementById('cloudSyncIndicator');
+    if (!cloudIndicator) return;
+
+    // Show cloud sync indicator if user is authenticated and has connected a bank
+    if (googleUserId && itemId) {
+      cloudIndicator.style.display = 'block';
+    } else {
+      cloudIndicator.style.display = 'none';
+    }
+  } catch (error) {
+    // Silently fail - non-critical feature
+    console.log('[Cloud Sync Indicator] Error:', error);
+  }
+}
+
+// Phase 3.8: Handle Google Sign-In
+async function handleGoogleSignIn() {
+  try {
+    // Trigger Google OAuth flow via service worker
+    // Note: This opens OAuth window and doesn't wait for response
+    // Service worker will reopen popup after OAuth completes
+    chrome.runtime.sendMessage({ type: 'GET_AUTH_TOKEN' }, async (response) => {
+      if (response && response.token) {
+        // OAuth completed successfully
+        // Get user info after successful OAuth
+        const userInfo = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
+
+        if (!userInfo || !userInfo.id) {
+          showError('Could not get Google user information');
+          return;
+        }
+
+        // Store Google user ID for backend
+        await chrome.storage.sync.set({
+          googleUserId: userInfo.id,
+          googleAuthenticated: true
+        });
+
+        // Reload state to show next step (connect bank)
+        await loadState();
+      }
+    });
+
+    // Close popup immediately so OAuth window is visible
+    window.close();
+
+  } catch (error) {
+    showError('Failed to sign in with Google: ' + error.message);
+  }
+}
+
 // Handle Connect Sandbox button (with walkthrough)
 async function handleConnectSandbox() {
   // Check if user has completed walkthrough
@@ -319,8 +663,15 @@ async function handleConnectSandbox() {
 }
 
 // Handle Connect Bank button
-async function handleConnectBank() {
+async function handleConnectBank(isUpdate = false) {
   try {
+    // Mark if this is an update connection (not first-time)
+    if (isUpdate) {
+      await chrome.storage.sync.set({
+        isUpdatingConnection: true
+      });
+    }
+
     showLoading('Connecting to Plaid...');
 
     const linkData = await getLinkToken();
@@ -355,7 +706,7 @@ async function handleSaveSheet() {
   }
 
   try {
-    showLoading('Saving sheet...');
+    showLoading('Verifying sheet access...');
     hideSheetError();
 
     const sheetId = extractSheetId(url);
@@ -363,19 +714,43 @@ async function handleSaveSheet() {
       throw new Error('Invalid Google Sheets URL');
     }
 
-    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
-
+    // Phase 3.9.2: Verify access BEFORE saving to prevent 403 errors
     if (window.SheetsAPI) {
-      await window.SheetsAPI.verifySheetAccess(sheetId);
+      try {
+        await window.SheetsAPI.verifySheetAccess(sheetId);
+      } catch (verifyError) {
+        // Parse error to detect account mismatch (403) vs not found (404)
+        const errorMsg = verifyError.message || '';
+
+        if (errorMsg.includes('403')) {
+          // Account mismatch - sheet exists but user can't access it
+          const { googleEmail } = await chrome.storage.sync.get(['googleEmail']);
+          const accountInfo = googleEmail ? ` (signed in as ${googleEmail})` : '';
+          throw new Error(
+            `Access denied. This sheet is not owned by or shared with your Google account${accountInfo}. ` +
+            `Make sure the sheet is owned by ${googleEmail || 'your Google account'} or that you have edit access.`
+          );
+        } else if (errorMsg.includes('404')) {
+          // Sheet not found
+          throw new Error(
+            'Sheet not found. Double check the URL is correct and that the sheet still exists.'
+          );
+        } else {
+          // Other error
+          throw new Error(`Cannot access sheet: ${errorMsg}`);
+        }
+      }
     }
+
+    // Only save if verification succeeds
+    await chrome.storage.sync.set({ sheetId, sheetUrl: url });
 
     hideLoading();
     updateStatus('Sheet saved successfully!', true);
     await loadState();
   } catch (error) {
-    await chrome.storage.sync.remove(['sheetId', 'sheetUrl']);
     hideLoading();
-    showSheetError('Sheets API error: ' + error.message);
+    showSheetError(error.message);
   }
 }
 
@@ -454,10 +829,26 @@ async function handleSyncNow() {
   } catch (error) {
     hideLoading();
 
-    if (error.message && (error.message.includes('404') || error.message.includes('Cannot access sheet') || error.message.includes('edit permissions'))) {
+    // Phase 3.9.2 & 3.9.6: Enhanced error detection for sheet access issues
+    const errorMsg = error.message || '';
+    const isSheetAccessError = errorMsg.includes('403') ||
+                                errorMsg.includes('404') ||
+                                errorMsg.includes('Cannot access sheet') ||
+                                errorMsg.includes('edit permissions');
+
+    if (isSheetAccessError) {
       showSyncError();
     } else {
-      showError('Sync failed: ' + error.message);
+      // Phase 3.9.6: Improved generic error messages
+      let userFriendlyMsg = errorMsg;
+
+      if (errorMsg.includes('429') || errorMsg.toLowerCase().includes('rate limit')) {
+        userFriendlyMsg = 'Rate limit exceeded. Please wait a moment and try again.';
+      } else if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
+        userFriendlyMsg = 'Network error. Check your internet connection and try again.';
+      }
+
+      showError('Sync failed: ' + userFriendlyMsg);
     }
   }
 }
@@ -579,18 +970,51 @@ async function handleDisconnect() {
   try {
     showLoading('Disconnecting...');
 
-    const { itemId } = await chrome.storage.sync.get(['itemId']);
+    const { itemId, googleUserId, googleEmail, googleAuthenticated } = await chrome.storage.sync.get(['itemId', 'googleUserId', 'googleEmail', 'googleAuthenticated']);
 
+    // Call backend to remove item if it exists
     if (itemId) {
-      await deleteBackendTokens(itemId);
+      try {
+        console.log(`[Disconnect] Calling DELETE /plaid/item/${itemId}`);
+        const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}`, {
+          method: 'DELETE'
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.warn('Failed to delete item from backend:', response.status, errorText);
+          // Continue anyway - at least clear local storage
+        } else {
+          const result = await response.json();
+          console.log('[Disconnect] Item deleted from backend successfully:', result);
+        }
+      } catch (error) {
+        console.error('Error deleting item from backend:', error);
+        // Continue anyway - at least clear local storage
+      }
+    } else {
+      console.log('[Disconnect] No itemId found, skipping backend delete');
     }
-    
-    // Clear local storage
+
+    // Clear all local storage
     await chrome.storage.sync.clear();
-    
+
+    // Also clear local storage (Google access tokens)
+    await chrome.storage.local.clear();
+
+    // Restore Google auth information so user doesn't have to re-authenticate
+    if (googleUserId && googleEmail && googleAuthenticated) {
+      await chrome.storage.sync.set({
+        googleUserId,
+        googleEmail,
+        googleAuthenticated
+      });
+    }
+
     hideLoading();
     await loadState();
   } catch (error) {
+    hideLoading();
     showError('Failed to disconnect: ' + error.message);
   }
 }
@@ -854,11 +1278,25 @@ async function writeToSheets(sheetId, data) {
     throw new Error('Sheets API not loaded');
   }
 
-  // Verify sheet access first
+  // Phase 3.9.2: Verify sheet access first with enhanced error messages
   try {
     await window.SheetsAPI.verifySheetAccess(sheetId);
   } catch (error) {
-    throw new Error(`Cannot access sheet. Make sure you have edit permissions: ${error.message}`);
+    const errorMsg = error.message || '';
+
+    if (errorMsg.includes('403')) {
+      // Account mismatch
+      const { googleEmail } = await chrome.storage.sync.get(['googleEmail']);
+      const accountInfo = googleEmail ? ` Your SheetLink account is signed in as ${googleEmail}.` : '';
+      throw new Error(
+        `Cannot access sheet - permission denied.${accountInfo} ` +
+        `Make sure the sheet is owned by ${googleEmail || 'your Google account'} or that SheetLink has edit access.`
+      );
+    } else if (errorMsg.includes('404')) {
+      throw new Error('Sheet not found. The sheet may have been deleted or the URL is incorrect.');
+    } else {
+      throw new Error(`Cannot access sheet: ${errorMsg}`);
+    }
   }
 
   // Write accounts data
@@ -984,6 +1422,16 @@ function hideSyncError() {
 function showSuccessModal() {
   const modal = document.getElementById('connectionSuccessModal');
   if (modal) {
+    // Set the modal description text based on environment
+    const descriptionEl = document.getElementById('connectionSuccessDescription');
+    if (descriptionEl) {
+      if (CONFIG.isSandbox) {
+        descriptionEl.textContent = 'Your Plaid sandbox account is now linked. You\'re ready to sync transactions to Google Sheets.';
+      } else {
+        descriptionEl.textContent = 'Your bank account is now linked. You\'re ready to sync transactions to Google Sheets.';
+      }
+    }
+
     // Reset to page 1
     const page1 = document.getElementById('modalPage1');
     const page2 = document.getElementById('modalPage2');
@@ -1020,6 +1468,16 @@ function hideSuccessModal() {
 async function showSheetSuccessModal() {
   if (sheetSuccessModal) {
     const { sheetUrl } = await chrome.storage.sync.get(['sheetUrl']);
+
+    // Set modal description text based on environment
+    const descriptionEl = document.getElementById('sheetSuccessDescription');
+    if (descriptionEl) {
+      if (CONFIG.isSandbox) {
+        descriptionEl.textContent = 'Your Google Sheet is now live with sandbox transactions including balances, categories, and sample activity powered by SheetLink.';
+      } else {
+        descriptionEl.textContent = 'Your Google Sheet is now live with your transaction data including balances, categories, and account activity powered by SheetLink.';
+      }
+    }
 
     if (syncSuccessOpenSheetBtn) {
       if (!sheetUrl) {
