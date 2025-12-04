@@ -9,9 +9,30 @@
 </head>
 <body>
   <div class="container">
-    <header>
+    <!-- Default header (shown before Google auth) -->
+    <header id="default-header">
       <img src="../assets/brand/sheetlink-logo-horizontal-white.svg" alt="SheetLink" class="logo" width="144" height="36">
       <p class="subtitle" id="headerSubtitle">Forget dashboards. Feed your spreadsheet.</p>
+    </header>
+
+    <!-- User control panel header (shown after Google auth) -->
+    <header id="user-header" class="user-header hidden">
+      <div class="user-profile">
+        <div class="user-avatar" id="userAvatar">
+          <span id="userInitial">U</span>
+        </div>
+        <div class="user-info">
+          <div class="user-email" id="userEmail">user@gmail.com</div>
+        </div>
+      </div>
+      <div class="connection-indicators">
+        <div class="indicator bank-indicator" id="bankIndicator" title="Bank connection">
+          <span class="indicator-icon">🏦</span>
+        </div>
+        <div class="indicator sheet-indicator" id="sheetIndicator" title="Sheet connection">
+          <span class="indicator-icon">📊</span>
+        </div>
+      </div>
     </header>
 
     <main id="mainContent">

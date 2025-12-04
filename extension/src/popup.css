@@ -121,6 +121,104 @@ header {
   animation: fadeInText 0.4s ease-out 0.25s forwards;
 }
 
+/* User Control Panel Header */
+.user-header {
+  background: linear-gradient(135deg, var(--sl-primary) 0%, var(--sl-accent) 100%);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0;
+  animation: slideInDown 0.4s ease-out 0.1s forwards;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-email {
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.connection-indicators {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.indicator {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  cursor: help;
+}
+
+.indicator-icon {
+  font-size: 16px;
+  filter: grayscale(1) brightness(0.7);
+  transition: filter 0.3s ease;
+}
+
+/* Connected state - green glow */
+.indicator.connected {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5),
+              0 0 16px rgba(16, 185, 129, 0.3);
+}
+
+.indicator.connected .indicator-icon {
+  filter: grayscale(0) brightness(1);
+}
+
+/* Disconnected state - red glow */
+.indicator.disconnected {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5),
+              0 0 16px rgba(239, 68, 68, 0.3);
+}
+
+.indicator.disconnected .indicator-icon {
+  filter: grayscale(0.5) brightness(0.9);
+}
+
 @keyframes fadeInText {
   to {
     opacity: 0.9;
