@@ -1879,7 +1879,7 @@ function formatRelativeTime(date) {
 // Attach event listeners for new nav buttons
 function attachNavigationEventListeners() {
   // Home page
-  if (homeSyncBtn) homeSyncBtn.addEventListener('click', handleSync);
+  if (homeSyncBtn) homeSyncBtn.addEventListener('click', handleSyncNow);
 
   // Bank page
   if (updateBankConnectionBtn) updateBankConnectionBtn.addEventListener('click', handleConnectBank);
