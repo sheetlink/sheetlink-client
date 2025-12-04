@@ -205,14 +205,16 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
 
       if (userInfo && userInfo.id) {
         console.log('[Service Worker] Successfully fetched Google user ID:', userInfo.id);
+        console.log('[Service Worker] Profile picture URL:', userInfo.picture);
 
         await chrome.storage.sync.set({
           googleUserId: userInfo.id,
           googleEmail: userInfo.email || null,
+          googlePicture: userInfo.picture || null,
           googleAuthenticated: true
         });
 
-        console.log('[Service Worker] Stored googleUserId, googleEmail, and googleAuthenticated flag');
+        console.log('[Service Worker] Stored googleUserId, googleEmail, googlePicture, and googleAuthenticated flag');
       } else {
         console.error('[Service Worker] No user ID in Google userinfo response:', userInfo);
       }

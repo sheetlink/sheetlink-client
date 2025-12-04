@@ -26,7 +26,7 @@ let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBt
 let currentTab = 'home';
 
 // User control panel header elements
-let defaultHeader, userHeader, userAvatar, userInitial, userEmail;
+let defaultHeader, userHeader, userAvatar, userPicture, userInitial, userEmail;
 let bankIndicator, sheetIndicator;
 
 // Initialize popup
@@ -132,6 +132,7 @@ function initializeElements() {
   defaultHeader = document.getElementById('default-header');
   userHeader = document.getElementById('user-header');
   userAvatar = document.getElementById('userAvatar');
+  userPicture = document.getElementById('userPicture');
   userInitial = document.getElementById('userInitial');
   userEmail = document.getElementById('userEmail');
   bankIndicator = document.getElementById('bankIndicator');
@@ -1392,7 +1393,7 @@ function extractSheetId(url) {
 }
 
 // Update user control panel header
-function updateUserHeader(googleEmail, hasBank, hasSheet) {
+async function updateUserHeader(googleEmail, hasBank, hasSheet) {
   console.log('[User Header] Updating with:', { googleEmail, hasBank, hasSheet });
 
   if (!userEmail || !userInitial) return;
@@ -1400,9 +1401,21 @@ function updateUserHeader(googleEmail, hasBank, hasSheet) {
   // Update email
   userEmail.textContent = googleEmail || 'user@gmail.com';
 
-  // Update avatar initial (first letter of email)
-  const initial = googleEmail ? googleEmail.charAt(0).toUpperCase() : 'U';
-  userInitial.textContent = initial;
+  // Get profile picture from storage
+  const { googlePicture } = await chrome.storage.sync.get(['googlePicture']);
+
+  // Update avatar - show picture if available, otherwise show initial
+  if (googlePicture && userPicture) {
+    userPicture.src = googlePicture;
+    userPicture.classList.remove('hidden');
+    userInitial.classList.add('hidden');
+  } else {
+    // Show initial as fallback
+    const initial = googleEmail ? googleEmail.charAt(0).toUpperCase() : 'U';
+    userInitial.textContent = initial;
+    userInitial.classList.remove('hidden');
+    if (userPicture) userPicture.classList.add('hidden');
+  }
 
   // Update bank indicator
   if (bankIndicator) {
