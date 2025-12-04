@@ -1,6 +1,32 @@
 // sheets.js - Google Sheets API wrapper for writing banking data
+// Version: Phase 3.11 - Re-auth error handling - Updated 2025-12-04 03:20
+console.log('[Sheets.js] Loading sheets.js - Phase 3.11 - Re-auth fixes v2');
 
 const SHEETS_API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
+
+/**
+ * Custom error class for authentication failures
+ * Used when OAuth token is expired or invalid
+ */
+class AuthenticationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'AuthenticationError';
+    this.isAuthError = true;
+  }
+}
+
+/**
+ * Custom error class for permission/access failures
+ * Used when user doesn't have access to the requested resource
+ */
+class PermissionError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'PermissionError';
+    this.isPermissionError = true;
+  }
+}
 
 /**
  * Convert column number to letter (A, B, ... Z, AA, AB, ...)
@@ -98,9 +124,23 @@ async function getAuthToken() {
     chrome.runtime.sendMessage(
       { type: 'GET_AUTH_TOKEN' },
       (response) => {
+        console.log('[Sheets] getAuthToken response:', response);
+
         if (response.error) {
-          reject(new Error(response.error));
+          console.log('[Sheets] Error in response:', response.error, 'Type:', typeof response.error);
+
+          // Phase 3.11: Check if it's an auth expiry error
+          if (response.error === 'AUTH_EXPIRED') {
+            console.log('[Sheets] AUTH_EXPIRED error from service worker, throwing AuthenticationError');
+            const authError = new AuthenticationError('Your session has expired. Please sign in again.');
+            console.log('[Sheets] Created error:', authError.name, authError.isAuthError);
+            reject(authError);
+          } else {
+            console.log('[Sheets] Not AUTH_EXPIRED, throwing generic Error');
+            reject(new Error(response.error));
+          }
         } else {
+          console.log('[Sheets] Token received successfully');
           resolve(response.token);
         }
       }
@@ -130,6 +170,33 @@ async function sheetsApiRequest(token, url, method = 'GET', body = null) {
   }
 
   const response = await fetch(url, options);
+
+  // Handle authentication errors (401/403)
+  if (response.status === 401 || response.status === 403) {
+    const errorData = await response.json().catch(() => ({}));
+    const errorMsg = errorData.error?.message || '';
+
+    // Check if it's an auth token error (not a permission error)
+    const isAuthError = errorMsg.toLowerCase().includes('invalid') ||
+                       errorMsg.toLowerCase().includes('expired') ||
+                       errorMsg.toLowerCase().includes('credentials') ||
+                       errorMsg.toLowerCase().includes('unauthenticated') ||
+                       response.status === 401;
+
+    if (isAuthError) {
+      console.log('[Sheets API] Authentication error detected, clearing expired token');
+      // Clear the expired token
+      await chrome.storage.local.remove(['googleAccessToken', 'googleTokenExpiry']);
+
+      // Throw specific auth error
+      throw new AuthenticationError('Your session has expired. Please sign in again.');
+    }
+
+    // It's a real permission error
+    throw new PermissionError(
+      `Cannot access sheet: ${errorMsg || 'Permission denied. Make sure the sheet is owned by your account or that you have edit access.'}`
+    );
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -428,6 +495,8 @@ async function writeAccounts(sheetId, accountsData) {
 async function writeTransactions(sheetId, transactionsData, accountsData = []) {
   const tabName = 'Transactions';
 
+  console.log('[Sheets] writeTransactions called with', transactionsData?.length, 'transactions and', accountsData?.length, 'accounts');
+
   // Check if rules are enabled to determine headers
   const settings = await chrome.storage.sync.get(['enableRulesTab']);
   const includeRules = settings.enableRulesTab || false;
@@ -435,6 +504,7 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
 
   // Ensure tab exists with proper headers
   await ensureTab(sheetId, tabName, headers);
+  console.log('[Sheets] Transactions tab ensured with headers');
 
   // Create account lookup map for enriching transactions
   const accountMap = new Map();
@@ -507,9 +577,12 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
     return baseRow;
   });
 
+  console.log('[Sheets] Prepared', rows.length, 'transaction rows to write');
+
   // Append only unique transactions
   const newCount = await appendUniqueRows(sheetId, tabName, rows, 'transaction_id');
 
+  console.log('[Sheets] Wrote', newCount, 'new transactions (out of', rows.length, 'total)');
   return newCount;
 }
 
@@ -519,17 +592,39 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
  * @returns {Promise<object>} Basic spreadsheet info if accessible
  */
 async function verifySheetAccess(sheetId) {
-  const token = await getAuthToken();
-  const url = `${SHEETS_API_BASE}/${sheetId}?fields=properties.title`;
-  return await sheetsApiRequest(token, url);
+  console.log('[Sheets] verifySheetAccess called for sheetId:', sheetId);
+  try {
+    const token = await getAuthToken();
+    console.log('[Sheets] verifySheetAccess got token, making API request');
+    const url = `${SHEETS_API_BASE}/${sheetId}?fields=properties.title`;
+    return await sheetsApiRequest(token, url);
+  } catch (error) {
+    console.log('[Sheets] verifySheetAccess caught error:', error);
+    console.log('[Sheets] Error name:', error.name, 'isAuthError:', error.isAuthError);
+    throw error;
+  }
 }
 
-// Export functions for use in popup
+/**
+ * Read a range from a spreadsheet (wrapper for popup.js)
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} range - Range to read (e.g., "Sheet1!A1:B10")
+ * @returns {Promise<array>} Values from the range
+ */
+async function readRangeWithAuth(sheetId, range) {
+  const token = await getAuthToken();
+  return await readRange(token, sheetId, range);
+}
+
+// Export functions and error classes for use in popup
 window.SheetsAPI = {
   ensureTab,
   appendUniqueRows,
   getAuthToken,
   writeAccounts,
   writeTransactions,
-  verifySheetAccess
+  verifySheetAccess,
+  readRange: readRangeWithAuth,  // Export wrapper that includes token
+  AuthenticationError,
+  PermissionError
 };
