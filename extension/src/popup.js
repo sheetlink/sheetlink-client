@@ -139,19 +139,19 @@ function initializeElements() {
   bankIndicator = document.getElementById('bankIndicator');
   sheetIndicator = document.getElementById('sheetIndicator');
 
-  // Add click handlers for indicators (navigate to respective pages)
+  // Add click handlers for indicators (navigate to respective footer nav pages)
   if (bankIndicator) {
     bankIndicator.addEventListener('click', async () => {
-      const { itemId } = await chrome.storage.sync.get(['itemId']);
-      if (itemId && footerNav && !footerNav.classList.contains('hidden')) {
+      // Check if footer nav is visible (user is fully connected)
+      if (footerNav && !footerNav.classList.contains('hidden')) {
         await switchTab('bank');
       }
     });
   }
   if (sheetIndicator) {
     sheetIndicator.addEventListener('click', async () => {
-      const { sheetId } = await chrome.storage.sync.get(['sheetId']);
-      if (sheetId && footerNav && !footerNav.classList.contains('hidden')) {
+      // Check if footer nav is visible (user is fully connected)
+      if (footerNav && !footerNav.classList.contains('hidden')) {
         await switchTab('sheet');
       }
     });
@@ -1482,7 +1482,7 @@ async function updateUserHeader(googleEmail, hasBank, hasSheet) {
     // Update tooltip text
     const bankTooltip = document.getElementById('bankTooltipContent');
     if (bankTooltip) {
-      bankTooltip.textContent = hasBank ? 'Bank connected - Click to manage' : 'Bank not connected';
+      bankTooltip.textContent = hasBank ? 'Bank connected' : 'Bank not connected';
     }
   }
 
@@ -1494,7 +1494,7 @@ async function updateUserHeader(googleEmail, hasBank, hasSheet) {
     // Update tooltip text
     const sheetTooltip = document.getElementById('sheetTooltipContent');
     if (sheetTooltip) {
-      sheetTooltip.textContent = hasSheet ? 'Sheet connected - Click to manage' : 'Sheet not connected';
+      sheetTooltip.textContent = hasSheet ? 'Sheet connected' : 'Sheet not connected';
     }
   }
 }
