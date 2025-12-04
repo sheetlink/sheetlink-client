@@ -25,6 +25,10 @@ let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn, 
 let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBtn;
 let currentTab = 'home';
 
+// User control panel header elements
+let defaultHeader, userHeader, userAvatar, userInitial, userEmail;
+let bankIndicator, sheetIndicator;
+
 // Initialize popup
 document.addEventListener('DOMContentLoaded', async () => {
   initializeElements();
@@ -123,6 +127,15 @@ function initializeElements() {
   sheetLastWrite = document.getElementById('sheetLastWrite');
   changeSheetBtnPage = document.getElementById('changeSheetBtnPage');
   disconnectSheetBtn = document.getElementById('disconnectSheetBtn');
+
+  // User control panel header elements
+  defaultHeader = document.getElementById('default-header');
+  userHeader = document.getElementById('user-header');
+  userAvatar = document.getElementById('userAvatar');
+  userInitial = document.getElementById('userInitial');
+  userEmail = document.getElementById('userEmail');
+  bankIndicator = document.getElementById('bankIndicator');
+  sheetIndicator = document.getElementById('sheetIndicator');
 }
 
 function initializeSandboxMode() {
@@ -261,6 +274,10 @@ async function loadState() {
     }
 
     console.log('[Popup] User is authenticated - continuing with flow');
+
+    // Phase 3.10: After Google auth, show user control panel header
+    toggleHeader(true);
+    updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
 
     // Check if we should show the success modal
     // Only show for first-time connections, not for updates
@@ -1374,6 +1391,49 @@ function extractSheetId(url) {
   return match ? match[1] : null;
 }
 
+// Update user control panel header
+function updateUserHeader(googleEmail, hasBank, hasSheet) {
+  console.log('[User Header] Updating with:', { googleEmail, hasBank, hasSheet });
+
+  if (!userEmail || !userInitial) return;
+
+  // Update email
+  userEmail.textContent = googleEmail || 'user@gmail.com';
+
+  // Update avatar initial (first letter of email)
+  const initial = googleEmail ? googleEmail.charAt(0).toUpperCase() : 'U';
+  userInitial.textContent = initial;
+
+  // Update bank indicator
+  if (bankIndicator) {
+    bankIndicator.classList.remove('connected', 'disconnected');
+    bankIndicator.classList.add(hasBank ? 'connected' : 'disconnected');
+    bankIndicator.title = hasBank ? 'Bank connected' : 'Bank not connected';
+  }
+
+  // Update sheet indicator
+  if (sheetIndicator) {
+    sheetIndicator.classList.remove('connected', 'disconnected');
+    sheetIndicator.classList.add(hasSheet ? 'connected' : 'disconnected');
+    sheetIndicator.title = hasSheet ? 'Sheet connected' : 'Sheet not connected';
+  }
+}
+
+// Toggle between default header and user control panel header
+function toggleHeader(showUserHeader) {
+  console.log('[Header] Toggling to:', showUserHeader ? 'user-header' : 'default-header');
+
+  if (showUserHeader) {
+    // Show user control panel, hide default header
+    if (defaultHeader) defaultHeader.classList.add('hidden');
+    if (userHeader) userHeader.classList.remove('hidden');
+  } else {
+    // Show default header, hide user control panel
+    if (defaultHeader) defaultHeader.classList.remove('hidden');
+    if (userHeader) userHeader.classList.add('hidden');
+  }
+}
+
 function showSection(section) {
   // Hide all sections
   [connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection]
@@ -1383,14 +1443,16 @@ function showSection(section) {
   switch(section) {
     case 'welcome':
       welcomeSection && welcomeSection.classList.remove('hidden');
-      // Phase 3.10: Hide default header for modern welcome page
+      // Phase 3.10: Hide both headers for modern welcome page
       document.body.classList.add('welcome-active');
+      toggleHeader(false);
+      if (defaultHeader) defaultHeader.classList.add('hidden');
       // Mark that user has seen welcome
       chrome.storage.sync.set({ hasSeenWelcome: true });
       break;
     case 'connect':
       connectSection.classList.remove('hidden');
-      // Phase 3.10: Show default header for other sections
+      // Phase 3.10: Show user header for authenticated sections
       document.body.classList.remove('welcome-active');
       break;
     case 'sheet':
@@ -1795,7 +1857,7 @@ async function initializeNavigation() {
  * Load Home page data
  */
 async function loadHomePage() {
-  const data = await chrome.storage.sync.get(['lastSync', 'itemId', 'sheetId']);
+  const data = await chrome.storage.sync.get(['lastSync', 'itemId', 'sheetId', 'googleEmail']);
 
   // Update last sync
   if (homeLastSync && data.lastSync) {
@@ -1810,13 +1872,16 @@ async function loadHomePage() {
   if (homeStatusSheet) {
     homeStatusSheet.style.display = data.sheetId ? 'flex' : 'none';
   }
+
+  // Update user header
+  updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
 }
 
 /**
  * Load Bank page data
  */
 async function loadBankPage() {
-  const data = await chrome.storage.sync.get(['itemId', 'institutionName']);
+  const data = await chrome.storage.sync.get(['itemId', 'institutionName', 'sheetId', 'googleEmail']);
 
   if (!data.itemId) {
     // Show empty state
@@ -1841,13 +1906,16 @@ async function loadBankPage() {
       bankAccountsList.innerHTML = '<div class="account-item" style="font-size: 13px; color: #6b7280;">Accounts synced with Sheet</div>';
     }, 500);
   }
+
+  // Update user header
+  updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
 }
 
 /**
  * Load Sheet page data
  */
 async function loadSheetPage() {
-  const data = await chrome.storage.sync.get(['sheetId', 'sheetUrl', 'googleEmail', 'lastSync']);
+  const data = await chrome.storage.sync.get(['sheetId', 'sheetUrl', 'googleEmail', 'lastSync', 'itemId']);
 
   if (!data.sheetId) {
     // Show empty state
@@ -1869,6 +1937,9 @@ async function loadSheetPage() {
     const date = new Date(data.lastSync);
     sheetLastWrite.textContent = formatRelativeTime(date);
   }
+
+  // Update user header
+  updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
 }
 
 /**
