@@ -1380,19 +1380,27 @@ function showSection(section) {
   switch(section) {
     case 'welcome':
       welcomeSection && welcomeSection.classList.remove('hidden');
+      // Phase 3.10: Hide default header for modern welcome page
+      document.body.classList.add('welcome-active');
       // Mark that user has seen welcome
       chrome.storage.sync.set({ hasSeenWelcome: true });
       break;
     case 'connect':
       connectSection.classList.remove('hidden');
+      // Phase 3.10: Show default header for other sections
+      document.body.classList.remove('welcome-active');
       break;
     case 'sheet':
       sheetSection.classList.remove('hidden');
       statusSection.classList.remove('hidden');
+      // Phase 3.10: Show default header for other sections
+      document.body.classList.remove('welcome-active');
       break;
     case 'sync':
       syncSection.classList.remove('hidden');
       statusSection.classList.remove('hidden');
+      // Phase 3.10: Show default header for other sections
+      document.body.classList.remove('welcome-active');
       break;
     case 'status':
       statusSection.classList.remove('hidden');
