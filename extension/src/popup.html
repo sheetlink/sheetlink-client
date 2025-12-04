@@ -15,6 +15,7 @@
     </header>
 
     <main id="mainContent">
+      <!-- Onboarding Pages (shown during initial setup) -->
       <!-- Welcome Screen (First Time) -->
       <div id="welcomeSection" class="section hidden">
         <div class="step-progress">
@@ -126,7 +127,108 @@
         </button>
       </div>
 
-      <!-- Sync Section -->
+      <!-- Post-Onboarding Pages (shown after full connection) -->
+      <!-- Home Page -->
+      <div id="page-home" class="page hidden">
+        <h2 style="margin-bottom: 16px; font-size: 18px; font-weight: 600;">Dashboard</h2>
+
+        <!-- Sync Section -->
+        <div class="sync-section card">
+          <button id="homeSyncBtn" class="btn btn-primary">Sync Now</button>
+          <p class="last-sync" style="margin-top: 12px; font-size: 13px; color: #6b7280;">
+            Last sync: <span id="homeLastSync">Never</span>
+          </p>
+          <p class="plan-tier" style="margin-top: 4px; font-size: 13px;">
+            <span style="color: #6b7280;">Plan:</span>
+            <span id="homePlanTier" style="font-weight: 600; color: #3b82f6;">Free (7 days)</span>
+          </p>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="status-section card" style="margin-top: 12px;">
+          <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Connection Status</h3>
+          <div id="homeStatusPlaid" class="status-item" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span class="status-icon" style="color: #10b981;">✓</span>
+            <span style="font-size: 13px;">Plaid connection active</span>
+          </div>
+          <div id="homeStatusSheet" class="status-item" style="display: flex; align-items: center; gap: 8px;">
+            <span class="status-icon" style="color: #10b981;">✓</span>
+            <span style="font-size: 13px;">Sheet linked</span>
+          </div>
+        </div>
+
+        <!-- Auto-Sync Section -->
+        <div class="auto-sync-section card" style="margin-top: 12px;">
+          <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Auto-Sync</h3>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 13px; color: #6b7280;">Automatic daily syncs</span>
+            <label class="toggle-switch disabled" title="Upgrade required">
+              <input type="checkbox" disabled id="homeAutoSyncToggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <p class="upgrade-note" style="margin-top: 8px; font-size: 12px; color: #9ca3af;">Available with paid plans</p>
+        </div>
+      </div>
+
+      <!-- Bank Page -->
+      <div id="page-bank" class="page hidden">
+        <h2 style="margin-bottom: 16px; font-size: 18px; font-weight: 600;">Your Banks</h2>
+
+        <!-- Connected Institutions -->
+        <div id="bankList" class="bank-list">
+          <!-- Dynamically populated -->
+          <div class="bank-card card">
+            <div class="bank-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <h3 class="institution-name" id="bankInstitutionName" style="font-size: 16px; font-weight: 600;">Chase</h3>
+              <span class="connection-status active" style="font-size: 12px; color: #10b981; font-weight: 500;">Active</span>
+            </div>
+            <div class="accounts-list" id="bankAccountsList">
+              <!-- Accounts populated by JS -->
+              <div class="account-item" style="font-size: 13px; color: #6b7280; margin-bottom: 4px;">
+                <span>Loading accounts...</span>
+              </div>
+            </div>
+            <button id="updateBankConnectionBtn" class="btn btn-secondary" style="margin-top: 12px;">Update Connection</button>
+          </div>
+        </div>
+
+        <!-- Add Bank Button (for future multi-account support) -->
+        <button id="addBankBtn" class="btn btn-primary" style="margin-top: 12px;">Add Bank</button>
+
+        <!-- Disconnect Bank -->
+        <button id="disconnectBankBtn" class="btn btn-text" style="margin-top: 8px; color: #ef4444;">Disconnect Bank</button>
+      </div>
+
+      <!-- Sheet Page -->
+      <div id="page-sheet" class="page hidden">
+        <h2 style="margin-bottom: 16px; font-size: 18px; font-weight: 600;">Your Google Sheet</h2>
+
+        <!-- Sheet Info -->
+        <div class="sheet-info card">
+          <div class="status-item" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <span class="status-icon" style="color: #10b981;">✓</span>
+            <span style="font-size: 14px; font-weight: 500;">Connected to Sheet</span>
+          </div>
+          <p class="sheet-url" style="margin-bottom: 8px;">
+            <a id="sheetLink" href="#" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">Open Sheet →</a>
+          </p>
+          <p class="sheet-owner" style="font-size: 13px; color: #6b7280; margin-bottom: 4px;">
+            Owner: <span id="sheetOwner">user@gmail.com</span>
+          </p>
+          <p class="sheet-last-write" style="font-size: 13px; color: #6b7280;">
+            Last write: <span id="sheetLastWrite">2 hours ago</span>
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="sheet-actions" style="margin-top: 12px;">
+          <button id="changeSheetBtnPage" class="btn btn-secondary">Change Sheet</button>
+          <button id="disconnectSheetBtn" class="btn btn-text" style="margin-top: 8px; color: #ef4444;">Disconnect Sheet</button>
+        </div>
+      </div>
+
+      <!-- Legacy Sync Section (kept for backward compatibility during onboarding) -->
       <div id="syncSection" class="section hidden">
         <!-- Sync error banner for sheet access issues -->
         <div id="syncErrorBanner" class="error-banner hidden" style="margin-bottom: 12px; padding: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
@@ -233,7 +335,8 @@
       </div>
     </main>
 
-    <footer>
+    <!-- Legacy footer (shown during onboarding) -->
+    <footer id="legacy-footer">
       <button id="templatesBtn" class="btn btn-text hidden">
         Templates
       </button>
@@ -242,6 +345,26 @@
       </button>
       <button id="optionsBtn" class="btn btn-text">
         Options
+      </button>
+    </footer>
+
+    <!-- Footer Navigation (shown after onboarding complete) -->
+    <footer id="footer-nav" class="footer-nav hidden">
+      <button class="nav-tab active" data-page="home">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-tab" data-page="bank">
+        <span class="nav-icon">🏦</span>
+        <span class="nav-label">Bank</span>
+      </button>
+      <button class="nav-tab" data-page="sheet">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Sheet</span>
+      </button>
+      <button class="nav-tab" data-page="options">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Options</span>
       </button>
     </footer>
 
