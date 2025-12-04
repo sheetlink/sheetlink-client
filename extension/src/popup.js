@@ -1417,13 +1417,34 @@ async function updateUserHeader(googleEmail, hasBank, hasSheet) {
   // Get profile picture from storage
   const { googlePicture } = await chrome.storage.sync.get(['googlePicture']);
 
-  // Update avatar - show picture if available, otherwise show SheetLink logo
-  if (googlePicture && userPicture) {
-    userPicture.src = googlePicture;
-    userPicture.classList.remove('hidden', 'fallback-logo');
-    userInitial.classList.add('hidden');
+  // Helper function to check if URL is a generic Google avatar
+  const isGenericGoogleAvatar = (url) => {
+    if (!url) return true;
+    // Generic Google avatars contain specific patterns
+    return url.includes('ui-avatars.com') ||
+           url.includes('/avatar/') ||
+           url.match(/\/s\d+-c\//); // Pattern like /s96-c/ for default size
+  };
+
+  // Update avatar - show picture if available and not generic, otherwise show SheetLink logo
+  if (googlePicture && userPicture && !isGenericGoogleAvatar(googlePicture)) {
+    // Load the image and check if it's actually valid
+    const img = new Image();
+    img.onload = () => {
+      userPicture.src = googlePicture;
+      userPicture.classList.remove('hidden', 'fallback-logo');
+      userInitial.classList.add('hidden');
+    };
+    img.onerror = () => {
+      // Image failed to load, use SheetLink logo
+      userPicture.src = '../assets/brand/sheetlink-mark-green.svg';
+      userPicture.classList.remove('hidden');
+      userPicture.classList.add('fallback-logo');
+      userInitial.classList.add('hidden');
+    };
+    img.src = googlePicture;
   } else if (userPicture) {
-    // Show SheetLink logo as fallback
+    // Show SheetLink logo as fallback (no picture or generic avatar)
     userPicture.src = '../assets/brand/sheetlink-mark-green.svg';
     userPicture.classList.remove('hidden');
     userPicture.classList.add('fallback-logo');
