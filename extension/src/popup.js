@@ -1746,8 +1746,12 @@ async function switchTab(tabName) {
 async function initializeNavigation() {
   const state = await chrome.storage.sync.get(['googleUserId', 'itemId', 'sheetId']);
 
+  console.log('[Nav] initializeNavigation called, state:', state);
+  console.log('[Nav] isFullyConnected:', isFullyConnected(state));
+
   if (!isFullyConnected(state)) {
     // Hide footer nav during onboarding
+    console.log('[Nav] Not fully connected - hiding footer nav');
     if (footerNav) footerNav.classList.add('hidden');
     if (legacyFooter) legacyFooter.style.display = '';
     return;
