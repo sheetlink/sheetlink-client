@@ -620,3 +620,241 @@ footer .btn {
 .security-badge:hover {
   opacity: 1;
 }
+
+/* ========================================
+   Phase 3.10: Post-Onboarding Navigation
+   ======================================== */
+
+/* Page System */
+.page {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.page.active {
+  display: block;
+  opacity: 1;
+}
+
+.page.hidden {
+  display: none;
+}
+
+/* Card Component */
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer Navigation */
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 0;
+  margin: 0;
+  position: sticky;
+  bottom: 0;
+  opacity: 0;
+  animation: slideInUp 0.4s ease-out 0.35s forwards;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer-nav.hidden {
+  display: none;
+}
+
+/* Nav Tabs */
+.nav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-tab:hover {
+  background: #f9fafb;
+}
+
+.nav-tab.active {
+  background: #f0f9ff;
+}
+
+.nav-tab.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #3b82f6;
+}
+
+.nav-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+  transition: transform 0.2s;
+}
+
+.nav-tab.active .nav-icon {
+  transform: scale(1.1);
+}
+
+.nav-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.nav-tab.active .nav-label {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+/* Toggle Switch Component */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1d5db;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #3b82f6;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.toggle-switch.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggle-switch.disabled .slider {
+  cursor: not-allowed;
+}
+
+/* Legacy Footer (during onboarding) */
+#legacy-footer {
+  /* Inherits existing footer styles */
+}
+
+/* Hide legacy footer when nav is active */
+.footer-nav:not(.hidden) ~ #legacy-footer {
+  display: none;
+}
+
+/* Page-specific styles */
+#page-home h2,
+#page-bank h2,
+#page-sheet h2 {
+  color: #1f2937;
+}
+
+/* Bank Page */
+.bank-card {
+  margin-bottom: 12px;
+}
+
+.bank-card:last-child {
+  margin-bottom: 0;
+}
+
+.bank-header {
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 8px;
+}
+
+.connection-status.active {
+  background: #d1fae5;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.account-item {
+  padding: 6px 0;
+  border-bottom: 1px solid #f9fafb;
+}
+
+.account-item:last-child {
+  border-bottom: none;
+}
+
+/* Sheet Page */
+.sheet-info a {
+  font-weight: 500;
+}
+
+.sheet-info a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 360px) {
+  .nav-label {
+    font-size: 10px;
+  }
+
+  .nav-icon {
+    font-size: 18px;
+  }
+}
