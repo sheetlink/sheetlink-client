@@ -871,6 +871,17 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  opacity: 0;
+  animation: welcomePageFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes welcomePageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .welcome-hero-bg {
@@ -884,19 +895,6 @@ input:checked + .slider:before {
 .welcome-logo {
   display: block;
   margin: 0 auto 16px;
-  opacity: 0;
-  animation: fadeInDown 0.6s ease-out 0.2s forwards;
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .welcome-tagline {
@@ -905,8 +903,6 @@ input:checked + .slider:before {
   color: rgba(255, 255, 255, 0.95);
   margin: 0;
   letter-spacing: 0.3px;
-  opacity: 0;
-  animation: fadeIn 0.6s ease-out 0.4s forwards;
 }
 
 /* Welcome Content Section */
@@ -926,27 +922,12 @@ input:checked + .slider:before {
   font-weight: 600;
   color: var(--sl-text);
   margin: 0 0 8px;
-  opacity: 0;
-  animation: fadeInUp 0.6s ease-out 0.5s forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .welcome-subtitle {
   font-size: 13px;
   color: #6b7280;
   margin: 0 0 24px;
-  opacity: 0;
-  animation: fadeInUp 0.6s ease-out 0.6s forwards;
 }
 
 /* Google Sign In Button */
@@ -967,8 +948,6 @@ input:checked + .slider:before {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  opacity: 0;
-  animation: fadeInUp 0.6s ease-out 0.7s forwards;
 }
 
 .btn-google:hover {
@@ -994,8 +973,6 @@ input:checked + .slider:before {
   color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   font-weight: 500;
-  opacity: 0;
-  animation: fadeIn 0.6s ease-out 0.8s forwards;
   transition: all 0.2s;
 }
 
@@ -1017,8 +994,6 @@ input:checked + .slider:before {
   margin: 0;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.85);
-  opacity: 0;
-  animation: fadeIn 0.6s ease-out 0.9s forwards;
 }
 
 /* Hide default header and footer on welcome screen */
