@@ -216,7 +216,7 @@ header {
 
 .tier-tooltip {
   position: absolute;
-  bottom: calc(100% + 8px);
+  top: calc(100% + 8px);
   left: 0;
   opacity: 0;
   visibility: hidden;
@@ -235,17 +235,18 @@ header {
   color: white;
   padding: 8px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.4;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 220px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.tier-tooltip-content::after {
+.tier-tooltip-content::before {
   content: '';
   position: absolute;
-  bottom: -4px;
-  left: 12px;
+  top: -4px;
+  left: 8px;
   width: 8px;
   height: 8px;
   background: rgba(0, 0, 0, 0.9);
