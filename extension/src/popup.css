@@ -420,6 +420,16 @@ header {
   filter: grayscale(1) brightness(0.7);
   transition: filter 0.3s ease;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.indicator-icon svg {
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+  transition: color 0.3s ease;
 }
 
 /* Connected state - green glow */
@@ -434,6 +444,10 @@ header {
   filter: grayscale(0) brightness(1);
 }
 
+.indicator.connected .indicator-icon svg {
+  color: #10b981;
+}
+
 /* Disconnected state - red glow */
 .indicator.disconnected {
   background: rgba(239, 68, 68, 0.2);
@@ -444,6 +458,11 @@ header {
 
 .indicator.disconnected .indicator-icon {
   filter: grayscale(0.5) brightness(0.9);
+}
+
+/* Phase 3.13.1: Disconnected SVG icon - brighter red */
+.indicator.disconnected .indicator-icon svg {
+  color: #f87171;  /* Brighter red (red-400) */
 }
 
 /* Indicator tooltip */
@@ -1081,6 +1100,7 @@ footer .btn {
 .footer-nav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-gap: 0;  /* Phase 3.13.1: Remove gaps between tabs */
   border-top: 1px solid #e5e7eb;
   background: #ffffff;
   padding: 0;
@@ -1112,7 +1132,7 @@ footer .btn {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px 8px;
+  padding: 12px 0;  /* Phase 3.13.1: Remove horizontal padding to eliminate gaps */
   background: transparent;
   border: none;
   cursor: pointer;
@@ -1125,7 +1145,7 @@ footer .btn {
 }
 
 .nav-tab.active {
-  background: #f0f9ff;
+  background: rgba(2, 56, 32, 0.08);  /* SheetLink dark green with 8% opacity */
 }
 
 .nav-tab.active::before {
@@ -1135,7 +1155,7 @@ footer .btn {
   left: 0;
   right: 0;
   height: 2px;
-  background: #3b82f6;
+  background: #023820;  /* SheetLink dark green */
 }
 
 .nav-icon {
@@ -1144,19 +1164,31 @@ footer .btn {
   transition: transform 0.2s;
 }
 
+/* Phase 3.13.1: SVG icon styling for footer nav */
+.nav-icon svg {
+  width: 20px;
+  height: 20px;
+  color: #023820;  /* SheetLink dark green */
+  transition: color 0.2s, transform 0.2s;
+}
+
 .nav-tab.active .nav-icon {
   transform: scale(1.1);
+}
+
+.nav-tab.active .nav-icon svg {
+  color: #023820;  /* SheetLink dark green */
 }
 
 .nav-label {
   font-size: 11px;
   font-weight: 500;
-  color: #6b7280;
+  color: #023820;  /* SheetLink dark green */
   transition: color 0.2s;
 }
 
 .nav-tab.active .nav-label {
-  color: #3b82f6;
+  color: #023820;  /* SheetLink dark green */
   font-weight: 600;
 }
 

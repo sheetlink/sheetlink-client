@@ -35,6 +35,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   initializeElements();
   initializeSandboxMode();
 
+  // Phase 3.13.1: Debug - Check raw storage before StateManager init
+  const rawStorage = await chrome.storage.sync.get(null);
+  console.log('[Popup] Raw storage on load:', rawStorage);
+
   // Phase 3.13: Initialize StateManager ONCE from storage
   console.log('[Popup] Initializing StateManager...');
   await window.StateManager.init();
@@ -1101,24 +1105,32 @@ async function handleSaveSheet() {
       try {
         await window.SheetsAPI.verifySheetAccess(sheetId);
       } catch (verifyError) {
+        // Phase 3.13.1: Check if it's a PermissionError (thrown by sheets.js)
+        if (verifyError.isPermissionError || verifyError.name === 'PermissionError') {
+          // Re-throw PermissionError as-is (already has good message)
+          throw verifyError;
+        }
+
         // Parse error to detect account mismatch (403) vs not found (404)
         const errorMsg = verifyError.message || '';
 
-        if (errorMsg.includes('403')) {
-          // Account mismatch - sheet exists but user can't access it
+        if (errorMsg.includes('403') || errorMsg.toLowerCase().includes('permission')) {
+          // Permission error from API
           const { googleEmail } = await chrome.storage.sync.get(['googleEmail']);
           const accountInfo = googleEmail ? ` (signed in as ${googleEmail})` : '';
           throw new Error(
-            `Access denied. This sheet is not owned by or shared with your Google account${accountInfo}. ` +
-            `Make sure the sheet is owned by ${googleEmail || 'your Google account'} or that you have edit access.`
+            `You do not have edit access to this sheet. Make sure the sheet is owned by your account${accountInfo} or shared with edit permissions.`
           );
         } else if (errorMsg.includes('404')) {
           // Sheet not found
           throw new Error(
             'Sheet not found. Double check the URL is correct and that the sheet still exists.'
           );
+        } else if (errorMsg.startsWith('Cannot access sheet:')) {
+          // Already formatted error - don't double-wrap
+          throw verifyError;
         } else {
-          // Other error
+          // Other error - wrap with context
           throw new Error(`Cannot access sheet: ${errorMsg}`);
         }
       }
@@ -1140,6 +1152,14 @@ async function handleSaveSheet() {
     await loadState();
   } catch (error) {
     hideLoading();
+
+    // Phase 3.13.1: Check if it's an authentication error
+    if (error.name === 'AuthenticationError' || error.isAuthError) {
+      console.warn('[Sheet] Authentication error detected, showing welcome page for re-authentication');
+      showReAuthPage();
+      return;
+    }
+
     showSheetError(error.message);
   }
 }
@@ -1508,7 +1528,7 @@ async function handleDisconnect() {
   try {
     showLoading('Disconnecting...');
 
-    const { itemId, googleUserId, googleEmail, googleAuthenticated } = await chrome.storage.sync.get(['itemId', 'googleUserId', 'googleEmail', 'googleAuthenticated']);
+    const { itemId, googleUserId, googleEmail, googleAuthenticated, hasCompletedInitialOnboarding } = await chrome.storage.sync.get(['itemId', 'googleUserId', 'googleEmail', 'googleAuthenticated', 'hasCompletedInitialOnboarding']);
 
     // Call backend to remove item if it exists
     if (itemId) {
@@ -1534,6 +1554,16 @@ async function handleDisconnect() {
       console.log('[Disconnect] No itemId found, skipping backend delete');
     }
 
+    // Phase 3.13.1: Clear bank state from StateManager immediately
+    // This ensures in-memory state is cleared before we reload the page
+    await window.StateManager.set({
+      itemId: null,
+      institutionName: null,
+      institutionId: null,
+      accounts: null,
+      accountsLastFetched: null
+    });
+
     // Clear all local storage
     await chrome.storage.sync.clear();
 
@@ -1541,11 +1571,13 @@ async function handleDisconnect() {
     await chrome.storage.local.clear();
 
     // Restore Google auth information so user doesn't have to re-authenticate
+    // Phase 3.13.1: Also restore onboarding flag to prevent re-onboarding
     if (googleUserId && googleEmail && googleAuthenticated) {
       await window.StateManager.set({
         googleUserId,
         googleEmail,
-        googleAuthenticated
+        googleAuthenticated,
+        hasCompletedInitialOnboarding
       });
     }
 
@@ -2852,6 +2884,13 @@ async function loadSheetPage() {
           <span class="status-dot status-dot-disconnected" style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6), 0 0 4px rgba(239, 68, 68, 0.8);"></span>
           <span style="font-size: 14px; font-weight: 500;">No sheet connected</span>
         </div>
+
+        <!-- Error banner for permission/access errors -->
+        <div id="sheetPageErrorBanner" class="hidden" style="margin-bottom: 12px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
+          <div style="font-weight: 600; color: #991b1b; margin-bottom: 6px; font-size: 14px;">Cannot Access Google Sheet</div>
+          <div id="sheetPageErrorDetail" style="font-size: 13px; color: #7f1d1d; line-height: 1.5;"></div>
+        </div>
+
         <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">
           Paste the URL of the Google Sheet where you want SheetLink to send your data.
         </p>
@@ -2902,10 +2941,48 @@ async function loadSheetPage() {
 
           // Disable button during save
           saveSheetBtnPage.disabled = true;
-          saveSheetBtnPage.textContent = 'Saving...';
+          saveSheetBtnPage.textContent = 'Verifying...';
 
           try {
+            // Phase 3.13.1: Hide any previous errors
+            const errorBanner = document.getElementById('sheetPageErrorBanner');
+            if (errorBanner) errorBanner.classList.add('hidden');
+
+            // Phase 3.13.1: Verify sheet access BEFORE saving
+            console.log('[Sheet Page] Verifying access for sheet:', sheetId);
+            console.log('[Sheet Page] window.SheetsAPI available?', !!window.SheetsAPI);
+
+            if (!window.SheetsAPI) {
+              throw new Error('Sheets API not loaded. Please reload the extension and try again.');
+            }
+
+            try {
+              await window.SheetsAPI.verifySheetAccess(sheetId);
+              console.log('[Sheet Page] ✓ Verification passed');
+            } catch (verifyError) {
+              console.error('[Sheet Page] Verification failed:', verifyError);
+
+              // Handle permission errors with clear messages
+              if (verifyError.isPermissionError || verifyError.name === 'PermissionError') {
+                throw verifyError;
+              }
+
+              const errorMsg = verifyError.message || '';
+              if (errorMsg.includes('403') || errorMsg.toLowerCase().includes('permission')) {
+                throw new Error('You do not have edit access to this sheet. Make sure the sheet is owned by your account or shared with edit permissions.');
+              } else if (errorMsg.includes('404')) {
+                throw new Error('Sheet not found. Double check the URL is correct and that the sheet still exists.');
+              } else if (errorMsg.startsWith('Cannot access sheet:')) {
+                throw verifyError;
+              } else {
+                throw new Error(`Cannot access sheet: ${errorMsg}`);
+              }
+            }
+
+            saveSheetBtnPage.textContent = 'Saving...';
+
             // Phase 3.13: Save to StateManager
+            console.log('[Sheet Page] Saving sheet to StateManager');
             await window.StateManager.set({
               sheetId: sheetId,
               sheetUrl: url
@@ -2921,7 +2998,19 @@ async function loadSheetPage() {
             // Update home page if it's loaded
             await loadHomePage();
           } catch (error) {
-            alert('Failed to save sheet: ' + error.message);
+            // Show error in UI instead of alert
+            const errorBanner = document.getElementById('sheetPageErrorBanner');
+            const errorDetail = document.getElementById('sheetPageErrorDetail');
+            if (errorBanner && errorDetail) {
+              errorDetail.textContent = error.message;
+              errorBanner.classList.remove('hidden');
+
+              // Auto-hide after 8 seconds (consistent with sync errors)
+              setTimeout(() => {
+                if (errorBanner) errorBanner.classList.add('hidden');
+              }, 8000);
+            }
+
             saveSheetBtnPage.disabled = false;
             saveSheetBtnPage.textContent = 'Save Sheet';
           }
@@ -3036,6 +3125,13 @@ function attachNavigationEventListeners() {
         <span class="status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.6), 0 0 4px rgba(59, 130, 246, 0.8);"></span>
         <span style="font-size: 14px; font-weight: 500;">Change Sheet</span>
       </div>
+
+      <!-- Error banner for permission/access errors -->
+      <div id="sheetChangeErrorBanner" class="hidden" style="margin-bottom: 12px; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
+        <div style="font-weight: 600; color: #991b1b; margin-bottom: 6px; font-size: 14px;">Cannot Access Google Sheet</div>
+        <div id="sheetChangeErrorDetail" style="font-size: 13px; color: #7f1d1d; line-height: 1.5;"></div>
+      </div>
+
       <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">
         Enter a new Google Sheet URL to change where your data is synced.
       </p>
@@ -3090,10 +3186,48 @@ function attachNavigationEventListeners() {
 
         // Disable button during save
         saveNewSheetBtn.disabled = true;
-        saveNewSheetBtn.textContent = 'Saving...';
+        saveNewSheetBtn.textContent = 'Verifying...';
 
         try {
+          // Phase 3.13.1: Hide any previous errors
+          const errorBanner = document.getElementById('sheetChangeErrorBanner');
+          if (errorBanner) errorBanner.classList.add('hidden');
+
+          // Phase 3.13.1: Verify sheet access BEFORE saving
+          console.log('[Sheet Change] Verifying access for sheet:', sheetId);
+          console.log('[Sheet Change] window.SheetsAPI available?', !!window.SheetsAPI);
+
+          if (!window.SheetsAPI) {
+            throw new Error('Sheets API not loaded. Please reload the extension and try again.');
+          }
+
+          try {
+            await window.SheetsAPI.verifySheetAccess(sheetId);
+            console.log('[Sheet Change] ✓ Verification passed');
+          } catch (verifyError) {
+            console.error('[Sheet Change] Verification failed:', verifyError);
+
+            // Handle permission errors with clear messages
+            if (verifyError.isPermissionError || verifyError.name === 'PermissionError') {
+              throw verifyError;
+            }
+
+            const errorMsg = verifyError.message || '';
+            if (errorMsg.includes('403') || errorMsg.toLowerCase().includes('permission')) {
+              throw new Error('You do not have edit access to this sheet. Make sure the sheet is owned by your account or shared with edit permissions.');
+            } else if (errorMsg.includes('404')) {
+              throw new Error('Sheet not found. Double check the URL is correct and that the sheet still exists.');
+            } else if (errorMsg.startsWith('Cannot access sheet:')) {
+              throw verifyError;
+            } else {
+              throw new Error(`Cannot access sheet: ${errorMsg}`);
+            }
+          }
+
+          saveNewSheetBtn.textContent = 'Saving...';
+
           // Phase 3.13: Save to StateManager
+          console.log('[Sheet Change] Saving sheet to StateManager');
           await window.StateManager.set({
             sheetId: sheetId,
             sheetUrl: url
@@ -3108,7 +3242,19 @@ function attachNavigationEventListeners() {
           // Update home page if it's loaded
           await loadHomePage();
         } catch (error) {
-          alert('Failed to save sheet: ' + error.message);
+          // Show error in UI instead of alert
+          const errorBanner = document.getElementById('sheetChangeErrorBanner');
+          const errorDetail = document.getElementById('sheetChangeErrorDetail');
+          if (errorBanner && errorDetail) {
+            errorDetail.textContent = error.message;
+            errorBanner.classList.remove('hidden');
+
+            // Auto-hide after 8 seconds (consistent with sync errors)
+            setTimeout(() => {
+              if (errorBanner) errorBanner.classList.add('hidden');
+            }, 8000);
+          }
+
           saveNewSheetBtn.disabled = false;
           saveNewSheetBtn.textContent = 'Save Sheet';
         }
@@ -3125,8 +3271,14 @@ function attachNavigationEventListeners() {
   });
   if (disconnectSheetBtn) disconnectSheetBtn.addEventListener('click', async () => {
     if (confirm('Are you sure you want to disconnect your Google Sheet?')) {
-      // Phase 3.13: Use StateManager to clear sheet connection
-      await window.StateManager.set({ sheetId: null, sheetUrl: null });
+      // Phase 3.13.1: Clear all sheet-related state including cached name
+      await window.StateManager.set({
+        sheetId: null,
+        sheetUrl: null,
+        sheetName: null,
+        sheetOwner: null,
+        sheetLastWrite: null
+      });
 
       // Reload the sheet page to show disconnected state
       await loadSheetPage();
@@ -3185,8 +3337,19 @@ async function handleLogout() {
 
   console.log('[Settings] Logging out');
 
+  // Phase 3.13.1: Debug - log state before clear
+  console.log('[Logout] State before clear:', {
+    itemId: window.StateManager.get('itemId'),
+    sheetId: window.StateManager.get('sheetId'),
+    institutionName: window.StateManager.get('institutionName')
+  });
+
   // Phase 3.13: Use StateManager to clear all state (preserves onboarding flag)
   await window.StateManager.clear(true);
+
+  // Phase 3.13.1: Debug - verify storage is actually cleared
+  const afterClear = await chrome.storage.sync.get(['itemId', 'sheetId', 'institutionName', 'hasCompletedInitialOnboarding']);
+  console.log('[Logout] Storage after clear:', afterClear);
 
   // Clear localStorage
   localStorage.clear();
