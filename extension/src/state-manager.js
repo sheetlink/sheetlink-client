@@ -45,6 +45,9 @@ class StateManager {
       hasProgressedToSheetSetup: false,
       hasCompletedInitialOnboarding: false,
 
+      // UI State
+      isReAuthenticating: false,  // Phase 3.13.1: Moved from global variable
+
       // Metadata
       isInitialized: false,
       _initPromise: null
@@ -143,7 +146,7 @@ class StateManager {
    * Update state and persist to storage (batched to avoid rate limits)
    * @param {Object} updates - Key-value pairs to update
    * @param {boolean} immediate - If true, write immediately without batching
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} Resolves when write is complete (immediate) or scheduled (batched)
    */
   async set(updates, immediate = false) {
     console.log('[StateManager] Setting:', Object.keys(updates));
@@ -164,9 +167,19 @@ class StateManager {
     if (immediate) {
       return this._flushWrites();
     } else {
-      // Debounce: wait 100ms for more writes before flushing
-      clearTimeout(this._writeTimeout);
-      this._writeTimeout = setTimeout(() => this._flushWrites(), this._writeBatchDelay);
+      // Phase 3.13.1: Return promise that resolves when flush completes
+      // This ensures await stateManager.set() waits for persistence
+      return new Promise((resolve, reject) => {
+        clearTimeout(this._writeTimeout);
+        this._writeTimeout = setTimeout(async () => {
+          try {
+            await this._flushWrites();
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        }, this._writeBatchDelay);
+      });
     }
   }
 
