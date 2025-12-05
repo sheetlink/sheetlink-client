@@ -595,9 +595,72 @@ async function verifySheetAccess(sheetId) {
   console.log('[Sheets] verifySheetAccess called for sheetId:', sheetId);
   try {
     const token = await getAuthToken();
-    console.log('[Sheets] verifySheetAccess got token, making API request');
-    const url = `${SHEETS_API_BASE}/${sheetId}?fields=properties.title`;
-    return await sheetsApiRequest(token, url);
+    console.log('[Sheets] verifySheetAccess got token, testing permissions');
+
+    // First, verify the sheet exists and is readable
+    const url = `${SHEETS_API_BASE}/${sheetId}?fields=properties.title,sheets.properties`;
+    const metadata = await sheetsApiRequest(token, url);
+    console.log('[Sheets] Sheet exists and is readable:', metadata.properties.title);
+
+    // Phase 3.13.1: Test WRITE permissions by attempting a test write
+    // We need to actually try to write something to verify edit access
+    try {
+      console.log('[Sheets] Testing write permissions with actual write attempt...');
+
+      // Try to update spreadsheet properties (this requires edit access)
+      // We'll just read and write back the same title (no visible change)
+      const batchUrl = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+      const testResponse = await fetch(batchUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          requests: [{
+            updateSpreadsheetProperties: {
+              properties: {
+                title: metadata.properties.title  // Set to current title (no change)
+              },
+              fields: 'title'
+            }
+          }]
+        })
+      });
+
+      console.log('[Sheets] Write test response status:', testResponse.status);
+
+      if (!testResponse.ok) {
+        const errorData = await testResponse.json().catch(() => ({}));
+        const errorMsg = errorData.error?.message || '';
+        console.error('[Sheets] Write test failed:', testResponse.status, errorMsg);
+
+        // Check if it's a permission error
+        if (testResponse.status === 403 || errorMsg.toLowerCase().includes('permission') ||
+            errorMsg.toLowerCase().includes('does not have') || errorMsg.toLowerCase().includes('denied')) {
+          throw new PermissionError(
+            'You do not have edit access to this sheet. Make sure the sheet is owned by your account or shared with edit permissions.'
+          );
+        }
+
+        // Other error - this is also concerning, throw it
+        throw new Error(`Unable to verify write access: ${errorMsg}`);
+      } else {
+        console.log('[Sheets] ✓ Write permissions confirmed');
+      }
+    } catch (testError) {
+      console.error('[Sheets] Write permission test error:', testError);
+
+      // If it's a PermissionError, re-throw it
+      if (testError.isPermissionError || testError.name === 'PermissionError') {
+        throw testError;
+      }
+
+      // Any other error during write test should also block connection
+      throw testError;
+    }
+
+    return metadata;
   } catch (error) {
     console.log('[Sheets] verifySheetAccess caught error:', error);
     console.log('[Sheets] Error name:', error.name, 'isAuthError:', error.isAuthError);
