@@ -50,6 +50,54 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadState();
 });
 
+// Phase 3.13.1: Listen for account switch events from service worker
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.type === 'ACCOUNT_SWITCHED') {
+    console.warn('[Popup] ⚠️ Account switch detected!');
+    console.warn(`[Popup] Old: ${message.oldEmail} → New: ${message.newEmail}`);
+    console.log('[Popup] Reinitializing StateManager with cleared state...');
+
+    // Force StateManager to re-read from storage (which was cleared)
+    window.StateManager._initPromise = null;
+    window.StateManager.state = {
+      // Reset to defaults, then add new auth data
+      googleAuthenticated: false,
+      googleEmail: null,
+      googleUserId: null,
+      googlePicture: null,
+      googleAccessToken: null,
+      googleTokenExpiry: null,
+      itemId: null,
+      institutionName: null,
+      institutionId: null,
+      accounts: null,
+      accountsLastFetched: null,
+      sheetId: null,
+      sheetUrl: null,
+      sheetName: null,
+      sheetOwner: null,
+      sheetLastWrite: null,
+      lastSync: null,
+      hasSeenWelcome: false,
+      hasSeenConnectStep: false,
+      hasProgressedToSheetSetup: false,
+      hasCompletedInitialOnboarding: false,
+      isInitialized: false,
+      _initPromise: null,
+      ...message.newUserData
+    };
+
+    // Reinitialize from storage
+    await window.StateManager.init();
+    console.log('[Popup] StateManager reinitialized, reloading UI...');
+
+    // Reload the UI with fresh state
+    await loadState();
+
+    sendResponse({ success: true });
+  }
+});
+
 function initializeElements() {
   // Buttons
   connectBankBtn = document.getElementById('connectBankBtn');
@@ -405,7 +453,7 @@ async function loadState() {
     // Note: shouldShowStep2 was already checked earlier and loading screen shown if needed
     if (shouldShowStep2) {
       // Mark that we've shown step 2
-      await chrome.storage.sync.set({ hasSeenConnectStep: true });
+      await window.StateManager.set({ hasSeenConnectStep: true });
 
       // Fetch and display item info (institution name and accounts)
       await displayItemInfo(stateManager.get('itemId'));
@@ -436,7 +484,7 @@ async function loadState() {
         nextBtn.classList.remove('hidden');
         nextBtn.addEventListener('click', async () => {
           // Mark that user has progressed to sheet setup
-          await chrome.storage.sync.set({ hasProgressedToSheetSetup: true });
+          await window.StateManager.set({ hasProgressedToSheetSetup: true });
           proceedToSheetSetup();
         });
       }
@@ -512,7 +560,7 @@ async function showConnectSection() {
       nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
       newNextBtn.addEventListener('click', async () => {
         // Phase 3.13: Use StateManager
-        await chrome.storage.sync.set({ hasProgressedToSheetSetup: true });
+        await window.StateManager.set({ hasProgressedToSheetSetup: true });
         proceedToSheetSetup();
       });
     }
@@ -530,6 +578,12 @@ async function showConnectSection() {
 
 // Helper function to proceed to sheet setup after step 2
 async function proceedToSheetSetup() {
+    // Phase 3.13.1: Ensure initialLoader is hidden (safety check)
+    const initialLoader = document.getElementById('initialLoader');
+    if (initialLoader && initialLoader.style.display !== 'none') {
+      initialLoader.style.display = 'none';
+    }
+
     // Phase 3.13: Get state from StateManager
     const stateManager = window.StateManager;
     const sheetId = stateManager.get('sheetId');
@@ -922,7 +976,9 @@ async function handleGoogleSignIn() {
   console.log('[Google Auth] Sign in button clicked');
   try {
     // Phase 3.13: Check if this is a returning user using StateManager
-    const hasCompletedInitialOnboarding = window.StateManager?.get('hasCompletedInitialOnboarding');
+    const stateManager = window.StateManager;
+    const hasCompletedInitialOnboarding = stateManager.get('hasCompletedInitialOnboarding');
+    const isReAuthenticating = stateManager.get('isReAuthenticating');
     const isReturningUser = hasCompletedInitialOnboarding || isReAuthenticating;
 
     // Trigger Google OAuth flow via service worker
@@ -941,7 +997,7 @@ async function handleGoogleSignIn() {
         // during the OAuth callback, so we don't need to fetch it again here
 
         // Phase 3.11: Check if this is a re-authentication flow
-        if (isReAuthenticating) {
+        if (stateManager.get('isReAuthenticating')) {
           console.log('[ReAuth] Re-authentication successful, returning to home page');
 
           // Reset subtitle back to normal
@@ -951,7 +1007,7 @@ async function handleGoogleSignIn() {
           }
 
           // Clear re-auth flag
-          isReAuthenticating = false;
+          await stateManager.set({ isReAuthenticating: false });
 
           // Reload state to return to normal flow
           await loadState();
@@ -1486,7 +1542,7 @@ async function handleDisconnect() {
 
     // Restore Google auth information so user doesn't have to re-authenticate
     if (googleUserId && googleEmail && googleAuthenticated) {
-      await chrome.storage.sync.set({
+      await window.StateManager.set({
         googleUserId,
         googleEmail,
         googleAuthenticated
@@ -2024,7 +2080,7 @@ function showSection(section) {
       toggleHeader(false);
       if (defaultHeader) defaultHeader.classList.add('hidden');
       // Mark that user has seen welcome
-      chrome.storage.sync.set({ hasSeenWelcome: true });
+      window.StateManager.set({ hasSeenWelcome: true });
       // Hide legacy footer on welcome
       if (legacyFooter) legacyFooter.classList.add('hidden');
       break;
@@ -2221,7 +2277,8 @@ function hideSheetSuccessModal() {
 
 // ===== Re-authentication using Welcome Page =====
 
-let isReAuthenticating = false;
+// Phase 3.13.1: isReAuthenticating moved to StateManager for persistence
+// let isReAuthenticating = false; // REMOVED
 
 /**
  * Show welcome page for re-authentication when token expires
@@ -2230,7 +2287,7 @@ function showReAuthPage() {
   console.log('[ReAuth] Showing welcome page for re-authentication');
 
   // Mark that we're in re-authentication mode
-  isReAuthenticating = true;
+  window.StateManager.set({ isReAuthenticating: true });
 
   // Hide all post-onboarding pages
   document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
@@ -2367,7 +2424,7 @@ async function handleInstallTemplate(templateId) {
 
     // Optionally save as current sheet
     if (confirm('Set this as your active sheet for syncing?')) {
-      await chrome.storage.sync.set({
+      await window.StateManager.set({
         sheetId: result.sheetId,
         sheetUrl: result.sheetUrl
       });
@@ -2396,6 +2453,9 @@ function isFullyConnected(state) {
  */
 async function switchTab(tabName) {
   console.log('[Nav] Switching to tab:', tabName);
+
+  // Phase 3.13.1: Remove welcome background when switching to post-onboarding pages
+  document.body.classList.remove('welcome-active');
 
   // Hide all pages
   const pages = [pageHome, pageBank, pageSheet, pageSettings];

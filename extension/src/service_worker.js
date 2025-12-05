@@ -244,6 +244,49 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
         console.log('[Service Worker] Successfully fetched Google user ID:', userInfo.id);
         console.log('[Service Worker] Profile picture URL:', userInfo.picture);
 
+        // Phase 3.13.1: Check if user is switching Google accounts
+        const currentData = await chrome.storage.sync.get(['googleEmail', 'hasCompletedInitialOnboarding']);
+        const currentEmail = currentData.googleEmail;
+        const newEmail = userInfo.email;
+
+        if (currentEmail && currentEmail !== newEmail) {
+          // ACCOUNT SWITCH DETECTED - Clear all account-specific data
+          console.warn('[Service Worker] ⚠️ Account switch detected!');
+          console.warn(`[Service Worker] Old account: ${currentEmail}`);
+          console.warn(`[Service Worker] New account: ${newEmail}`);
+          console.warn('[Service Worker] Clearing all account-specific data...');
+
+          // Clear all account data except onboarding flag
+          await chrome.storage.sync.clear();
+          await chrome.storage.local.clear();
+
+          // Restore onboarding flag if it existed
+          if (currentData.hasCompletedInitialOnboarding) {
+            await chrome.storage.sync.set({ hasCompletedInitialOnboarding: true });
+            console.log('[Service Worker] Preserved onboarding flag');
+          }
+
+          console.log('[Service Worker] ✅ Account data cleared - fresh start for new account');
+
+          // Phase 3.13.1: Broadcast account switch to all popups to invalidate StateManager
+          chrome.runtime.sendMessage({
+            type: 'ACCOUNT_SWITCHED',
+            oldEmail: currentEmail,
+            newEmail: newEmail,
+            newUserData: {
+              googleUserId: userInfo.id,
+              googleEmail: userInfo.email,
+              googlePicture: userInfo.picture,
+              googleAuthenticated: true
+            }
+          }, () => {
+            // Ignore errors - popup might not be open
+            if (chrome.runtime.lastError) {
+              console.log('[Service Worker] No popup to notify (expected if closed)');
+            }
+          });
+        }
+
         await chrome.storage.sync.set({
           googleUserId: userInfo.id,
           googleEmail: userInfo.email || null,
