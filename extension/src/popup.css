@@ -719,6 +719,16 @@ input[type="text"]:focus {
   100% { transform: rotate(360deg); }
 }
 
+/* Phase 3.13: White spinner on green gradient loading screen */
+body.welcome-active .loader {
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top: 3px solid rgba(255, 255, 255, 0.95);
+}
+
+body.welcome-active #loadingMessage {
+  color: rgba(255, 255, 255, 0.95);
+}
+
 #loadingMessage {
   color: #6b7280;
   font-size: 13px;
@@ -1418,6 +1428,29 @@ body.welcome-active footer {
 /* Green gradient background for entire popup on welcome screen */
 body.welcome-active {
   background: linear-gradient(135deg, var(--sl-primary) 0%, var(--sl-accent) 100%);
+}
+
+/* Phase 3.13: Unified loading screen */
+.unified-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--sl-primary) 0%, var(--sl-accent) 100%);
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.unified-loader .loader {
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top: 3px solid rgba(255, 255, 255, 0.95);
+}
+
+.unified-loader #initialLoadingMessage {
+  color: rgba(255, 255, 255, 0.95);
 }
 
 body.welcome-active .container {

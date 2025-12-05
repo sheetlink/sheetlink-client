@@ -8,6 +8,18 @@
   <link rel="stylesheet" href="components/WalkthroughModal.css">
 </head>
 <body>
+  <!-- Phase 3.13: Unified loading screen (hidden by JS when ready) -->
+  <div id="initialLoader" class="unified-loader">
+    <div class="welcome-hero-bg">
+      <img src="../assets/brand/sheetlink-logo-horizontal-white.svg" alt="SheetLink" class="welcome-logo" width="180" height="45">
+      <p class="welcome-tagline">Forget dashboards. Feed your spreadsheet.</p>
+    </div>
+    <div class="welcome-content">
+      <div class="loader" style="margin-bottom: 16px;"></div>
+      <p id="initialLoadingMessage" style="font-size: 14px; text-align: center;">Loading...</p>
+    </div>
+  </div>
+
   <div class="container">
     <!-- Default header (shown before Google auth) -->
     <header id="default-header">
@@ -309,20 +321,7 @@
 
         <!-- Connected Institutions -->
         <div id="bankList" class="bank-list">
-          <!-- Dynamically populated -->
-          <div class="bank-card card">
-            <div class="bank-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-              <h3 class="institution-name" id="bankInstitutionName" style="font-size: 16px; font-weight: 600;">Chase</h3>
-              <span class="connection-status active" style="font-size: 12px; color: #10b981; font-weight: 500;">Active</span>
-            </div>
-            <div class="accounts-list" id="bankAccountsList">
-              <!-- Accounts populated by JS -->
-              <div class="account-item" style="font-size: 13px; color: #6b7280; margin-bottom: 4px;">
-                <span>Loading accounts...</span>
-              </div>
-            </div>
-            <button id="updateBankConnectionBtn" class="btn btn-secondary" style="margin-top: 12px;">Update Connection</button>
-          </div>
+          <!-- Dynamically populated - placeholder hidden to prevent flash -->
         </div>
 
         <!-- Add Bank Button (for future multi-account support) -->
@@ -339,7 +338,7 @@
         <!-- Sheet Info -->
         <div class="sheet-info card">
           <div class="status-item" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-            <span class="status-icon" style="color: #10b981;">✓</span>
+            <span class="status-dot status-dot-connected" style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);"></span>
             <span style="font-size: 14px; font-weight: 500;">Connected to Sheet</span>
           </div>
           <p class="sheet-url" style="margin-bottom: 8px;">
@@ -496,10 +495,19 @@
         </div>
       </div>
 
-      <!-- Loading Indicator -->
-      <div id="loadingSection" class="section hidden">
-        <div class="loader"></div>
-        <p id="loadingMessage">Processing...</p>
+      <!-- Loading Indicator - Phase 3.13: Clean loading state -->
+      <div id="loadingSection" class="section welcome-hero hidden">
+        <!-- Hero Section with Green Gradient -->
+        <div class="welcome-hero-bg">
+          <img src="../assets/brand/sheetlink-logo-horizontal-white.svg" alt="SheetLink" class="welcome-logo" width="180" height="45">
+          <p class="welcome-tagline">Forget dashboards. Feed your spreadsheet.</p>
+        </div>
+
+        <!-- Loading Spinner Section -->
+        <div class="welcome-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px;">
+          <div class="loader" style="margin-bottom: 16px;"></div>
+          <p id="loadingMessage" style="font-size: 14px; text-align: center;">Loading...</p>
+        </div>
       </div>
     </main>
 
@@ -630,6 +638,9 @@
 
   <!-- Drive API wrapper -->
   <script src="drive.js"></script>
+
+  <!-- Phase 3.13: State Manager -->
+  <script src="state-manager.js"></script>
 
   <!-- Walkthrough Modal -->
   <script src="components/WalkthroughModal.js"></script>
