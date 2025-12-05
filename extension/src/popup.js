@@ -35,6 +35,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   initializeElements();
   initializeSandboxMode();
 
+  // Phase 3.13: Initialize StateManager ONCE from storage
+  console.log('[Popup] Initializing StateManager...');
+  await window.StateManager.init();
+  console.log('[Popup] StateManager initialized');
+
   // Initialize walkthrough modal if in sandbox mode
   if (CONFIG.isSandbox) {
     walkthroughModal = new WalkthroughModal();
@@ -318,23 +323,25 @@ function handleLearnMore() {
 // Load current state from storage
 async function loadState() {
   try {
-    const data = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync', 'hasSeenWelcome', 'sheetlink_connection_status', 'googleAuthenticated', 'googleUserId', 'googleEmail', 'hasProgressedToSheetSetup', 'hasCompletedInitialOnboarding']);
+    // Phase 3.13: Read from StateManager (instant memory access)
+    const stateManager = window.StateManager;
 
-    console.log('[Popup] loadState - googleAuthenticated:', data.googleAuthenticated);
-    console.log('[Popup] loadState - googleUserId:', data.googleUserId);
-    console.log('[Popup] loadState - hasProgressedToSheetSetup:', data.hasProgressedToSheetSetup);
-    console.log('[Popup] loadState - hasCompletedInitialOnboarding:', data.hasCompletedInitialOnboarding);
+    console.log('[Popup] loadState - googleAuthenticated:', stateManager.isAuthenticated());
+    console.log('[Popup] loadState - googleUserId:', stateManager.get('googleUserId'));
+    console.log('[Popup] loadState - hasProgressedToSheetSetup:', stateManager.get('hasProgressedToSheetSetup'));
+    console.log('[Popup] loadState - hasCompletedInitialOnboarding:', stateManager.get('hasCompletedInitialOnboarding'));
 
     // Phase 3.9: Update email displays throughout the UI
-    if (data.googleEmail) {
+    const googleEmail = stateManager.get('googleEmail');
+    if (googleEmail) {
       const emailElements = document.querySelectorAll('#sheetUserEmail, #syncGoogleEmail');
       emailElements.forEach(el => {
-        if (el) el.textContent = data.googleEmail;
+        if (el) el.textContent = googleEmail;
       });
     }
 
     // Phase 3.8: Check if user is authenticated with Google first
-    if (!data.googleAuthenticated) {
+    if (!stateManager.isAuthenticated()) {
       console.log('[Popup] User not authenticated - showing welcome screen');
       // User not authenticated - show welcome with "Sign in with Google" button
       showSection('welcome');
@@ -345,29 +352,47 @@ async function loadState() {
 
     console.log('[Popup] User is authenticated - continuing with flow');
 
-    // Phase 3.10: After Google auth, show user control panel header
+    // Phase 3.13: Get state and check if we should show loading screen FIRST
+    const itemId = stateManager.get('itemId');
+    const sheetId = stateManager.get('sheetId');
+    const shouldShowStep2 = itemId && !stateManager.get('hasSeenConnectStep') && !stateManager.get('hasProgressedToSheetSetup') && !stateManager.get('hasCompletedInitialOnboarding');
+
+    // If we're going to show the loading screen, do it IMMEDIATELY before any other UI updates
+    if (shouldShowStep2) {
+      showLoading('Loading your bank info...');
+    }
+
+    // Now update header (will be hidden behind loading screen if showing)
     toggleHeader(true);
-    updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
+    updateUserHeader(googleEmail, !!itemId, !!sheetId);
     updateTierDisplay();
 
     // No bank connected: try to restore from backend
-    if (!data.itemId) {
-      // If user has completed onboarding before, try to restore silently
-      if (data.hasCompletedInitialOnboarding) {
-        console.log('[Popup] Checking for items to restore...');
+    if (!itemId) {
+      // Phase 3.13: Always try to restore items for authenticated users (not just those with completed onboarding)
+      // This handles cases where storage was cleared but backend still has the connection
+      const googleUserId = stateManager.get('googleUserId');
+      if (googleUserId) {
+        console.log('[Popup] No itemId in storage, attempting to restore from backend...');
         const restored = await tryRestoreItems();
         if (restored) {
           // Items restored! Reload state with new itemId
+          console.log('[Popup] Items restored successfully, reloading state...');
           return loadState();
         }
+        console.log('[Popup] No items found in backend to restore');
+      }
 
-        // No items to restore - show navigation with empty state
-        // User can reconnect from Bank page
+      // Check if user has completed onboarding before
+      if (stateManager.get('hasCompletedInitialOnboarding')) {
+        // Returning user with no items - show navigation with empty state
+        console.log('[Popup] Returning user with no bank, showing navigation...');
         await initializeNavigation();
         return;
       }
 
       // New user - show connect bank screen
+      console.log('[Popup] New user, showing connect bank screen...');
       showSection('connect');
       // Hide disconnect button when no bank connected
       if (disconnectBtn) disconnectBtn.classList.add('hidden');
@@ -376,28 +401,16 @@ async function loadState() {
       return;
     }
 
-    // Bank connected
-    // Skip legacy sections for users who have completed onboarding
-    if (!data.hasCompletedInitialOnboarding) {
-      showSection('status');
-      updateStatus(CONFIG.isSandbox ? CONFIG.currentCopy.connectedInstitution(CONFIG.DEMO_INSTITUTION_NAME) : 'Connected', true);
-      disconnectBtn.classList.remove('hidden');
-    }
-
     // Phase 3.9 UX: Show step 2 for returning users if they just authenticated
-    // BUT skip step 2 if user has already progressed to sheet setup
-    // Check if user just signed in (first load after Google auth)
-    const shouldShowStep2 = !data.hasSeenConnectStep && data.googleAuthenticated && !data.hasProgressedToSheetSetup && !data.hasCompletedInitialOnboarding;
+    // Note: shouldShowStep2 was already checked earlier and loading screen shown if needed
     if (shouldShowStep2) {
       // Mark that we've shown step 2
       await chrome.storage.sync.set({ hasSeenConnectStep: true });
 
-      // Show connect screen with connection status
-      showSection('connect');
-
       // Fetch and display item info (institution name and accounts)
-      await displayItemInfo(data.itemId);
+      await displayItemInfo(stateManager.get('itemId'));
 
+      // Phase 3.13: Configure all UI elements BEFORE showing section (prevents flash)
       // Update header to "Add a Bank"
       const connectHeader = document.querySelector('#connectSection h2');
       if (connectHeader) {
@@ -424,7 +437,7 @@ async function loadState() {
         nextBtn.addEventListener('click', async () => {
           // Mark that user has progressed to sheet setup
           await chrome.storage.sync.set({ hasProgressedToSheetSetup: true });
-          proceedToSheetSetup(data);
+          proceedToSheetSetup();
         });
       }
 
@@ -434,6 +447,10 @@ async function loadState() {
         plaidDesc.textContent = 'Connect multiple institutions to sync all your accounts in one place.';
       }
 
+      // NOW hide loading and show connect screen (everything already configured)
+      hideLoading();
+      showSection('connect');
+
       // Phase 3.10: Initialize navigation (will hide footer nav since not fully connected)
       await initializeNavigation();
       return;
@@ -441,8 +458,8 @@ async function loadState() {
 
     // Normal flow - proceed to sheet setup
     // Skip legacy sections for returning users
-    if (!data.hasCompletedInitialOnboarding) {
-      proceedToSheetSetup(data);
+    if (!stateManager.get('hasCompletedInitialOnboarding')) {
+      proceedToSheetSetup();
     }
 
     // Phase 3.10: Initialize navigation after state is loaded
@@ -455,14 +472,14 @@ async function loadState() {
 
 // Helper function to show connect section with proper state
 async function showConnectSection() {
-  const data = await chrome.storage.sync.get(['itemId', 'googleEmail']);
+  // Phase 3.13: Use StateManager instead of storage
+  const stateManager = window.StateManager;
+  const itemId = stateManager.get('itemId');
 
-  showSection('connect');
-
-  // If user has a bank connected, show the "Add a Bank" state
-  if (data.itemId) {
+  // If user has a bank connected, configure everything BEFORE showing section (prevents flash)
+  if (itemId) {
     // Fetch and display item info (institution name and accounts)
-    await displayItemInfo(data.itemId);
+    await displayItemInfo(itemId);
 
     // Update header to "Add a Bank"
     const connectHeader = document.querySelector('#connectSection h2');
@@ -494,9 +511,9 @@ async function showConnectSection() {
       const newNextBtn = nextBtn.cloneNode(true);
       nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
       newNextBtn.addEventListener('click', async () => {
-        const fullData = await chrome.storage.sync.get(['itemId', 'sheetId', 'sheetUrl', 'lastSync']);
+        // Phase 3.13: Use StateManager
         await chrome.storage.sync.set({ hasProgressedToSheetSetup: true });
-        proceedToSheetSetup(fullData);
+        proceedToSheetSetup();
       });
     }
 
@@ -506,26 +523,36 @@ async function showConnectSection() {
       plaidDesc.textContent = 'Connect multiple institutions to sync all your accounts in one place.';
     }
   }
+
+  // NOW show section (everything already configured if itemId exists)
+  showSection('connect');
 }
 
 // Helper function to proceed to sheet setup after step 2
-async function proceedToSheetSetup(data) {
-    if (data.sheetId) {
+async function proceedToSheetSetup() {
+    // Phase 3.13: Get state from StateManager
+    const stateManager = window.StateManager;
+    const sheetId = stateManager.get('sheetId');
+    const sheetUrl = stateManager.get('sheetUrl');
+    const lastSync = stateManager.get('lastSync');
+    const itemId = stateManager.get('itemId');
+
+    if (sheetId) {
       showSection('sync');
       document.getElementById('currentSheet').textContent =
-        data.sheetUrl ? new URL(data.sheetUrl).pathname.split('/')[3].substring(0, 20) + '...' : data.sheetId;
+        sheetUrl ? new URL(sheetUrl).pathname.split('/')[3].substring(0, 20) + '...' : sheetId;
 
       if (changeSheetBtn) {
         changeSheetBtn.classList.remove('hidden');
       }
 
-      if (data.lastSync) {
-        document.getElementById('lastSync').textContent = new Date(data.lastSync).toLocaleString();
+      if (lastSync) {
+        document.getElementById('lastSync').textContent = new Date(lastSync).toLocaleString();
       }
 
       // Fetch and display bank name in status
-      if (data.itemId) {
-        await updateBankStatus(data.itemId);
+      if (itemId) {
+        await updateBankStatus(itemId);
       }
 
       updateAutoSyncStatus();
@@ -541,6 +568,7 @@ async function proceedToSheetSetup(data) {
 }
 
 // Phase 3.9: Fetch and display item info (institution and accounts)
+// Phase 3.13: Now uses StateManager caching to prevent flash on reload
 async function displayItemInfo(itemId) {
   try {
     if (!itemId) {
@@ -550,81 +578,111 @@ async function displayItemInfo(itemId) {
       return;
     }
 
-    console.log(`Fetching item info for: ${itemId}`);
+    // Phase 3.13: Check cache first for instant display
+    const stateManager = window.StateManager;
+    let cachedAccounts = stateManager.getCachedAccounts();
+    let cachedInstitutionName = stateManager.get('institutionName');
 
-    // Call backend to get item info
-    const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
-
-    if (!response.ok) {
-      console.error('Failed to fetch item info:', response.status);
-      // Fall back to generic display
-      showGenericBankStatus();
-      return;
+    // Display cached data IMMEDIATELY if available (NO FLASH!)
+    if (cachedAccounts && cachedInstitutionName) {
+      console.log('[displayItemInfo] Displaying cached data instantly');
+      renderBankInfo(cachedInstitutionName, cachedAccounts);
     }
 
-    const itemInfo = await response.json();
-    console.log('Item info received:', itemInfo);
+    // Refresh from backend only if cache is stale or missing
+    if (!cachedAccounts || stateManager.isCacheStale('accounts')) {
+      console.log('[displayItemInfo] Cache stale/missing, fetching from backend...');
 
-    // Update the bank connection status display with collapsible card
-    const statusEl = document.getElementById('bankConnectionStatus');
-    if (statusEl) {
-      const accountCount = itemInfo.accounts ? itemInfo.accounts.length : 0;
+      const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
 
-      // Build collapsible accounts list
-      let accountsHTML = '';
-      if (itemInfo.accounts && itemInfo.accounts.length > 0) {
-        accountsHTML = '<div class="bank-accounts-list" style="margin-top: 12px; padding-left: 8px; display: none;">';
-        itemInfo.accounts.forEach(account => {
-          const accountName = account.official_name || account.name;
-          const mask = account.mask ? ` ••${account.mask}` : '';
-          accountsHTML += `
-            <div style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #374151;">
-              <div style="font-weight: 500;">${accountName}</div>
-              <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">${mask}</div>
-            </div>
-          `;
-        });
-        accountsHTML += '</div>';
+      if (!response.ok) {
+        console.error('[displayItemInfo] Failed to fetch item info:', response.status);
+        // If we have cache, we already displayed it. Otherwise show generic.
+        if (!cachedAccounts) {
+          showGenericBankStatus();
+        }
+        return;
       }
 
-      // Create collapsible bank card
-      statusEl.innerHTML = `
-        <div class="bank-card" style="cursor: pointer; user-select: none;">
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="color: #10b981; font-size: 16px;">✓</span>
-              <div>
-                <div style="font-size: 14px; color: #166534; font-weight: 600;">${itemInfo.institution_name}</div>
-                <div style="font-size: 12px; color: #6b7280; margin-top: 2px;">${accountCount} account${accountCount !== 1 ? 's' : ''}</div>
-              </div>
-            </div>
-            <span class="expand-arrow" style="color: #9ca3af; font-size: 14px; transition: transform 0.2s;">▶</span>
-          </div>
-          ${accountsHTML}
+      const itemInfo = await response.json();
+      console.log('[displayItemInfo] Fresh data received:', itemInfo);
+
+      // Update cache in StateManager
+      await stateManager.setCachedAccounts(itemInfo.accounts, {
+        institutionName: itemInfo.institution_name,
+        institutionId: itemInfo.institution_id
+      });
+
+      // Update display with fresh data
+      renderBankInfo(itemInfo.institution_name, itemInfo.accounts);
+    } else {
+      console.log('[displayItemInfo] Using fresh cache, no backend fetch needed');
+    }
+  } catch (error) {
+    console.error('[displayItemInfo] Error:', error);
+    showGenericBankStatus();
+  }
+}
+
+// Phase 3.13: Extracted render logic for reuse
+// Updated to use "Active" badge design per user preference
+function renderBankInfo(institutionName, accounts) {
+  const statusEl = document.getElementById('bankConnectionStatus');
+  if (!statusEl) return;
+
+  const accountCount = accounts ? accounts.length : 0;
+
+  // Build collapsible accounts list
+  let accountsHTML = '';
+  if (accounts && accounts.length > 0) {
+    accountsHTML = '<div class="bank-accounts-list" style="margin-top: 12px; border-top: 1px solid #e5e7eb; padding-top: 8px; display: none;">';
+    accounts.forEach(account => {
+      const accountName = account.official_name || account.name;
+      const mask = account.mask ? ` ••${account.mask}` : '';
+      const type = account.subtype ? ` - ${account.subtype}` : '';
+      accountsHTML += `
+        <div style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #374151;">
+          <div style="font-weight: 500;">${accountName}${mask}</div>
+          <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">${account.type}${type}</div>
         </div>
       `;
-      statusEl.classList.remove('hidden');
+    });
+    accountsHTML += '</div>';
+  }
 
-      // Add click event listener to toggle expansion
-      const bankCard = statusEl.querySelector('.bank-card');
-      if (bankCard) {
-        bankCard.addEventListener('click', () => {
-          const accountsList = bankCard.querySelector('.bank-accounts-list');
-          const arrow = bankCard.querySelector('.expand-arrow');
+  // Create bank card with glowing status dot and account count
+  statusEl.innerHTML = `
+    <div class="bank-card" style="cursor: pointer; user-select: none;">
+      <div class="bank-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: none; padding-bottom: 0;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="status-dot status-dot-connected" style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);"></span>
+          <h3 style="font-size: 16px; font-weight: 600; margin: 0; padding-bottom: 0; color: #1f2937; text-decoration: none; border-bottom: none;">${institutionName}</h3>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 12px; color: #6b7280; font-weight: 500;">${accountCount} account${accountCount !== 1 ? 's' : ''}</span>
+          ${accountsHTML ? '<span class="expand-arrow" style="color: #9ca3af; font-size: 14px; transition: transform 0.2s;">▶</span>' : ''}
+        </div>
+      </div>
+      ${accountsHTML}
+    </div>
+  `;
+  statusEl.classList.remove('hidden');
 
-          if (accountsList) {
-            const isExpanded = accountsList.style.display !== 'none';
-            accountsList.style.display = isExpanded ? 'none' : 'block';
-            arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
-          }
-        });
-      }
+  // Add click event listener to toggle expansion (only if there are accounts)
+  if (accountsHTML) {
+    const bankCard = statusEl.querySelector('.bank-card');
+    if (bankCard) {
+      bankCard.addEventListener('click', () => {
+        const accountsList = bankCard.querySelector('.bank-accounts-list');
+        const arrow = bankCard.querySelector('.expand-arrow');
+
+        if (accountsList) {
+          const isExpanded = accountsList.style.display !== 'none';
+          accountsList.style.display = isExpanded ? 'none' : 'block';
+          arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
+        }
+      });
     }
-
-  } catch (error) {
-    console.error('Error displaying item info:', error);
-    // Fall back to generic display
-    showGenericBankStatus();
   }
 }
 
@@ -717,44 +775,47 @@ async function updateBankStatus(itemId) {
 // Phase 3.8: Try to restore Items from backend using Google user ID
 async function tryRestoreItems() {
   try {
-    // Get Google user ID from storage (set during sign-in)
-    const { googleUserId } = await chrome.storage.sync.get(['googleUserId']);
+    // Phase 3.13: Get Google user ID from StateManager
+    const stateManager = window.StateManager;
+    const googleUserId = stateManager.get('googleUserId');
 
     if (!googleUserId) {
-      console.log('No Google user ID available for restoration');
+      console.log('[tryRestoreItems] No Google user ID available for restoration');
       return false;
     }
 
-    console.log('Checking for Items to restore...');
+    console.log('[tryRestoreItems] Checking for Items to restore for user:', googleUserId);
 
     // Call backend to get user's Items
     const response = await fetch(`${BACKEND_URL}/plaid/items?user_id=${encodeURIComponent(googleUserId)}`);
 
     if (!response.ok) {
-      console.log('Could not fetch Items from backend');
+      console.log('[tryRestoreItems] Could not fetch Items from backend, status:', response.status);
       return false;
     }
 
     const data = await response.json();
+    console.log('[tryRestoreItems] Response from backend:', data);
 
     if (!data.items || data.items.length === 0) {
-      console.log('No Items found to restore');
+      console.log('[tryRestoreItems] No Items found to restore');
       return false;
     }
 
     // Restore the most recently synced Item
     const mostRecentItem = data.items[0];
-    console.log(`Restoring Item: ${mostRecentItem.institution_name}`);
+    console.log(`[tryRestoreItems] Restoring Item: ${mostRecentItem.institution_name} (${mostRecentItem.item_id})`);
 
-    await chrome.storage.sync.set({
+    // Phase 3.13: Use StateManager to persist the restored item
+    await stateManager.set({
       itemId: mostRecentItem.item_id
     });
 
-    console.log(`Item restored successfully: ${mostRecentItem.item_id}`);
+    console.log(`[tryRestoreItems] Item restored successfully: ${mostRecentItem.item_id}`);
     return true;
 
   } catch (error) {
-    console.error('Error restoring Items:', error);
+    console.error('[tryRestoreItems] Error restoring Items:', error);
     return false; // Silent fail - user sees normal welcome screen
   }
 }
@@ -860,8 +921,8 @@ async function updateCloudSyncIndicator() {
 async function handleGoogleSignIn() {
   console.log('[Google Auth] Sign in button clicked');
   try {
-    // Check if this is a returning user (has completed onboarding before)
-    const { hasCompletedInitialOnboarding } = await chrome.storage.sync.get(['hasCompletedInitialOnboarding']);
+    // Phase 3.13: Check if this is a returning user using StateManager
+    const hasCompletedInitialOnboarding = window.StateManager?.get('hasCompletedInitialOnboarding');
     const isReturningUser = hasCompletedInitialOnboarding || isReAuthenticating;
 
     // Trigger Google OAuth flow via service worker
@@ -901,15 +962,9 @@ async function handleGoogleSignIn() {
       }
     });
 
-    // Phase 3.11: Don't close popup during re-auth or for returning users
-    // Service worker will reopen popup after OAuth completes
-    if (!isReturningUser) {
-      // Only close for first-time onboarding
-      console.log('[Google Auth] First-time user - closing popup for OAuth');
-      window.close();
-    } else {
-      console.log('[Google Auth] Returning user - keeping popup open during OAuth');
-    }
+    // Phase 3.13: Keep popup open for all users during OAuth for better UX
+    console.log('[Google Auth] Keeping popup open during OAuth');
+    // The callback above (line 884) will handle UI updates after OAuth completes
 
   } catch (error) {
     showError('Failed to sign in with Google: ' + error.message);
@@ -954,7 +1009,8 @@ async function handleConnectBank(isUpdate = false) {
     if (!CONFIG.isSandbox && result) {
       showLoading('Exchanging token...');
       const itemId = await exchangePublicToken(result);
-      await chrome.storage.sync.set({ itemId });
+      // Phase 3.13: Use StateManager to persist itemId
+      await window.StateManager.set({ itemId });
     }
 
     hideLoading();
@@ -1013,12 +1069,15 @@ async function handleSaveSheet() {
     }
 
     // Only save if verification succeeds
-    // Phase 3.11: Mark onboarding as complete when sheet is connected
-    await chrome.storage.sync.set({
+    // Phase 3.13: Use StateManager to persist sheet connection
+    await window.StateManager.set({
       sheetId,
       sheetUrl: url,
       hasCompletedInitialOnboarding: true  // Flag for enabling item restoration in future
     });
+
+    // Fetch and cache the sheet name
+    await fetchSheetName(sheetId);
 
     hideLoading();
     updateStatus('Sheet saved successfully!', true);
@@ -1078,7 +1137,10 @@ async function handleSyncNow() {
     try {
       showHomeSyncLoading('Checking your data...');
 
-      const { itemId, sheetId } = await chrome.storage.sync.get(['itemId', 'sheetId']);
+      // Phase 3.13: Use StateManager
+      const stateManager = window.StateManager;
+      const itemId = stateManager.get('itemId');
+      const sheetId = stateManager.get('sheetId');
 
       if (!itemId || !sheetId) {
         throw new Error('Missing item ID or sheet ID');
@@ -1139,8 +1201,8 @@ async function handleSyncNow() {
       // Write to Google Sheets
       const result = await writeToSheets(sheetId, syncData);
 
-      // Update last sync time
-      await chrome.storage.sync.set({ lastSync: Date.now() });
+      // Phase 3.13: Update last sync time in StateManager
+      await window.StateManager.set({ lastSync: Date.now() });
 
       // Show detailed success message
       const message = `Sync completed! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
@@ -1203,7 +1265,10 @@ async function handleResyncAll() {
   try {
     showHomeSyncLoading('Re-fetching all data...');
 
-    const { itemId, sheetId } = await chrome.storage.sync.get(['itemId', 'sheetId']);
+    // Phase 3.13: Use StateManager
+    const stateManager = window.StateManager;
+    const itemId = stateManager.get('itemId');
+    const sheetId = stateManager.get('sheetId');
 
     if (!itemId || !sheetId) {
       throw new Error('Missing item ID or sheet ID');
@@ -1219,8 +1284,8 @@ async function handleResyncAll() {
     // Write to Google Sheets
     const result = await writeToSheets(sheetId, syncData);
 
-    // Update last sync time
-    await chrome.storage.sync.set({ lastSync: Date.now() });
+    // Phase 3.13: Update last sync time in StateManager
+    await window.StateManager.set({ lastSync: Date.now() });
 
     // Show detailed success message
     const message = `Re-sync completed! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
@@ -1470,7 +1535,11 @@ async function handleRemoveSheet() {
   try {
     showLoading('Removing sheet...');
 
-    await chrome.storage.sync.remove(['sheetId', 'sheetUrl']);
+    // Phase 3.13: Use StateManager to clear sheet connection
+    await window.StateManager.set({
+      sheetId: null,
+      sheetUrl: null
+    });
 
     hideLoading();
     updateStatus('Sheet removed', true);
@@ -1936,6 +2005,12 @@ function toggleHeader(showUserHeader) {
 }
 
 function showSection(section) {
+  // Phase 3.13: Hide initial loader when content is ready
+  const initialLoader = document.getElementById('initialLoader');
+  if (initialLoader) {
+    initialLoader.style.display = 'none';
+  }
+
   // Hide all sections
   [connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection]
     .forEach(el => el && el.classList.add('hidden'));
@@ -1989,9 +2064,17 @@ function showSection(section) {
 }
 
 function showLoading(message) {
-  loadingMessage.textContent = message;
-  loadingSection.classList.remove('hidden');
-  
+  // Phase 3.13: Use unified loader (keep it visible or show it again)
+  const initialLoader = document.getElementById('initialLoader');
+  const initialLoadingMessage = document.getElementById('initialLoadingMessage');
+
+  if (initialLoader) {
+    initialLoader.style.display = 'flex';
+  }
+  if (initialLoadingMessage) {
+    initialLoadingMessage.textContent = message;
+  }
+
   // Disable buttons
   [connectBankBtn, saveSheetBtn, syncNowBtn, disconnectBtn].forEach(btn => {
     if (btn) btn.disabled = true;
@@ -1999,8 +2082,12 @@ function showLoading(message) {
 }
 
 function hideLoading() {
-  loadingSection.classList.add('hidden');
-  
+  // Phase 3.13: Hide unified loader
+  const initialLoader = document.getElementById('initialLoader');
+  if (initialLoader) {
+    initialLoader.style.display = 'none';
+  }
+
   // Enable buttons
   [connectBankBtn, saveSheetBtn, syncNowBtn, disconnectBtn].forEach(btn => {
     if (btn) btn.disabled = false;
@@ -2355,14 +2442,20 @@ async function switchTab(tabName) {
  * Initialize navigation system
  */
 async function initializeNavigation() {
-  const state = await chrome.storage.sync.get(['googleUserId', 'itemId', 'sheetId', 'hasCompletedOnboarding', 'hasCompletedInitialOnboarding']);
+  // Phase 3.13: Use StateManager for instant, consistent state access
+  const stateManager = window.StateManager;
+  const googleUserId = stateManager.get('googleUserId');
+  const itemId = stateManager.get('itemId');
+  const sheetId = stateManager.get('sheetId');
+  const hasCompletedInitialOnboarding = stateManager.get('hasCompletedInitialOnboarding');
 
-  console.log('[Nav] initializeNavigation called, state:', state);
-  console.log('[Nav] isFullyConnected:', isFullyConnected(state));
+  console.log('[Nav] initializeNavigation called');
+  console.log('[Nav] isFullyConnected:', stateManager.isFullyConnected());
+  console.log('[Nav] State:', { googleUserId, itemId, sheetId, hasCompletedInitialOnboarding });
 
   // Phase 3.11: Check if user has completed initial onboarding (all 3 steps)
   // Only show post-onboarding navigation after they've finished Google + Bank + Sheet
-  const hasReachedPostOnboarding = state.hasCompletedInitialOnboarding;
+  const hasReachedPostOnboarding = hasCompletedInitialOnboarding;
 
   if (!hasReachedPostOnboarding) {
     // User is still in onboarding - hide footer nav
@@ -2386,16 +2479,10 @@ async function initializeNavigation() {
   // Restore last tab or intelligently default based on connection state
   const { currentTab: savedTab } = await chrome.storage.local.get('currentTab');
 
-  // Default logic:
-  // - If fully connected (bank + sheet): default to home
-  // - If no bank: default to bank page
-  // - If bank but no sheet: default to sheet page
+  // Phase 3.13: Always default to home page for returning users
+  // This provides a better UX after sign-in/re-authentication
+  // Users can easily navigate to Bank or Sheet pages if needed
   let defaultTab = 'home';
-  if (!state.itemId) {
-    defaultTab = 'bank';
-  } else if (!state.sheetId) {
-    defaultTab = 'sheet';
-  }
 
   await switchTab(savedTab || defaultTab);
 
@@ -2406,17 +2493,25 @@ async function initializeNavigation() {
       switchTab(page);
     });
   });
+
+  // Phase 3.13: Hide initial loader after navigation is ready
+  hideLoading();
 }
 
 /**
  * Load Home page data
  */
 async function loadHomePage() {
-  const data = await chrome.storage.sync.get(['lastSync', 'itemId', 'sheetId', 'googleEmail']);
+  // Phase 3.13: Use StateManager for instant, consistent state access
+  const stateManager = window.StateManager;
+  const lastSync = stateManager.get('lastSync');
+  const itemId = stateManager.get('itemId');
+  const sheetId = stateManager.get('sheetId');
+  const googleEmail = stateManager.get('googleEmail');
 
   // Update last sync
-  if (homeLastSync && data.lastSync) {
-    const date = new Date(data.lastSync);
+  if (homeLastSync && lastSync) {
+    const date = new Date(lastSync);
     homeLastSync.textContent = formatRelativeTime(date);
   }
 
@@ -2424,18 +2519,18 @@ async function loadHomePage() {
   if (homeStatusPlaid) {
     const plaidDot = homeStatusPlaid.querySelector('.status-dot');
     if (plaidDot) {
-      plaidDot.className = 'status-dot ' + (data.itemId ? 'status-dot-connected' : 'status-dot-disconnected');
+      plaidDot.className = 'status-dot ' + (itemId ? 'status-dot-connected' : 'status-dot-disconnected');
     }
   }
   if (homeStatusSheet) {
     const sheetDot = homeStatusSheet.querySelector('.status-dot');
     if (sheetDot) {
-      sheetDot.className = 'status-dot ' + (data.sheetId ? 'status-dot-connected' : 'status-dot-disconnected');
+      sheetDot.className = 'status-dot ' + (sheetId ? 'status-dot-connected' : 'status-dot-disconnected');
     }
   }
 
   // Enable/disable sync buttons based on connection status
-  const isFullyConnected = data.itemId && data.sheetId;
+  const isFullyConnected = stateManager.isFullyConnected();
 
   if (homeSyncBtn) {
     homeSyncBtn.disabled = !isFullyConnected;
@@ -2466,7 +2561,7 @@ async function loadHomePage() {
   }
 
   // Update user header
-  updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
+  updateUserHeader(googleEmail, !!itemId, !!sheetId);
 
   // Update tier display
   updateTierDisplay();
@@ -2474,13 +2569,17 @@ async function loadHomePage() {
 
 /**
  * Load Bank page data
+ * Phase 3.13: Uses cached accounts for instant display, refreshes in background if stale
  */
 async function loadBankPage() {
-  const data = await chrome.storage.sync.get(['itemId', 'institutionName', 'sheetId', 'googleEmail']);
+  const stateManager = window.StateManager;
+  const itemId = stateManager.get('itemId');
+  const googleEmail = stateManager.get('googleEmail');
+  const sheetId = stateManager.get('sheetId');
 
   const bankListContainer = document.getElementById('bankList');
 
-  if (!data.itemId) {
+  if (!itemId) {
     // Show empty state
     if (bankListContainer) {
       bankListContainer.innerHTML = `
@@ -2494,11 +2593,23 @@ async function loadBankPage() {
     return;
   }
 
-  // Fetch and display item info with collapsible card
-  if (data.itemId) {
+  // Phase 3.13: Get cached accounts
+  let cachedAccounts = stateManager.getCachedAccounts();
+  let cachedInstitutionName = stateManager.get('institutionName');
+
+  // Display cached data IMMEDIATELY (NO FLASH!)
+  if (cachedAccounts && cachedInstitutionName) {
+    console.log('[Bank] Displaying cached accounts (instant)');
+    renderBankAccounts(cachedAccounts, cachedInstitutionName, bankListContainer);
+  }
+
+  // Refresh from backend only if cache is stale or missing
+  if (!cachedAccounts || stateManager.isCacheStale('accounts')) {
     try {
-      // Call backend to get item info
-      const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(data.itemId)}/info`);
+      console.log('[Bank] Cache stale/missing, fetching from backend...');
+
+      // Fetch fresh data from backend
+      const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch item info');
@@ -2506,99 +2617,186 @@ async function loadBankPage() {
 
       const itemInfo = await response.json();
 
-      if (bankListContainer && itemInfo) {
-        const accountCount = itemInfo.accounts ? itemInfo.accounts.length : 0;
+      // Update cache in StateManager
+      await stateManager.setCachedAccounts(itemInfo.accounts, {
+        institutionName: itemInfo.institution_name,
+        institutionId: itemInfo.institution_id
+      });
 
-        // Build collapsible accounts list
-        let accountsHTML = '';
-        if (itemInfo.accounts && itemInfo.accounts.length > 0) {
-          accountsHTML = '<div class="bank-accounts-list" style="margin-top: 12px; padding-left: 8px; display: none;">';
-          itemInfo.accounts.forEach(account => {
-            const accountName = account.official_name || account.name;
-            const mask = account.mask ? ` ••${account.mask}` : '';
-            const type = account.subtype ? ` - ${account.subtype}` : '';
-            accountsHTML += `
-              <div style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #374151;">
-                <div style="font-weight: 500;">${accountName}${mask}</div>
-                <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">${account.type}${type}</div>
-              </div>
-            `;
-          });
-          accountsHTML += '</div>';
-        }
+      console.log('[Bank] Cache updated with fresh data');
 
-        // Create collapsible bank card
-        bankListContainer.innerHTML = `
-          <div class="card bank-card" style="cursor: pointer; user-select: none;">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="color: #10b981; font-size: 16px;">✓</span>
-                <div>
-                  <div style="font-size: 14px; color: #166534; font-weight: 600;">${itemInfo.institution_name}</div>
-                  <div style="font-size: 12px; color: #6b7280; margin-top: 2px;">${accountCount} account${accountCount !== 1 ? 's' : ''}</div>
-                </div>
-              </div>
-              <span class="expand-arrow" style="color: #9ca3af; font-size: 14px; transition: transform 0.2s;">▶</span>
-            </div>
-            ${accountsHTML}
-          </div>
-        `;
-
-        // Add click event listener to toggle expansion
-        const bankCard = bankListContainer.querySelector('.bank-card');
-        if (bankCard) {
-          bankCard.addEventListener('click', () => {
-            const accountsList = bankCard.querySelector('.bank-accounts-list');
-            const arrow = bankCard.querySelector('.expand-arrow');
-
-            if (accountsList) {
-              const isExpanded = accountsList.style.display !== 'none';
-              accountsList.style.display = isExpanded ? 'none' : 'block';
-              arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
-            }
-          });
-        }
-      }
+      // Update UI with fresh data (if changed)
+      renderBankAccounts(itemInfo.accounts, itemInfo.institution_name, bankListContainer);
     } catch (error) {
-      console.error('Failed to load bank info:', error);
-      // Show error state
-      if (bankListContainer) {
+      console.error('[Bank] Failed to refresh accounts:', error);
+      // Cached data already displayed, graceful degradation
+      // If no cache, show fallback
+      if (!cachedAccounts && bankListContainer) {
         bankListContainer.innerHTML = `
           <div class="card">
-            <div style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">${data.institutionName || 'Bank'}</div>
+            <div style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">${cachedInstitutionName || 'Bank'}</div>
             <div style="font-size: 13px; color: #6b7280;">Connected</div>
           </div>
         `;
       }
     }
+  } else {
+    console.log('[Bank] Using fresh cache, no backend fetch needed');
   }
 
   // Update user header
-  updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
+  updateUserHeader(googleEmail, !!itemId, !!sheetId);
+}
+
+/**
+ * Render bank accounts in the UI
+ * Phase 3.13: Extracted for reuse by cache and refresh logic
+ * Updated to use "Active" badge design per user preference
+ */
+function renderBankAccounts(accounts, institutionName, container) {
+  if (!container) return;
+
+  const accountCount = accounts ? accounts.length : 0;
+
+  // Build collapsible accounts list
+  let accountsHTML = '';
+  if (accounts && accounts.length > 0) {
+    accountsHTML = '<div class="bank-accounts-list" style="margin-top: 12px; border-top: 1px solid #e5e7eb; padding-top: 8px; display: none;">';
+    accounts.forEach(account => {
+      const accountName = account.official_name || account.name;
+      const mask = account.mask ? ` ••${account.mask}` : '';
+      const type = account.subtype ? ` - ${account.subtype}` : '';
+      accountsHTML += `
+        <div style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #374151;">
+          <div style="font-weight: 500;">${accountName}${mask}</div>
+          <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">${account.type}${type}</div>
+        </div>
+      `;
+    });
+    accountsHTML += '</div>';
+  }
+
+  // Create bank card with glowing status dot and account count
+  container.innerHTML = `
+    <div class="card bank-card" style="cursor: pointer; user-select: none;">
+      <div class="bank-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: none; padding-bottom: 0;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="status-dot status-dot-connected" style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);"></span>
+          <h3 style="font-size: 16px; font-weight: 600; margin: 0; padding-bottom: 0; color: #1f2937; text-decoration: none; border-bottom: none;">${institutionName}</h3>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 12px; color: #6b7280; font-weight: 500;">${accountCount} account${accountCount !== 1 ? 's' : ''}</span>
+          ${accountsHTML ? '<span class="expand-arrow" style="color: #9ca3af; font-size: 14px; transition: transform 0.2s;">▶</span>' : ''}
+        </div>
+      </div>
+      ${accountsHTML}
+    </div>
+  `;
+
+  // Add click event listener to toggle expansion (only if there are accounts)
+  if (accountsHTML) {
+    const bankCard = container.querySelector('.bank-card');
+    if (bankCard) {
+      bankCard.addEventListener('click', () => {
+        const accountsList = bankCard.querySelector('.bank-accounts-list');
+        const arrow = bankCard.querySelector('.expand-arrow');
+
+        if (accountsList) {
+          const isExpanded = accountsList.style.display !== 'none';
+          accountsList.style.display = isExpanded ? 'none' : 'block';
+          arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
+        }
+      });
+    }
+  }
+}
+
+/**
+ * Fetch sheet name from Google Sheets API
+ */
+async function fetchSheetName(sheetId) {
+  try {
+    console.log('[fetchSheetName] Fetching sheet name for ID:', sheetId);
+
+    // Get access token from SheetsAPI (service worker)
+    if (!window.SheetsAPI) {
+      console.error('[fetchSheetName] SheetsAPI not available');
+      return null;
+    }
+
+    console.log('[fetchSheetName] Getting auth token...');
+    const accessToken = await window.SheetsAPI.getAuthToken();
+
+    if (!accessToken) {
+      console.error('[fetchSheetName] No access token available');
+      return null;
+    }
+
+    console.log('[fetchSheetName] Making API call to Google Sheets...');
+    const response = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?fields=properties.title`,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[fetchSheetName] API call failed:', response.status, errorText);
+      return null;
+    }
+
+    const data = await response.json();
+    console.log('[fetchSheetName] API response:', data);
+    const sheetName = data?.properties?.title || null;
+
+    if (sheetName) {
+      // Store in StateManager for caching
+      const stateManager = window.StateManager;
+      await stateManager.set({ sheetName });
+      console.log('[fetchSheetName] Sheet name fetched and cached:', sheetName);
+    } else {
+      console.warn('[fetchSheetName] No title found in response');
+    }
+
+    return sheetName;
+  } catch (error) {
+    console.error('[fetchSheetName] Error:', error);
+    return null;
+  }
 }
 
 /**
  * Load Sheet page data
  */
 async function loadSheetPage() {
-  const data = await chrome.storage.sync.get(['sheetId', 'sheetUrl', 'googleEmail', 'lastSync', 'itemId']);
+  // Phase 3.13: Use StateManager for instant, consistent state access
+  const stateManager = window.StateManager;
+  const sheetId = stateManager.get('sheetId');
+  const sheetUrl = stateManager.get('sheetUrl');
+  const googleEmail = stateManager.get('googleEmail');
+  const lastSync = stateManager.get('lastSync');
+  const itemId = stateManager.get('itemId');
 
   const sheetInfoCard = document.querySelector('#page-sheet .sheet-info');
   const sheetActions = document.querySelector('#page-sheet .sheet-actions');
 
-  if (!data.sheetId) {
+  if (!sheetId) {
     // Show empty/disconnected state with input
     if (sheetInfoCard) {
       sheetInfoCard.innerHTML = `
         <div class="status-item" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-          <span class="status-icon" style="color: #ef4444;">⚠</span>
+          <span class="status-dot status-dot-disconnected" style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6), 0 0 4px rgba(239, 68, 68, 0.8);"></span>
           <span style="font-size: 14px; font-weight: 500;">No sheet connected</span>
         </div>
         <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">
           Paste the URL of the Google Sheet where you want SheetLink to send your data.
         </p>
         <p style="font-size: 12px; color: #9ca3af; margin-bottom: 16px;">
-          Use a sheet owned by <span style="color: #6b7280; font-weight: 500;">${data.googleEmail || 'user@gmail.com'}</span>
+          Use a sheet owned by <span style="color: #6b7280; font-weight: 500;">${googleEmail || 'user@gmail.com'}</span>
         </p>
         <label for="sheetUrlPage" style="font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px; display: block;">Google Sheet URL</label>
         <input
@@ -2647,8 +2845,8 @@ async function loadSheetPage() {
           saveSheetBtnPage.textContent = 'Saving...';
 
           try {
-            // Save to storage
-            await chrome.storage.sync.set({
+            // Phase 3.13: Save to StateManager
+            await window.StateManager.set({
               sheetId: sheetId,
               sheetUrl: url
             });
@@ -2657,7 +2855,8 @@ async function loadSheetPage() {
             await loadSheetPage();
 
             // Update user header
-            updateUserHeader(data.googleEmail, !!data.itemId, true);
+            const stateManager = window.StateManager;
+            updateUserHeader(stateManager.get('googleEmail'), !!stateManager.get('itemId'), true);
 
             // Update home page if it's loaded
             await loadHomePage();
@@ -2676,25 +2875,35 @@ async function loadSheetPage() {
     }
 
     // Update user header
-    updateUserHeader(data.googleEmail, !!data.itemId, false);
+    updateUserHeader(googleEmail, !!itemId, false);
     return;
+  }
+
+  // Fetch sheet name if we don't have it cached
+  let sheetName = stateManager.get('sheetName');
+  if (!sheetName && sheetId) {
+    sheetName = await fetchSheetName(sheetId);
   }
 
   // Show connected state
   if (sheetInfoCard) {
+    // Extract first 5 characters of sheet ID for display
+    const shortId = sheetId ? sheetId.substring(0, 5) + '...' : '';
+    const displayName = sheetName ? `${sheetName} (${shortId})` : `Google Sheet (${shortId})`;
+
     sheetInfoCard.innerHTML = `
       <div class="status-item" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-        <span class="status-icon" style="color: #10b981;">✓</span>
-        <span style="font-size: 14px; font-weight: 500;">Connected to Sheet</span>
+        <span class="status-dot status-dot-connected" style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);"></span>
+        <span style="font-size: 14px; font-weight: 500;">${displayName}</span>
       </div>
       <p class="sheet-url" style="margin-bottom: 8px;">
-        <a id="sheetLink" href="${data.sheetUrl || '#'}" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">Open Sheet →</a>
+        <a id="sheetLink" href="${sheetUrl || '#'}" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">Open Sheet →</a>
       </p>
       <p class="sheet-owner" style="font-size: 13px; color: #6b7280; margin-bottom: 4px;">
-        Owner: <span id="sheetOwner">${data.googleEmail || 'user@gmail.com'}</span>
+        Owner: <span id="sheetOwner">${googleEmail || 'user@gmail.com'}</span>
       </p>
       <p class="sheet-last-write" style="font-size: 13px; color: #6b7280;">
-        Last write: <span id="sheetLastWrite">${data.lastSync ? formatRelativeTime(new Date(data.lastSync)) : 'Never'}</span>
+        Last write: <span id="sheetLastWrite">${lastSync ? formatRelativeTime(new Date(lastSync)) : 'Never'}</span>
       </p>
     `;
   }
@@ -2705,23 +2914,23 @@ async function loadSheetPage() {
   }
 
   // Update sheet link
-  if (sheetLink && data.sheetUrl) {
-    sheetLink.href = data.sheetUrl;
+  if (sheetLink && sheetUrl) {
+    sheetLink.href = sheetUrl;
   }
 
   // Update owner email
-  if (sheetOwner && data.googleEmail) {
-    sheetOwner.textContent = data.googleEmail;
+  if (sheetOwner && googleEmail) {
+    sheetOwner.textContent = googleEmail;
   }
 
   // Update last write time
-  if (sheetLastWrite && data.lastSync) {
-    const date = new Date(data.lastSync);
+  if (sheetLastWrite && lastSync) {
+    const date = new Date(lastSync);
     sheetLastWrite.textContent = formatRelativeTime(date);
   }
 
   // Update user header
-  updateUserHeader(data.googleEmail, !!data.itemId, !!data.sheetId);
+  updateUserHeader(googleEmail, !!itemId, !!sheetId);
 }
 
 /**
@@ -2754,21 +2963,24 @@ function attachNavigationEventListeners() {
   // Sheet page
   if (changeSheetBtnPage) changeSheetBtnPage.addEventListener('click', async () => {
     const sheetInfoCard = document.querySelector('#page-sheet .sheet-info');
-    const data = await chrome.storage.sync.get(['googleEmail', 'itemId']);
+    // Phase 3.13: Use StateManager
+    const stateManager = window.StateManager;
+    const googleEmail = stateManager.get('googleEmail');
+    const itemId = stateManager.get('itemId');
 
     if (!sheetInfoCard) return;
 
-    // Show input form
+    // Show input form with blue dot indicator
     sheetInfoCard.innerHTML = `
       <div class="status-item" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-        <span class="status-icon" style="color: #3b82f6;">✎</span>
+        <span class="status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.6), 0 0 4px rgba(59, 130, 246, 0.8);"></span>
         <span style="font-size: 14px; font-weight: 500;">Change Sheet</span>
       </div>
       <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">
         Enter a new Google Sheet URL to change where your data is synced.
       </p>
       <p style="font-size: 12px; color: #9ca3af; margin-bottom: 16px;">
-        Use a sheet owned by <span style="color: #6b7280; font-weight: 500;">${data.googleEmail || 'user@gmail.com'}</span>
+        Use a sheet owned by <span style="color: #6b7280; font-weight: 500;">${googleEmail || 'user@gmail.com'}</span>
       </p>
       <label for="sheetUrlChange" style="font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px; display: block;">Google Sheet URL</label>
       <input
@@ -2821,8 +3033,8 @@ function attachNavigationEventListeners() {
         saveNewSheetBtn.textContent = 'Saving...';
 
         try {
-          // Save to storage
-          await chrome.storage.sync.set({
+          // Phase 3.13: Save to StateManager
+          await window.StateManager.set({
             sheetId: sheetId,
             sheetUrl: url
           });
@@ -2831,7 +3043,7 @@ function attachNavigationEventListeners() {
           await loadSheetPage();
 
           // Update user header
-          updateUserHeader(data.googleEmail, !!data.itemId, true);
+          updateUserHeader(googleEmail, !!itemId, true);
 
           // Update home page if it's loaded
           await loadHomePage();
@@ -2853,14 +3065,16 @@ function attachNavigationEventListeners() {
   });
   if (disconnectSheetBtn) disconnectSheetBtn.addEventListener('click', async () => {
     if (confirm('Are you sure you want to disconnect your Google Sheet?')) {
-      await chrome.storage.sync.remove(['sheetId', 'sheetUrl']);
+      // Phase 3.13: Use StateManager to clear sheet connection
+      await window.StateManager.set({ sheetId: null, sheetUrl: null });
 
       // Reload the sheet page to show disconnected state
       await loadSheetPage();
 
       // Update user header to reflect disconnected state
-      const data = await chrome.storage.sync.get(['googleEmail', 'itemId']);
-      updateUserHeader(data.googleEmail, !!data.itemId, false);
+      // Phase 3.13: Use StateManager
+      const stateManager = window.StateManager;
+      updateUserHeader(stateManager.get('googleEmail'), !!stateManager.get('itemId'), false);
     }
   });
 
@@ -2877,21 +3091,24 @@ function attachNavigationEventListeners() {
 async function loadSettingsPage() {
   console.log('[Settings] Loading settings page');
 
-  const data = await chrome.storage.sync.get(['googleEmail', 'googlePicture']);
+  // Phase 3.13: Use StateManager
+  const stateManager = window.StateManager;
+  const googleEmail = stateManager.get('googleEmail');
+  const googlePicture = stateManager.get('googlePicture');
 
   // Update user email
-  if (settingsUserEmail && data.googleEmail) {
-    settingsUserEmail.textContent = data.googleEmail;
+  if (settingsUserEmail && googleEmail) {
+    settingsUserEmail.textContent = googleEmail;
   }
 
   // Update user picture/initial
-  if (data.googlePicture && settingsUserPicture) {
-    settingsUserPicture.src = data.googlePicture;
+  if (googlePicture && settingsUserPicture) {
+    settingsUserPicture.src = googlePicture;
     settingsUserPicture.style.display = 'block';
     if (settingsUserInitial) settingsUserInitial.style.display = 'none';
-  } else if (data.googleEmail && settingsUserInitial) {
+  } else if (googleEmail && settingsUserInitial) {
     // Show initial if no picture
-    const initial = data.googleEmail.charAt(0).toUpperCase();
+    const initial = googleEmail.charAt(0).toUpperCase();
     settingsUserInitial.textContent = initial;
     settingsUserInitial.style.display = 'flex';
     if (settingsUserPicture) settingsUserPicture.style.display = 'none';
@@ -2908,21 +3125,8 @@ async function handleLogout() {
 
   console.log('[Settings] Logging out');
 
-  // Preserve onboarding completion flag so user doesn't have to onboard again
-  const { hasCompletedInitialOnboarding } = await chrome.storage.sync.get(['hasCompletedInitialOnboarding']);
-
-  // Clear all extension data
-  await chrome.storage.sync.clear();
-  await chrome.storage.local.clear();
-
-  // Restore onboarding flag if it was set (but don't set hasProgressedToSheetSetup)
-  // This will make the extension show welcome page, but skip full onboarding after re-auth
-  if (hasCompletedInitialOnboarding) {
-    await chrome.storage.sync.set({
-      hasCompletedInitialOnboarding: true
-    });
-    console.log('[Settings] Preserved onboarding completion flag');
-  }
+  // Phase 3.13: Use StateManager to clear all state (preserves onboarding flag)
+  await window.StateManager.clear(true);
 
   // Clear localStorage
   localStorage.clear();
