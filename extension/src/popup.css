@@ -1350,7 +1350,7 @@ input:checked + .slider:before {
 .account-balance {
   font-size: 14px;
   font-weight: 600;
-  color: #059669;
+  color: #1f2937;
 }
 
 .institution-actions {
@@ -1387,16 +1387,6 @@ input:checked + .slider:before {
 
 .update-connection-btn:hover {
   background: #f3f4f6;
-}
-
-.update-connection-btn.inactive {
-  opacity: 0.5;
-  cursor: not-allowed;
-  color: #9ca3af;
-}
-
-.update-connection-btn.inactive:hover {
-  background: white;
 }
 
 .disconnect-institution-btn {
