@@ -38,43 +38,6 @@ body {
   height: 100%;
 }
 
-/* Sandbox Badge */
-.sandbox-badge {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  color: #065f46;
-  padding: 8px 12px;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 600;
-  border-top: 1px solid #a7f3d0;
-  letter-spacing: 0.3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  opacity: 0;
-  animation: slideInUp 0.4s ease-out 0.35s forwards;
-}
-
-.sandbox-link,
-.privacy-link {
-  color: #065f46;
-  text-decoration: none;
-  font-weight: 600;
-  transition: opacity 0.2s;
-}
-
-.sandbox-link:hover,
-.privacy-link:hover {
-  opacity: 0.7;
-  text-decoration: underline;
-}
-
-.sandbox-divider {
-  color: #065f46;
-  font-weight: 400;
-}
-
 /* Header */
 header {
   background: linear-gradient(135deg, var(--sl-primary) 0%, var(--sl-accent) 100%);
@@ -1341,7 +1304,7 @@ input:checked + .slider:before {
 
 .welcome-hero-bg {
   background: transparent;
-  padding: 50px 20px 30px;
+  padding: 50px 40px 30px;
   text-align: center;
   color: white;
   flex-shrink: 0;
@@ -1362,7 +1325,7 @@ input:checked + .slider:before {
 
 /* Welcome Content Section */
 .welcome-content {
-  padding: 40px 24px 30px;
+  padding: 40px 24px 50px;
   text-align: center;
   background: transparent;
   flex-grow: 1;
@@ -1487,4 +1450,243 @@ body.welcome-active {
 
 body.welcome-active .container {
   background: transparent;
+}
+
+/* Toggle Switch for Settings */
+#page-settings .toggle .slider {
+  background-color: #d1d5db;
+}
+
+#page-settings .toggle input:checked + .slider {
+  background-color: var(--sl-accent) !important;
+}
+
+#page-settings .toggle input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+#page-settings .slider:before {
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  position: absolute;
+}
+
+/* Settings Status Message */
+#settingsStatusMessage.success {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+#settingsStatusMessage.error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Settings Input Focus */
+#page-settings input[type="text"]:focus {
+  outline: none;
+  border-color: var(--sl-accent);
+  box-shadow: 0 0 0 3px rgba(11, 112, 58, 0.1);
+}
+
+/* NEW STATUS PILLS (Option 1 - Experimental) */
+.status-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  transition: background-color 0.2s ease;
+}
+
+/* Connected state */
+.status-pill.connected {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.status-pill.connected .status-dot {
+  background-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+/* Disconnected/inactive state */
+.status-pill.disconnected {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.status-pill.disconnected .status-dot {
+  background-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.status-label {
+  line-height: 1;
+  user-select: none;
+}
+
+/* OPTION 3 - MINIMAL STATUS DOTS (Experimental) */
+.status-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot-indicator {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.status-dot-indicator:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.status-dot-indicator .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  transition: all 0.2s ease;
+}
+
+/* Connected state - green dot */
+.status-dot-indicator.connected .dot {
+  background-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+/* Disconnected state - red dot */
+.status-dot-indicator.disconnected .dot {
+  background-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+/* Pulse animation for connected state (subtle) */
+.status-dot-indicator.connected .dot {
+  animation: subtle-pulse 2s ease-in-out infinite;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+  }
+}
+
+/* Native tooltip styling via title attribute */
+.status-dot-indicator[title] {
+  cursor: help;
+}
+
+/* HYBRID - ICONS WITH STATUS DOTS (Experimental) */
+.status-indicators-hybrid {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-indicator-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.status-indicator-item .indicator-icon {
+  color: #ffffff;
+  stroke: #ffffff;
+  opacity: 1;
+  filter: brightness(1.1);
+  transition: all 0.2s ease;
+}
+
+.status-indicator-item .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  transition: all 0.2s ease;
+}
+
+.status-indicator-item.connected .status-dot {
+  background-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.status-indicator-item.disconnected .status-dot {
+  background-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+/* Subtle pulse for connected dots */
+.status-indicator-item.connected .status-dot {
+  animation: subtle-pulse-hybrid 2s ease-in-out infinite;
+}
+
+@keyframes subtle-pulse-hybrid {
+  0%, 100% {
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+  }
+}
+
+/* Tooltip for hybrid indicators */
+.status-indicator-item .indicator-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  z-index: 10000;
+  white-space: nowrap;
+}
+
+.status-indicator-item:hover .indicator-tooltip {
+  opacity: 1;
+  visibility: visible;
 }

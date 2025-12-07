@@ -11,6 +11,8 @@
  * - Manage cache invalidation and refresh strategies
  */
 
+// Use global debug function from popup.html
+
 class StateManager {
   constructor() {
     this.state = {
@@ -80,7 +82,7 @@ class StateManager {
 
     this._initPromise = (async () => {
       try {
-        console.log('[StateManager] Initializing from storage...');
+        debug('[StateManager] Initializing from storage...');
 
         const keys = [
           'googleAuthenticated', 'googleEmail', 'googleUserId', 'googlePicture',
@@ -97,7 +99,7 @@ class StateManager {
         // Merge storage data into state
         this.state = { ...this.state, ...data, isInitialized: true };
 
-        console.log('[StateManager] Initialized:', {
+        debug('[StateManager] Initialized:', {
           authenticated: this.state.googleAuthenticated,
           hasBank: !!this.state.itemId,
           hasSheet: !!this.state.sheetId,
@@ -149,7 +151,7 @@ class StateManager {
    * @returns {Promise<void>} Resolves when write is complete (immediate) or scheduled (batched)
    */
   async set(updates, immediate = false) {
-    console.log('[StateManager] Setting:', Object.keys(updates));
+    debug('[StateManager] Setting:', Object.keys(updates));
 
     // Store old state for notifications
     const oldState = { ...this.state };
@@ -196,7 +198,7 @@ class StateManager {
     this._pendingWrites = {};
 
     try {
-      console.log('[StateManager] Flushing writes to storage:', Object.keys(toWrite));
+      debug('[StateManager] Flushing writes to storage:', Object.keys(toWrite));
       await chrome.storage.sync.set(toWrite);
     } catch (error) {
       console.error('[StateManager] Failed to persist state:', error);
@@ -216,11 +218,11 @@ class StateManager {
     const id = `${Date.now()}-${Math.random()}`;
     this.listeners.set(id, { keys, callback });
 
-    console.log('[StateManager] Subscriber added:', id, keys);
+    debug('[StateManager] Subscriber added:', id, keys);
 
     // Return unsubscribe function
     return () => {
-      console.log('[StateManager] Subscriber removed:', id);
+      debug('[StateManager] Subscriber removed:', id);
       this.listeners.delete(id);
     };
   }
@@ -269,7 +271,7 @@ class StateManager {
    * @param {boolean} preserveOnboarding - Whether to keep onboarding flag (default: true)
    */
   async clear(preserveOnboarding = true) {
-    console.log('[StateManager] Clearing state...');
+    debug('[StateManager] Clearing state...');
 
     // Flush any pending writes first
     await this._flushWrites();
@@ -299,7 +301,7 @@ class StateManager {
     // Notify all subscribers of clear
     this.notify({ _cleared: true }, {});
 
-    console.log('[StateManager] State cleared, onboarding preserved:', onboardingFlag);
+    debug('[StateManager] State cleared, onboarding preserved:', onboardingFlag);
   }
 
   /**
@@ -343,7 +345,7 @@ class StateManager {
    * Debug: Log current state
    */
   debug() {
-    console.log('[StateManager] Current State:', {
+    debug('[StateManager] Current State:', {
       initialized: this.state.isInitialized,
       authenticated: this.state.googleAuthenticated,
       email: this.state.googleEmail,

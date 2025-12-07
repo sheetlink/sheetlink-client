@@ -2,20 +2,23 @@
 
 import { CONFIG } from '../config.js';
 
+// Update global debug flag from CONFIG (in case it was changed)
+window.SHEETLINK_DEBUG = CONFIG.DEBUG;
+
+// Use global debug function
+const debug = window.debug;
+
 // Backend API base URL
 const BACKEND_URL = CONFIG.BACKEND_URL;
 
 // DOM elements
-let connectBankBtn, connectSandboxBtn, signInGoogleBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, generateTestBtn, templatesBtn, learnMoreBtn;
+let connectBankBtn, signInGoogleBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, templatesBtn, learnMoreBtn;
 let removeSheetBtn, changeSheetBtn, changeSheetLinkBtn, retrySyncBtn;
 let sheetUrlInput, statusText, errorMessage, loadingMessage;
 let connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection;
-let sandboxBadge, sandboxLink, privacyLink, welcomeTitle, welcomeSubtitle, welcomeDescription, headerSubtitle;
+let welcomeTitle, welcomeSubtitle, welcomeDescription, headerSubtitle;
 let sheetSuccessModal, syncSuccessOpenSheetBtn, syncSuccessViewAccountsBtn;
 let sheetErrorBanner, sheetErrorDetail, syncErrorBanner;
-
-// Walkthrough modal
-let walkthroughModal;
 
 // Phase 3.10: Post-onboarding navigation
 let footerNav, legacyFooter;
@@ -23,7 +26,8 @@ let pageHome, pageBank, pageSheet, pageSettings;
 let homeSyncBtn, homeResyncAllBtn, homeLastSync, homePlanTier, homeStatusPlaid, homeStatusSheet, homeSyncStatus;
 let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn, disconnectBankBtn;
 let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBtn;
-let settingsUserEmail, settingsUserPicture, settingsUserInitial, logoutBtn, advancedOptionsBtn;
+let settingsUserEmail, settingsUserPicture, settingsUserInitial, logoutBtn;
+let settingsAccountsTabName, settingsTransactionsTabName, settingsAppendOnly, saveSettingsBtn, settingsStatusMessage;
 let currentTab = 'home';
 
 // User control panel header elements
@@ -33,22 +37,15 @@ let bankIndicator, sheetIndicator;
 // Initialize popup
 document.addEventListener('DOMContentLoaded', async () => {
   initializeElements();
-  initializeSandboxMode();
 
   // Phase 3.13.1: Debug - Check raw storage before StateManager init
   const rawStorage = await chrome.storage.sync.get(null);
-  console.log('[Popup] Raw storage on load:', rawStorage);
+  debug('[Popup] Raw storage on load:', rawStorage);
 
   // Phase 3.13: Initialize StateManager ONCE from storage
-  console.log('[Popup] Initializing StateManager...');
+  debug('[Popup] Initializing StateManager...');
   await window.StateManager.init();
-  console.log('[Popup] StateManager initialized');
-
-  // Initialize walkthrough modal if in sandbox mode
-  if (CONFIG.isSandbox) {
-    walkthroughModal = new WalkthroughModal();
-    await walkthroughModal.init();
-  }
+  debug('[Popup] StateManager initialized');
 
   attachEventListeners();
   await loadState();
@@ -59,7 +56,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.type === 'ACCOUNT_SWITCHED') {
     console.warn('[Popup] ⚠️ Account switch detected!');
     console.warn(`[Popup] Old: ${message.oldEmail} → New: ${message.newEmail}`);
-    console.log('[Popup] Reinitializing StateManager with cleared state...');
+    debug('[Popup] Reinitializing StateManager with cleared state...');
 
     // Force StateManager to re-read from storage (which was cleared)
     window.StateManager._initPromise = null;
@@ -93,7 +90,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
     // Reinitialize from storage
     await window.StateManager.init();
-    console.log('[Popup] StateManager reinitialized, reloading UI...');
+    debug('[Popup] StateManager reinitialized, reloading UI...');
 
     // Reload the UI with fresh state
     await loadState();
@@ -105,7 +102,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 function initializeElements() {
   // Buttons
   connectBankBtn = document.getElementById('connectBankBtn');
-  connectSandboxBtn = document.getElementById('connectSandboxBtn');
   signInGoogleBtn = document.getElementById('signInGoogleBtn');
   learnMoreBtn = document.getElementById('learnMoreBtn');
   saveSheetBtn = document.getElementById('saveSheetBtn');
@@ -115,7 +111,6 @@ function initializeElements() {
   retrySyncBtn = document.getElementById('retrySyncBtn');
   syncNowBtn = document.getElementById('syncNowBtn');
   backfillBtn = document.getElementById('backfillBtn');
-  generateTestBtn = document.getElementById('generateTestBtn');
   disconnectBtn = document.getElementById('disconnectBtn');
   optionsBtn = document.getElementById('optionsBtn');
   retryBtn = document.getElementById('retryBtn');
@@ -139,10 +134,7 @@ function initializeElements() {
   templatesSection = document.getElementById('templatesSection');
   welcomeSection = document.getElementById('welcomeSection');
 
-  // Sandbox elements
-  sandboxBadge = document.getElementById('sandboxBadge');
-  sandboxLink = document.getElementById('sandboxLink');
-  privacyLink = document.getElementById('privacyLink');
+  // Welcome page elements
   welcomeTitle = document.getElementById('welcomeTitle');
   welcomeSubtitle = document.getElementById('welcomeSubtitle');
   welcomeDescription = document.getElementById('welcomeDescription');
@@ -194,7 +186,11 @@ function initializeElements() {
   settingsUserPicture = document.getElementById('settingsUserPicture');
   settingsUserInitial = document.getElementById('settingsUserInitial');
   logoutBtn = document.getElementById('logoutBtn');
-  advancedOptionsBtn = document.getElementById('advancedOptionsBtn');
+  settingsAccountsTabName = document.getElementById('settingsAccountsTabName');
+  settingsTransactionsTabName = document.getElementById('settingsTransactionsTabName');
+  settingsAppendOnly = document.getElementById('settingsAppendOnly');
+  saveSettingsBtn = document.getElementById('saveSettingsBtn');
+  settingsStatusMessage = document.getElementById('settingsStatusMessage');
 
   // User control panel header elements
   defaultHeader = document.getElementById('default-header');
@@ -232,46 +228,10 @@ function initializeElements() {
   }
 }
 
-function initializeSandboxMode() {
-  const copy = CONFIG.currentCopy;
-
-  // Show/hide sandbox badge
-  if (CONFIG.isSandbox) {
-    sandboxBadge.classList.remove('hidden');
-  }
-
-  // Update copy based on environment
-  if (welcomeTitle) welcomeTitle.textContent = copy.welcomeTitle;
-  if (welcomeSubtitle) welcomeSubtitle.textContent = copy.welcomeSubtitle;
-  if (welcomeDescription) welcomeDescription.textContent = copy.welcomeDescription;
-
-  // Update button text
-  if (connectBankBtn) connectBankBtn.textContent = copy.connectButton;
-  if (connectSandboxBtn) connectSandboxBtn.textContent = copy.connectButton;
-  if (disconnectBtn) disconnectBtn.textContent = copy.resetButton;
-  if (syncNowBtn) syncNowBtn.textContent = copy.syncButton;
-
-  // Set sheet success modal footer based on environment
-  const sheetSuccessFooter = document.getElementById('sheetSuccessFooter');
-  if (sheetSuccessFooter) {
-    if (CONFIG.isSandbox) {
-      sheetSuccessFooter.textContent = '🧪 You are in Plaid Sandbox mode. This is demo data.';
-    } else {
-      sheetSuccessFooter.textContent = '🔒 Your data is encrypted and secure.';
-    }
-  }
-
-  // Hide "Generate Test Transactions" button in production mode
-  if (generateTestBtn && !CONFIG.isSandbox) {
-    generateTestBtn.style.display = 'none';
-  }
-}
-
 function attachEventListeners() {
   if (connectBankBtn) connectBankBtn.addEventListener('click', handleConnectBank);
-  if (connectSandboxBtn) connectSandboxBtn.addEventListener('click', handleConnectSandbox);
   if (signInGoogleBtn) {
-    console.log('[Init] Attaching event listener to signInGoogleBtn');
+    debug('[Init] Attaching event listener to signInGoogleBtn');
     signInGoogleBtn.addEventListener('click', handleGoogleSignIn);
   } else {
     console.warn('[Init] signInGoogleBtn not found!');
@@ -284,7 +244,6 @@ function attachEventListeners() {
   if (retrySyncBtn) retrySyncBtn.addEventListener('click', handleSyncNow);
   syncNowBtn.addEventListener('click', handleSyncNow);
   if (backfillBtn) backfillBtn.addEventListener('click', handleBackfill);
-  generateTestBtn.addEventListener('click', handleGenerateTestTransactions);
   disconnectBtn.addEventListener('click', handleDisconnect);
   optionsBtn.addEventListener('click', () => chrome.runtime.openOptionsPage());
   retryBtn.addEventListener('click', handleRetry);
@@ -302,20 +261,6 @@ function attachEventListeners() {
   }
   if (syncSuccessViewAccountsBtn) {
     syncSuccessViewAccountsBtn.addEventListener('click', hideSheetSuccessModal);
-  }
-
-  // Sandbox badge links
-  if (sandboxLink) {
-    sandboxLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      chrome.tabs.create({ url: 'https://sheetlink.app/sandbox' });
-    });
-  }
-  if (privacyLink) {
-    privacyLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      chrome.tabs.create({ url: 'https://sheetlink.app/privacy' });
-    });
   }
 
   // Success modal
@@ -378,10 +323,10 @@ async function loadState() {
     // Phase 3.13: Read from StateManager (instant memory access)
     const stateManager = window.StateManager;
 
-    console.log('[Popup] loadState - googleAuthenticated:', stateManager.isAuthenticated());
-    console.log('[Popup] loadState - googleUserId:', stateManager.get('googleUserId'));
-    console.log('[Popup] loadState - hasProgressedToSheetSetup:', stateManager.get('hasProgressedToSheetSetup'));
-    console.log('[Popup] loadState - hasCompletedInitialOnboarding:', stateManager.get('hasCompletedInitialOnboarding'));
+    debug('[Popup] loadState - googleAuthenticated:', stateManager.isAuthenticated());
+    debug('[Popup] loadState - googleUserId:', stateManager.get('googleUserId'));
+    debug('[Popup] loadState - hasProgressedToSheetSetup:', stateManager.get('hasProgressedToSheetSetup'));
+    debug('[Popup] loadState - hasCompletedInitialOnboarding:', stateManager.get('hasCompletedInitialOnboarding'));
 
     // Phase 3.9: Update email displays throughout the UI
     const googleEmail = stateManager.get('googleEmail');
@@ -394,7 +339,7 @@ async function loadState() {
 
     // Phase 3.8: Check if user is authenticated with Google first
     if (!stateManager.isAuthenticated()) {
-      console.log('[Popup] User not authenticated - showing welcome screen');
+      debug('[Popup] User not authenticated - showing welcome screen');
       // User not authenticated - show welcome with "Sign in with Google" button
       showSection('welcome');
       // Hide disconnect button on welcome screen
@@ -402,7 +347,7 @@ async function loadState() {
       return;
     }
 
-    console.log('[Popup] User is authenticated - continuing with flow');
+    debug('[Popup] User is authenticated - continuing with flow');
 
     // Phase 3.13: Get state and check if we should show loading screen FIRST
     const itemId = stateManager.get('itemId');
@@ -425,26 +370,26 @@ async function loadState() {
       // This handles cases where storage was cleared but backend still has the connection
       const googleUserId = stateManager.get('googleUserId');
       if (googleUserId) {
-        console.log('[Popup] No itemId in storage, attempting to restore from backend...');
+        debug('[Popup] No itemId in storage, attempting to restore from backend...');
         const restored = await tryRestoreItems();
         if (restored) {
           // Items restored! Reload state with new itemId
-          console.log('[Popup] Items restored successfully, reloading state...');
+          debug('[Popup] Items restored successfully, reloading state...');
           return loadState();
         }
-        console.log('[Popup] No items found in backend to restore');
+        debug('[Popup] No items found in backend to restore');
       }
 
       // Check if user has completed onboarding before
       if (stateManager.get('hasCompletedInitialOnboarding')) {
         // Returning user with no items - show navigation with empty state
-        console.log('[Popup] Returning user with no bank, showing navigation...');
+        debug('[Popup] Returning user with no bank, showing navigation...');
         await initializeNavigation();
         return;
       }
 
       // New user - show connect bank screen
-      console.log('[Popup] New user, showing connect bank screen...');
+      debug('[Popup] New user, showing connect bank screen...');
       showSection('connect');
       // Hide disconnect button when no bank connected
       if (disconnectBtn) disconnectBtn.classList.add('hidden');
@@ -643,13 +588,13 @@ async function displayItemInfo(itemId) {
 
     // Display cached data IMMEDIATELY if available (NO FLASH!)
     if (cachedAccounts && cachedInstitutionName) {
-      console.log('[displayItemInfo] Displaying cached data instantly');
+      debug('[displayItemInfo] Displaying cached data instantly');
       renderBankInfo(cachedInstitutionName, cachedAccounts);
     }
 
     // Refresh from backend only if cache is stale or missing
     if (!cachedAccounts || stateManager.isCacheStale('accounts')) {
-      console.log('[displayItemInfo] Cache stale/missing, fetching from backend...');
+      debug('[displayItemInfo] Cache stale/missing, fetching from backend...');
 
       const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
 
@@ -663,7 +608,7 @@ async function displayItemInfo(itemId) {
       }
 
       const itemInfo = await response.json();
-      console.log('[displayItemInfo] Fresh data received:', itemInfo);
+      debug('[displayItemInfo] Fresh data received:', itemInfo);
 
       // Update cache in StateManager
       await stateManager.setCachedAccounts(itemInfo.accounts, {
@@ -674,7 +619,7 @@ async function displayItemInfo(itemId) {
       // Update display with fresh data
       renderBankInfo(itemInfo.institution_name, itemInfo.accounts);
     } else {
-      console.log('[displayItemInfo] Using fresh cache, no backend fetch needed');
+      debug('[displayItemInfo] Using fresh cache, no backend fetch needed');
     }
   } catch (error) {
     console.error('[displayItemInfo] Error:', error);
@@ -838,38 +783,38 @@ async function tryRestoreItems() {
     const googleUserId = stateManager.get('googleUserId');
 
     if (!googleUserId) {
-      console.log('[tryRestoreItems] No Google user ID available for restoration');
+      debug('[tryRestoreItems] No Google user ID available for restoration');
       return false;
     }
 
-    console.log('[tryRestoreItems] Checking for Items to restore for user:', googleUserId);
+    debug('[tryRestoreItems] Checking for Items to restore for user:', googleUserId);
 
     // Call backend to get user's Items
     const response = await fetch(`${BACKEND_URL}/plaid/items?user_id=${encodeURIComponent(googleUserId)}`);
 
     if (!response.ok) {
-      console.log('[tryRestoreItems] Could not fetch Items from backend, status:', response.status);
+      debug('[tryRestoreItems] Could not fetch Items from backend, status:', response.status);
       return false;
     }
 
     const data = await response.json();
-    console.log('[tryRestoreItems] Response from backend:', data);
+    debug('[tryRestoreItems] Response from backend:', data);
 
     if (!data.items || data.items.length === 0) {
-      console.log('[tryRestoreItems] No Items found to restore');
+      debug('[tryRestoreItems] No Items found to restore');
       return false;
     }
 
     // Restore the most recently synced Item
     const mostRecentItem = data.items[0];
-    console.log(`[tryRestoreItems] Restoring Item: ${mostRecentItem.institution_name} (${mostRecentItem.item_id})`);
+    debug(`[tryRestoreItems] Restoring Item: ${mostRecentItem.institution_name} (${mostRecentItem.item_id})`);
 
     // Phase 3.13: Use StateManager to persist the restored item
     await stateManager.set({
       itemId: mostRecentItem.item_id
     });
 
-    console.log(`[tryRestoreItems] Item restored successfully: ${mostRecentItem.item_id}`);
+    debug(`[tryRestoreItems] Item restored successfully: ${mostRecentItem.item_id}`);
     return true;
 
   } catch (error) {
@@ -947,7 +892,7 @@ async function updateTierDisplay() {
     }
   } catch (error) {
     // Silently fail - keep default "Free (7 days)" and hide auto-sync
-    console.log('Tier status check failed, using default');
+    debug('Tier status check failed, using default');
     const autoSyncCard = document.querySelector('.auto-sync-card');
     if (autoSyncCard) {
       autoSyncCard.style.display = 'none';
@@ -971,13 +916,13 @@ async function updateCloudSyncIndicator() {
     }
   } catch (error) {
     // Silently fail - non-critical feature
-    console.log('[Cloud Sync Indicator] Error:', error);
+    debug('[Cloud Sync Indicator] Error:', error);
   }
 }
 
 // Phase 3.8: Handle Google Sign-In
 async function handleGoogleSignIn() {
-  console.log('[Google Auth] Sign in button clicked');
+  debug('[Google Auth] Sign in button clicked');
   try {
     // Phase 3.13: Check if this is a returning user using StateManager
     const stateManager = window.StateManager;
@@ -988,13 +933,13 @@ async function handleGoogleSignIn() {
     // Trigger Google OAuth flow via service worker
     // Note: This opens OAuth window and doesn't wait for response
     // Service worker will reopen popup after OAuth completes
-    console.log('[Google Auth] Sending GET_AUTH_TOKEN message to service worker');
+    debug('[Google Auth] Sending GET_AUTH_TOKEN message to service worker');
     // Phase 3.11: Set forceAuth=true when user clicks button (re-authentication or returning user)
     chrome.runtime.sendMessage({
       type: 'GET_AUTH_TOKEN',
       forceAuth: isReturningUser
     }, async (response) => {
-      console.log('[Google Auth] Received response from service worker:', response);
+      debug('[Google Auth] Received response from service worker:', response);
       if (response && response.token) {
         // OAuth completed successfully
         // Note: Service worker already fetched and stored user info (googleUserId, googleEmail, googlePicture, googleAuthenticated)
@@ -1002,7 +947,7 @@ async function handleGoogleSignIn() {
 
         // Phase 3.11: Check if this is a re-authentication flow
         if (stateManager.get('isReAuthenticating')) {
-          console.log('[ReAuth] Re-authentication successful, returning to home page');
+          debug('[ReAuth] Re-authentication successful, returning to home page');
 
           // Reset subtitle back to normal
           const headerSubtitle = document.getElementById('headerSubtitle');
@@ -1023,27 +968,11 @@ async function handleGoogleSignIn() {
     });
 
     // Phase 3.13: Keep popup open for all users during OAuth for better UX
-    console.log('[Google Auth] Keeping popup open during OAuth');
+    debug('[Google Auth] Keeping popup open during OAuth');
     // The callback above (line 884) will handle UI updates after OAuth completes
 
   } catch (error) {
     showError('Failed to sign in with Google: ' + error.message);
-  }
-}
-
-// Handle Connect Sandbox button (with walkthrough)
-async function handleConnectSandbox() {
-  // Check if user has completed walkthrough
-  const completed = await WalkthroughModal.hasCompleted();
-
-  if (!completed && walkthroughModal) {
-    // Show walkthrough first, then connect on completion
-    walkthroughModal.show(() => {
-      handleConnectBank();
-    });
-  } else {
-    // Walkthrough already completed, connect directly
-    await handleConnectBank();
   }
 }
 
@@ -1063,10 +992,8 @@ async function handleConnectBank(isUpdate = false) {
 
     const result = await openPlaidLink(linkData);
 
-    // For OAuth flow (production), result is publicToken that needs to be exchanged
-    // For embedded flow (sandbox), result might be itemId (but currently returns publicToken too)
-    // We'll always treat it as publicToken and exchange it
-    if (!CONFIG.isSandbox && result) {
+    // Result is publicToken that needs to be exchanged
+    if (result) {
       showLoading('Exchanging token...');
       const itemId = await exchangePublicToken(result);
       // Phase 3.13: Use StateManager to persist itemId
@@ -1105,6 +1032,12 @@ async function handleSaveSheet() {
       try {
         await window.SheetsAPI.verifySheetAccess(sheetId);
       } catch (verifyError) {
+        // Phase 3.14: Check if it's an AuthenticationError (token expired)
+        if (verifyError.isAuthError || verifyError.name === 'AuthenticationError') {
+          // Re-throw AuthenticationError so outer catch block can handle it
+          throw verifyError;
+        }
+
         // Phase 3.13.1: Check if it's a PermissionError (thrown by sheets.js)
         if (verifyError.isPermissionError || verifyError.name === 'PermissionError') {
           // Re-throw PermissionError as-is (already has good message)
@@ -1228,11 +1161,11 @@ async function handleSyncNow() {
       // Fetch data from backend (backfill if needed, otherwise incremental sync)
       let syncData;
       if (needsBackfill) {
-        console.log('[Sync] Tabs missing or empty, using backfill to re-populate all data');
+        debug('[Sync] Tabs missing or empty, using backfill to re-populate all data');
         showHomeSyncLoading('Fetching all transactions...');
         syncData = await fetchBackfillData(itemId);
       } else {
-        console.log('[Sync] Tabs exist with data, using incremental sync');
+        debug('[Sync] Tabs exist with data, using incremental sync');
         showHomeSyncLoading('Fetching new transactions...');
         syncData = await fetchSyncData(itemId);
       }
@@ -1287,12 +1220,12 @@ async function handleSyncNow() {
       await loadState();
       hideSyncError();
     } catch (error) {
-      console.log('[Sync] Error caught:', error);
-      console.log('[Sync] Error type:', error.name, 'isAuthError:', error.isAuthError);
+      debug('[Sync] Error caught:', error);
+      debug('[Sync] Error type:', error.name, 'isAuthError:', error.isAuthError);
 
       // Phase 3.11: Check for authentication errors
       if (error.isAuthError || error.name === 'AuthenticationError') {
-        console.log('[Sync] Auth error detected, showing welcome page for re-authentication');
+        debug('[Sync] Auth error detected, showing welcome page for re-authentication');
         hideHomeSyncStatus();
         // Show welcome page for re-authentication (no auto-retry)
         showReAuthPage();
@@ -1350,7 +1283,7 @@ async function handleResyncAll() {
       throw new Error('Missing item ID or sheet ID');
     }
 
-    console.log('[Resync All] Forcing backfill to re-fetch all data');
+    debug('[Resync All] Forcing backfill to re-fetch all data');
 
     // Always use backfill (ignore tab state check)
     const syncData = await fetchBackfillData(itemId);
@@ -1370,11 +1303,11 @@ async function handleResyncAll() {
     await loadState();
 
   } catch (error) {
-    console.log('[Resync All] Error:', error);
+    debug('[Resync All] Error:', error);
 
     // Check for authentication errors
     if (error.isAuthError || error.name === 'AuthenticationError') {
-      console.log('[Resync All] Auth error detected, showing welcome page for re-authentication');
+      debug('[Resync All] Auth error detected, showing welcome page for re-authentication');
       hideHomeSyncStatus();
       showReAuthPage();
       return;
@@ -1483,42 +1416,6 @@ async function handleBackfill() {
   }
 }
 
-// Handle Generate Test Transactions button (sandbox only)
-async function handleGenerateTestTransactions() {
-  try {
-    showLoading('Generating test transactions...');
-
-    const { itemId } = await chrome.storage.sync.get(['itemId']);
-
-    if (!itemId) {
-      throw new Error('No bank connected');
-    }
-
-    // Call sandbox endpoint to generate transactions
-    const response = await fetch(`${BACKEND_URL}/plaid/sandbox/generate-transactions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ item_id: itemId })
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || 'Failed to generate transactions');
-    }
-
-    const result = await response.json();
-
-    hideLoading();
-    updateStatus('Test transactions generated! Wait 5-10 seconds, then click Sync Now.', true);
-
-  } catch (error) {
-    hideLoading();
-    showError('Failed to generate transactions: ' + error.message);
-  }
-}
-
 // Handle Disconnect button
 async function handleDisconnect() {
   if (!confirm('Are you sure you want to disconnect your bank? This will remove all stored credentials.')) {
@@ -1533,7 +1430,7 @@ async function handleDisconnect() {
     // Call backend to remove item if it exists
     if (itemId) {
       try {
-        console.log(`[Disconnect] Calling DELETE /plaid/item/${itemId}`);
+        debug(`[Disconnect] Calling DELETE /plaid/item/${itemId}`);
         const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}`, {
           method: 'DELETE'
         });
@@ -1544,14 +1441,14 @@ async function handleDisconnect() {
           // Continue anyway - at least clear local storage
         } else {
           const result = await response.json();
-          console.log('[Disconnect] Item deleted from backend successfully:', result);
+          debug('[Disconnect] Item deleted from backend successfully:', result);
         }
       } catch (error) {
         console.error('Error deleting item from backend:', error);
         // Continue anyway - at least clear local storage
       }
     } else {
-      console.log('[Disconnect] No itemId found, skipping backend delete');
+      debug('[Disconnect] No itemId found, skipping backend delete');
     }
 
     // Phase 3.13.1: Clear bank state from StateManager immediately
@@ -1655,10 +1552,8 @@ async function getLinkToken() {
     env: CONFIG.ENV
   };
 
-  // Add redirect_uri for production OAuth flow
-  if (!CONFIG.isSandbox) {
-    requestBody.redirect_uri = 'https://sheetlink.app/oauth/plaid/callback';
-  }
+  // Add redirect_uri for OAuth flow
+  requestBody.redirect_uri = 'https://sheetlink.app/oauth/plaid/callback';
 
   const response = await fetch(`${BACKEND_URL}/plaid/link-token`, {
     method: 'POST',
@@ -1699,7 +1594,7 @@ async function exchangePublicToken(publicToken) {
 }
 
 async function fetchSyncData(itemId) {
-  console.log('[Sync] Fetching data from backend for item_id:', itemId);
+  debug('[Sync] Fetching data from backend for item_id:', itemId);
 
   const response = await fetch(`${BACKEND_URL}/plaid/sync`, {
     method: 'POST',
@@ -1713,16 +1608,22 @@ async function fetchSyncData(itemId) {
   }
 
   const data = await response.json();
-  console.log('[Sync] Backend returned:', {
+  debug('[Sync] Backend returned:', {
     accounts: data.accounts?.length || 0,
     transactions: data.transactions?.length || 0
   });
+
+  // Log warning if accounts are missing
+  if (!data.accounts || data.accounts.length === 0) {
+    console.warn('[Sync] ⚠️ Backend returned 0 accounts - this may indicate a backend issue');
+    console.warn('[Sync] Full response:', data);
+  }
 
   return data;
 }
 
 async function fetchBackfillData(itemId) {
-  console.log('[Sync] Fetching backfill data from backend for item_id:', itemId);
+  debug('[Sync] Fetching backfill data from backend for item_id:', itemId);
 
   const response = await fetch(`${BACKEND_URL}/plaid/backfill`, {
     method: 'POST',
@@ -1736,10 +1637,16 @@ async function fetchBackfillData(itemId) {
   }
 
   const data = await response.json();
-  console.log('[Sync] Backfill returned:', {
+  debug('[Sync] Backfill returned:', {
     accounts: data.accounts?.length || 0,
     transactions: data.transactions?.length || 0
   });
+
+  // Log warning if accounts are missing
+  if (!data.accounts || data.accounts.length === 0) {
+    console.warn('[Sync] ⚠️ Backend returned 0 accounts - this may indicate a backend issue');
+    console.warn('[Sync] Full response:', data);
+  }
 
   // Backfill endpoint returns different format, normalize it
   return {
@@ -1749,7 +1656,7 @@ async function fetchBackfillData(itemId) {
 }
 
 async function checkIfBackfillNeeded(sheetId) {
-  console.log('[Sync] Checking if backfill is needed for sheet:', sheetId);
+  debug('[Sync] Checking if backfill is needed for sheet:', sheetId);
 
   try {
     // Check if Accounts and Transactions tabs exist and have data
@@ -1757,20 +1664,20 @@ async function checkIfBackfillNeeded(sheetId) {
     const transactionsEmpty = await isTabEmptyOrMissing(sheetId, 'Transactions');
 
     if (accountsEmpty || transactionsEmpty) {
-      console.log('[Sync] Backfill needed - Accounts empty:', accountsEmpty, 'Transactions empty:', transactionsEmpty);
+      debug('[Sync] Backfill needed - Accounts empty:', accountsEmpty, 'Transactions empty:', transactionsEmpty);
       return true;
     }
 
-    console.log('[Sync] Both tabs exist with data, no backfill needed');
+    debug('[Sync] Both tabs exist with data, no backfill needed');
     return false;
   } catch (error) {
     // If it's an authentication error, propagate it up so user can re-authenticate
     if (error.isAuthError || error.name === 'AuthenticationError') {
-      console.log('[Sync] Auth error while checking tabs, propagating for re-auth');
+      debug('[Sync] Auth error while checking tabs, propagating for re-auth');
       throw error;
     }
 
-    console.log('[Sync] Error checking tabs, defaulting to backfill:', error);
+    debug('[Sync] Error checking tabs, defaulting to backfill:', error);
     // If we can't check, safer to backfill
     return true;
   }
@@ -1786,7 +1693,7 @@ async function isTabEmptyOrMissing(sheetId, tabName) {
     // - Only 1 row (just headers, no data)
     // - No rows (completely empty)
     if (!data || data.length <= 1) {
-      console.log(`[Sync] Tab "${tabName}" is empty or missing (rows: ${data?.length || 0})`);
+      debug(`[Sync] Tab "${tabName}" is empty or missing (rows: ${data?.length || 0})`);
       return true;
     }
 
@@ -1794,12 +1701,12 @@ async function isTabEmptyOrMissing(sheetId, tabName) {
   } catch (error) {
     // If it's an authentication error, propagate it up so user can re-authenticate
     if (error.isAuthError || error.name === 'AuthenticationError') {
-      console.log(`[Sync] Auth error while checking tab "${tabName}", propagating for re-auth`);
+      debug(`[Sync] Auth error while checking tab "${tabName}", propagating for re-auth`);
       throw error;
     }
 
     // If we get 404 or any other error, tab likely doesn't exist
-    console.log(`[Sync] Tab "${tabName}" doesn't exist or is inaccessible:`, error);
+    debug(`[Sync] Tab "${tabName}" doesn't exist or is inaccessible:`, error);
     return true;
   }
 }
@@ -1918,7 +1825,7 @@ function getTimeAgo(date) {
 // Plaid Link integration - Opens in new tab using embedded SDK
 async function openPlaidLink(linkData) {
   return new Promise((resolve, reject) => {
-    // Use embedded SDK in extension page for both sandbox and production
+    // Use embedded SDK in extension page
     // The SDK handles OAuth redirect internally when needed
     const linkUrl = chrome.runtime.getURL(`src/plaid_link.html?link_token=${encodeURIComponent(linkData.link_token)}`);
 
@@ -2003,7 +1910,7 @@ function extractSheetId(url) {
 
 // Update user control panel header
 async function updateUserHeader(googleEmail, hasBank, hasSheet) {
-  console.log('[User Header] Updating with:', { googleEmail, hasBank, hasSheet });
+  debug('[User Header] Updating with:', { googleEmail, hasBank, hasSheet });
 
   if (!userEmail || !userInitial) return;
 
@@ -2079,7 +1986,7 @@ async function updateUserHeader(googleEmail, hasBank, hasSheet) {
 
 // Toggle between default header and user control panel header
 function toggleHeader(showUserHeader) {
-  console.log('[Header] Toggling to:', showUserHeader ? 'user-header' : 'default-header');
+  debug('[Header] Toggling to:', showUserHeader ? 'user-header' : 'default-header');
 
   if (showUserHeader) {
     // Show user control panel, hide default header
@@ -2230,14 +2137,10 @@ function hideSyncError() {
 function showSuccessModal() {
   const modal = document.getElementById('connectionSuccessModal');
   if (modal) {
-    // Set the modal description text based on environment
+    // Set the modal description text
     const descriptionEl = document.getElementById('connectionSuccessDescription');
     if (descriptionEl) {
-      if (CONFIG.isSandbox) {
-        descriptionEl.textContent = 'Your Plaid sandbox account is now linked. You\'re ready to sync transactions to Google Sheets.';
-      } else {
-        descriptionEl.textContent = 'Your bank account is now linked. You\'re ready to sync transactions to Google Sheets.';
-      }
+      descriptionEl.textContent = 'Your bank account is now linked. You\'re ready to sync transactions to Google Sheets.';
     }
 
     // Reset to page 1
@@ -2277,14 +2180,10 @@ async function showSheetSuccessModal() {
   if (sheetSuccessModal) {
     const { sheetUrl } = await chrome.storage.sync.get(['sheetUrl']);
 
-    // Set modal description text based on environment
+    // Set modal description text
     const descriptionEl = document.getElementById('sheetSuccessDescription');
     if (descriptionEl) {
-      if (CONFIG.isSandbox) {
-        descriptionEl.textContent = 'Your Google Sheet is now live with sandbox transactions including balances, categories, and sample activity powered by SheetLink.';
-      } else {
-        descriptionEl.textContent = 'Your Google Sheet is now live with your transaction data including balances, categories, and account activity powered by SheetLink.';
-      }
+      descriptionEl.textContent = 'Your Google Sheet is now live with your transaction data including balances, categories, and account activity powered by SheetLink.';
     }
 
     if (syncSuccessOpenSheetBtn) {
@@ -2316,7 +2215,7 @@ function hideSheetSuccessModal() {
  * Show welcome page for re-authentication when token expires
  */
 function showReAuthPage() {
-  console.log('[ReAuth] Showing welcome page for re-authentication');
+  debug('[ReAuth] Showing welcome page for re-authentication');
 
   // Mark that we're in re-authentication mode
   window.StateManager.set({ isReAuthenticating: true });
@@ -2484,7 +2383,7 @@ function isFullyConnected(state) {
  * Switch to a specific tab/page
  */
 async function switchTab(tabName) {
-  console.log('[Nav] Switching to tab:', tabName);
+  debug('[Nav] Switching to tab:', tabName);
 
   // Phase 3.13.1: Remove welcome background when switching to post-onboarding pages
   document.body.classList.remove('welcome-active');
@@ -2541,9 +2440,9 @@ async function initializeNavigation() {
   const sheetId = stateManager.get('sheetId');
   const hasCompletedInitialOnboarding = stateManager.get('hasCompletedInitialOnboarding');
 
-  console.log('[Nav] initializeNavigation called');
-  console.log('[Nav] isFullyConnected:', stateManager.isFullyConnected());
-  console.log('[Nav] State:', { googleUserId, itemId, sheetId, hasCompletedInitialOnboarding });
+  debug('[Nav] initializeNavigation called');
+  debug('[Nav] isFullyConnected:', stateManager.isFullyConnected());
+  debug('[Nav] State:', { googleUserId, itemId, sheetId, hasCompletedInitialOnboarding });
 
   // Phase 3.11: Check if user has completed initial onboarding (all 3 steps)
   // Only show post-onboarding navigation after they've finished Google + Bank + Sheet
@@ -2551,7 +2450,7 @@ async function initializeNavigation() {
 
   if (!hasReachedPostOnboarding) {
     // User is still in onboarding - hide footer nav
-    console.log('[Nav] Still in onboarding - hiding footer nav');
+    debug('[Nav] Still in onboarding - hiding footer nav');
     if (footerNav) footerNav.classList.add('hidden');
     if (legacyFooter) legacyFooter.style.display = '';
     return;
@@ -2670,6 +2569,7 @@ async function loadBankPage() {
   const sheetId = stateManager.get('sheetId');
 
   const bankListContainer = document.getElementById('bankList');
+  const disconnectBankBtn = document.getElementById('disconnectBankBtn');
 
   if (!itemId) {
     // Show empty state
@@ -2682,8 +2582,13 @@ async function loadBankPage() {
         </div>
       `;
     }
+    // Hide disconnect button when no bank is connected
+    if (disconnectBankBtn) disconnectBankBtn.classList.add('hidden');
     return;
   }
+
+  // Show disconnect button when bank is connected
+  if (disconnectBankBtn) disconnectBankBtn.classList.remove('hidden');
 
   // Phase 3.13: Get cached accounts
   let cachedAccounts = stateManager.getCachedAccounts();
@@ -2691,14 +2596,14 @@ async function loadBankPage() {
 
   // Display cached data IMMEDIATELY (NO FLASH!)
   if (cachedAccounts && cachedInstitutionName) {
-    console.log('[Bank] Displaying cached accounts (instant)');
+    debug('[Bank] Displaying cached accounts (instant)');
     renderBankAccounts(cachedAccounts, cachedInstitutionName, bankListContainer);
   }
 
   // Refresh from backend only if cache is stale or missing
   if (!cachedAccounts || stateManager.isCacheStale('accounts')) {
     try {
-      console.log('[Bank] Cache stale/missing, fetching from backend...');
+      debug('[Bank] Cache stale/missing, fetching from backend...');
 
       // Fetch fresh data from backend
       const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
@@ -2715,7 +2620,7 @@ async function loadBankPage() {
         institutionId: itemInfo.institution_id
       });
 
-      console.log('[Bank] Cache updated with fresh data');
+      debug('[Bank] Cache updated with fresh data');
 
       // Update UI with fresh data (if changed)
       renderBankAccounts(itemInfo.accounts, itemInfo.institution_name, bankListContainer);
@@ -2733,7 +2638,7 @@ async function loadBankPage() {
       }
     }
   } else {
-    console.log('[Bank] Using fresh cache, no backend fetch needed');
+    debug('[Bank] Using fresh cache, no backend fetch needed');
   }
 
   // Update user header
@@ -2808,7 +2713,7 @@ function renderBankAccounts(accounts, institutionName, container) {
  */
 async function fetchSheetName(sheetId) {
   try {
-    console.log('[fetchSheetName] Fetching sheet name for ID:', sheetId);
+    debug('[fetchSheetName] Fetching sheet name for ID:', sheetId);
 
     // Get access token from SheetsAPI (service worker)
     if (!window.SheetsAPI) {
@@ -2816,7 +2721,7 @@ async function fetchSheetName(sheetId) {
       return null;
     }
 
-    console.log('[fetchSheetName] Getting auth token...');
+    debug('[fetchSheetName] Getting auth token...');
     const accessToken = await window.SheetsAPI.getAuthToken();
 
     if (!accessToken) {
@@ -2824,7 +2729,7 @@ async function fetchSheetName(sheetId) {
       return null;
     }
 
-    console.log('[fetchSheetName] Making API call to Google Sheets...');
+    debug('[fetchSheetName] Making API call to Google Sheets...');
     const response = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?fields=properties.title`,
       {
@@ -2842,14 +2747,14 @@ async function fetchSheetName(sheetId) {
     }
 
     const data = await response.json();
-    console.log('[fetchSheetName] API response:', data);
+    debug('[fetchSheetName] API response:', data);
     const sheetName = data?.properties?.title || null;
 
     if (sheetName) {
       // Store in StateManager for caching
       const stateManager = window.StateManager;
       await stateManager.set({ sheetName });
-      console.log('[fetchSheetName] Sheet name fetched and cached:', sheetName);
+      debug('[fetchSheetName] Sheet name fetched and cached:', sheetName);
     } else {
       console.warn('[fetchSheetName] No title found in response');
     }
@@ -2949,8 +2854,8 @@ async function loadSheetPage() {
             if (errorBanner) errorBanner.classList.add('hidden');
 
             // Phase 3.13.1: Verify sheet access BEFORE saving
-            console.log('[Sheet Page] Verifying access for sheet:', sheetId);
-            console.log('[Sheet Page] window.SheetsAPI available?', !!window.SheetsAPI);
+            debug('[Sheet Page] Verifying access for sheet:', sheetId);
+            debug('[Sheet Page] window.SheetsAPI available?', !!window.SheetsAPI);
 
             if (!window.SheetsAPI) {
               throw new Error('Sheets API not loaded. Please reload the extension and try again.');
@@ -2958,9 +2863,14 @@ async function loadSheetPage() {
 
             try {
               await window.SheetsAPI.verifySheetAccess(sheetId);
-              console.log('[Sheet Page] ✓ Verification passed');
+              debug('[Sheet Page] ✓ Verification passed');
             } catch (verifyError) {
               console.error('[Sheet Page] Verification failed:', verifyError);
+
+              // Handle authentication errors - re-throw so outer catch can redirect to welcome
+              if (verifyError.isAuthError || verifyError.name === 'AuthenticationError') {
+                throw verifyError;
+              }
 
               // Handle permission errors with clear messages
               if (verifyError.isPermissionError || verifyError.name === 'PermissionError') {
@@ -2982,7 +2892,7 @@ async function loadSheetPage() {
             saveSheetBtnPage.textContent = 'Saving...';
 
             // Phase 3.13: Save to StateManager
-            console.log('[Sheet Page] Saving sheet to StateManager');
+            debug('[Sheet Page] Saving sheet to StateManager');
             await window.StateManager.set({
               sheetId: sheetId,
               sheetUrl: url
@@ -2998,6 +2908,15 @@ async function loadSheetPage() {
             // Update home page if it's loaded
             await loadHomePage();
           } catch (error) {
+            // Phase 3.14: Check for authentication errors
+            if (error.isAuthError || error.name === 'AuthenticationError') {
+              debug('[Sheet Page] Auth error detected, showing welcome page for re-authentication');
+              saveSheetBtnPage.disabled = false;
+              saveSheetBtnPage.textContent = 'Save Sheet';
+              showReAuthPage();
+              return;
+            }
+
             // Show error in UI instead of alert
             const errorBanner = document.getElementById('sheetPageErrorBanner');
             const errorDetail = document.getElementById('sheetPageErrorDetail');
@@ -3194,8 +3113,8 @@ function attachNavigationEventListeners() {
           if (errorBanner) errorBanner.classList.add('hidden');
 
           // Phase 3.13.1: Verify sheet access BEFORE saving
-          console.log('[Sheet Change] Verifying access for sheet:', sheetId);
-          console.log('[Sheet Change] window.SheetsAPI available?', !!window.SheetsAPI);
+          debug('[Sheet Change] Verifying access for sheet:', sheetId);
+          debug('[Sheet Change] window.SheetsAPI available?', !!window.SheetsAPI);
 
           if (!window.SheetsAPI) {
             throw new Error('Sheets API not loaded. Please reload the extension and try again.');
@@ -3203,9 +3122,14 @@ function attachNavigationEventListeners() {
 
           try {
             await window.SheetsAPI.verifySheetAccess(sheetId);
-            console.log('[Sheet Change] ✓ Verification passed');
+            debug('[Sheet Change] ✓ Verification passed');
           } catch (verifyError) {
             console.error('[Sheet Change] Verification failed:', verifyError);
+
+            // Handle authentication errors - re-throw so outer catch can redirect to welcome
+            if (verifyError.isAuthError || verifyError.name === 'AuthenticationError') {
+              throw verifyError;
+            }
 
             // Handle permission errors with clear messages
             if (verifyError.isPermissionError || verifyError.name === 'PermissionError') {
@@ -3227,7 +3151,7 @@ function attachNavigationEventListeners() {
           saveNewSheetBtn.textContent = 'Saving...';
 
           // Phase 3.13: Save to StateManager
-          console.log('[Sheet Change] Saving sheet to StateManager');
+          debug('[Sheet Change] Saving sheet to StateManager');
           await window.StateManager.set({
             sheetId: sheetId,
             sheetUrl: url
@@ -3242,6 +3166,15 @@ function attachNavigationEventListeners() {
           // Update home page if it's loaded
           await loadHomePage();
         } catch (error) {
+          // Phase 3.14: Check for authentication errors
+          if (error.isAuthError || error.name === 'AuthenticationError') {
+            debug('[Sheet Change] Auth error detected, showing welcome page for re-authentication');
+            saveNewSheetBtn.disabled = false;
+            saveNewSheetBtn.textContent = 'Save Sheet';
+            showReAuthPage();
+            return;
+          }
+
           // Show error in UI instead of alert
           const errorBanner = document.getElementById('sheetChangeErrorBanner');
           const errorDetail = document.getElementById('sheetChangeErrorDetail');
@@ -3292,16 +3225,14 @@ function attachNavigationEventListeners() {
 
   // Settings page event listeners
   if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
-  if (advancedOptionsBtn) advancedOptionsBtn.addEventListener('click', () => {
-    chrome.runtime.openOptionsPage();
-  });
+  if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', handleSaveSettings);
 }
 
 /**
  * Load Settings page
  */
 async function loadSettingsPage() {
-  console.log('[Settings] Loading settings page');
+  debug('[Settings] Loading settings page');
 
   // Phase 3.13: Use StateManager
   const stateManager = window.StateManager;
@@ -3325,6 +3256,65 @@ async function loadSettingsPage() {
     settingsUserInitial.style.display = 'flex';
     if (settingsUserPicture) settingsUserPicture.style.display = 'none';
   }
+
+  // Load settings from storage
+  chrome.storage.sync.get({
+    accountsTabName: 'Accounts',
+    transactionsTabName: 'Transactions',
+    appendOnly: true
+  }, (settings) => {
+    if (settingsAccountsTabName) settingsAccountsTabName.value = settings.accountsTabName;
+    if (settingsTransactionsTabName) settingsTransactionsTabName.value = settings.transactionsTabName;
+    if (settingsAppendOnly) settingsAppendOnly.checked = settings.appendOnly;
+  });
+}
+
+/**
+ * Handle save settings
+ */
+async function handleSaveSettings() {
+  debug('[Settings] Saving settings');
+
+  try {
+    // Get values from inputs
+    const accountsTabName = settingsAccountsTabName?.value || 'Accounts';
+    const transactionsTabName = settingsTransactionsTabName?.value || 'Transactions';
+    const appendOnly = settingsAppendOnly?.checked ?? true;
+
+    // Save to storage
+    await chrome.storage.sync.set({
+      accountsTabName,
+      transactionsTabName,
+      appendOnly
+    });
+
+    // Show success message
+    if (settingsStatusMessage) {
+      settingsStatusMessage.textContent = '✓ Settings saved successfully';
+      settingsStatusMessage.className = 'success';
+      settingsStatusMessage.classList.remove('hidden');
+
+      // Hide after 3 seconds
+      setTimeout(() => {
+        settingsStatusMessage.classList.add('hidden');
+      }, 3000);
+    }
+
+    debug('[Settings] ✓ Settings saved:', { accountsTabName, transactionsTabName, appendOnly });
+  } catch (error) {
+    console.error('[Settings] Error saving settings:', error);
+
+    // Show error message
+    if (settingsStatusMessage) {
+      settingsStatusMessage.textContent = '✗ Error saving settings';
+      settingsStatusMessage.className = 'error';
+      settingsStatusMessage.classList.remove('hidden');
+
+      setTimeout(() => {
+        settingsStatusMessage.classList.add('hidden');
+      }, 3000);
+    }
+  }
 }
 
 /**
@@ -3335,10 +3325,10 @@ async function handleLogout() {
     return;
   }
 
-  console.log('[Settings] Logging out');
+  debug('[Settings] Logging out');
 
   // Phase 3.13.1: Debug - log state before clear
-  console.log('[Logout] State before clear:', {
+  debug('[Logout] State before clear:', {
     itemId: window.StateManager.get('itemId'),
     sheetId: window.StateManager.get('sheetId'),
     institutionName: window.StateManager.get('institutionName')
@@ -3349,7 +3339,7 @@ async function handleLogout() {
 
   // Phase 3.13.1: Debug - verify storage is actually cleared
   const afterClear = await chrome.storage.sync.get(['itemId', 'sheetId', 'institutionName', 'hasCompletedInitialOnboarding']);
-  console.log('[Logout] Storage after clear:', afterClear);
+  debug('[Logout] Storage after clear:', afterClear);
 
   // Clear localStorage
   localStorage.clear();

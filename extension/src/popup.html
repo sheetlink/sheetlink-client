@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SheetLink</title>
   <link rel="stylesheet" href="popup.css">
-  <link rel="stylesheet" href="components/WalkthroughModal.css">
 </head>
 <body>
   <!-- Phase 3.13: Unified loading screen (hidden by JS when ready) -->
@@ -16,7 +15,7 @@
     </div>
     <div class="welcome-content">
       <div class="loader" style="margin-bottom: 16px;"></div>
-      <p id="initialLoadingMessage" style="font-size: 14px; text-align: center;">Loading...</p>
+      <p id="initialLoadingMessage" style="font-size: 14px; text-align: center; color: #6b7280;">Loading...</p>
     </div>
   </div>
 
@@ -47,11 +46,15 @@
           </div>
         </div>
       </div>
-      <div class="connection-indicators">
+      <!-- ORIGINAL CONNECTION INDICATORS (preserved for rollback) -->
+      <!-- <div class="connection-indicators">
         <div class="indicator bank-indicator" id="bankIndicator">
           <span class="indicator-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
-              <path d="M320 32C373 32 416 75 416 128C416 181 373 224 320 224C267 224 224 181 224 128C224 75 267 32 320 32zM80 368C80 297.9 127 236.6 197.1 203.1C222.4 244.4 268 272 320 272C375.7 272 424.1 240.3 448 194C463.8 182.7 483.1 176 504 176L523.5 176C533.9 176 541.5 185.8 539 195.9L521.9 264.2C531.8 276.6 540.1 289.9 546.3 304L568 304C581.3 304 592 314.7 592 328L592 440C592 453.3 581.3 464 568 464L528 464C511.5 486 489.5 503.6 464 514.7L464 544C464 561.7 449.7 576 432 576L399 576C384.7 576 372.2 566.5 368.2 552.8L361.1 528L278.8 528L271.7 552.8C267.8 566.5 255.3 576 241 576L208 576C190.3 576 176 561.7 176 544L176 514.7C119.5 490 80 433.6 80 368zM456 384C469.3 384 480 373.3 480 360C480 346.7 469.3 336 456 336C442.7 336 432 346.7 432 360C432 373.3 442.7 384 456 384z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="8" r="6"/>
+              <path d="M18.09 10.37A6 6 0 1 1 10.34 18"/>
+              <path d="M7 6h1v4"/>
+              <path d="m16.71 13.88.7.71-2.82 2.82"/>
             </svg>
           </span>
           <div class="indicator-tooltip">
@@ -62,10 +65,61 @@
         </div>
         <div class="indicator sheet-indicator" id="sheetIndicator">
           <span class="indicator-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
-              <path d="M352 224L352 320L480 320L480 224L352 224zM288 224L160 224L160 320L288 320L288 224zM96 384L96 160C96 124.7 124.7 96 160 96L480 96C515.3 96 544 124.7 544 160L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 384zM480 384L352 384L352 480L480 480L480 384zM288 480L288 384L160 384L160 480L288 480z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
             </svg>
           </span>
+          <div class="indicator-tooltip">
+            <div class="indicator-tooltip-content" id="sheetTooltipContent">
+              Sheet connected
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- OPTION 1 - STATUS PILLS (scrapped - too bulky) -->
+      <!-- <div class="status-pills">
+        <div class="status-pill" id="bankIndicator">
+          <span class="status-dot"></span>
+          <span class="status-label">Bank</span>
+        </div>
+        <div class="status-pill" id="sheetIndicator">
+          <span class="status-dot"></span>
+          <span class="status-label">Sheet</span>
+        </div>
+      </div> -->
+
+      <!-- OPTION 3 - MINIMAL STATUS DOTS (scrapped - too minimal) -->
+      <!-- <div class="status-dots">
+        <div class="status-dot-indicator" id="bankIndicator" title="Bank status">
+          <span class="dot"></span>
+        </div>
+        <div class="status-dot-indicator" id="sheetIndicator" title="Sheet status">
+          <span class="dot"></span>
+        </div>
+      </div> -->
+
+      <!-- HYBRID - ICONS WITH STATUS DOTS (Experimental) -->
+      <div class="status-indicators-hybrid">
+        <div class="status-indicator-item" id="bankIndicator">
+          <svg class="indicator-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="6"/>
+            <path d="M18.09 10.37A6 6 0 1 1 10.34 18"/>
+            <path d="M7 6h1v4"/>
+            <path d="m16.71 13.88.7.71-2.82 2.82"/>
+          </svg>
+          <span class="status-dot"></span>
+          <div class="indicator-tooltip">
+            <div class="indicator-tooltip-content" id="bankTooltipContent">
+              Bank connected
+            </div>
+          </div>
+        </div>
+        <div class="status-indicator-item" id="sheetIndicator">
+          <svg class="indicator-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+          </svg>
+          <span class="status-dot"></span>
           <div class="indicator-tooltip">
             <div class="indicator-tooltip-content" id="sheetTooltipContent">
               Sheet connected
@@ -335,8 +389,8 @@
         <!-- Add Bank Button (for future multi-account support) -->
         <button id="addBankBtn" class="btn btn-primary" style="margin-top: 12px;">Add Bank</button>
 
-        <!-- Disconnect Bank -->
-        <button id="disconnectBankBtn" class="btn btn-text" style="margin-top: 8px; color: #ef4444;">Disconnect Bank</button>
+        <!-- Disconnect Bank (only shown when banks are connected) -->
+        <button id="disconnectBankBtn" class="btn btn-text hidden" style="margin-top: 8px; color: #ef4444;">Disconnect Bank</button>
       </div>
 
       <!-- Sheet Page -->
@@ -391,15 +445,147 @@
           </button>
         </div>
 
-        <!-- Advanced Settings -->
-        <div class="card">
-          <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">Advanced</h3>
-          <button id="advancedOptionsBtn" class="btn btn-secondary" style="width: 100%;">
-            Open Advanced Options
-          </button>
-          <p style="font-size: 12px; color: #6b7280; margin-top: 8px;">
-            Configure rules, auto-sync, and other advanced features
-          </p>
+        <!-- Sheet Defaults -->
+        <div class="card" style="margin-bottom: 16px;">
+          <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">Sheet Defaults</h3>
+
+          <div style="margin-bottom: 12px;">
+            <label for="settingsAccountsTabName" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
+              Accounts Tab Name
+            </label>
+            <input
+              type="text"
+              id="settingsAccountsTabName"
+              value="Accounts"
+              placeholder="Accounts"
+              style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; transition: border-color 0.2s;"
+            >
+            <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0;">
+              Name of the sheet tab where account balances will be written
+            </p>
+          </div>
+
+          <div>
+            <label for="settingsTransactionsTabName" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
+              Transactions Tab Name
+            </label>
+            <input
+              type="text"
+              id="settingsTransactionsTabName"
+              value="Transactions"
+              placeholder="Transactions"
+              style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; transition: border-color 0.2s;"
+            >
+            <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0;">
+              Name of the sheet tab where transaction data will be written
+            </p>
+          </div>
+
+          <div style="margin-top: 12px; opacity: 0.6;">
+            <label for="settingsRulesTabName" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
+              Rules Tab Name 🔒
+            </label>
+            <input
+              type="text"
+              id="settingsRulesTabName"
+              value="Rules"
+              placeholder="Rules"
+              disabled
+              style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; cursor: not-allowed; background: #f9fafb;"
+            >
+            <p style="font-size: 11px; color: #9ca3af; margin: 4px 0 0 0; font-style: italic;">
+              Requires Pro plan - Name of the sheet tab for categorization rules
+            </p>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div class="card" style="margin-bottom: 16px;">
+          <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">Features</h3>
+
+          <div style="display: flex; align-items: start; gap: 12px;">
+            <label class="toggle" style="position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px;">
+              <input type="checkbox" id="settingsAppendOnly" style="opacity: 0; width: 0; height: 0;">
+              <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: 0.3s; border-radius: 24px;"></span>
+            </label>
+            <div style="flex: 1;">
+              <label for="settingsAppendOnly" style="display: block; font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; margin-bottom: 4px;">
+                Append-Only Mode
+              </label>
+              <p style="font-size: 11px; color: #6b7280; margin: 0; line-height: 1.4;">
+                Only add new transactions, never update existing ones (Recommended)
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: start; gap: 12px; margin-top: 16px; opacity: 0.6;">
+            <label class="toggle" style="position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px;">
+              <input type="checkbox" id="settingsFullTransactionDetails" disabled style="opacity: 0; width: 0; height: 0;">
+              <span class="slider" style="position: absolute; cursor: not-allowed; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: 0.3s; border-radius: 24px;"></span>
+            </label>
+            <div style="flex: 1;">
+              <label for="settingsFullTransactionDetails" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
+                Full Transaction Details 🔒
+              </label>
+              <p style="font-size: 11px; color: #9ca3af; margin: 0; line-height: 1.4; font-style: italic;">
+                Requires Pro plan - Unlock all 34 transaction fields
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; border: 1px solid #9ca3af; font-size: 9px; font-weight: 600; cursor: pointer; font-style: normal; margin-left: 2px;" title="Full list of Pro transaction fields:&#10;&#10;• transaction_id&#10;• account_id&#10;• persistent_account_id&#10;• account_name&#10;• account_mask&#10;• date&#10;• authorized_date&#10;• datetime&#10;• authorized_datetime&#10;• description_raw&#10;• merchant_name&#10;• merchant_entity_id&#10;• amount&#10;• iso_currency_code&#10;• unofficial_currency_code&#10;• pending&#10;• pending_transaction_id&#10;• check_number&#10;• plaid_category&#10;• personal_finance_category&#10;• payment_channel&#10;• transaction_type&#10;• transaction_code&#10;• location_address&#10;• location_city&#10;• location_region&#10;• location_postal_code&#10;• location_country&#10;• location_lat&#10;• location_lon&#10;• website&#10;• logo_url&#10;• source_institution&#10;• synced_at">i</span>
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: start; gap: 12px; margin-top: 16px; opacity: 0.6;">
+            <label class="toggle" style="position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px;">
+              <input type="checkbox" id="settingsEnableRulesTab" disabled style="opacity: 0; width: 0; height: 0;">
+              <span class="slider" style="position: absolute; cursor: not-allowed; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: 0.3s; border-radius: 24px;"></span>
+            </label>
+            <div style="flex: 1;">
+              <label for="settingsEnableRulesTab" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
+                Enable Rules Tab 🔒
+              </label>
+              <p style="font-size: 11px; color: #9ca3af; margin: 0; line-height: 1.4; font-style: italic;">
+                Requires Pro plan
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: start; gap: 12px; margin-top: 16px; opacity: 0.6;">
+            <label class="toggle" style="position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px;">
+              <input type="checkbox" id="settingsEnableMLAssist" disabled style="opacity: 0; width: 0; height: 0;">
+              <span class="slider" style="position: absolute; cursor: not-allowed; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: 0.3s; border-radius: 24px;"></span>
+            </label>
+            <div style="flex: 1;">
+              <label for="settingsEnableMLAssist" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
+                Enable AI Categorization 🔒
+              </label>
+              <p style="font-size: 11px; color: #9ca3af; margin: 0; line-height: 1.4; font-style: italic;">
+                Requires Pro plan
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: start; gap: 12px; margin-top: 16px; opacity: 0.6;">
+            <label class="toggle" style="position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px;">
+              <input type="checkbox" id="settingsEnableSplitTransactions" disabled style="opacity: 0; width: 0; height: 0;">
+              <span class="slider" style="position: absolute; cursor: not-allowed; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: 0.3s; border-radius: 24px;"></span>
+            </label>
+            <div style="flex: 1;">
+              <label for="settingsEnableSplitTransactions" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
+                Enable Split Transactions 🔒
+              </label>
+              <p style="font-size: 11px; color: #9ca3af; margin: 0; line-height: 1.4; font-style: italic;">
+                Requires Pro plan (coming soon)
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save Settings Button -->
+        <button id="saveSettingsBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">
+          Save Settings
+        </button>
+
+        <div id="settingsStatusMessage" class="hidden" style="padding: 10px; border-radius: 6px; font-size: 12px; text-align: center; margin-bottom: 12px;">
         </div>
       </div>
 
@@ -445,9 +631,6 @@
         </div>
         <button id="syncNowBtn" class="btn btn-primary">
           Sync Now
-        </button>
-        <button id="generateTestBtn" class="btn btn-secondary" style="margin-top: 8px;">
-          Generate Test Transactions (Sandbox)
         </button>
 
         <!-- Auto-Sync Status -->
@@ -536,44 +719,42 @@
     <footer id="footer-nav" class="footer-nav hidden">
       <button class="nav-tab active" data-page="home">
         <span class="nav-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
-            <path d="M298.2 72.6C310.5 61.2 329.5 61.2 341.7 72.6L432 156.3L432 144C432 126.3 446.3 112 464 112L496 112C513.7 112 528 126.3 528 144L528 245.5L565.8 280.6C575.4 289.6 578.6 303.5 573.8 315.7C569 327.9 557.2 336 544 336L528 336L528 512C528 547.3 499.3 576 464 576L176 576C140.7 576 112 547.3 112 512L112 336L96 336C82.8 336 71 327.9 66.2 315.7C61.4 303.5 64.6 289.5 74.2 280.6L298.2 72.6zM304 384C277.5 384 256 405.5 256 432L256 528L384 528L384 432C384 405.5 362.5 384 336 384L304 384z"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
         </span>
         <span class="nav-label">Home</span>
       </button>
       <button class="nav-tab" data-page="bank">
         <span class="nav-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
-            <path d="M320 32C373 32 416 75 416 128C416 181 373 224 320 224C267 224 224 181 224 128C224 75 267 32 320 32zM80 368C80 297.9 127 236.6 197.1 203.1C222.4 244.4 268 272 320 272C375.7 272 424.1 240.3 448 194C463.8 182.7 483.1 176 504 176L523.5 176C533.9 176 541.5 185.8 539 195.9L521.9 264.2C531.8 276.6 540.1 289.9 546.3 304L568 304C581.3 304 592 314.7 592 328L592 440C592 453.3 581.3 464 568 464L528 464C511.5 486 489.5 503.6 464 514.7L464 544C464 561.7 449.7 576 432 576L399 576C384.7 576 372.2 566.5 368.2 552.8L361.1 528L278.8 528L271.7 552.8C267.8 566.5 255.3 576 241 576L208 576C190.3 576 176 561.7 176 544L176 514.7C119.5 490 80 433.6 80 368zM456 384C469.3 384 480 373.3 480 360C480 346.7 469.3 336 456 336C442.7 336 432 346.7 432 360C432 373.3 442.7 384 456 384z"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="6"/>
+            <path d="M18.09 10.37A6 6 0 1 1 10.34 18"/>
+            <path d="M7 6h1v4"/>
+            <path d="m16.71 13.88.7.71-2.82 2.82"/>
           </svg>
         </span>
         <span class="nav-label">Bank</span>
       </button>
       <button class="nav-tab" data-page="sheet">
         <span class="nav-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
-            <path d="M352 224L352 320L480 320L480 224L352 224zM288 224L160 224L160 320L288 320L288 224zM96 384L96 160C96 124.7 124.7 96 160 96L480 96C515.3 96 544 124.7 544 160L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 384zM480 384L352 384L352 480L480 480L480 384zM288 480L288 384L160 384L160 480L288 480z"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
           </svg>
         </span>
         <span class="nav-label">Sheet</span>
       </button>
       <button class="nav-tab" data-page="settings">
         <span class="nav-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
-            <path d="M259.1 73.5C262.1 58.7 275.2 48 290.4 48L350.2 48C365.4 48 378.5 58.7 381.5 73.5L396 143.5C410.1 149.5 423.3 157.2 435.3 166.3L503.1 143.8C517.5 139 533.3 145 540.9 158.2L570.8 210C578.4 223.2 575.7 239.8 564.3 249.9L511 297.3C511.9 304.7 512.3 312.3 512.3 320C512.3 327.7 511.8 335.3 511 342.7L564.4 390.2C575.8 400.3 578.4 417 570.9 430.1L541 481.9C533.4 495 517.6 501.1 503.2 496.3L435.4 473.8C423.3 482.9 410.1 490.5 396.1 496.6L381.7 566.5C378.6 581.4 365.5 592 350.4 592L290.6 592C275.4 592 262.3 581.3 259.3 566.5L244.9 496.6C230.8 490.6 217.7 482.9 205.6 473.8L137.5 496.3C123.1 501.1 107.3 495.1 99.7 481.9L69.8 430.1C62.2 416.9 64.9 400.3 76.3 390.2L129.7 342.7C128.8 335.3 128.4 327.7 128.4 320C128.4 312.3 128.9 304.7 129.7 297.3L76.3 249.8C64.9 239.7 62.3 223 69.8 209.9L99.7 158.1C107.3 144.9 123.1 138.9 137.5 143.7L205.3 166.2C217.4 157.1 230.6 149.5 244.6 143.4L259.1 73.5zM320.3 400C364.5 399.8 400.2 363.9 400 319.7C399.8 275.5 363.9 239.8 319.7 240C275.5 240.2 239.8 276.1 240 320.3C240.2 364.5 276.1 400.2 320.3 400z"/>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
           </svg>
         </span>
         <span class="nav-label">Settings</span>
       </button>
     </footer>
-
-    <!-- Sandbox Mode Badge (moved to bottom) -->
-    <div id="sandboxBadge" class="sandbox-badge hidden">
-      <a href="#" id="sandboxLink" class="sandbox-link">🧪 Sandbox Mode</a>
-      <span class="sandbox-divider"> • </span>
-      <a href="#" id="privacyLink" class="privacy-link">🔒 Privacy First</a>
-    </div>
 
     <!-- Connection Success Modal -->
     <div id="connectionSuccessModal" class="modal hidden">
@@ -632,7 +813,7 @@
         </div>
 
         <p class="modal-description" id="sheetSuccessDescription">
-          Your Google Sheet is now live with sandbox transactions including balances, categories, and sample activity powered by SheetLink.
+          Your Google Sheet is now live with your transaction data including balances, categories, and account activity powered by SheetLink.
         </p>
 
         <div class="modal-actions">
@@ -654,6 +835,9 @@
   <!-- Configuration -->
   <script type="module" src="../config.js"></script>
 
+  <!-- Debug utility (must load before other scripts) -->
+  <script src="debug.js"></script>
+
   <!-- Google Sheets API wrapper -->
   <script src="sheets.js?v=20251204-0330"></script>
 
@@ -665,9 +849,6 @@
 
   <!-- Phase 3.13: State Manager -->
   <script src="state-manager.js"></script>
-
-  <!-- Walkthrough Modal -->
-  <script src="components/WalkthroughModal.js"></script>
 
   <!-- Main popup logic -->
   <script type="module" src="popup.js"></script>

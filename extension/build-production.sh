@@ -3,8 +3,9 @@
 
 echo "Building SheetLink Extension (Production Mode)..."
 
-# Update config.js to production environment
-sed -i.bak 's/ENV: "sandbox"/ENV: "production"/g' config.js && rm config.js.bak
+# Disable debug logging
+sed -i.bak 's/DEBUG: true/DEBUG: false/g' config.js && rm config.js.bak
+sed -i.bak 's/window\.SHEETLINK_DEBUG = true/window.SHEETLINK_DEBUG = false/g' src/debug.js && rm src/debug.js.bak
 
 # Create ZIP file
 cd ..
@@ -15,11 +16,12 @@ zip -r sheetlink-extension-production.zip extension/ \
   -x '*.bak' \
   -x '*.sh'
 
-# Restore sandbox environment (safety measure)
+# Restore debug mode (safety measure)
 cd extension
-sed -i.bak 's/ENV: "production"/ENV: "sandbox"/g' config.js && rm config.js.bak
+sed -i.bak 's/DEBUG: false/DEBUG: true/g' config.js && rm config.js.bak
+sed -i.bak 's/window\.SHEETLINK_DEBUG = false/window.SHEETLINK_DEBUG = true/g' src/debug.js && rm src/debug.js.bak
 
 echo "✓ Production build created: sheetlink-extension-production.zip"
-echo "  Environment: Production"
-echo "  ⚠️  Config restored to sandbox mode for safety"
+echo "  Debug logging: Disabled"
+echo "  ⚠️  Config restored to debug mode for safety"
 echo "  Ready to load in Chrome or submit to Web Store"
