@@ -100,6 +100,28 @@ class StateManager {
         // Merge storage data into state
         this.state = { ...this.state, ...data, isInitialized: true };
 
+        // Phase 3.14.0: Migration from single itemId to institutions array
+        if ((!this.state.institutions || this.state.institutions.length === 0) && this.state.itemId) {
+          debug('[StateManager] Migrating legacy single-institution data to institutions array...');
+
+          // Get cached accounts if they exist
+          const cachedData = await chrome.storage.sync.get(['accounts', 'accountsLastFetched']);
+
+          const institution = {
+            itemId: this.state.itemId,
+            institutionName: this.state.institutionName,
+            institutionId: this.state.institutionId,
+            accounts: cachedData.accounts || null,
+            accounts_cached_at: cachedData.accountsLastFetched || null,
+            connected_at: Date.now() // Use current time as approximation
+          };
+
+          this.state.institutions = [institution];
+          await chrome.storage.sync.set({ institutions: this.state.institutions });
+
+          debug('[StateManager] Migration complete. Migrated institution:', this.state.institutionName);
+        }
+
         debug('[StateManager] Initialized:', {
           authenticated: this.state.googleAuthenticated,
           institutions: (this.state.institutions || []).length,
