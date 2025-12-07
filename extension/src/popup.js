@@ -776,6 +776,9 @@ async function updateBankStatus(itemId) {
 }
 
 // Phase 3.8: Try to restore Items from backend using Google user ID
+/**
+ * Phase 3.14.0: Restore ALL institutions from backend
+ */
 async function tryRestoreItems() {
   try {
     // Phase 3.13: Get Google user ID from StateManager
@@ -805,16 +808,38 @@ async function tryRestoreItems() {
       return false;
     }
 
-    // Restore the most recently synced Item
-    const mostRecentItem = data.items[0];
-    debug(`[tryRestoreItems] Restoring Item: ${mostRecentItem.institution_name} (${mostRecentItem.item_id})`);
+    // Phase 3.14.0: Restore ALL items, not just the first one
+    debug(`[tryRestoreItems] Restoring ${data.items.length} institution(s)...`);
 
-    // Phase 3.13: Use StateManager to persist the restored item
-    await stateManager.set({
-      itemId: mostRecentItem.item_id
-    });
+    for (const item of data.items) {
+      try {
+        debug(`[tryRestoreItems] Restoring: ${item.institution_name} (${item.item_id})`);
 
-    debug(`[tryRestoreItems] Item restored successfully: ${mostRecentItem.item_id}`);
+        // Fetch institution details
+        const itemInfoResponse = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(item.item_id)}/info`);
+        if (!itemInfoResponse.ok) {
+          console.error(`[tryRestoreItems] Failed to fetch details for ${item.item_id}`);
+          continue;
+        }
+
+        const itemInfo = await itemInfoResponse.json();
+
+        // Add to institutions array
+        await stateManager.addInstitution(item.item_id, {
+          institutionName: itemInfo.institution_name,
+          institutionId: itemInfo.institution_id,
+          accounts: itemInfo.accounts,
+          accounts_cached_at: Date.now()
+        });
+
+        debug(`[tryRestoreItems] Successfully restored: ${item.institution_name}`);
+      } catch (error) {
+        console.error(`[tryRestoreItems] Error restoring ${item.item_id}:`, error);
+        // Continue with other items
+      }
+    }
+
+    debug(`[tryRestoreItems] Restoration complete. Restored ${data.items.length} institution(s)`);
     return true;
 
   } catch (error) {
