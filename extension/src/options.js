@@ -18,13 +18,12 @@ const DEFAULT_SETTINGS = {
 let accountsTabNameInput, transactionsTabNameInput, rulesTabNameInput;
 let enableRulesTabCheckbox, enableMLAssistCheckbox, appendOnlyCheckbox;
 let backendUrlInput;
-let saveBtn, resetBtn, resetSandboxBtn, replayWalkthroughBtn;
-let statusMessage, sandboxInfo;
+let saveBtn, resetBtn;
+let statusMessage;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
   initializeElements();
-  initializeSandboxMode();
   attachEventListeners();
   await loadSettings();
 });
@@ -42,116 +41,14 @@ function initializeElements() {
   // Buttons
   saveBtn = document.getElementById('saveBtn');
   resetBtn = document.getElementById('resetBtn');
-  resetSandboxBtn = document.getElementById('resetSandboxBtn');
-  replayWalkthroughBtn = document.getElementById('replayWalkthroughBtn');
 
   // Status
   statusMessage = document.getElementById('statusMessage');
-  sandboxInfo = document.getElementById('sandboxInfo');
-}
-
-function initializeSandboxMode() {
-  // Handle sandbox info section based on environment
-  if (sandboxInfo) {
-    if (CONFIG.isSandbox) {
-      // Show sandbox info in sandbox mode
-      sandboxInfo.classList.remove('hidden');
-    } else {
-      // Hide sandbox info in production mode
-      sandboxInfo.style.display = 'none';
-    }
-  }
-
-  // Update footer based on environment
-  const footerVersion = document.getElementById('footerVersion');
-  if (footerVersion) {
-    if (CONFIG.isSandbox) {
-      footerVersion.textContent = 'SheetLink v0.3.1 (Sandbox Preview)';
-    } else {
-      footerVersion.textContent = 'SheetLink v0.3.1';
-    }
-  }
-
-  // Hide "Join Beta" link in production mode
-  if (!CONFIG.isSandbox) {
-    const betaLinks = document.querySelectorAll('a[href*="beta"]');
-    betaLinks.forEach(link => {
-      link.style.display = 'none';
-    });
-  }
-
-  // Lock backend URL in production mode
-  if (!CONFIG.isSandbox && backendUrlInput) {
-    backendUrlInput.value = 'https://api.sheetlink.app';
-    backendUrlInput.readOnly = true;
-    backendUrlInput.style.cursor = 'not-allowed';
-    backendUrlInput.style.opacity = '0.7';
-    backendUrlInput.style.background = '#f9fafb';
-
-    // Update label to show lock icon
-    const label = document.querySelector('label[for="backendUrl"]');
-    if (label) {
-      label.innerHTML = 'Backend URL <span class="lock-icon">🔒</span>';
-    }
-
-    // Update description
-    const formGroup = backendUrlInput.closest('.form-group');
-    if (formGroup) {
-      const description = formGroup.querySelector('.description');
-      if (description) {
-        description.textContent = 'Locked in production mode';
-        description.style.color = '#9ca3af';
-        description.style.fontStyle = 'italic';
-      }
-    }
-  }
 }
 
 function attachEventListeners() {
   saveBtn.addEventListener('click', handleSave);
   resetBtn.addEventListener('click', handleReset);
-  if (resetSandboxBtn) {
-    resetSandboxBtn.addEventListener('click', handleResetSandbox);
-  }
-  if (replayWalkthroughBtn) {
-    replayWalkthroughBtn.addEventListener('click', handleReplayWalkthrough);
-  }
-}
-
-// Replay walkthrough
-async function handleReplayWalkthrough() {
-  try {
-    // Reset walkthrough completion flag
-    await chrome.storage.local.set({ walkthroughCompleted: false });
-
-    // Show success message
-    showStatus('Walkthrough reset! Open the popup and click "Connect to Sandbox" to see it again.', 'success');
-  } catch (error) {
-    showStatus('Error resetting walkthrough. Please try again.', 'error');
-  }
-}
-
-// Reset sandbox data
-async function handleResetSandbox() {
-  if (!confirm('Reset all sandbox data? This will disconnect your demo bank connection and clear all test data.')) {
-    return;
-  }
-
-  try {
-    // Clear all extension storage
-    await chrome.storage.sync.clear();
-    await chrome.storage.local.clear();
-
-    // Show success message
-    showStatus('Sandbox data cleared successfully! Reopen the extension to start fresh.', 'success');
-
-    // Reload the page after a delay
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
-  } catch (error) {
-    showStatus('Error resetting sandbox data. Please try again.', 'error');
-  }
 }
 
 // Load settings from storage

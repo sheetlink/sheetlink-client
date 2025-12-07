@@ -1,6 +1,8 @@
 // sheets.js - Google Sheets API wrapper for writing banking data
 // Version: Phase 3.11 - Re-auth error handling - Updated 2025-12-04 03:20
-console.log('[Sheets.js] Loading sheets.js - Phase 3.11 - Re-auth fixes v2');
+
+// Use global debug function from popup.html
+debug('[Sheets.js] Loading sheets.js - Phase 3.11 - Re-auth fixes v2');
 
 const SHEETS_API_BASE = 'https://sheets.googleapis.com/v4/spreadsheets';
 
@@ -63,10 +65,27 @@ const ACCOUNTS_HEADERS = [
 ];
 
 /**
- * Transaction headers schema for the Transactions tab (base)
- * Comprehensive schema with all Plaid transaction fields
+ * Transaction headers schema - Free Tier (Essential columns only)
  */
-const TRANSACTIONS_HEADERS_BASE = [
+const TRANSACTIONS_HEADERS_FREE = [
+  'transaction_id',
+  'account_name',
+  'account_mask',
+  'date',
+  'merchant_name',
+  'amount',
+  'iso_currency_code',
+  'pending',
+  'payment_channel',
+  'source_institution',
+  'synced_at'
+];
+
+/**
+ * Transaction headers schema - Full (All Plaid transaction fields)
+ * Available for paid tiers
+ */
+const TRANSACTIONS_HEADERS_FULL = [
   'transaction_id',
   'account_id',
   'persistent_account_id',
@@ -103,6 +122,9 @@ const TRANSACTIONS_HEADERS_BASE = [
   'synced_at'
 ];
 
+// Alias for backward compatibility
+const TRANSACTIONS_HEADERS_BASE = TRANSACTIONS_HEADERS_FREE;
+
 /**
  * Get transaction headers based on rules settings
  * @param {boolean} includeRules - Whether to include final_category column
@@ -124,23 +146,23 @@ async function getAuthToken() {
     chrome.runtime.sendMessage(
       { type: 'GET_AUTH_TOKEN' },
       (response) => {
-        console.log('[Sheets] getAuthToken response:', response);
+        debug('[Sheets] getAuthToken response:', response);
 
         if (response.error) {
-          console.log('[Sheets] Error in response:', response.error, 'Type:', typeof response.error);
+          debug('[Sheets] Error in response:', response.error, 'Type:', typeof response.error);
 
           // Phase 3.11: Check if it's an auth expiry error
           if (response.error === 'AUTH_EXPIRED') {
-            console.log('[Sheets] AUTH_EXPIRED error from service worker, throwing AuthenticationError');
+            debug('[Sheets] AUTH_EXPIRED error from service worker, throwing AuthenticationError');
             const authError = new AuthenticationError('Your session has expired. Please sign in again.');
-            console.log('[Sheets] Created error:', authError.name, authError.isAuthError);
+            debug('[Sheets] Created error:', authError.name, authError.isAuthError);
             reject(authError);
           } else {
-            console.log('[Sheets] Not AUTH_EXPIRED, throwing generic Error');
+            debug('[Sheets] Not AUTH_EXPIRED, throwing generic Error');
             reject(new Error(response.error));
           }
         } else {
-          console.log('[Sheets] Token received successfully');
+          debug('[Sheets] Token received successfully');
           resolve(response.token);
         }
       }
@@ -184,7 +206,7 @@ async function sheetsApiRequest(token, url, method = 'GET', body = null) {
                        response.status === 401;
 
     if (isAuthError) {
-      console.log('[Sheets API] Authentication error detected, clearing expired token');
+      debug('[Sheets API] Authentication error detected, clearing expired token');
       // Clear the expired token
       await chrome.storage.local.remove(['googleAccessToken', 'googleTokenExpiry']);
 
@@ -402,7 +424,10 @@ async function appendUniqueFuzzyRows(token, sheetId, tabName, rows, headers, all
   // Find column indices
   const dateIndex = headers.indexOf('date');
   const amountIndex = headers.indexOf('amount');
-  const descriptionIndex = headers.indexOf('description_raw');
+  // Free tier uses merchant_name instead of description_raw
+  const descriptionIndex = headers.indexOf('merchant_name') !== -1
+    ? headers.indexOf('merchant_name')
+    : headers.indexOf('description_raw');
 
   if (dateIndex === -1 || amountIndex === -1 || descriptionIndex === -1) {
     throw new Error('Missing required transaction columns for fuzzy deduplication');
@@ -475,8 +500,8 @@ async function writeAccounts(sheetId, accountsData) {
   const existingData = await readRange(token, sheetId, `${tabName}!A:A`);
 
   if (existingData.length > 1) {
-    // Clear all rows except header
-    const clearRange = `${tabName}!A2:I${existingData.length}`;
+    // Clear all rows except header (A-L covers all 12 account columns)
+    const clearRange = `${tabName}!A2:L${existingData.length}`;
     const clearUrl = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(clearRange)}:clear`;
     await sheetsApiRequest(token, clearUrl, 'POST', {});
   }
@@ -495,7 +520,7 @@ async function writeAccounts(sheetId, accountsData) {
 async function writeTransactions(sheetId, transactionsData, accountsData = []) {
   const tabName = 'Transactions';
 
-  console.log('[Sheets] writeTransactions called with', transactionsData?.length, 'transactions and', accountsData?.length, 'accounts');
+  debug('[Sheets] writeTransactions called with', transactionsData?.length, 'transactions and', accountsData?.length, 'accounts');
 
   // Check if rules are enabled to determine headers
   const settings = await chrome.storage.sync.get(['enableRulesTab']);
@@ -504,7 +529,7 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
 
   // Ensure tab exists with proper headers
   await ensureTab(sheetId, tabName, headers);
-  console.log('[Sheets] Transactions tab ensured with headers');
+  debug('[Sheets] Transactions tab ensured with headers');
 
   // Create account lookup map for enriching transactions
   const accountMap = new Map();
@@ -524,47 +549,17 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
     // Look up account info
     const accountInfo = accountMap.get(txn.account_id) || { name: '', mask: '', persistent_account_id: '' };
 
-    // Format personal_finance_category if it exists (it's an object with primary/detailed fields)
-    let pfcFormatted = '';
-    if (txn.personal_finance_category) {
-      const pfc = txn.personal_finance_category;
-      pfcFormatted = pfc.detailed || pfc.primary || '';
-    }
-
+    // Free tier: Essential columns only
     const baseRow = [
       txn.transaction_id || '',
-      txn.account_id || '',
-      accountInfo.persistent_account_id,  // persistent_account_id from account lookup
       accountInfo.name,  // account_name (enriched label)
       accountInfo.mask,  // account_mask (last 4 digits)
       txn.date || '',
-      txn.authorized_date || '',
-      txn.datetime || '',
-      txn.authorized_datetime || '',
-      txn.description_raw || txn.name || '',
       txn.merchant_name || '',
-      txn.merchant_entity_id || '',
       txn.amount || '',
       txn.iso_currency_code || '',
-      txn.unofficial_currency_code || '',
       txn.pending ? 'TRUE' : 'FALSE',
-      txn.pending_transaction_id || '',
-      txn.check_number || '',
-      Array.isArray(txn.plaid_category) ? txn.plaid_category.join(', ') :
-        (Array.isArray(txn.category) ? txn.category.join(', ') : ''),
-      pfcFormatted,
       txn.payment_channel || '',
-      txn.transaction_type || '',
-      txn.transaction_code || '',
-      txn.location?.address || '',
-      txn.location?.city || '',
-      txn.location?.region || '',
-      txn.location?.postal_code || '',
-      txn.location?.country || '',
-      txn.location?.lat || '',
-      txn.location?.lon || '',
-      txn.website || '',
-      txn.logo_url || '',
       txn.source_institution || txn.institution_name || '',
       syncedAt
     ];
@@ -577,12 +572,12 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
     return baseRow;
   });
 
-  console.log('[Sheets] Prepared', rows.length, 'transaction rows to write');
+  debug('[Sheets] Prepared', rows.length, 'transaction rows to write');
 
   // Append only unique transactions
   const newCount = await appendUniqueRows(sheetId, tabName, rows, 'transaction_id');
 
-  console.log('[Sheets] Wrote', newCount, 'new transactions (out of', rows.length, 'total)');
+  debug('[Sheets] Wrote', newCount, 'new transactions (out of', rows.length, 'total)');
   return newCount;
 }
 
@@ -592,20 +587,20 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
  * @returns {Promise<object>} Basic spreadsheet info if accessible
  */
 async function verifySheetAccess(sheetId) {
-  console.log('[Sheets] verifySheetAccess called for sheetId:', sheetId);
+  debug('[Sheets] verifySheetAccess called for sheetId:', sheetId);
   try {
     const token = await getAuthToken();
-    console.log('[Sheets] verifySheetAccess got token, testing permissions');
+    debug('[Sheets] verifySheetAccess got token, testing permissions');
 
     // First, verify the sheet exists and is readable
     const url = `${SHEETS_API_BASE}/${sheetId}?fields=properties.title,sheets.properties`;
     const metadata = await sheetsApiRequest(token, url);
-    console.log('[Sheets] Sheet exists and is readable:', metadata.properties.title);
+    debug('[Sheets] Sheet exists and is readable:', metadata.properties.title);
 
     // Phase 3.13.1: Test WRITE permissions by attempting a test write
     // We need to actually try to write something to verify edit access
     try {
-      console.log('[Sheets] Testing write permissions with actual write attempt...');
+      debug('[Sheets] Testing write permissions with actual write attempt...');
 
       // Try to update spreadsheet properties (this requires edit access)
       // We'll just read and write back the same title (no visible change)
@@ -628,7 +623,7 @@ async function verifySheetAccess(sheetId) {
         })
       });
 
-      console.log('[Sheets] Write test response status:', testResponse.status);
+      debug('[Sheets] Write test response status:', testResponse.status);
 
       if (!testResponse.ok) {
         const errorData = await testResponse.json().catch(() => ({}));
@@ -646,7 +641,7 @@ async function verifySheetAccess(sheetId) {
         // Other error - this is also concerning, throw it
         throw new Error(`Unable to verify write access: ${errorMsg}`);
       } else {
-        console.log('[Sheets] ✓ Write permissions confirmed');
+        debug('[Sheets] ✓ Write permissions confirmed');
       }
     } catch (testError) {
       console.error('[Sheets] Write permission test error:', testError);
@@ -662,8 +657,8 @@ async function verifySheetAccess(sheetId) {
 
     return metadata;
   } catch (error) {
-    console.log('[Sheets] verifySheetAccess caught error:', error);
-    console.log('[Sheets] Error name:', error.name, 'isAuthError:', error.isAuthError);
+    debug('[Sheets] verifySheetAccess caught error:', error);
+    debug('[Sheets] Error name:', error.name, 'isAuthError:', error.isAuthError);
     throw error;
   }
 }
