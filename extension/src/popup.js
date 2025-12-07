@@ -1607,10 +1607,13 @@ async function handleUpdateConnection(itemId) {
   try {
     showLoading('Opening Plaid to update connection...');
 
-    // Get userId from storage (same format as getLinkToken)
-    const userData = await chrome.storage.sync.get(['userId']);
+    // Get or create userId from storage (same format as getLinkToken)
+    let userData = await chrome.storage.sync.get(['userId']);
     if (!userData.userId) {
-      throw new Error('User ID not found');
+      // Generate a unique user ID if it doesn't exist
+      userData.userId = 'user_' + Math.random().toString(36).substring(2, 15);
+      await chrome.storage.sync.set({ userId: userData.userId });
+      debug('[handleUpdateConnection] Generated new userId:', userData.userId);
     }
 
     // Get update mode link token for this specific itemId
