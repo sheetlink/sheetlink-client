@@ -1257,6 +1257,136 @@ input:checked + .slider:before {
   border-bottom: none;
 }
 
+/* ========================================
+   Phase 3.14.0: Multi-Institution Cards
+   ======================================== */
+
+.institution-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.institution-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.institution-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.institution-icon {
+  font-size: 24px;
+}
+
+.institution-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.institution-meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.institution-actions-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.institution-actions-btn:hover {
+  background: #e5e7eb;
+}
+
+.institution-accounts {
+  padding: 12px 16px;
+}
+
+.institution-accounts .account-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.institution-accounts .account-item:last-child {
+  border-bottom: none;
+}
+
+.account-info {
+  flex: 1;
+}
+
+.account-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.account-type {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
+.account-balance {
+  font-size: 14px;
+  font-weight: 600;
+  color: #059669;
+}
+
+.institution-actions {
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 8px;
+}
+
+.institution-actions.hidden {
+  display: none;
+}
+
+.update-connection-btn,
+.disconnect-institution-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+}
+
+.update-connection-btn:hover {
+  background: #f3f4f6;
+}
+
+.disconnect-institution-btn {
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.disconnect-institution-btn:hover {
+  background: #fef2f2;
+}
+
 /* Sheet Page */
 .sheet-info a {
   font-weight: 500;
@@ -1427,7 +1557,7 @@ body.welcome-active {
 
 /* Phase 3.13: Unified loading screen */
 .unified-loader {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;

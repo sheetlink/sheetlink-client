@@ -25,6 +25,7 @@ class StateManager {
       googleTokenExpiry: null,
 
       // Bank State
+      institutions: [],  // Phase 3.14.0: Array of connected institutions
       itemId: null,
       institutionName: null,
       institutionId: null,
@@ -87,7 +88,7 @@ class StateManager {
         const keys = [
           'googleAuthenticated', 'googleEmail', 'googleUserId', 'googlePicture',
           'googleAccessToken', 'googleTokenExpiry',
-          'itemId', 'institutionName', 'institutionId',
+          'institutions', 'itemId', 'institutionName', 'institutionId',
           'sheetId', 'sheetUrl', 'sheetName', 'sheetOwner', 'sheetLastWrite',
           'lastSync',
           'hasSeenWelcome', 'hasSeenConnectStep', 'hasProgressedToSheetSetup',
@@ -101,6 +102,7 @@ class StateManager {
 
         debug('[StateManager] Initialized:', {
           authenticated: this.state.googleAuthenticated,
+          institutions: (this.state.institutions || []).length,
           hasBank: !!this.state.itemId,
           hasSheet: !!this.state.sheetId,
           email: this.state.googleEmail
@@ -305,11 +307,140 @@ class StateManager {
   }
 
   /**
+   * Phase 3.14.0: Multi-Institution Support Methods
+   */
+
+  /**
+   * Get all institutions
+   * @returns {Array} Array of institution objects
+   */
+  getInstitutions() {
+    return this.state.institutions || [];
+  }
+
+  /**
+   * Add new institution (append to array)
+   * @param {string} itemId - Plaid item ID
+   * @param {Object} institutionData - Institution metadata (name, id, accounts, etc.)
+   */
+  async addInstitution(itemId, institutionData) {
+    const institutions = this.getInstitutions();
+
+    // Check if already exists
+    const existingIndex = institutions.findIndex(i => i.itemId === itemId);
+    if (existingIndex >= 0) {
+      // Update existing
+      institutions[existingIndex] = {
+        ...institutions[existingIndex],
+        ...institutionData,
+        itemId
+      };
+    } else {
+      // Add new
+      institutions.push({
+        itemId,
+        ...institutionData,
+        connected_at: Date.now()
+      });
+    }
+
+    await this.set({ institutions });
+
+    // Backward compatibility: Set first institution as legacy itemId
+    if (institutions.length > 0) {
+      await this.set({
+        itemId: institutions[0].itemId,
+        institutionName: institutions[0].institutionName,
+        institutionId: institutions[0].institutionId
+      });
+    }
+
+    debug('[StateManager] Institution added:', institutionData.institutionName);
+  }
+
+  /**
+   * Remove institution by itemId
+   * @param {string} itemId - Plaid item ID to remove
+   */
+  async removeInstitution(itemId) {
+    const institutions = this.getInstitutions();
+    const filtered = institutions.filter(i => i.itemId !== itemId);
+    await this.set({ institutions: filtered });
+
+    // Update legacy fields if we removed the first institution
+    if (filtered.length > 0) {
+      await this.set({
+        itemId: filtered[0].itemId,
+        institutionName: filtered[0].institutionName,
+        institutionId: filtered[0].institutionId
+      });
+    } else {
+      // No institutions left, clear legacy fields
+      await this.set({
+        itemId: null,
+        institutionName: null,
+        institutionId: null
+      });
+    }
+
+    debug('[StateManager] Institution removed:', itemId);
+  }
+
+  /**
+   * Get institution by itemId
+   * @param {string} itemId - Plaid item ID
+   * @returns {Object|undefined} Institution object or undefined
+   */
+  getInstitution(itemId) {
+    const institutions = this.getInstitutions();
+    return institutions.find(i => i.itemId === itemId);
+  }
+
+  /**
+   * Update institution cache
+   * @param {string} itemId - Plaid item ID
+   * @param {Array} accounts - Account data
+   * @param {Object} metadata - Additional metadata (institutionName, institutionId)
+   */
+  async updateInstitutionCache(itemId, accounts, metadata = {}) {
+    const institutions = this.getInstitutions();
+    const index = institutions.findIndex(i => i.itemId === itemId);
+
+    if (index >= 0) {
+      institutions[index] = {
+        ...institutions[index],
+        accounts,
+        accounts_cached_at: Date.now(),
+        ...metadata
+      };
+      await this.set({ institutions });
+      debug('[StateManager] Institution cache updated:', itemId);
+    }
+  }
+
+  /**
+   * Check if any institution cache is stale
+   * @returns {boolean} True if any institution has stale cache
+   */
+  isAnyCacheStale() {
+    const institutions = this.getInstitutions();
+    const now = Date.now();
+    const staleThreshold = 5 * 60 * 1000; // 5 minutes
+
+    return institutions.some(inst => {
+      const cacheAge = now - (inst.accounts_cached_at || 0);
+      return cacheAge > staleThreshold;
+    });
+  }
+
+  /**
    * Utility: Check if user is fully connected (bank + sheet)
    * @returns {boolean}
    */
   isFullyConnected() {
-    return !!(this.state.itemId && this.state.sheetId);
+    const hasInstitutions = (this.state.institutions || []).length > 0;
+    const hasLegacyItemId = !!this.state.itemId;
+    return !!(( hasInstitutions || hasLegacyItemId) && this.state.sheetId);
   }
 
   /**
@@ -349,6 +480,7 @@ class StateManager {
       initialized: this.state.isInitialized,
       authenticated: this.state.googleAuthenticated,
       email: this.state.googleEmail,
+      institutions: (this.state.institutions || []).length,
       hasBank: !!this.state.itemId,
       institution: this.state.institutionName,
       hasSheet: !!this.state.sheetId,

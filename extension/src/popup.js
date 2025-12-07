@@ -996,8 +996,22 @@ async function handleConnectBank(isUpdate = false) {
     if (result) {
       showLoading('Exchanging token...');
       const itemId = await exchangePublicToken(result);
-      // Phase 3.13: Use StateManager to persist itemId
-      await window.StateManager.set({ itemId });
+
+      // Phase 3.14.0: Fetch institution info immediately after connecting
+      showLoading('Fetching institution details...');
+      const itemInfoResponse = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
+      if (!itemInfoResponse.ok) {
+        throw new Error('Failed to fetch institution details');
+      }
+      const itemInfo = await itemInfoResponse.json();
+
+      // Phase 3.14.0: Add institution to array (doesn't overwrite)
+      await window.StateManager.addInstitution(itemId, {
+        institutionName: itemInfo.institution_name,
+        institutionId: itemInfo.institution_id,
+        accounts: itemInfo.accounts,
+        accounts_cached_at: Date.now()
+      });
     }
 
     hideLoading();
@@ -1141,34 +1155,71 @@ function hideHomeSyncStatus() {
 }
 
 // Handle Sync Now button
+/**
+ * Phase 3.14.0: Sync all institutions
+ */
 async function handleSyncNow() {
   async function attemptSync() {
     try {
       showHomeSyncLoading('Checking your data...');
 
-      // Phase 3.13: Use StateManager
+      // Phase 3.14.0: Use StateManager to get ALL institutions
       const stateManager = window.StateManager;
-      const itemId = stateManager.get('itemId');
+      const institutions = stateManager.getInstitutions();
       const sheetId = stateManager.get('sheetId');
 
-      if (!itemId || !sheetId) {
-        throw new Error('Missing item ID or sheet ID');
+      if (institutions.length === 0) {
+        throw new Error('No banks connected');
+      }
+
+      if (!sheetId) {
+        throw new Error('Missing sheet ID');
       }
 
       // Check if we need to backfill (tabs deleted or empty)
       const needsBackfill = await checkIfBackfillNeeded(sheetId);
 
-      // Fetch data from backend (backfill if needed, otherwise incremental sync)
-      let syncData;
-      if (needsBackfill) {
-        debug('[Sync] Tabs missing or empty, using backfill to re-populate all data');
-        showHomeSyncLoading('Fetching all transactions...');
-        syncData = await fetchBackfillData(itemId);
-      } else {
-        debug('[Sync] Tabs exist with data, using incremental sync');
-        showHomeSyncLoading('Fetching new transactions...');
-        syncData = await fetchSyncData(itemId);
+      // Phase 3.14.0: Fetch data from ALL institutions
+      let allAccounts = [];
+      let allTransactions = [];
+
+      for (const institution of institutions) {
+        try {
+          showHomeSyncLoading(`Syncing ${institution.institutionName}...`);
+          debug(`[Sync] Processing ${institution.institutionName} (${institution.itemId})`);
+
+          // Fetch data from backend (backfill if needed, otherwise incremental sync)
+          let syncData;
+          if (needsBackfill) {
+            debug(`[Sync] Backfilling ${institution.institutionName}`);
+            syncData = await fetchBackfillData(institution.itemId);
+          } else {
+            debug(`[Sync] Incremental sync for ${institution.institutionName}`);
+            syncData = await fetchSyncData(institution.itemId);
+          }
+
+          // Aggregate accounts and transactions
+          if (syncData.accounts) {
+            allAccounts = allAccounts.concat(syncData.accounts);
+          }
+          if (syncData.transactions) {
+            allTransactions = allTransactions.concat(syncData.transactions);
+          }
+
+          debug(`[Sync] ${institution.institutionName}: ${syncData.transactions?.length || 0} transactions`);
+        } catch (error) {
+          console.error(`[Sync] Failed to sync ${institution.institutionName}:`, error);
+          // Continue with other institutions
+        }
       }
+
+      // Combine all data
+      const syncData = {
+        accounts: allAccounts,
+        transactions: allTransactions
+      };
+
+      debug(`[Sync] Total: ${allAccounts.length} accounts, ${allTransactions.length} transactions`);
 
       // Check if rules are enabled and ensure Rules tab exists
       if (window.RulesEngine) {
@@ -1213,8 +1264,8 @@ async function handleSyncNow() {
       // Phase 3.13: Update last sync time in StateManager
       await window.StateManager.set({ lastSync: Date.now() });
 
-      // Show detailed success message
-      const message = `Sync completed! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
+      // Phase 3.14.0: Show detailed success message with institution count
+      const message = `Synced ${institutions.length} ${institutions.length === 1 ? 'bank' : 'banks'}! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
       showHomeSyncSuccess(message);
 
       await loadState();
@@ -1417,43 +1468,50 @@ async function handleBackfill() {
 }
 
 // Handle Disconnect button
+/**
+ * Phase 3.14.0: Handle disconnecting ALL institutions
+ */
 async function handleDisconnect() {
-  if (!confirm('Are you sure you want to disconnect your bank? This will remove all stored credentials.')) {
+  const institutions = window.StateManager.getInstitutions();
+
+  if (institutions.length === 0) {
+    showError('No banks connected');
     return;
   }
 
+  const bankNames = institutions.map(i => i.institutionName).join(', ');
+
+  const confirmed = confirm(
+    `Disconnect ALL banks?\n\n` +
+    `This will remove: ${bankNames}\n\n` +
+    `All stored credentials will be removed.`
+  );
+
+  if (!confirmed) return;
+
   try {
-    showLoading('Disconnecting...');
+    showLoading('Disconnecting all banks...');
 
-    const { itemId, googleUserId, googleEmail, googleAuthenticated, hasCompletedInitialOnboarding } = await chrome.storage.sync.get(['itemId', 'googleUserId', 'googleEmail', 'googleAuthenticated', 'hasCompletedInitialOnboarding']);
-
-    // Call backend to remove item if it exists
-    if (itemId) {
+    // Disconnect each institution from backend
+    for (const institution of institutions) {
       try {
-        debug(`[Disconnect] Calling DELETE /plaid/item/${itemId}`);
-        const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}`, {
+        debug(`[Disconnect] Calling DELETE /plaid/item/${institution.itemId}`);
+        await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(institution.itemId)}`, {
           method: 'DELETE'
         });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.warn('Failed to delete item from backend:', response.status, errorText);
-          // Continue anyway - at least clear local storage
-        } else {
-          const result = await response.json();
-          debug('[Disconnect] Item deleted from backend successfully:', result);
-        }
       } catch (error) {
-        console.error('Error deleting item from backend:', error);
+        console.error(`Error deleting ${institution.institutionName} from backend:`, error);
         // Continue anyway - at least clear local storage
       }
-    } else {
-      debug('[Disconnect] No itemId found, skipping backend delete');
     }
 
-    // Phase 3.13.1: Clear bank state from StateManager immediately
-    // This ensures in-memory state is cleared before we reload the page
+    // Get auth data before clearing storage
+    const { googleUserId, googleEmail, googleAuthenticated, hasCompletedInitialOnboarding, sheetId, sheetUrl, sheetName } =
+      await chrome.storage.sync.get(['googleUserId', 'googleEmail', 'googleAuthenticated', 'hasCompletedInitialOnboarding', 'sheetId', 'sheetUrl', 'sheetName']);
+
+    // Clear all institutions from StateManager
     await window.StateManager.set({
+      institutions: [],
       itemId: null,
       institutionName: null,
       institutionId: null,
@@ -1461,36 +1519,112 @@ async function handleDisconnect() {
       accountsLastFetched: null
     });
 
-    // Clear all local storage
-    await chrome.storage.sync.clear();
-
-    // Also clear local storage (Google access tokens)
-    await chrome.storage.local.clear();
-
-    // Restore Google auth information so user doesn't have to re-authenticate
-    // Phase 3.13.1: Also restore onboarding flag to prevent re-onboarding
-    if (googleUserId && googleEmail && googleAuthenticated) {
-      await window.StateManager.set({
-        googleUserId,
-        googleEmail,
-        googleAuthenticated,
-        hasCompletedInitialOnboarding
-      });
-    }
-
     hideLoading();
 
-    // Instead of calling loadState() which triggers onboarding,
-    // stay in post-onboarding nav and go to Bank page
+    // Reload bank page to show empty state
     await loadBankPage();
-    await switchTab('bank');
+    updateStatus('All banks disconnected', true);
 
     // Update user header
-    const updatedData = await chrome.storage.sync.get(['googleEmail', 'sheetId']);
-    updateUserHeader(updatedData.googleEmail, false, !!updatedData.sheetId);
+    updateUserHeader(googleEmail, false, !!sheetId);
   } catch (error) {
     hideLoading();
-    showError('Failed to disconnect: ' + error.message);
+    showError('Failed to disconnect banks: ' + error.message);
+  }
+}
+
+/**
+ * Phase 3.14.0: Handle disconnecting a single institution
+ */
+async function handleDisconnectInstitution(itemId, institutionName) {
+  const confirmed = confirm(
+    `Disconnect ${institutionName}?\n\n` +
+    `This will remove all accounts from this institution. ` +
+    `Your other connected banks will not be affected.`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    showLoading(`Disconnecting ${institutionName}...`);
+
+    // Call backend to disconnect
+    const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}`, {
+      method: 'DELETE'
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to disconnect institution');
+    }
+
+    debug(`[Bank] Disconnected ${institutionName} from backend`);
+
+    // Remove from local state
+    await window.StateManager.removeInstitution(itemId);
+
+    hideLoading();
+
+    // Reload bank page
+    await loadBankPage();
+
+    // Show success message
+    updateStatus(`${institutionName} disconnected successfully`, true);
+  } catch (error) {
+    hideLoading();
+    showError(`Failed to disconnect ${institutionName}: ${error.message}`);
+  }
+}
+
+/**
+ * Phase 3.14.0: Handle updating institution connection (e.g., when login credentials change)
+ */
+async function handleUpdateConnection(itemId) {
+  try {
+    showLoading('Opening Plaid to update connection...');
+
+    // Get update mode link token for this specific itemId
+    const response = await fetch(`${BACKEND_URL}/plaid/link-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: window.StateManager.get('googleUserId'),
+        item_id: itemId
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to get link token for update');
+    }
+
+    const linkData = await response.json();
+
+    // Open Plaid Link in update mode
+    const result = await openPlaidLink(linkData);
+
+    if (result) {
+      // Fetch updated institution info
+      showLoading('Fetching updated institution details...');
+      const itemInfoResponse = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
+      if (!itemInfoResponse.ok) {
+        throw new Error('Failed to fetch updated institution details');
+      }
+      const itemInfo = await itemInfoResponse.json();
+
+      // Update cache
+      await window.StateManager.updateInstitutionCache(itemId, itemInfo.accounts, {
+        institutionName: itemInfo.institution_name,
+        institutionId: itemInfo.institution_id
+      });
+
+      hideLoading();
+      updateStatus('Connection updated successfully!', true);
+      await loadBankPage();
+    } else {
+      hideLoading();
+    }
+  } catch (error) {
+    hideLoading();
+    showError('Failed to update connection: ' + error.message);
   }
 }
 
@@ -2559,90 +2693,208 @@ async function loadHomePage() {
 }
 
 /**
+ * Phase 3.14.0: Render Individual Institution Card
+ */
+async function renderInstitution(institution, container) {
+  const { itemId, institutionName, accounts, accounts_cached_at } = institution;
+
+  // Create institution card
+  const card = document.createElement('div');
+  card.className = 'institution-card';
+  card.dataset.itemId = itemId;
+
+  // Render accounts (use cached if fresh, fetch if stale)
+  let accountsToRender = accounts || [];
+
+  if (!accounts || isInstitutionCacheStale(institution)) {
+    try {
+      debug(`[Bank] Fetching fresh accounts for ${institutionName}...`);
+
+      // Fetch fresh data from backend
+      const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
+      if (response.ok) {
+        const itemInfo = await response.json();
+        accountsToRender = itemInfo.accounts;
+
+        // Update cache
+        await window.StateManager.updateInstitutionCache(itemId, itemInfo.accounts, {
+          institutionName: itemInfo.institution_name,
+          institutionId: itemInfo.institution_id
+        });
+
+        debug(`[Bank] Cache updated for ${institutionName}`);
+      }
+    } catch (error) {
+      console.error(`[Bank] Failed to fetch accounts for ${institutionName}:`, error);
+      // Use cached data as fallback
+    }
+  } else {
+    debug(`[Bank] Using cached accounts for ${institutionName}`);
+  }
+
+  // Build HTML
+  const connectedDate = institution.connected_at
+    ? new Date(institution.connected_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    : 'Recently';
+
+  const accountCount = accountsToRender.length;
+
+  // Build accounts list HTML
+  let accountsHTML = '';
+  if (accountsToRender.length > 0) {
+    accountsHTML = '<div class="institution-accounts" style="display: none;">';
+    accountsToRender.forEach(account => {
+      const accountName = account.official_name || account.name;
+      const mask = account.mask ? `••${account.mask}` : '0000';
+      const type = account.subtype || account.type;
+      const balance = account.balances?.current != null
+        ? `$${account.balances.current.toFixed(2)}`
+        : '—';
+
+      accountsHTML += `
+        <div class="account-item">
+          <div class="account-info">
+            <div class="account-name">${accountName} (...${mask})</div>
+            <div class="account-type">${type}</div>
+          </div>
+          <div class="account-balance">${balance}</div>
+        </div>
+      `;
+    });
+    accountsHTML += '</div>';
+  }
+
+  card.innerHTML = `
+    <div class="institution-header">
+      <div class="institution-info">
+        <span class="institution-icon">🏦</span>
+        <div>
+          <div class="institution-name">${institutionName}</div>
+          <div class="institution-meta">${accountCount} account${accountCount !== 1 ? 's' : ''} • Connected ${connectedDate}</div>
+        </div>
+      </div>
+      <button class="institution-actions-btn" data-item-id="${itemId}">⋮</button>
+    </div>
+    ${accountsHTML}
+    <div class="institution-actions hidden">
+      <button class="update-connection-btn" data-item-id="${itemId}">
+        🔄 Update Connection
+      </button>
+      <button class="disconnect-institution-btn" data-item-id="${itemId}">
+        🗑 Disconnect ${institutionName}
+      </button>
+    </div>
+  `;
+
+  container.appendChild(card);
+
+  // Attach event listeners
+  const actionsBtn = card.querySelector('.institution-actions-btn');
+  const actionsMenu = card.querySelector('.institution-actions');
+  const updateBtn = card.querySelector('.update-connection-btn');
+  const disconnectBtn = card.querySelector('.disconnect-institution-btn');
+  const header = card.querySelector('.institution-header');
+  const accountsList = card.querySelector('.institution-accounts');
+
+  // Toggle accounts list on header click
+  if (accountsList && accountsToRender.length > 0) {
+    header.style.cursor = 'pointer';
+    header.addEventListener('click', (e) => {
+      // Don't toggle if clicking actions button
+      if (e.target.closest('.institution-actions-btn')) return;
+
+      const isExpanded = accountsList.style.display !== 'none';
+      accountsList.style.display = isExpanded ? 'none' : 'block';
+    });
+  }
+
+  // Toggle actions menu
+  actionsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    actionsMenu.classList.toggle('hidden');
+
+    // Close other open action menus
+    document.querySelectorAll('.institution-actions').forEach(menu => {
+      if (menu !== actionsMenu) {
+        menu.classList.add('hidden');
+      }
+    });
+  });
+
+  // Update connection handler
+  updateBtn.addEventListener('click', () => {
+    handleUpdateConnection(itemId);
+    actionsMenu.classList.add('hidden');
+  });
+
+  // Disconnect handler
+  disconnectBtn.addEventListener('click', () => {
+    handleDisconnectInstitution(itemId, institutionName);
+    actionsMenu.classList.add('hidden');
+  });
+
+  // Close actions menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.institution-card')) {
+      actionsMenu.classList.add('hidden');
+    }
+  });
+}
+
+/**
+ * Phase 3.14.0: Check if institution cache is stale
+ */
+function isInstitutionCacheStale(institution) {
+  if (!institution.accounts_cached_at) return true;
+  const cacheAge = Date.now() - institution.accounts_cached_at;
+  return cacheAge > (5 * 60 * 1000); // 5 minutes
+}
+
+/**
  * Load Bank page data
  * Phase 3.13: Uses cached accounts for instant display, refreshes in background if stale
  */
+/**
+ * Phase 3.14.0: Load Bank Page with Multi-Institution Support
+ */
 async function loadBankPage() {
   const stateManager = window.StateManager;
-  const itemId = stateManager.get('itemId');
+  const institutions = stateManager.getInstitutions();
   const googleEmail = stateManager.get('googleEmail');
   const sheetId = stateManager.get('sheetId');
 
   const bankListContainer = document.getElementById('bankList');
   const disconnectBankBtn = document.getElementById('disconnectBankBtn');
 
-  if (!itemId) {
+  if (institutions.length === 0) {
     // Show empty state
     if (bankListContainer) {
       bankListContainer.innerHTML = `
         <div class="card" style="text-align: center; padding: 32px;">
           <div style="font-size: 40px; margin-bottom: 12px;">🏦</div>
-          <div style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">No bank connected</div>
+          <div style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">No banks connected</div>
           <div style="font-size: 13px; color: #6b7280;">Connect a bank to start syncing your transactions.</div>
         </div>
       `;
     }
-    // Hide disconnect button when no bank is connected
+    // Hide disconnect button when no banks connected
     if (disconnectBankBtn) disconnectBankBtn.classList.add('hidden');
     return;
   }
 
-  // Show disconnect button when bank is connected
+  // Show disconnect button when banks are connected
   if (disconnectBankBtn) disconnectBankBtn.classList.remove('hidden');
 
-  // Phase 3.13: Get cached accounts
-  let cachedAccounts = stateManager.getCachedAccounts();
-  let cachedInstitutionName = stateManager.get('institutionName');
+  // Clear container
+  bankListContainer.innerHTML = '';
 
-  // Display cached data IMMEDIATELY (NO FLASH!)
-  if (cachedAccounts && cachedInstitutionName) {
-    debug('[Bank] Displaying cached accounts (instant)');
-    renderBankAccounts(cachedAccounts, cachedInstitutionName, bankListContainer);
-  }
-
-  // Refresh from backend only if cache is stale or missing
-  if (!cachedAccounts || stateManager.isCacheStale('accounts')) {
-    try {
-      debug('[Bank] Cache stale/missing, fetching from backend...');
-
-      // Fetch fresh data from backend
-      const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch item info');
-      }
-
-      const itemInfo = await response.json();
-
-      // Update cache in StateManager
-      await stateManager.setCachedAccounts(itemInfo.accounts, {
-        institutionName: itemInfo.institution_name,
-        institutionId: itemInfo.institution_id
-      });
-
-      debug('[Bank] Cache updated with fresh data');
-
-      // Update UI with fresh data (if changed)
-      renderBankAccounts(itemInfo.accounts, itemInfo.institution_name, bankListContainer);
-    } catch (error) {
-      console.error('[Bank] Failed to refresh accounts:', error);
-      // Cached data already displayed, graceful degradation
-      // If no cache, show fallback
-      if (!cachedAccounts && bankListContainer) {
-        bankListContainer.innerHTML = `
-          <div class="card">
-            <div style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">${cachedInstitutionName || 'Bank'}</div>
-            <div style="font-size: 13px; color: #6b7280;">Connected</div>
-          </div>
-        `;
-      }
-    }
-  } else {
-    debug('[Bank] Using fresh cache, no backend fetch needed');
+  // Render each institution
+  for (const institution of institutions) {
+    await renderInstitution(institution, bankListContainer);
   }
 
   // Update user header
-  updateUserHeader(googleEmail, !!itemId, !!sheetId);
+  updateUserHeader(googleEmail, institutions.length > 0, !!sheetId);
 }
 
 /**
