@@ -1607,18 +1607,29 @@ async function handleUpdateConnection(itemId) {
   try {
     showLoading('Opening Plaid to update connection...');
 
+    // Get userId from storage (same format as getLinkToken)
+    const userData = await chrome.storage.sync.get(['userId']);
+    if (!userData.userId) {
+      throw new Error('User ID not found');
+    }
+
     // Get update mode link token for this specific itemId
+    const requestBody = {
+      client_user_id: userData.userId,
+      env: CONFIG.ENV,
+      item_id: itemId,  // Tells backend to create link token in update mode
+      redirect_uri: 'https://sheetlink.app/oauth/plaid/callback'
+    };
+
     const response = await fetch(`${BACKEND_URL}/plaid/link-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: window.StateManager.get('googleUserId'),
-        item_id: itemId
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
-      throw new Error('Failed to get link token for update');
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Failed to get link token for update: ${errorData.detail || response.statusText}`);
     }
 
     const linkData = await response.json();
