@@ -2806,21 +2806,30 @@ async function renderInstitution(institution, container) {
   card.innerHTML = `
     <div class="institution-header">
       <div class="institution-info">
-        <span class="institution-icon">🏦</span>
+        <span class="status-dot status-dot-connected"></span>
         <div>
           <div class="institution-name">${institutionName}</div>
-          <div class="institution-meta">${accountCount} account${accountCount !== 1 ? 's' : ''} • Connected ${connectedDate}</div>
+          <div class="institution-meta">${accountCount} account${accountCount !== 1 ? 's' : ''}</div>
         </div>
       </div>
       <button class="institution-actions-btn" data-item-id="${itemId}">⋮</button>
     </div>
     ${accountsHTML}
     <div class="institution-actions hidden">
-      <button class="update-connection-btn" data-item-id="${itemId}">
-        🔄 Update Connection
+      <button class="update-connection-btn inactive" data-item-id="${itemId}" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+        </svg>
+        Upgrade
       </button>
       <button class="disconnect-institution-btn" data-item-id="${itemId}">
-        🗑 Disconnect ${institutionName}
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+        Disconnect
       </button>
     </div>
   `;

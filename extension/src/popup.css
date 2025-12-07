@@ -1284,8 +1284,10 @@ input:checked + .slider:before {
   gap: 12px;
 }
 
-.institution-icon {
-  font-size: 24px;
+.institution-info .status-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
 }
 
 .institution-name {
@@ -1372,10 +1374,29 @@ input:checked + .slider:before {
   border-radius: 6px;
   background: white;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.update-connection-btn svg,
+.disconnect-institution-btn svg {
+  flex-shrink: 0;
 }
 
 .update-connection-btn:hover {
   background: #f3f4f6;
+}
+
+.update-connection-btn.inactive {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #9ca3af;
+}
+
+.update-connection-btn.inactive:hover {
+  background: white;
 }
 
 .disconnect-institution-btn {
