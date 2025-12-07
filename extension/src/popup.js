@@ -24,7 +24,7 @@ let sheetErrorBanner, sheetErrorDetail, syncErrorBanner;
 let footerNav, legacyFooter;
 let pageHome, pageBank, pageSheet, pageSettings;
 let homeSyncBtn, homeResyncAllBtn, homeLastSync, homePlanTier, homeStatusPlaid, homeStatusSheet, homeSyncStatus;
-let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn, disconnectBankBtn;
+let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn;
 let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBtn;
 let settingsUserEmail, settingsUserPicture, settingsUserInitial, logoutBtn;
 let settingsAccountsTabName, settingsTransactionsTabName, settingsAppendOnly, saveSettingsBtn, settingsStatusMessage;
@@ -172,7 +172,7 @@ function initializeElements() {
   bankAccountsList = document.getElementById('bankAccountsList');
   updateBankConnectionBtn = document.getElementById('updateBankConnectionBtn');
   addBankBtn = document.getElementById('addBankBtn');
-  disconnectBankBtn = document.getElementById('disconnectBankBtn');
+  // disconnectBankBtn removed - managed per-institution in cards
 
   // Sheet page elements
   sheetLink = document.getElementById('sheetLink');
@@ -2816,11 +2816,12 @@ async function renderInstitution(institution, container) {
     </div>
     ${accountsHTML}
     <div class="institution-actions hidden">
-      <button class="update-connection-btn inactive" data-item-id="${itemId}" disabled>
+      <button class="update-connection-btn" data-item-id="${itemId}">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
         </svg>
-        Upgrade
+        Edit
       </button>
       <button class="disconnect-institution-btn" data-item-id="${itemId}">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2912,7 +2913,6 @@ async function loadBankPage() {
   const sheetId = stateManager.get('sheetId');
 
   const bankListContainer = document.getElementById('bankList');
-  const disconnectBankBtn = document.getElementById('disconnectBankBtn');
 
   if (institutions.length === 0) {
     // Show empty state
@@ -2925,13 +2925,8 @@ async function loadBankPage() {
         </div>
       `;
     }
-    // Hide disconnect button when no banks connected
-    if (disconnectBankBtn) disconnectBankBtn.classList.add('hidden');
     return;
   }
-
-  // Show disconnect button when banks are connected
-  if (disconnectBankBtn) disconnectBankBtn.classList.remove('hidden');
 
   // Clear container
   bankListContainer.innerHTML = '';
@@ -3326,7 +3321,7 @@ function attachNavigationEventListeners() {
   // Bank page
   if (updateBankConnectionBtn) updateBankConnectionBtn.addEventListener('click', handleConnectBank);
   if (addBankBtn) addBankBtn.addEventListener('click', handleConnectBank);
-  if (disconnectBankBtn) disconnectBankBtn.addEventListener('click', handleDisconnect);
+  // disconnectBankBtn removed - managed per-institution in cards
 
   // Sheet page
   if (changeSheetBtnPage) changeSheetBtnPage.addEventListener('click', async () => {
