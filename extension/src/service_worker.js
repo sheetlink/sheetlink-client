@@ -105,8 +105,16 @@ async function handleExchangePublicToken(message, sendResponse) {
     const data = await response.json();
     const itemId = data.item_id;
 
-    // Store item_id
-    await chrome.storage.sync.set({ itemId });
+    // Phase 3.14.0: Store pending institution for popup to pick up after reopen
+    // Don't overwrite existing itemId - let popup handle adding to institutions array
+    await chrome.storage.sync.set({
+      pendingInstitution: {
+        itemId: itemId,
+        institutionName: metadata?.institution?.name || 'Bank',
+        institutionId: metadata?.institution?.institution_id || null,
+        connectedAt: Date.now()
+      }
+    });
 
     // Notify popup of success (if it's listening)
     chrome.runtime.sendMessage({
@@ -474,9 +482,15 @@ async function handleExchangePublicTokenAsync(message) {
     const data = await response.json();
     const itemId = data.item_id;
 
-    // Store item_id and connection status
+    // Phase 3.14.0: Store pending institution for popup to pick up after reopen
+    // Don't overwrite existing itemId - let popup handle adding to institutions array
     await chrome.storage.sync.set({
-      itemId,
+      pendingInstitution: {
+        itemId: itemId,
+        institutionName: data.institution_name || metadata?.institution?.name || 'Bank',
+        institutionId: metadata?.institution?.institution_id || null,
+        connectedAt: Date.now()
+      },
       sheetlink_connection_status: {
         status: 'connected',
         mode: CONFIG.ENV,

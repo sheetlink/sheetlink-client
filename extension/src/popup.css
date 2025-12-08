@@ -1290,6 +1290,13 @@ input:checked + .slider:before {
   flex-shrink: 0;
 }
 
+/* Ensure status dot has solid green background with glow */
+.institution-info .status-dot-connected {
+  background: #10b981 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
 .institution-name {
   font-size: 14px;
   font-weight: 600;
@@ -1324,11 +1331,6 @@ input:checked + .slider:before {
   align-items: center;
   justify-content: space-between;
   padding: 12px 0;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.institution-accounts .account-item:last-child {
-  border-bottom: none;
 }
 
 .account-info {
