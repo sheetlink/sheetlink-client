@@ -957,10 +957,40 @@ async function updateTierDisplay() {
       userTier.textContent = tierText;
     }
 
+    // Update tier badge in user panel
+    const tierBadge = document.getElementById('tierBadge');
+    if (tierBadge) {
+      if (data.tier === 'basic') {
+        tierBadge.textContent = 'BASIC';
+        tierBadge.className = 'tier-badge basic';
+      } else if (data.tier === 'pro') {
+        tierBadge.textContent = 'PRO ⭐';
+        tierBadge.className = 'tier-badge pro';
+      } else {
+        // Free tier: hide badge
+        tierBadge.className = 'tier-badge hidden';
+      }
+    }
+
     // Update home page tier
     const homePlanTier = document.getElementById('homePlanTier');
     if (homePlanTier) {
       homePlanTier.textContent = tierText;
+    }
+
+    // Update home page tier message
+    const homeTierMessage = document.getElementById('homeTierMessage');
+    if (homeTierMessage) {
+      if (data.tier === 'free') {
+        homeTierMessage.textContent = 'Upgrade for longer history and more institutions';
+        homeTierMessage.style.color = '#6b7280';
+      } else if (data.tier === 'basic') {
+        homeTierMessage.textContent = 'Upgrade to Pro for full transaction data';
+        homeTierMessage.style.color = '#0d9488';
+      } else if (data.tier === 'pro') {
+        homeTierMessage.textContent = 'You have access to all features ✓';
+        homeTierMessage.style.color = '#10b981';
+      }
     }
 
     // Update tooltip days value (user header)
