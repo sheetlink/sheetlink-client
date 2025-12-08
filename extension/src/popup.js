@@ -47,6 +47,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   await window.StateManager.init();
   debug('[Popup] StateManager initialized');
 
+  // Phase 3.14.0: Check for pending institution from OAuth callback
+  await handlePendingInstitution();
+
   attachEventListeners();
   await loadState();
 });
@@ -772,6 +775,64 @@ async function updateBankStatus(itemId) {
   } catch (error) {
     console.error('Error updating bank status:', error);
     updateStatus('Plaid connected', true);
+  }
+}
+
+/**
+ * Phase 3.14.0: Handle pending institution from OAuth callback
+ * Called after StateManager is initialized to check if a new institution
+ * was connected via Plaid Link and needs to be added to the institutions array
+ */
+async function handlePendingInstitution() {
+  try {
+    const { pendingInstitution } = await chrome.storage.sync.get(['pendingInstitution']);
+
+    if (!pendingInstitution) {
+      debug('[handlePendingInstitution] No pending institution found');
+      return;
+    }
+
+    debug('[handlePendingInstitution] Found pending institution:', pendingInstitution);
+
+    const stateManager = window.StateManager;
+    const { itemId, institutionName, institutionId, connectedAt } = pendingInstitution;
+
+    // Fetch full institution details from backend
+    try {
+      showLoading(`Adding ${institutionName}...`);
+
+      const itemInfoResponse = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(itemId)}/info`);
+      if (!itemInfoResponse.ok) {
+        throw new Error('Failed to fetch institution details');
+      }
+
+      const itemInfo = await itemInfoResponse.json();
+
+      // Add institution to array
+      await stateManager.addInstitution(itemId, {
+        institutionName: itemInfo.institution_name,
+        institutionId: itemInfo.institution_id,
+        accounts: itemInfo.accounts,
+        accounts_cached_at: Date.now()
+      });
+
+      // Clear the pending flag
+      await chrome.storage.sync.remove(['pendingInstitution']);
+
+      debug('[handlePendingInstitution] Successfully added institution:', institutionName);
+      hideLoading();
+      updateStatus(`${institutionName} connected successfully!`, true);
+    } catch (error) {
+      console.error('[handlePendingInstitution] Error adding institution:', error);
+      hideLoading();
+      showError(`Failed to add ${institutionName}: ${error.message}`);
+
+      // Clear the pending flag even on error to avoid retry loops
+      await chrome.storage.sync.remove(['pendingInstitution']);
+    }
+  } catch (error) {
+    console.error('[handlePendingInstitution] Error:', error);
+    // Silent fail - don't disrupt the normal flow
   }
 }
 
@@ -2788,7 +2849,7 @@ async function renderInstitution(institution, container) {
       const type = account.subtype || account.type;
       const balance = account.balances?.current != null
         ? `$${account.balances.current.toFixed(2)}`
-        : '—';
+        : '';
 
       accountsHTML += `
         <div class="account-item">
