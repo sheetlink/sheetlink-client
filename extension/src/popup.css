@@ -1030,9 +1030,9 @@ footer .btn {
 }
 
 .status-dot-connected {
-  background: #10b981;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);
-  animation: pulse-green 2s ease-in-out infinite;
+  background: #10b981 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8) !important;
+  animation: pulse-green 2s ease-in-out infinite !important;
 }
 
 .status-dot-disconnected {

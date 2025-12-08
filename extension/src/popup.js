@@ -1295,6 +1295,27 @@ async function handleSyncNow() {
           debug(`[Sync] ${institution.institutionName}: ${syncData.transactions?.length || 0} transactions`);
         } catch (error) {
           console.error(`[Sync] Failed to sync ${institution.institutionName}:`, error);
+
+          // CRITICAL: Even if sync fails, preserve accounts from cache to avoid data loss
+          // When we write to sheets, we need ALL accounts, not just successful syncs
+          if (institution.accounts && institution.accounts.length > 0) {
+            debug(`[Sync] Using cached accounts for ${institution.institutionName} (${institution.accounts.length} accounts)`);
+            allAccounts = allAccounts.concat(institution.accounts);
+          } else {
+            console.warn(`[Sync] No cached accounts for ${institution.institutionName}, attempting to fetch...`);
+            try {
+              const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(institution.itemId)}/info`);
+              if (response.ok) {
+                const itemInfo = await response.json();
+                if (itemInfo.accounts) {
+                  debug(`[Sync] Fetched ${itemInfo.accounts.length} accounts for ${institution.institutionName}`);
+                  allAccounts = allAccounts.concat(itemInfo.accounts);
+                }
+              }
+            } catch (fetchError) {
+              console.error(`[Sync] Could not fetch accounts for ${institution.institutionName}:`, fetchError);
+            }
+          }
           // Continue with other institutions
         }
       }
