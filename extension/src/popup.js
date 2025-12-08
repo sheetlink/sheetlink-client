@@ -925,6 +925,14 @@ async function updateTierDisplay() {
 
     const data = await response.json();
 
+    // Cache tier in chrome.storage for use during sync
+    await chrome.storage.sync.set({
+      userTier: data.tier,
+      tierFetchedAt: Date.now(),
+      tierFeatures: data.features || {}
+    });
+    debug('[Tier] Cached tier in storage:', data.tier);
+
     // Format tier display
     const tierName = data.tier.charAt(0).toUpperCase() + data.tier.slice(1);
     const tierText = `${tierName} (${data.days_available} days)`;
@@ -2300,11 +2308,27 @@ async function writeToSheets(sheetId, data) {
     await window.SheetsAPI.writeAccounts(sheetId, data.accounts);
   }
 
+  // Fetch user tier to determine transaction fields
+  // PRO tier gets 33 fields, FREE/BASIC get 11 fields
+  let userTier = 'free';  // Default to free tier
+  try {
+    const storage = await chrome.storage.sync.get(['userTier']);
+    if (storage.userTier) {
+      userTier = storage.userTier;
+      debug('[Sheets] Using cached tier:', userTier);
+    } else {
+      debug('[Sheets] No cached tier, defaulting to free');
+    }
+  } catch (error) {
+    debug('[Sheets] Error fetching tier from storage:', error);
+  }
+
   // Always write transactions tab (creates tab even if no transactions)
   // Pass accounts data for enriching transactions with account_name and account_mask
+  // Pass tier to determine which transaction fields to write
   const transactionsData = data.transactions || [];
   const accountsData = data.accounts || [];
-  const newCount = await window.SheetsAPI.writeTransactions(sheetId, transactionsData, accountsData);
+  const newCount = await window.SheetsAPI.writeTransactions(sheetId, transactionsData, accountsData, userTier);
 
   return {
     accountsWritten: data.accounts?.length || 0,

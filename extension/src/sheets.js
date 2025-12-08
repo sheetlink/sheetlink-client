@@ -126,15 +126,20 @@ const TRANSACTIONS_HEADERS_FULL = [
 const TRANSACTIONS_HEADERS_BASE = TRANSACTIONS_HEADERS_FREE;
 
 /**
- * Get transaction headers based on rules settings
+ * Get transaction headers based on tier and rules settings
+ * @param {string} tier - Subscription tier: "free", "basic", or "pro"
  * @param {boolean} includeRules - Whether to include final_category column
  * @returns {array} Transaction headers array
  */
-function getTransactionHeaders(includeRules = false) {
+function getTransactionHeaders(tier = 'free', includeRules = false) {
+  // PRO tier gets full transaction data (33 fields)
+  // FREE and BASIC tiers get essential data only (11 fields)
+  const baseHeaders = (tier === 'pro') ? TRANSACTIONS_HEADERS_FULL : TRANSACTIONS_HEADERS_FREE;
+
   if (includeRules) {
-    return [...TRANSACTIONS_HEADERS_BASE, 'final_category'];
+    return [...baseHeaders, 'final_category'];
   }
-  return TRANSACTIONS_HEADERS_BASE;
+  return baseHeaders;
 }
 
 /**
@@ -515,17 +520,18 @@ async function writeAccounts(sheetId, accountsData) {
  * @param {string} sheetId - Spreadsheet ID
  * @param {array} transactionsData - Array of transaction objects from backend
  * @param {array} accountsData - Array of account objects for enriching transaction data (optional)
+ * @param {string} tier - Subscription tier: "free", "basic", or "pro" (default: "free")
  * @returns {Promise<number>} Number of new transactions added
  */
-async function writeTransactions(sheetId, transactionsData, accountsData = []) {
+async function writeTransactions(sheetId, transactionsData, accountsData = [], tier = 'free') {
   const tabName = 'Transactions';
 
-  debug('[Sheets] writeTransactions called with', transactionsData?.length, 'transactions and', accountsData?.length, 'accounts');
+  debug('[Sheets] writeTransactions called with', transactionsData?.length, 'transactions,', accountsData?.length, 'accounts, tier:', tier);
 
   // Check if rules are enabled to determine headers
   const settings = await chrome.storage.sync.get(['enableRulesTab']);
   const includeRules = settings.enableRulesTab || false;
-  const headers = getTransactionHeaders(includeRules);
+  const headers = getTransactionHeaders(tier, includeRules);
 
   // Ensure tab exists with proper headers
   await ensureTab(sheetId, tabName, headers);
@@ -553,20 +559,63 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
     // Look up account info
     const accountInfo = accountMap.get(txn.account_id) || { name: '', mask: '', persistent_account_id: '' };
 
-    // Free tier: Essential columns only
-    const baseRow = [
-      txn.transaction_id || '',
-      accountInfo.name,  // account_name (enriched label)
-      accountInfo.mask,  // account_mask (last 4 digits)
-      txn.date || '',
-      txn.merchant_name || '',
-      txn.amount || '',
-      txn.iso_currency_code || '',
-      txn.pending ? 'TRUE' : 'FALSE',
-      txn.payment_channel || '',
-      txn.source_institution || txn.institution_name || '',
-      syncedAt
-    ];
+    let baseRow;
+
+    // PRO tier: All 33 transaction fields
+    if (tier === 'pro') {
+      baseRow = [
+        txn.transaction_id || '',
+        txn.account_id || '',
+        accountInfo.persistent_account_id || '',
+        accountInfo.name,  // account_name (enriched label)
+        accountInfo.mask,  // account_mask (last 4 digits)
+        txn.date || '',
+        txn.authorized_date || '',
+        txn.datetime || '',
+        txn.authorized_datetime || '',
+        txn.description_raw || txn.name || '',
+        txn.merchant_name || '',
+        txn.merchant_entity_id || '',
+        txn.amount || '',
+        txn.iso_currency_code || '',
+        txn.unofficial_currency_code || '',
+        txn.pending ? 'TRUE' : 'FALSE',
+        txn.pending_transaction_id || '',
+        txn.check_number || '',
+        txn.plaid_category ? JSON.stringify(txn.plaid_category) : '',
+        txn.personal_finance_category ? JSON.stringify(txn.personal_finance_category) : '',
+        txn.payment_channel || '',
+        txn.transaction_type || '',
+        txn.transaction_code || '',
+        txn.location?.address || '',
+        txn.location?.city || '',
+        txn.location?.region || '',
+        txn.location?.postal_code || '',
+        txn.location?.country || '',
+        txn.location?.lat || '',
+        txn.location?.lon || '',
+        txn.website || '',
+        txn.logo_url || '',
+        txn.source_institution || txn.institution_name || '',
+        syncedAt
+      ];
+    }
+    // FREE/BASIC tier: Essential 11 columns only
+    else {
+      baseRow = [
+        txn.transaction_id || '',
+        accountInfo.name,  // account_name (enriched label)
+        accountInfo.mask,  // account_mask (last 4 digits)
+        txn.date || '',
+        txn.merchant_name || '',
+        txn.amount || '',
+        txn.iso_currency_code || '',
+        txn.pending ? 'TRUE' : 'FALSE',
+        txn.payment_channel || '',
+        txn.source_institution || txn.institution_name || '',
+        syncedAt
+      ];
+    }
 
     // Add final_category if rules are enabled
     if (includeRules) {
