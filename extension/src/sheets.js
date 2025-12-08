@@ -543,9 +543,9 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
     });
   }
 
-  // Sort transactions by date in descending order (newest first)
-  // This ensures consistent chronological order regardless of batch order
-  transactionsData.sort((a, b) => new Date(b.date) - new Date(a.date));
+  // Sort transactions by date in ascending order (oldest first)
+  // This ensures chronological order when appending: older dates at top, newer at bottom
+  transactionsData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
   // Transform transactions data to rows
   const syncedAt = new Date().toISOString();
