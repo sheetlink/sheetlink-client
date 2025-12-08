@@ -543,6 +543,10 @@ async function writeTransactions(sheetId, transactionsData, accountsData = []) {
     });
   }
 
+  // Sort transactions by date in descending order (newest first)
+  // This ensures consistent chronological order regardless of batch order
+  transactionsData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
   // Transform transactions data to rows
   const syncedAt = new Date().toISOString();
   const rows = transactionsData.map(txn => {
