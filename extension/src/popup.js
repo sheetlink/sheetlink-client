@@ -1240,6 +1240,83 @@ function hideHomeSyncStatus() {
   homeSyncStatus.classList.add('hidden');
 }
 
+/**
+ * Phase 3.14.0: Show message when stuck cursor is detected with fix button
+ */
+function showSyncCursorIssueMessage() {
+  if (!homeSyncStatus) return;
+
+  homeSyncStatus.classList.remove('hidden', 'loading', 'success', 'error');
+  homeSyncStatus.classList.add('warning');
+  homeSyncStatus.querySelector('.sync-status-loading').style.display = 'none';
+  homeSyncStatus.querySelector('.sync-status-message').style.display = 'block';
+
+  const messageEl = homeSyncStatus.querySelector('#homeSyncStatusMessage');
+  messageEl.innerHTML = `
+    No new transactions found. This might be a sync issue.
+    <button id="fixSyncIssuesBtn" style="
+      margin-left: 8px;
+      padding: 4px 12px;
+      background: #f59e0b;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    ">Fix Sync Issues</button>
+  `;
+
+  // Attach click handler
+  const fixBtn = document.getElementById('fixSyncIssuesBtn');
+  if (fixBtn) {
+    fixBtn.addEventListener('click', handleFixSyncIssues);
+  }
+
+  // Don't auto-hide - let user decide when to dismiss
+}
+
+/**
+ * Phase 3.14.0: Reset sync cursors for all institutions and retry
+ */
+async function handleFixSyncIssues() {
+  try {
+    showHomeSyncLoading('Resetting sync state...');
+
+    const stateManager = window.StateManager;
+    const institutions = stateManager.getInstitutions();
+
+    debug('[Fix Sync] Resetting cursors for', institutions.length, 'institution(s)');
+
+    // Reset cursor for each institution
+    for (const institution of institutions) {
+      try {
+        const response = await fetch(`${BACKEND_URL}/plaid/item/${encodeURIComponent(institution.itemId)}/reset-cursor`, {
+          method: 'POST'
+        });
+
+        if (!response.ok) {
+          console.warn(`[Fix Sync] Failed to reset cursor for ${institution.institutionName}`);
+        } else {
+          debug(`[Fix Sync] Reset cursor for ${institution.institutionName}`);
+        }
+      } catch (error) {
+        console.error(`[Fix Sync] Error resetting cursor for ${institution.institutionName}:`, error);
+      }
+    }
+
+    // Retry sync after resetting cursors
+    showHomeSyncLoading('Retrying sync...');
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Brief delay
+
+    await handleSyncNow();
+
+  } catch (error) {
+    console.error('[Fix Sync] Error:', error);
+    showHomeSyncError('Failed to fix sync issues. Please try again.');
+  }
+}
+
 // Handle Sync Now button
 /**
  * Phase 3.14.0: Sync all institutions
@@ -1400,6 +1477,25 @@ async function handleSyncNow() {
       // Phase 3.14.0: Show detailed success message with institution count
       const message = `Synced ${institutions.length} ${institutions.length === 1 ? 'bank' : 'banks'}! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
       showHomeSyncSuccess(message);
+
+      // Phase 3.14.0: Smart detection for stuck sync cursor
+      // If we fetched transactions but wrote 0 new ones, and it's been a while, cursor might be stuck
+      const lastSync = stateManager.get('lastSync');
+      const hoursSinceLastSync = lastSync ? (Date.now() - lastSync) / (1000 * 60 * 60) : 999;
+      const fetchedTransactions = allTransactions.length;
+      const wroteNewTransactions = result.transactionsNew;
+
+      if (fetchedTransactions > 0 && wroteNewTransactions === 0 && hoursSinceLastSync > 6) {
+        // Likely stuck cursor - all fetched transactions were duplicates
+        debug('[Sync] Possible stuck cursor detected:', {
+          fetched: fetchedTransactions,
+          wrote: wroteNewTransactions,
+          hoursSince: hoursSinceLastSync
+        });
+
+        // Show helpful message with fix button
+        showSyncCursorIssueMessage();
+      }
 
       await loadState();
       hideSyncError();
