@@ -1296,6 +1296,32 @@ async function handleSyncNow() {
         } catch (error) {
           console.error(`[Sync] Failed to sync ${institution.institutionName}:`, error);
 
+          // Check if this is a Plaid pagination mutation error - retry with backfill
+          const errorMsg = error.message || '';
+          const isPaginationError = errorMsg.includes('TRANSACTIONS_SYNC_MUTATION_DURING_PAGINATION');
+
+          if (isPaginationError && !needsBackfill) {
+            console.warn(`[Sync] Plaid pagination error for ${institution.institutionName}, retrying with backfill...`);
+            try {
+              showHomeSyncLoading(`Re-syncing ${institution.institutionName}...`);
+              debug(`[Sync] Backfill retry for ${institution.institutionName}`);
+              const syncData = await fetchBackfillData(institution.itemId);
+
+              // Aggregate accounts and transactions
+              if (syncData.accounts) {
+                allAccounts = allAccounts.concat(syncData.accounts);
+              }
+              if (syncData.transactions) {
+                allTransactions = allTransactions.concat(syncData.transactions);
+              }
+
+              debug(`[Sync] ${institution.institutionName} backfill retry: ${syncData.transactions?.length || 0} transactions`);
+              continue; // Skip the fallback account logic
+            } catch (retryError) {
+              console.error(`[Sync] Backfill retry also failed for ${institution.institutionName}:`, retryError);
+            }
+          }
+
           // CRITICAL: Even if sync fails, preserve accounts from cache to avoid data loss
           // When we write to sheets, we need ALL accounts, not just successful syncs
           if (institution.accounts && institution.accounts.length > 0) {
