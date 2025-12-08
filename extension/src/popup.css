@@ -331,6 +331,12 @@ header {
   color: #991b1b;
 }
 
+.sync-status.warning {
+  background: #fffbeb;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
 .sync-status.loading {
   background: #eff6ff;
   border-color: #3b82f6;
