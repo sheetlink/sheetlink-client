@@ -1458,19 +1458,53 @@ async function handleResyncAll() {
   try {
     showHomeSyncLoading('Re-fetching all data...');
 
-    // Phase 3.13: Use StateManager
+    // Phase 3.14.0: Use StateManager with multi-institution support
     const stateManager = window.StateManager;
-    const itemId = stateManager.get('itemId');
+    const institutions = stateManager.getInstitutions();
     const sheetId = stateManager.get('sheetId');
 
-    if (!itemId || !sheetId) {
-      throw new Error('Missing item ID or sheet ID');
+    if (institutions.length === 0 || !sheetId) {
+      throw new Error('No banks connected or sheet not set up');
     }
 
-    debug('[Resync All] Forcing backfill to re-fetch all data');
+    debug(`[Resync All] Forcing backfill for ${institutions.length} institution(s)`);
 
-    // Always use backfill (ignore tab state check)
-    const syncData = await fetchBackfillData(itemId);
+    // Phase 3.14.0: Fetch backfill data from ALL institutions
+    let allAccounts = [];
+    let allTransactions = [];
+
+    for (const institution of institutions) {
+      try {
+        showHomeSyncLoading(`Re-syncing ${institution.institutionName}...`);
+        debug(`[Resync All] Backfilling ${institution.institutionName}`);
+
+        const syncData = await fetchBackfillData(institution.itemId);
+
+        // Aggregate accounts and transactions
+        if (syncData.accounts) {
+          allAccounts = allAccounts.concat(syncData.accounts);
+        }
+        if (syncData.transactions) {
+          allTransactions = allTransactions.concat(syncData.transactions);
+        }
+
+        debug(`[Resync All] ${institution.institutionName}: ${syncData.transactions?.length || 0} transactions`);
+      } catch (error) {
+        console.error(`[Resync All] Failed to backfill ${institution.institutionName}:`, error);
+
+        // Use cached accounts as fallback
+        if (institution.accounts && institution.accounts.length > 0) {
+          allAccounts = allAccounts.concat(institution.accounts);
+        }
+      }
+    }
+
+    const syncData = {
+      accounts: allAccounts,
+      transactions: allTransactions
+    };
+
+    debug(`[Resync All] Total: ${allAccounts.length} accounts, ${allTransactions.length} transactions`);
 
     showHomeSyncLoading('Writing to sheet...');
 
@@ -1480,8 +1514,8 @@ async function handleResyncAll() {
     // Phase 3.13: Update last sync time in StateManager
     await window.StateManager.set({ lastSync: Date.now() });
 
-    // Show detailed success message
-    const message = `Re-sync completed! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
+    // Phase 3.14.0: Show detailed success message with institution count
+    const message = `Re-synced ${institutions.length} ${institutions.length === 1 ? 'bank' : 'banks'}! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
     showHomeSyncSuccess(message);
 
     await loadState();
