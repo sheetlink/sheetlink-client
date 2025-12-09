@@ -161,9 +161,9 @@ async function launchOAuthFlow(sendResponse) {
   const state = JSON.stringify({ extension_id: extensionId });
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
     `client_id=${CONFIG.GOOGLE_CLIENT_ID}&` +
-    `response_type=token&` +
+    `response_type=token id_token&` +
     `redirect_uri=${encodeURIComponent(CONFIG.GOOGLE_REDIRECT_URI)}&` +
-    `scope=${encodeURIComponent(scopes)}&` +
+    `scope=${encodeURIComponent(scopes)} openid&` +
     `state=${encodeURIComponent(state)}`;
 
   // Store the callback for later when the OAuth page sends us the token
@@ -241,7 +241,7 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
 
   if (message.type === 'OAUTH_SUCCESS') {
     debug('[Service Worker] Processing OAUTH_SUCCESS callback');
-    const { accessToken, expiresIn } = message;
+    const { accessToken, idToken, expiresIn } = message;  // Phase 3.16.0: Also receive ID token
 
     // Cache the token with expiry
     const expiry = Date.now() + (parseInt(expiresIn) * 1000);
@@ -319,6 +319,43 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
         });
 
         debug('[Service Worker] Stored googleUserId, googleEmail, googlePicture, and googleAuthenticated flag');
+
+        // Phase 3.16.0: Call /auth/login with ID token to get JWT
+        if (idToken) {
+          try {
+            debug('[Service Worker] Calling /auth/login with ID token...');
+            const loginResponse = await fetch(`${CONFIG.BACKEND_URL}/auth/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_token: idToken })
+            });
+
+            if (!loginResponse.ok) {
+              const errorData = await loginResponse.json().catch(() => ({}));
+              throw new Error(`Login failed: ${errorData.detail || loginResponse.statusText}`);
+            }
+
+            const loginData = await loginResponse.json();
+            debug('[Service Worker] Login successful:', loginData.email, loginData.subscription_tier);
+
+            // Store JWT token and user info
+            const jwtExpiry = Date.now() + (60 * 60 * 1000); // 60 minutes
+            await chrome.storage.sync.set({
+              jwtToken: loginData.token,
+              jwtExpiry: jwtExpiry,
+              userId: loginData.user_id,
+              userEmail: loginData.email,
+              userTier: loginData.subscription_tier
+            });
+
+            debug('[Service Worker] Stored JWT token and user info (tier:', loginData.subscription_tier, ')');
+          } catch (error) {
+            console.error('[Service Worker] Failed to authenticate with backend:', error);
+            // Don't fail the OAuth flow - user can still use extension without JWT
+          }
+        } else {
+          console.warn('[Service Worker] No ID token received - JWT authentication skipped');
+        }
       } else {
         console.error('[Service Worker] No user ID in Google userinfo response:', userInfo);
       }

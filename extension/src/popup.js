@@ -11,6 +11,48 @@ const debug = window.debug;
 // Backend API base URL
 const BACKEND_URL = CONFIG.BACKEND_URL;
 
+// Phase 3.16.0: Authenticated fetch helper
+// Automatically adds JWT token to API requests and handles expiry
+async function authenticatedFetch(url, options = {}) {
+  try {
+    // Get JWT token and expiry from storage
+    const { jwtToken, jwtExpiry } = await chrome.storage.sync.get(['jwtToken', 'jwtExpiry']);
+
+    // Check if token exists and is valid
+    if (!jwtToken || !jwtExpiry || Date.now() >= jwtExpiry) {
+      // Token missing or expired - throw AUTH_REQUIRED error
+      const error = new Error('Authentication required');
+      error.code = 'AUTH_REQUIRED';
+      throw error;
+    }
+
+    // Add Authorization header with JWT token
+    const headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${jwtToken}`
+    };
+
+    // Make the fetch request with JWT token
+    const response = await fetch(url, { ...options, headers });
+
+    // Handle 401 Unauthorized (token invalid/expired on backend)
+    if (response.status === 401) {
+      const error = new Error('Session expired');
+      error.code = 'AUTH_EXPIRED';
+      throw error;
+    }
+
+    return response;
+  } catch (error) {
+    // Re-throw auth errors for caller to handle
+    if (error.code === 'AUTH_REQUIRED' || error.code === 'AUTH_EXPIRED') {
+      throw error;
+    }
+    // Re-throw other errors
+    throw error;
+  }
+}
+
 // DOM elements
 let connectBankBtn, signInGoogleBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, templatesBtn, learnMoreBtn;
 let removeSheetBtn, changeSheetBtn, changeSheetLinkBtn, retrySyncBtn;
@@ -912,7 +954,19 @@ async function tryRestoreItems() {
 // Update tier display from backend
 async function updateTierDisplay() {
   try {
-    const response = await fetch(`${BACKEND_URL}/tier/status`);
+    // Phase 3.16.0: Try authenticated call first, fallback to unauthenticated
+    let response;
+    try {
+      response = await authenticatedFetch(`${BACKEND_URL}/tier/status`);
+    } catch (error) {
+      if (error.code === 'AUTH_REQUIRED' || error.code === 'AUTH_EXPIRED') {
+        // No JWT token or expired - fallback to unauthenticated call (free tier)
+        debug('[Tier] No JWT token, using unauthenticated tier/status');
+        response = await fetch(`${BACKEND_URL}/tier/status`);
+      } else {
+        throw error;
+      }
+    }
 
     if (!response.ok) {
       // If endpoint fails, keep default "Free (7 days)" and hide auto-sync
@@ -1707,8 +1761,8 @@ async function handleBackfill() {
       throw new Error('Missing item ID or sheet ID');
     }
 
-    // Call backfill endpoint
-    const response = await fetch(`${BACKEND_URL}/plaid/backfill`, {
+    // Call backfill endpoint (Phase 3.16.0: with JWT authentication)
+    const response = await authenticatedFetch(`${BACKEND_URL}/plaid/backfill`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -2045,7 +2099,8 @@ async function exchangePublicToken(publicToken) {
 async function fetchSyncData(itemId) {
   debug('[Sync] Fetching data from backend for item_id:', itemId);
 
-  const response = await fetch(`${BACKEND_URL}/plaid/sync`, {
+  // Phase 3.16.0: Use authenticated fetch for sync (enables tier-based features)
+  const response = await authenticatedFetch(`${BACKEND_URL}/plaid/sync`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ item_id: itemId })
@@ -2074,7 +2129,8 @@ async function fetchSyncData(itemId) {
 async function fetchBackfillData(itemId) {
   debug('[Sync] Fetching backfill data from backend for item_id:', itemId);
 
-  const response = await fetch(`${BACKEND_URL}/plaid/backfill`, {
+  // Phase 3.16.0: Use authenticated fetch for backfill (enables tier-based features)
+  const response = await authenticatedFetch(`${BACKEND_URL}/plaid/backfill`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ item_id: itemId })
