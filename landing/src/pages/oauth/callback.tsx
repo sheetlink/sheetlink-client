@@ -3,10 +3,11 @@ import Head from 'next/head';
 
 export default function OAuthCallback() {
   useEffect(() => {
-    // Extract the OAuth token from the URL fragment
+    // Extract the OAuth tokens from the URL fragment
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     const accessToken = params.get('access_token');
+    const idToken = params.get('id_token');  // Phase 3.16.0: Extract ID token for JWT auth
     const expiresIn = params.get('expires_in');
     const error = params.get('error');
 
@@ -41,6 +42,7 @@ export default function OAuthCallback() {
           {
             type: 'OAUTH_SUCCESS',
             accessToken: accessToken,
+            idToken: idToken,  // Phase 3.16.0: Send ID token for JWT auth
             expiresIn: expiresIn
           },
           (response: any) => {
