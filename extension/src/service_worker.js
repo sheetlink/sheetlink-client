@@ -159,11 +159,14 @@ async function launchOAuthFlow(sendResponse) {
   const extensionId = chrome.runtime.id;
   // Add extension_id as state parameter so it gets passed through OAuth
   const state = JSON.stringify({ extension_id: extensionId });
+  // Generate nonce for ID token security (required by Google for implicit flow)
+  const nonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
     `client_id=${CONFIG.GOOGLE_CLIENT_ID}&` +
     `response_type=token id_token&` +
     `redirect_uri=${encodeURIComponent(CONFIG.GOOGLE_REDIRECT_URI)}&` +
     `scope=${encodeURIComponent(scopes)} openid&` +
+    `nonce=${nonce}&` +
     `state=${encodeURIComponent(state)}`;
 
   // Store the callback for later when the OAuth page sends us the token
