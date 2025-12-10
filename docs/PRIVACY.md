@@ -67,47 +67,54 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 
 **What we store:**
 - Your Google user ID (an opaque identifier like `112233445566778899`)
+- Your Google email address (e.g., `user@gmail.com`)
 - Used to associate bank connections with your Google account
 
 **Why we store it:**
-- Prevent abuse: Enforce free tier limits (3 banks per 30 days)
-- Cross-device sync: Restore bank connections after extension reinstall or across devices
-- Upgrade path: Enable future subscription management
+- **User ID**: Prevent abuse by enforcing tier limits and enabling cross-device sync
+- **Email**: User identification, subscription management, and support
+- **Both**: Required for JWT authentication to enable tier-based features
 
 **Where it's stored:**
-- Backend database (PostgreSQL)
-- Associated with your Plaid Items
-- No personally identifiable information (just the ID)
-
-**What we DON'T store:**
-- Your Google email address
-- Your Google profile information
-- Your Google OAuth tokens or access credentials
+- Backend database (PostgreSQL) in the `users` table
+- Associated with your Plaid Items and subscription tier
+- Email and user ID stored together for authentication
 
 **Privacy guarantees:**
-- Google user ID is obtained via `chrome.identity.getProfileUserInfo()`
-- This is a non-sensitive, public identifier provided by Chrome
-- Cannot be used to access your Google account or data
-- Used ONLY for rate limiting and Item restoration
+- Google user ID obtained via Google OAuth ID token
+- Email obtained from Google OAuth during authentication
+- Cannot be used to access your Google account or data beyond what you authorized
+- Used ONLY for authentication, tier enforcement, and account management
 
-### 4. Google OAuth Flow
+### 4. Google OAuth Flow & JWT Authentication
 
 **How authentication works:**
 - Extension opens OAuth flow in a popup window
 - You authorize Google Sheets access via Google's secure OAuth page
-- Google redirects to `https://sheetlink.app/oauth/callback` with access token
-- Callback page immediately sends token to extension via `chrome.runtime.sendMessage`
-- Extension caches token locally for subsequent syncs
+- Google redirects to `https://sheetlink.app/oauth/callback` with **two tokens**:
+  - **Access token**: Used for Google Sheets API access (never sent to backend)
+  - **ID token**: Sent to backend to verify your Google identity
+- Callback page immediately sends both tokens to extension via `chrome.runtime.sendMessage`
+- Extension caches access token locally and exchanges ID token for JWT
+
+**JWT Authentication Flow:**
+1. Extension receives ID token from OAuth callback
+2. Extension sends ID token to backend `/auth/login` endpoint
+3. Backend verifies ID token with Google, extracts email and user ID
+4. Backend creates/updates user record and issues JWT token (60-minute expiry)
+5. Extension stores JWT token locally in `chrome.storage.sync`
+6. JWT token included in all subsequent API requests (`Authorization: Bearer <token>`)
 
 **What the OAuth callback page does:**
-- Extracts access token from URL (never sent to any server)
-- Communicates token to extension (local Chrome messaging)
+- Extracts access token and ID token from URL
+- Communicates tokens to extension (local Chrome messaging only)
 - Displays success message, then window can be closed
-- **Does NOT** store, log, or transmit the token anywhere
+- **Does NOT** store, log, or transmit tokens to any server
 
 **Privacy guarantees:**
-- OAuth token never leaves your browser
-- Token stored only in extension's local storage (encrypted by Chrome)
+- OAuth access token never leaves your browser
+- ID token sent ONLY to backend for one-time verification (not stored)
+- JWT token stored locally in extension storage (synced across Chrome instances)
 - Callback page runs entirely client-side (no server processing)
 - No analytics or tracking on callback page
 
@@ -135,6 +142,8 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 - Last sync timestamp
 - User preferences (Rules enabled, tab names, etc.)
 - Session ID for Plaid connection
+- **JWT token** (60-minute expiry, for authenticated API requests)
+- **User info** (user ID, email, subscription tier)
 
 **Where it's stored:**
 - `chrome.storage.sync` (synced across Chrome instances)
@@ -144,7 +153,8 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 - Transaction data
 - Account balances
 - Bank credentials
-- Google OAuth tokens (managed by Chrome Identity API)
+- Google OAuth access tokens (managed by Chrome Identity API)
+- Google OAuth ID tokens (sent to backend once, then discarded)
 
 ---
 
@@ -395,7 +405,10 @@ We may update this Privacy Policy from time to time. Changes will be posted with
 | Bank credentials | ❌ No (Plaid handles) | Plaid servers | ✅ Yes | ❌ No | N/A |
 | Transactions | ✅ Yes (transit only) | Your Google Sheet | ❌ No* | ❌ No | ✅ Yes (delete Sheet) |
 | Plaid tokens | ✅ Yes | Backend DB | ✅ Yes (Fernet) | ❌ No | ✅ Yes ("Disconnect") |
-| Google token | ✅ Yes | Chrome storage | ✅ Yes (Chrome) | ❌ No | ✅ Yes (revoke) |
+| Google access token | ✅ Yes | Chrome storage | ✅ Yes (Chrome) | ❌ No | ✅ Yes (revoke) |
+| Google ID token | ✅ Yes (1× use) | Not stored | N/A | ❌ No | N/A (ephemeral) |
+| JWT token | ✅ Yes | Extension storage | ✅ Yes (Chrome) | ❌ No | ✅ Yes (uninstall) |
+| Email & User ID | ✅ Yes | Backend DB | ❌ No | ❌ No | ✅ Yes ("Disconnect") |
 | Sheet ID | ✅ Yes | Extension storage | ❌ No | ❌ No | ✅ Yes (uninstall) |
 | Rules | ✅ Yes | Your Google Sheet | ❌ No* | ❌ No | ✅ Yes (delete tab) |
 | Usage analytics | ❌ No | N/A | N/A | N/A | N/A |
