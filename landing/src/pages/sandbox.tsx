@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { RefreshCw, FlaskConical } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
@@ -15,6 +16,7 @@ export default function Sandbox() {
       <Head>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
+        <meta name="robots" content="noindex, nofollow" />
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDescription} />
       </Head>
@@ -176,7 +178,9 @@ export default function Sandbox() {
                   </p>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-xl">🔄</span>
+                  <div className="flex-shrink-0">
+                    <RefreshCw className="h-5 w-5 text-sheetlink-green-700 stroke-[1.5]" />
+                  </div>
                   <p className="text-sm text-gray-700">
                     <strong className="text-sheetlink-text">Reset Anytime:</strong> You can reset
                     sandbox connections from the extension options page by clicking "Disconnect" and
@@ -184,7 +188,9 @@ export default function Sandbox() {
                   </p>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-xl">🧪</span>
+                  <div className="flex-shrink-0">
+                    <FlaskConical className="h-5 w-5 text-sheetlink-green-700 stroke-[1.5]" />
+                  </div>
                   <p className="text-sm text-gray-700">
                     <strong className="text-sheetlink-text">Testing Only:</strong> Sandbox mode is
                     for testing SheetLink's features before connecting real bank accounts in
@@ -232,17 +238,17 @@ export default function Sandbox() {
             <div className="not-prose mt-16 rounded-xl border-2 border-sheetlink-green-700 bg-sheetlink-bg p-8">
               <div className="text-center">
                 <h2 className="mb-4 text-2xl font-bold text-sheetlink-text">
-                  Ready to Test SheetLink?
+                  Ready to Connect Real Banks?
                 </h2>
                 <p className="mb-6 text-gray-700">
-                  Join the beta to get early access and lifetime free use.
+                  Get SheetLink and sync your real bank accounts to Google Sheets. Free forever for the last 7 days of transactions.
                 </p>
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                   <Link
                     href="/beta"
                     className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-3 font-semibold text-white transition-all duration-200 hover:shadow-lg"
                   >
-                    Join the Beta
+                    Get Early Access
                   </Link>
                   <Link
                     href="/privacy"

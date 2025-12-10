@@ -51,13 +51,16 @@ export default function About() {
 
             <div className="mt-16 rounded-lg border-2 border-sheetlink-green-700 bg-sheetlink-green-50 p-8 text-center">
               <p className="text-lg font-semibold text-sheetlink-text">
-                Join our beta and get lifetime free access.
+                Get SheetLink and start syncing your bank transactions to Google Sheets.
+              </p>
+              <p className="mt-2 text-sm text-gray-600">
+                Free forever for the last 7 days of transactions. No credit card required.
               </p>
               <a
                 href="/beta"
                 className="mt-4 inline-flex items-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-3 font-semibold text-white transition-all duration-200 hover:shadow-lg"
               >
-                Sign Up for Beta
+                Get Early Access
               </a>
             </div>
           </div>

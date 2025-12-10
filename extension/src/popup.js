@@ -634,23 +634,58 @@ async function displayAllInstitutionsOnboarding() {
     const { institutionName, accounts } = institution;
     const accountCount = accounts ? accounts.length : 0;
 
+    // Build collapsible accounts list
+    let accountsHTML = '';
+    if (accounts && accounts.length > 0) {
+      accountsHTML = '<div class="bank-accounts-list" style="margin-top: 12px; border-top: 1px solid #e5e7eb; padding-top: 8px; display: none;">';
+      accounts.forEach(account => {
+        const accountName = account.official_name || account.name;
+        const mask = account.mask ? ` ••${account.mask}` : '';
+        const type = account.subtype ? ` - ${account.subtype}` : '';
+        accountsHTML += `
+          <div style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #374151;">
+            <div style="font-weight: 500;">${accountName}${mask}</div>
+            <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">${account.type}${type}</div>
+          </div>
+        `;
+      });
+      accountsHTML += '</div>';
+    }
+
     institutionsHTML += `
-      <div class="bank-card" style="margin-bottom: 8px;">
+      <div class="bank-card" style="margin-bottom: 8px; cursor: ${accountsHTML ? 'pointer' : 'default'}; user-select: none;">
         <div class="bank-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: none; padding-bottom: 0;">
           <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
             <span class="status-dot status-dot-connected" style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);"></span>
             <h3 style="font-size: 14px; font-weight: 600; margin: 0; padding-bottom: 0; color: #1f2937; text-decoration: none; border-bottom: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${institutionName}</h3>
           </div>
-          <div style="flex-shrink: 0; margin-left: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: 8px;">
             <span style="font-size: 12px; color: #6b7280; font-weight: 500; white-space: nowrap;">${accountCount} account${accountCount !== 1 ? 's' : ''}</span>
+            ${accountsHTML ? '<span class="expand-arrow" style="color: #9ca3af; font-size: 14px; transition: transform 0.2s;">▶</span>' : ''}
           </div>
         </div>
+        ${accountsHTML}
       </div>
     `;
   }
 
   statusEl.innerHTML = institutionsHTML;
   statusEl.classList.remove('hidden');
+
+  // Add click event listeners to toggle expansion
+  const bankCards = statusEl.querySelectorAll('.bank-card');
+  bankCards.forEach(card => {
+    const accountsList = card.querySelector('.bank-accounts-list');
+    const arrow = card.querySelector('.expand-arrow');
+
+    if (accountsList && arrow) {
+      card.addEventListener('click', () => {
+        const isExpanded = accountsList.style.display !== 'none';
+        accountsList.style.display = isExpanded ? 'none' : 'block';
+        arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
+      });
+    }
+  });
 }
 
 // Phase 3.9: Fetch and display item info (institution and accounts)

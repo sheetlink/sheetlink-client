@@ -1,8 +1,8 @@
 export const BRAND = {
   name: 'SheetLink',
-  tagline: 'Forget dashboards. Feed your spreadsheet.',
+  tagline: 'Your bank data, straight into Google Sheets.',
   description:
-    'Try SheetLink with Plaid Sandbox demo data. Test transaction syncing before connecting real accounts. Open beta launching soon.',
+    'SheetLink connects your real bank accounts to Google Sheets. Free forever for the last 7 days of transactions.',
   colors: {
     green900: '#023820',
     green700: '#0B703A',
@@ -15,31 +15,50 @@ export const BRAND = {
 export const URLS = {
   chromeStore: process.env.NEXT_PUBLIC_CHROME_STORE_URL || '#',
   github: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/sheetlink/sheetlink-client',
-  docs: 'https://docs.sheetlink.app',
+  docs: '/docs',
+  pricing: '/pricing',
+  firstSync: '/first-sync',
+  userGuide: '/user-guide',
   support: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'mailto:support@sheetlink.app',
   privacy: '/privacy',
   terms: '/terms',
+  security: '/security',
 } as const;
 
-// PRICING: Future pricing model - not active during sandbox demo phase
-// Kept for component compatibility, should not be displayed in sandbox-only UI
+// PRICING: Future pricing model - Coming Soon
 export const PRICING = {
   free: {
     name: 'Free',
     price: '$0',
     period: 'forever',
-    banks: 1,
-    features: ['1 bank account', 'Manual sync', 'All core features', 'Open source code'],
+    banks: 'unlimited',
+    historyDays: 7,
+    features: ['Unlimited banks', 'Last 7 days of transactions', 'Manual sync', 'Google Sheets integration'],
+  },
+  basic: {
+    name: 'Basic',
+    priceMonthly: '$1.99',
+    priceAnnual: '$0.99',
+    period: 'month',
+    banks: 'unlimited',
+    historyDays: 90,
+    features: ['Everything in Free', '90 days of history', 'Auto-sync every 24 hours', 'Per institution pricing'],
   },
   pro: {
     name: 'Pro',
-    price: '$2',
+    priceMonthly: '$9.99',
+    priceAnnual: '$4.99',
     period: 'month',
     banks: 'unlimited',
+    historyDays: 730,
     features: [
-      'Unlimited banks',
-      'Auto-sync (hourly)',
+      'Everything in Basic',
+      '24 months of history',
+      'Auto-sync hourly',
       'AI categorization',
+      'Rules engine',
+      'Split transactions',
+      'Multi-institution dashboards',
       'Priority support',
     ],
   },
@@ -50,7 +69,7 @@ export const STEPS = [
     number: '01',
     title: 'Link Your Bank',
     description:
-      'Connect via Plaid — 10,000+ banks supported. Your credentials never touch our servers.',
+      'Connect via Plaid. Over 10,000 banks supported. Your credentials never touch our servers.',
   },
   {
     number: '02',
@@ -64,8 +83,8 @@ export const STEPS = [
   },
 ] as const;
 
-// WHY_SHEETLINK: Future marketing copy - references pricing not active during sandbox demo
-// Kept for component compatibility, should not be displayed in sandbox-only UI
+// WHY_SHEETLINK: Marketing copy explaining SheetLink's value proposition
+// Can be used on landing pages and marketing materials
 export const WHY_SHEETLINK = [
   {
     icon: '💸',

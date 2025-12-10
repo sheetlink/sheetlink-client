@@ -1,11 +1,15 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
-import HeroComingSoon from '@/components/HeroComingSoon';
+import HeroFreeTier from '@/components/HeroFreeTier';
+import FreeTierFeatures from '@/components/FreeTierFeatures';
+import HowItWorks from '@/components/HowItWorks';
+import UpgradesTeaser from '@/components/UpgradesTeaser';
+import SecurityPrivacy from '@/components/SecurityPrivacy';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
 
 export default function Home() {
-  const seoTitle = `${BRAND.name} - Connect Your Bank to Google Sheets`;
+  const seoTitle = `${BRAND.name} - ${BRAND.tagline}`;
   const seoDescription = BRAND.description;
   const seoUrl = 'https://sheetlink.app';
   const seoImage = `${seoUrl}/og-image.svg`;
@@ -15,7 +19,7 @@ export default function Home() {
       <Head>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="google sheets, plaid, bank sync, personal finance, budgeting, spreadsheet, chrome extension" />
+        <meta name="keywords" content="google sheets, plaid, bank sync, personal finance, budgeting, spreadsheet, chrome extension, free tier" />
         <meta name="author" content={BRAND.name} />
 
         {/* OpenGraph */}
@@ -38,7 +42,11 @@ export default function Home() {
 
       <Header />
       <main className="pt-16">
-        <HeroComingSoon />
+        <HeroFreeTier />
+        <FreeTierFeatures />
+        <HowItWorks />
+        <UpgradesTeaser />
+        <SecurityPrivacy />
         <Footer />
       </main>
     </>
