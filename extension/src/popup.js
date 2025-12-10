@@ -54,7 +54,7 @@ async function authenticatedFetch(url, options = {}) {
 }
 
 // DOM elements
-let connectBankBtn, signInGoogleBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, optionsBtn, retryBtn, templatesBtn, learnMoreBtn;
+let connectBankBtn, signInGoogleBtn, saveSheetBtn, syncNowBtn, backfillBtn, disconnectBtn, retryBtn, templatesBtn, learnMoreBtn;
 let removeSheetBtn, changeSheetBtn, changeSheetLinkBtn, retrySyncBtn;
 let sheetUrlInput, statusText, errorMessage, loadingMessage;
 let connectSection, sheetSection, syncSection, statusSection, errorSection, loadingSection, templatesSection, welcomeSection;
@@ -157,7 +157,7 @@ function initializeElements() {
   syncNowBtn = document.getElementById('syncNowBtn');
   backfillBtn = document.getElementById('backfillBtn');
   disconnectBtn = document.getElementById('disconnectBtn');
-  optionsBtn = document.getElementById('optionsBtn');
+  // optionsBtn removed - Phase 3.10 replaced with Settings page in footer nav
   retryBtn = document.getElementById('retryBtn');
   templatesBtn = document.getElementById('templatesBtn');
 
@@ -290,7 +290,7 @@ function attachEventListeners() {
   syncNowBtn.addEventListener('click', handleSyncNow);
   if (backfillBtn) backfillBtn.addEventListener('click', handleBackfill);
   disconnectBtn.addEventListener('click', handleDisconnect);
-  optionsBtn.addEventListener('click', () => chrome.runtime.openOptionsPage());
+  // optionsBtn event listener removed - Phase 3.10 replaced with Settings page
   retryBtn.addEventListener('click', handleRetry);
   templatesBtn.addEventListener('click', handleShowTemplates);
 
@@ -571,6 +571,7 @@ async function showConnectSection() {
 }
 
 // Helper function to proceed to sheet setup after step 2
+// Phase 3.10+: Updated to use new navigation system instead of legacy sync UI
 async function proceedToSheetSetup() {
     // Phase 3.13.1: Ensure initialLoader is hidden (safety check)
     const initialLoader = document.getElementById('initialLoader');
@@ -581,37 +582,21 @@ async function proceedToSheetSetup() {
     // Phase 3.13: Get state from StateManager
     const stateManager = window.StateManager;
     const sheetId = stateManager.get('sheetId');
-    const sheetUrl = stateManager.get('sheetUrl');
-    const lastSync = stateManager.get('lastSync');
-    const itemId = stateManager.get('itemId');
+    const hasCompletedOnboarding = stateManager.get('hasCompletedInitialOnboarding');
 
-    if (sheetId) {
-      showSection('sync');
-      document.getElementById('currentSheet').textContent =
-        sheetUrl ? new URL(sheetUrl).pathname.split('/')[3].substring(0, 20) + '...' : sheetId;
+    // If user has completed onboarding, let initializeNavigation() handle UI
+    if (hasCompletedOnboarding) {
+      // Navigation will be initialized by main flow - do nothing here
+      return;
+    }
 
-      if (changeSheetBtn) {
-        changeSheetBtn.classList.remove('hidden');
-      }
-
-      if (lastSync) {
-        document.getElementById('lastSync').textContent = new Date(lastSync).toLocaleString();
-      }
-
-      // Fetch and display bank name in status
-      if (itemId) {
-        await updateBankStatus(itemId);
-      }
-
-      updateAutoSyncStatus();
-      loadRecentSyncs();
-      updateTierDisplay();  // Phase 3: Update tier info
-    } else {
+    // During onboarding: show sheet selection step
+    if (!sheetId) {
       showSection('sheet');
-      document.getElementById('currentSheet').textContent = 'Not connected yet';
-      if (changeSheetBtn) {
-        changeSheetBtn.classList.add('hidden');
-      }
+    } else {
+      // Sheet already connected during onboarding - complete onboarding
+      await stateManager.set({ hasCompletedInitialOnboarding: true });
+      await initializeNavigation();
     }
 }
 
