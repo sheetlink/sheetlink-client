@@ -11,6 +11,13 @@ export default function OAuthCallback() {
     const expiresIn = params.get('expires_in');
     const error = params.get('error');
 
+    // Debug logging - check what Google OAuth returned
+    console.log('[OAuth Callback] Full URL hash:', hash);
+    console.log('[OAuth Callback] All params:', Object.fromEntries(params));
+    console.log('[OAuth Callback] Access Token:', accessToken ? 'Present (length: ' + accessToken.length + ')' : 'MISSING');
+    console.log('[OAuth Callback] ID Token:', idToken ? 'Present (length: ' + idToken.length + ')' : 'MISSING ⚠️');
+    console.log('[OAuth Callback] Expires In:', expiresIn);
+
     if (error) {
       alert('OAuth error: ' + error);
       return;
