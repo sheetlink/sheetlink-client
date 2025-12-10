@@ -616,6 +616,7 @@ async function proceedToSheetSetup() {
 }
 
 // Phase 3.14.0: Display all connected institutions on onboarding Step 2
+// Uses same styling as Bank page for consistency
 async function displayAllInstitutionsOnboarding() {
   const stateManager = window.StateManager;
   const institutions = stateManager.getInstitutions();
@@ -634,34 +635,41 @@ async function displayAllInstitutionsOnboarding() {
     const { institutionName, accounts } = institution;
     const accountCount = accounts ? accounts.length : 0;
 
-    // Build collapsible accounts list
+    // Build collapsible accounts list (same structure as Bank page)
     let accountsHTML = '';
     if (accounts && accounts.length > 0) {
-      accountsHTML = '<div class="bank-accounts-list" style="margin-top: 12px; border-top: 1px solid #e5e7eb; padding-top: 8px; display: none;">';
+      accountsHTML = '<div class="institution-accounts" style="display: none;">';
       accounts.forEach(account => {
         const accountName = account.official_name || account.name;
-        const mask = account.mask ? ` ••${account.mask}` : '';
-        const type = account.subtype ? ` - ${account.subtype}` : '';
+        const mask = account.mask ? `••${account.mask}` : '0000';
+        const type = account.subtype || account.type;
+        const balance = account.balances?.current != null
+          ? `$${account.balances.current.toFixed(2)}`
+          : '';
+
         accountsHTML += `
-          <div style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-size: 13px; color: #374151;">
-            <div style="font-weight: 500;">${accountName}${mask}</div>
-            <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">${account.type}${type}</div>
+          <div class="account-item">
+            <div class="account-info">
+              <div class="account-name">${accountName} (...${mask})</div>
+              <div class="account-type">${type}</div>
+            </div>
+            <div class="account-balance">${balance}</div>
           </div>
         `;
       });
       accountsHTML += '</div>';
     }
 
+    // Use same structure as Bank page institution cards
     institutionsHTML += `
-      <div class="bank-card" style="margin-bottom: 8px; cursor: ${accountsHTML ? 'pointer' : 'default'}; user-select: none;">
-        <div class="bank-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: none; padding-bottom: 0;">
-          <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
-            <span class="status-dot status-dot-connected" style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);"></span>
-            <h3 style="font-size: 14px; font-weight: 600; margin: 0; padding-bottom: 0; color: #1f2937; text-decoration: none; border-bottom: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${institutionName}</h3>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: 8px;">
-            <span style="font-size: 12px; color: #6b7280; font-weight: 500; white-space: nowrap;">${accountCount} account${accountCount !== 1 ? 's' : ''}</span>
-            ${accountsHTML ? '<span class="expand-arrow" style="color: #9ca3af; font-size: 14px; transition: transform 0.2s;">▶</span>' : ''}
+      <div class="institution-card" style="margin-bottom: 12px;">
+        <div class="institution-header">
+          <div class="institution-info">
+            <span class="status-dot status-dot-connected"></span>
+            <div>
+              <div class="institution-name">${institutionName}</div>
+              <div class="institution-meta">${accountCount} account${accountCount !== 1 ? 's' : ''}</div>
+            </div>
           </div>
         </div>
         ${accountsHTML}
@@ -672,17 +680,17 @@ async function displayAllInstitutionsOnboarding() {
   statusEl.innerHTML = institutionsHTML;
   statusEl.classList.remove('hidden');
 
-  // Add click event listeners to toggle expansion
-  const bankCards = statusEl.querySelectorAll('.bank-card');
-  bankCards.forEach(card => {
-    const accountsList = card.querySelector('.bank-accounts-list');
-    const arrow = card.querySelector('.expand-arrow');
+  // Add click event listeners to toggle expansion (same as Bank page)
+  const institutionCards = statusEl.querySelectorAll('.institution-card');
+  institutionCards.forEach(card => {
+    const header = card.querySelector('.institution-header');
+    const accountsList = card.querySelector('.institution-accounts');
 
-    if (accountsList && arrow) {
-      card.addEventListener('click', () => {
+    if (header && accountsList) {
+      header.style.cursor = 'pointer';
+      header.addEventListener('click', () => {
         const isExpanded = accountsList.style.display !== 'none';
         accountsList.style.display = isExpanded ? 'none' : 'block';
-        arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
       });
     }
   });
