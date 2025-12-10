@@ -449,8 +449,8 @@ async function loadState() {
       // Mark that we've shown step 2
       await window.StateManager.set({ hasSeenConnectStep: true });
 
-      // Fetch and display item info (institution name and accounts)
-      await displayItemInfo(stateManager.get('itemId'));
+      // Phase 3.14.0: Display ALL connected institutions
+      await displayAllInstitutionsOnboarding();
 
       // Phase 3.13: Configure all UI elements BEFORE showing section (prevents flash)
       // Update header to "Add a Bank"
@@ -516,12 +516,12 @@ async function loadState() {
 async function showConnectSection() {
   // Phase 3.13: Use StateManager instead of storage
   const stateManager = window.StateManager;
-  const itemId = stateManager.get('itemId');
+  const institutions = stateManager.getInstitutions();
 
-  // If user has a bank connected, configure everything BEFORE showing section (prevents flash)
-  if (itemId) {
-    // Fetch and display item info (institution name and accounts)
-    await displayItemInfo(itemId);
+  // If user has banks connected, configure everything BEFORE showing section (prevents flash)
+  if (institutions.length > 0) {
+    // Phase 3.14.0: Display ALL connected institutions
+    await displayAllInstitutionsOnboarding();
 
     // Update header to "Add a Bank"
     const connectHeader = document.querySelector('#connectSection h2');
@@ -613,6 +613,44 @@ async function proceedToSheetSetup() {
         changeSheetBtn.classList.add('hidden');
       }
     }
+}
+
+// Phase 3.14.0: Display all connected institutions on onboarding Step 2
+async function displayAllInstitutionsOnboarding() {
+  const stateManager = window.StateManager;
+  const institutions = stateManager.getInstitutions();
+
+  if (institutions.length === 0) {
+    showGenericBankStatus();
+    return;
+  }
+
+  const statusEl = document.getElementById('bankConnectionStatus');
+  if (!statusEl) return;
+
+  // Build HTML for all institutions
+  let institutionsHTML = '';
+  for (const institution of institutions) {
+    const { institutionName, accounts } = institution;
+    const accountCount = accounts ? accounts.length : 0;
+
+    institutionsHTML += `
+      <div class="bank-card" style="margin-bottom: 8px;">
+        <div class="bank-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: none; padding-bottom: 0;">
+          <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+            <span class="status-dot status-dot-connected" style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6), 0 0 4px rgba(16, 185, 129, 0.8);"></span>
+            <h3 style="font-size: 14px; font-weight: 600; margin: 0; padding-bottom: 0; color: #1f2937; text-decoration: none; border-bottom: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${institutionName}</h3>
+          </div>
+          <div style="flex-shrink: 0; margin-left: 8px;">
+            <span style="font-size: 12px; color: #6b7280; font-weight: 500; white-space: nowrap;">${accountCount} account${accountCount !== 1 ? 's' : ''}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  statusEl.innerHTML = institutionsHTML;
+  statusEl.classList.remove('hidden');
 }
 
 // Phase 3.9: Fetch and display item info (institution and accounts)
