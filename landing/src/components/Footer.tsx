@@ -31,15 +31,23 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <a
-                  href="/about"
+                  href={URLS.firstSync}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
-                  About
+                  First Sync Guide
                 </a>
               </li>
               <li>
                 <a
-                  href="/docs"
+                  href={URLS.userGuide}
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  User Guide
+                </a>
+              </li>
+              <li>
+                <a
+                  href={URLS.docs}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   Documentation
@@ -79,6 +87,15 @@ export default function Footer() {
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   Terms of Service
+                </a>
+              </li>
+              <li>
+                <a
+                  href={URLS.security}
+                  onClick={() => analytics.footerLinkClick('security')}
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Security
                 </a>
               </li>
               <li>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
+import { Rocket, Book, BookOpen } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
@@ -120,7 +121,7 @@ export default function Welcome() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mx-auto max-w-2xl text-xl leading-relaxed text-gray-700 md:text-2xl"
             >
-              Start in sandbox mode and explore how SheetLink syncs banking data straight into Google Sheets.
+              Connect your real bank accounts and sync the last 7 days of transactions straight into Google Sheets.
             </motion.p>
           </div>
         </section>
@@ -157,10 +158,10 @@ export default function Welcome() {
                 2
               </div>
               <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
-                Connect to Sandbox
+                Connect your bank
               </h3>
               <p className="text-gray-600">
-                Try SheetLink's demo flow with Plaid's test accounts.
+                Link your real bank accounts securely via Plaid.
               </p>
             </motion.div>
 
@@ -175,10 +176,10 @@ export default function Welcome() {
                 3
               </div>
               <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
-                Sync sample data
+                Sync your data
               </h3>
               <p className="text-gray-600">
-                Your transactions flow straight into your Google Sheet.
+                7 days of transactions flow straight into your Google Sheet.
               </p>
             </motion.div>
           </div>
@@ -193,10 +194,10 @@ export default function Welcome() {
             className="flex flex-col gap-4 sm:flex-row sm:justify-center"
           >
             <Link
-              href="/sandbox"
+              href="/first-sync"
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
             >
-              <span className="relative z-10">Try the Sandbox</span>
+              <span className="relative z-10">First Sync Guide</span>
             </Link>
             <Link
               href="/docs"
@@ -231,34 +232,41 @@ export default function Welcome() {
             <h2 className="mb-6 text-2xl font-bold text-sheetlink-text">What's Next?</h2>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <span className="text-2xl">🎮</span>
+                <div className="flex-shrink-0">
+                  <Rocket className="h-6 w-6 text-sheetlink-green-700 stroke-[1.5]" />
+                </div>
                 <div>
-                  <strong className="text-sheetlink-text">Try the Sandbox</strong>
+                  <strong className="text-sheetlink-text">Get Started</strong>
                   <p className="mt-1 text-sm text-gray-600">
-                    Connect fake bank accounts using Plaid's sandbox environment. No real banking
-                    credentials required.
+                    Connect your real bank accounts and sync the last 7 days of transactions to Google Sheets.{' '}
+                    <Link href="/first-sync" className="text-sheetlink-green-700 underline">
+                      Start here
+                    </Link>
+                    .
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-2xl">📖</span>
+                <div className="flex-shrink-0">
+                  <Book className="h-6 w-6 text-sheetlink-green-700 stroke-[1.5]" />
+                </div>
                 <div>
                   <strong className="text-sheetlink-text">Read the Docs</strong>
                   <p className="mt-1 text-sm text-gray-600">
-                    Learn how to set up your first connection, customize your Sheet, and use
-                    advanced features.
+                    Learn how to manage connections, handle errors, and get the most out of SheetLink's features.
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-2xl">🧪</span>
+                <div className="flex-shrink-0">
+                  <BookOpen className="h-6 w-6 text-sheetlink-green-700 stroke-[1.5]" />
+                </div>
                 <div>
-                  <strong className="text-sheetlink-text">Join the Beta</strong>
+                  <strong className="text-sheetlink-text">Explore the User Guide</strong>
                   <p className="mt-1 text-sm text-gray-600">
-                    Get lifetime free access by helping test SheetLink. Share feedback and shape
-                    the product.{' '}
-                    <Link href="/beta" className="text-sheetlink-green-700 underline">
-                      Sign up here
+                    Learn how to manage connections, sync transactions, and get the most out of SheetLink.{' '}
+                    <Link href="/user-guide" className="text-sheetlink-green-700 underline">
+                      Read the guide
                     </Link>
                     .
                   </p>

@@ -35,11 +35,11 @@ export default function Header() {
               Docs
             </Link>
             <Link
-              href="/sandbox"
-              onClick={() => analytics.headerNavClick('sandbox')}
+              href={URLS.pricing}
+              onClick={() => analytics.headerNavClick('pricing')}
               className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
             >
-              Sandbox
+              Pricing
             </Link>
             <Link
               href="/beta"
@@ -47,6 +47,15 @@ export default function Header() {
               className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
             >
               Beta
+            </Link>
+            <Link
+              href={URLS.github}
+              onClick={() => analytics.githubClick('header')}
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
             </Link>
           </nav>
 
@@ -108,14 +117,14 @@ export default function Header() {
               Docs
             </Link>
             <Link
-              href="/sandbox"
+              href={URLS.pricing}
               onClick={() => {
-                analytics.headerNavClick('sandbox');
+                analytics.headerNavClick('pricing');
                 setMobileMenuOpen(false);
               }}
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
             >
-              Sandbox
+              Pricing
             </Link>
             <Link
               href="/beta"
@@ -127,6 +136,18 @@ export default function Header() {
             >
               Beta
             </Link>
+            <a
+              href={URLS.github}
+              onClick={() => {
+                analytics.githubClick('header');
+                setMobileMenuOpen(false);
+              }}
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
             <Link
               href="/beta"
               onClick={() => {

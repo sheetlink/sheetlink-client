@@ -35,25 +35,28 @@ The backend is in a **separate private repository** for:
 ### 1. Data Handling
 
 **What We Store (Encrypted)**:
-- Plaid access tokens (AES-256-GCM encryption)
-- User IDs from Google OAuth
-- Google Sheet URLs
-- Sync timestamps
+- Plaid access tokens (Fernet encryption: AES-128-CBC + HMAC)
+- Google user identifier (email or stable Google ID)
+- Linked sheet metadata (sheet ID, title)
+- Plaid metadata (Item IDs, institution IDs, cursors, timestamps)
+- Minimal operational logs (non-PII)
 
 **What We DON'T Store**:
-- ❌ Transaction details, amounts, or descriptions
-- ❌ Account balances
-- ❌ Bank credentials (handled entirely by Plaid)
+- ❌ Transaction line items (amounts, merchants, categories, dates)
+- ❌ Account balances or transaction history
+- ❌ Bank usernames or passwords (handled exclusively by Plaid)
+- ❌ Google OAuth tokens (these remain in your browser)
 - ❌ Contents of your Google Sheets
 
-**Pass-Through Architecture**: Transactions flow from Plaid → Backend (in-memory only) → Your Sheet. No persistence.
+**Pass-Through Architecture**: Transactions flow from Plaid → Backend (in-memory for <1 second) → Browser → Your Sheet. No persistence of transaction data.
 
 ### 2. Encryption
 
-- All Plaid tokens encrypted at rest using **AES-256-GCM**
-- Encryption keys stored in secure environment variables
+- All Plaid tokens encrypted at rest using **Fernet encryption** (AES-128-CBC + HMAC)
+- Encryption keys stored in secure environment variables and rotated regularly
 - Tokens only decrypted during sync operations
-- HTTPS/TLS for all API communication
+- HTTPS/TLS 1.2+ for all API communication
+- No plaintext tokens in logs (privacy middleware suppresses sensitive data)
 
 ### 3. Extension Permissions
 
@@ -74,6 +77,8 @@ The Chrome extension requests minimal permissions:
 - Rate limiting on all endpoints
 - Input validation and sanitization
 - Privacy middleware (suppresses sensitive data from logs)
+- Sheet permission verification (tests write access before connecting)
+- Token refresh handling with 5-minute expiry buffer
 
 ### 5. Third-Party Services
 
@@ -158,16 +163,16 @@ We currently don't have a formal bug bounty program, but we:
 
 ### 1. Extension Installation
 
-**During Beta (Current):**
-- Download only from official GitHub releases: [github.com/sheetlink/sheetlink-client/releases](https://github.com/sheetlink/sheetlink-client/releases)
-- Verify the release is published by the official SheetLink account
-- Review the source code (publicly available in this repository)
-- Load the extension manually in Developer Mode
-
-**After Production Launch:**
+**Production (Current):**
 - Install only from Chrome Web Store (official source)
 - Verify the publisher is "Rudy Martin Del Campo" or "SheetLink"
 - Check the extension ID matches our documentation
+- Automatic updates via Chrome Web Store
+
+**For Developers:**
+- Source code available at: [github.com/sheetlink/sheetlink-client](https://github.com/sheetlink/sheetlink-client)
+- Review the source code before use
+- Build and load manually in Developer Mode if preferred
 
 ### 2. Google Sheets Sharing
 
@@ -191,7 +196,7 @@ We currently don't have a formal bug bounty program, but we:
 
 ## Security Updates
 
-### Current Version: 0.3.1 (Sandbox Preview)
+### Current Version: Production Free Tier
 
 Security updates will be communicated via:
 - Extension update notifications
@@ -213,7 +218,8 @@ Security updates will be communicated via:
 
 - **Backend**: Railway (HTTPS/TLS, SOC 2 Type II)
 - **Landing**: Vercel (HTTPS/TLS, DDoS protection)
-- **Database**: Encrypted at rest, automatic backups
+- **Database**: Railway-managed PostgreSQL, encrypted at rest, automatic backups
+- **Item Cleanup**: Automatic orphaned Item detection and removal (30 days inactivity)
 
 ### Environment Variables
 
@@ -226,21 +232,22 @@ Security updates will be communicated via:
 
 ## Compliance & Certifications
 
-### Current Status (Sandbox)
+### Current Status (Production Free Tier)
 
-SheetLink is in **Sandbox Mode** using Plaid's test environment:
-- ✅ No real bank connections
-- ✅ Demo data only
-- ✅ Safe for public testing
+SheetLink is in **Production** with the Free Tier:
+- ✅ Real bank connections via Plaid Production
+- ✅ 7 days of transaction history per institution
+- ✅ Unlimited bank connections
+- ✅ Google-authenticated onboarding
+- ✅ Sheet permission verification
 
-### Production Roadmap
+### Completed Production Requirements
 
-Before launching production:
-- [ ] Plaid Production Access approval
-- [ ] Chrome Web Store review and approval
-- [ ] Security audit of backend infrastructure
-- [ ] Privacy policy review
-- [ ] Terms of service finalization
+- [x] Plaid Production Access approved
+- [x] Chrome Web Store listing ready
+- [x] Backend infrastructure security audit (internal)
+- [x] Privacy policy updated for production
+- [x] Terms of service finalized
 
 ---
 
@@ -261,8 +268,8 @@ Before launching production:
 
 ---
 
-**Last Updated**: November 2025
-**Version**: 0.3.1 (Sandbox Preview)
+**Last Updated**: December 2025
+**Version**: Production Free Tier
 
 **Built with security by design. Auditable by choice.**
 

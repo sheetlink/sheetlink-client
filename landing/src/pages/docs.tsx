@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { Rocket, Book, Lock, Shield } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND, URLS } from '@/lib/constants';
@@ -30,20 +31,44 @@ export default function Docs() {
         {/* Documentation Cards */}
         <section className="mx-auto max-w-5xl px-4 pb-20">
           <div className="grid gap-8 md:grid-cols-2">
-            {/* Sandbox Setup */}
+            {/* First Sync Guide */}
             <Link
-              href="/sandbox"
+              href="/first-sync"
               className="group flex flex-col rounded-xl border-2 border-gray-200 bg-white p-8 transition-all duration-200 hover:border-sheetlink-green-700 hover:shadow-xl"
             >
-              <div className="mb-4 text-5xl">🧪</div>
+              <div className="mb-4">
+                <Rocket className="h-12 w-12 text-sheetlink-green-700 stroke-[1.5]" />
+              </div>
               <h2 className="mb-3 text-2xl font-bold text-sheetlink-text">
-                Sandbox Setup
+                First Sync Guide
               </h2>
               <p className="mb-4 flex-1 text-gray-600">
-                Try SheetLink risk-free with demo data. Perfect for testing your workflow before connecting real accounts.
+                Complete your first sync: connect your bank, link your Google Sheet, and start pulling transactions. Free forever for the last 7 days.
               </p>
               <div className="flex items-center text-sheetlink-green-700 font-semibold">
                 Get started
+                <svg className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+            </Link>
+
+            {/* User Guide */}
+            <Link
+              href="/user-guide"
+              className="group flex flex-col rounded-xl border-2 border-gray-200 bg-white p-8 transition-all duration-200 hover:border-sheetlink-green-700 hover:shadow-xl"
+            >
+              <div className="mb-4">
+                <Book className="h-12 w-12 text-sheetlink-green-700 stroke-[1.5]" />
+              </div>
+              <h2 className="mb-3 text-2xl font-bold text-sheetlink-text">
+                User Guide
+              </h2>
+              <p className="mb-4 flex-1 text-gray-600">
+                Learn how to manage your connections, handle errors, and get the most out of SheetLink's features.
+              </p>
+              <div className="flex items-center text-sheetlink-green-700 font-semibold">
+                Read guide
                 <svg className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -55,12 +80,36 @@ export default function Docs() {
               href="/privacy"
               className="group flex flex-col rounded-xl border-2 border-gray-200 bg-white p-8 transition-all duration-200 hover:border-sheetlink-green-700 hover:shadow-xl"
             >
-              <div className="mb-4 text-5xl">🔒</div>
+              <div className="mb-4">
+                <Lock className="h-12 w-12 text-sheetlink-green-700 stroke-[1.5]" />
+              </div>
               <h2 className="mb-3 text-2xl font-bold text-sheetlink-text">
-                Privacy & Security
+                Privacy Policy
               </h2>
               <p className="mb-4 flex-1 text-gray-600">
-                Learn how SheetLink protects your data with encryption, pass-through architecture, and privacy-first design.
+                Understand what data we store, what we don't, and how SheetLink protects your financial information.
+              </p>
+              <div className="flex items-center text-sheetlink-green-700 font-semibold">
+                Read policy
+                <svg className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+            </Link>
+
+            {/* Security */}
+            <Link
+              href={URLS.security}
+              className="group flex flex-col rounded-xl border-2 border-gray-200 bg-white p-8 transition-all duration-200 hover:border-sheetlink-green-700 hover:shadow-xl"
+            >
+              <div className="mb-4">
+                <Shield className="h-12 w-12 text-sheetlink-green-700 stroke-[1.5]" />
+              </div>
+              <h2 className="mb-3 text-2xl font-bold text-sheetlink-text">
+                Security
+              </h2>
+              <p className="mb-4 flex-1 text-gray-600">
+                Learn about SheetLink's security architecture, data flow, encryption, and vulnerability reporting.
               </p>
               <div className="flex items-center text-sheetlink-green-700 font-semibold">
                 Learn more
@@ -69,34 +118,6 @@ export default function Docs() {
                 </svg>
               </div>
             </Link>
-
-            {/* Quick Start - Coming Soon */}
-            <div className="flex flex-col rounded-xl border-2 border-gray-200 bg-gray-50 p-8 opacity-60">
-              <div className="mb-4 text-5xl">⚡</div>
-              <h2 className="mb-3 text-2xl font-bold text-sheetlink-text">
-                Quick Start
-                <span className="ml-3 rounded-full bg-gray-300 px-3 py-1 text-sm font-medium text-gray-700">
-                  Coming Soon
-                </span>
-              </h2>
-              <p className="mb-4 flex-1 text-gray-600">
-                Step-by-step guides and video tutorials to get your first sync running in minutes.
-              </p>
-            </div>
-
-            {/* Self-Hosting - Coming Soon */}
-            <div className="flex flex-col rounded-xl border-2 border-gray-200 bg-gray-50 p-8 opacity-60">
-              <div className="mb-4 text-5xl">🏠</div>
-              <h2 className="mb-3 text-2xl font-bold text-sheetlink-text">
-                Self-Hosting
-                <span className="ml-3 rounded-full bg-gray-300 px-3 py-1 text-sm font-medium text-gray-700">
-                  Coming Soon
-                </span>
-              </h2>
-              <p className="mb-4 flex-1 text-gray-600">
-                Deploy SheetLink on your own infrastructure for complete control over your data.
-              </p>
-            </div>
           </div>
         </section>
 
@@ -124,7 +145,7 @@ export default function Docs() {
                 <svg className="h-6 w-6 text-sheetlink-text transition-colors group-hover:text-sheetlink-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>
-                <span className="font-medium text-sheetlink-text transition-colors group-hover:text-sheetlink-green-700">Join the Beta</span>
+                <span className="font-medium text-sheetlink-text transition-colors group-hover:text-sheetlink-green-700">Get Early Access</span>
               </Link>
 
               <Link
@@ -154,16 +175,16 @@ export default function Docs() {
         <section className="mx-auto max-w-4xl px-4 pb-20 text-center">
           <div className="rounded-xl border-2 border-sheetlink-green-700 bg-gradient-to-br from-sheetlink-green-50 to-white p-12">
             <h2 className="mb-4 text-3xl font-bold text-sheetlink-text">
-              Ready to get started with SheetLink?
+              Ready to sync your bank data?
             </h2>
             <p className="mb-8 text-lg text-gray-600">
-              Try the sandbox with demo data, no bank connection required.
+              Install SheetLink and connect your real bank accounts. The Free Tier is free forever.
             </p>
             <Link
-              href="/sandbox"
+              href="/first-sync"
               className="inline-flex items-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-xl"
             >
-              Try the Sandbox
+              Start Your First Sync
               <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>

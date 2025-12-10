@@ -37,7 +37,7 @@ export default function GetStarted() {
               transition={{ duration: 0.6 }}
               className="mb-6 text-5xl font-bold text-sheetlink-text md:text-6xl"
             >
-              Welcome to the SheetLink Beta
+              Install SheetLink
             </motion.h1>
 
             <motion.p
@@ -46,8 +46,7 @@ export default function GetStarted() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-gray-700"
             >
-              You're early. Thanks for helping shape the future of personal finance.
-              This beta lets you sync Plaid Sandbox data directly into Google Sheets using our unreleased Chrome extension.
+              Follow these steps to manually install the SheetLink Chrome extension and connect your real bank accounts to Google Sheets.
             </motion.p>
 
             <motion.p
@@ -56,7 +55,7 @@ export default function GetStarted() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mx-auto mb-12 max-w-2xl text-lg text-gray-600"
             >
-              Before we launch publicly, we want your feedback on ease-of-use and functionality.
+              Free forever for the last 7 days of transactions. No credit card required.
             </motion.p>
 
             <motion.div
@@ -65,14 +64,15 @@ export default function GetStarted() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <a
-                href="https://github.com/user-attachments/files/23640009/sheetlink-extension-v0.3.1-beta.zip"
+                href="/downloads/sheetlink-extension.zip"
                 onClick={() => analytics.downloadExtensionClick('hero')}
+                download
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
-                Download Beta Extension (v0.3.1)
+                Download Extension (v1.0.0)
               </a>
             </motion.div>
           </div>
@@ -101,7 +101,7 @@ export default function GetStarted() {
                   Download the Extension
                 </h3>
                 <p className="mb-4 text-lg text-gray-700">
-                  Download the ZIP file and unzip it to your computer. You'll get a folder called <code className="rounded bg-gray-100 px-2 py-1 font-mono text-sm">sheetlink-extension-v0.3.1-beta</code>.
+                  Download the ZIP file and unzip it to your computer. You'll get a folder called <code className="rounded bg-gray-100 px-2 py-1 font-mono text-sm">sheetlink-extension</code>.
                 </p>
                 <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
                   <p className="text-sm text-gray-600">
@@ -169,35 +169,17 @@ export default function GetStarted() {
               </div>
               <div className="flex-1">
                 <h3 className="mb-4 text-2xl font-bold text-sheetlink-text">
-                  Connect to Plaid Sandbox
+                  Sign in with Google
                 </h3>
                 <p className="mb-4 text-lg text-gray-700">
-                  Click the SheetLink extension icon in your toolbar, then click <strong>Connect Bank</strong>.
+                  Click the SheetLink extension icon in your toolbar, then click <strong>Continue with Google</strong>.
                 </p>
                 <p className="mb-4 text-lg text-gray-700">
-                  When Plaid Link opens, choose any <strong>Sandbox Institution</strong> and use these test credentials:
+                  This grants SheetLink permission to write data to your Google Sheets. We never read your spreadsheets - only write.
                 </p>
-                <div className="mb-4 rounded-lg border-2 border-sheetlink-green-700 bg-sheetlink-bg p-6">
-                  <div className="mb-3 grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="mb-1 text-sm font-semibold text-gray-600">Phone Number</p>
-                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">415-555-0011</code>
-                    </div>
-                    <div>
-                      <p className="mb-1 text-sm font-semibold text-gray-600">Verification Code</p>
-                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">123456</code>
-                    </div>
-                    <div>
-                      <p className="mb-1 text-sm font-semibold text-gray-600">Username</p>
-                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">user_good</code>
-                    </div>
-                    <div>
-                      <p className="mb-1 text-sm font-semibold text-gray-600">Password</p>
-                      <code className="block rounded bg-white px-3 py-2 font-mono text-lg">pass_good</code>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    <strong>Note:</strong> This is test data from Plaid's Sandbox environment. No real banking credentials are used.
+                <div className="mb-4 rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+                  <p className="text-sm text-blue-900">
+                    <strong>Privacy:</strong> SheetLink requests the minimum Google permissions needed to write to sheets you own. We never access sheets you haven't explicitly connected.
                   </p>
                 </div>
               </div>
@@ -216,29 +198,30 @@ export default function GetStarted() {
               </div>
               <div className="flex-1">
                 <h3 className="mb-4 text-2xl font-bold text-sheetlink-text">
-                  Sync to Google Sheets
+                  Complete Onboarding
                 </h3>
                 <ol className="mb-4 list-inside space-y-3 text-lg text-gray-700">
                   <li className="flex items-start gap-2">
                     <span className="flex-shrink-0 text-sheetlink-green-700">1.</span>
-                    <span>Open a new Google Sheet (or use an existing one)</span>
+                    <span><strong>Connect Your Bank:</strong> Click "Add Bank" and search for your institution. Sign in with your real bank credentials through Plaid's secure flow.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="flex-shrink-0 text-sheetlink-green-700">2.</span>
-                    <span>Click the SheetLink extension icon</span>
+                    <span><strong>Link Your Sheet:</strong> Paste a Google Sheets URL you own. SheetLink will verify you have edit access.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="flex-shrink-0 text-sheetlink-green-700">3.</span>
-                    <span>Choose <strong>Sync Transactions</strong></span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="flex-shrink-0 text-sheetlink-green-700">4.</span>
-                    <span>Your transactions will populate automatically!</span>
+                    <span><strong>First Sync:</strong> Click "Sync Now" on the Home tab to fetch your last 7 days of transactions.</span>
                   </li>
                 </ol>
                 <div className="rounded-lg border-2 border-green-200 bg-green-50 p-4">
                   <p className="text-sm text-green-900">
-                    <strong>Success!</strong> You're now syncing transactions to your sheet. Try adding more accounts or exploring the data.
+                    <strong>Success!</strong> Your transactions are now syncing to your sheet. The Free Tier gives you the last 7 days of history, updated on-demand.
+                  </p>
+                </div>
+                <div className="mt-4 rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
+                  <p className="text-sm text-gray-700">
+                    <strong>Next Steps:</strong> Check out the <Link href="/user-guide" className="text-sheetlink-green-700 underline">User Guide</Link> to learn about the 4-tab navigation, manual sync, and best practices.
                   </p>
                 </div>
               </div>
@@ -246,36 +229,6 @@ export default function GetStarted() {
           </div>
         </section>
 
-        {/* Beta Status Notice */}
-        <section className="bg-blue-50 px-4 py-12">
-          <div className="mx-auto max-w-4xl">
-            <div className="rounded-lg border-2 border-blue-300 bg-white p-8">
-              <div className="mb-4 flex items-center gap-3">
-                <svg className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <h3 className="text-2xl font-bold text-blue-900">Beta Status</h3>
-              </div>
-              <p className="mb-3 text-lg text-blue-900">
-                SheetLink is currently in a <strong>private beta</strong>.
-              </p>
-              <ul className="space-y-2 text-blue-800">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600">•</span>
-                  <span>Production bank connections via Plaid are pending approval</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600">•</span>
-                  <span>Currently only Sandbox test data is available</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600">•</span>
-                  <span>Expect active updates over the next few weeks</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
 
         {/* Feedback Section */}
         <section className="px-4 py-20">
@@ -323,12 +276,12 @@ export default function GetStarted() {
               <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-sheetlink-green-700 text-white">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Real Bank Support</h3>
+                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Auto-Sync (Basic/Pro Tiers)</h3>
                 <p className="text-gray-600">
-                  Connect your actual bank accounts with Plaid Production
+                  Automatic transaction syncing on a schedule - no manual clicks required
                 </p>
               </div>
 
@@ -338,9 +291,9 @@ export default function GetStarted() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                   </svg>
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Smart Categories</h3>
+                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Extended History (90 days / 2 years)</h3>
                 <p className="text-gray-600">
-                  Automated transaction categorization and custom rules
+                  Basic and Pro tiers will offer deeper transaction history for long-term analysis
                 </p>
               </div>
             </div>
