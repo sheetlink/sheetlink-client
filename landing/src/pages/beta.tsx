@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Lock } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
@@ -99,16 +100,16 @@ export default function Beta() {
             {/* Hero */}
             <div className="mb-12 text-center">
               <h1 className="mb-4 bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 bg-clip-text text-5xl font-bold text-transparent md:text-5xl">
-                Join the SheetLink Beta
+                Get Early Access to SheetLink
               </h1>
               <p className="mb-8 text-lg leading-relaxed text-gray-700 md:text-xl">
-                Be among the first to connect your bank directly to Google Sheets. Live, private, and under your control.
+                Connect your real bank accounts to Google Sheets. Free forever for the last 7 days of transactions.
               </p>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-3 text-sm font-semibold text-white shadow-md">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>
-                <span>Lifetime free access for sandbox testers</span>
+                <span>Production Beta - Real bank connections via Plaid</span>
               </div>
               <Link href="/privacy" className="flex items-center justify-center gap-2 text-sm text-gray-600">
                 <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
@@ -184,12 +185,15 @@ export default function Beta() {
                     disabled={status === 'loading'}
                     className="w-full rounded-md bg-[#023820] px-6 py-2.5 font-semibold text-white transition hover:bg-[#0B703A] disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {status === 'loading' ? 'Requesting...' : 'Join the Beta'}
+                    {status === 'loading' ? 'Requesting Access...' : 'Request Early Access'}
                   </button>
 
-                  <p className="text-center text-xs text-gray-600">
-                    🔒 We'll only use your email for early access updates.<br />
-                    You can remove yourself anytime.
+                  <p className="text-center text-xs text-gray-600 flex items-center justify-center gap-2">
+                    <Lock className="h-3 w-3 text-sheetlink-green-700 stroke-[1.5]" />
+                    <span>
+                      We'll only use your email for beta access updates.<br />
+                      You can remove yourself anytime.
+                    </span>
                   </p>
                 </form>
               )}
@@ -210,17 +214,16 @@ export default function Beta() {
 
           {/* Info Card */}
           <div className="mt-12 rounded-xl border-2 border-sheetlink-green-700/20 bg-sheetlink-bg p-8">
-            <h2 className="mb-6 text-2xl font-bold text-sheetlink-text">What to Expect</h2>
+            <h2 className="mb-6 text-2xl font-bold text-sheetlink-text">What's Included</h2>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-sheetlink-green-900 text-sm font-bold text-white">
                   1
                 </span>
                 <div>
-                  <strong className="text-sheetlink-text">Test with Plaid Sandbox</strong>
+                  <strong className="text-sheetlink-text">Connect Real Bank Accounts</strong>
                   <p className="mt-1 text-sm text-gray-600">
-                    Connect fake bank accounts using Plaid's sandbox environment. No real banking
-                    credentials required.
+                    Powered by Plaid - connect to 10,000+ US banks with secure, read-only access. Your credentials never touch our servers.
                   </p>
                 </div>
               </li>
@@ -229,9 +232,9 @@ export default function Beta() {
                   2
                 </span>
                 <div>
-                  <strong className="text-sheetlink-text">Provide Feedback</strong>
+                  <strong className="text-sheetlink-text">7 Days of History (Free Forever)</strong>
                   <p className="mt-1 text-sm text-gray-600">
-                    We'll send short surveys to understand what's working and what needs improvement.
+                    The Free Tier syncs your last 7 days of transactions. Unlimited banks, manual sync. No credit card required.
                   </p>
                 </div>
               </li>
@@ -240,10 +243,9 @@ export default function Beta() {
                   3
                 </span>
                 <div>
-                  <strong className="text-sheetlink-text">Keep Lifetime Free Access</strong>
+                  <strong className="text-sheetlink-text">Your Data, Your Sheet</strong>
                   <p className="mt-1 text-sm text-gray-600">
-                    Beta testers get permanent free access when we launch. No credit card. No
-                    expiration.
+                    SheetLink writes directly to your Google Sheet. Build your own dashboards, formulas, and reports.
                   </p>
                 </div>
               </li>
@@ -254,16 +256,16 @@ export default function Beta() {
           {/* CTAs */}
           <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link
-              href="/sandbox"
+              href="/user-guide"
               className="rounded-lg border-2 border-sheetlink-green-700 bg-white px-6 py-3 text-center font-semibold text-sheetlink-green-700 transition-all hover:bg-sheetlink-bg"
             >
-              View Sandbox Setup Guide →
+              User Guide →
             </Link>
             <Link
-              href="/privacy"
+              href="/security"
               className="rounded-lg border-2 border-gray-200 bg-white px-6 py-3 text-center font-semibold text-gray-700 transition-all hover:bg-gray-50"
             >
-              Read Privacy Policy
+              Security & Privacy
             </Link>
           </div>
 

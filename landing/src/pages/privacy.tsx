@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { Lock } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
@@ -26,7 +27,7 @@ export default function Privacy() {
             </h1>
             <p className="mx-auto max-w-2xl text-xl leading-relaxed text-gray-600">
               SheetLink never stores your financial data. Transactions flow from Plaid to your
-              spreadsheet, nowhere else. You can test with Plaid Sandbox before connecting real accounts.
+              spreadsheet, nowhere else. Available now on the Free Tier. Connect real bank accounts for free.
             </p>
           </div>
         </section>
@@ -46,8 +47,8 @@ export default function Privacy() {
 
             <p className="text-gray-700">We:</p>
             <ul className="list-disc pl-6 space-y-1 text-gray-700">
-              <li><strong>Do store</strong>: encrypted access tokens, institution name, minimal sync metadata, beta signup details.</li>
-              <li><strong>Do not store</strong>: transactions, balances, categories, or anything about your banking activity.</li>
+              <li><strong>Do store</strong>: encrypted Plaid access tokens, Google user ID, linked sheet metadata (ID and title), institution names, and minimal sync metadata.</li>
+              <li><strong>Do not store</strong>: transactions, balances, categories, or anything about your banking activity. We also never store your Google OAuth tokens or sheet contents.</li>
               <li><strong>Do not sell</strong> or share any data, ever.</li>
             </ul>
 
@@ -112,8 +113,9 @@ export default function Privacy() {
 
           <div className="mt-6 rounded-lg border-2 border-sheetlink-accent bg-green-50 p-6">
             <div className="flex items-start gap-3">
-              {/* <span className="text-2xl">✅</span> */}
-              <span className="text-2xl">🔒</span>
+              <div className="flex-shrink-0">
+                <Lock className="h-6 w-6 text-sheetlink-green-700 stroke-[1.5]" />
+              </div>
               <div>
                 <strong className="text-lg text-sheetlink-text">Privacy Guarantee:</strong>
                 <p className="mt-2 text-gray-700">
@@ -143,12 +145,13 @@ export default function Privacy() {
               <h3 className="mb-4 text-xl font-bold text-sheetlink-text">What We Store</h3>
               <ul className="space-y-2 text-gray-700">
                 <li>✓ Encrypted Plaid access tokens</li>
-                <li>✓ Metadata: <code className="text-sm">item_id</code>, <code className="text-sm">cursor</code>, timestamps</li>
-                <li>✓ Your email address (if you join the beta)</li>
-                <li>✓ High-level telemetry (no transaction content)</li>
+                <li>✓ Google user identifier (email or stable Google ID)</li>
+                <li>✓ Linked sheet metadata (sheet ID, title)</li>
+                <li>✓ Plaid metadata: <code className="text-sm">item_id</code>, <code className="text-sm">institution_id</code>, <code className="text-sm">cursor</code>, timestamps</li>
+                <li>✓ Minimal operational logs (non-PII)</li>
               </ul>
               <p className="mt-4 text-sm text-gray-700">
-                We use <strong>Fernet encryption</strong> to store Plaid tokens. Only encrypted values touch our database.
+                We use <strong>Fernet encryption</strong> (AES-128-CBC + HMAC) to store Plaid tokens at rest. Only encrypted values are stored in our database.
               </p>
             </div>
 
@@ -156,13 +159,14 @@ export default function Privacy() {
             <div className="rounded-lg border-2 border-gray-300 bg-gray-50 p-6">
               <h3 className="mb-4 text-xl font-bold text-sheetlink-text">What We Don't Store</h3>
               <ul className="space-y-2 text-gray-700">
-                <li>✗ Transaction descriptions, merchant names, or amounts</li>
-                <li>✗ Account balances or PII</li>
-                <li>✗ Your bank username or password (handled by Plaid)</li>
-                <li>✗ Your Google Sheets contents</li>
+                <li>✗ Transaction line items (amounts, merchants, categories, dates)</li>
+                <li>✗ Account balances or transaction history</li>
+                <li>✗ Bank usernames or passwords (handled exclusively by Plaid)</li>
+                <li>✗ Google OAuth tokens (these remain in your browser)</li>
+                <li>✗ Contents of your Google Sheets</li>
               </ul>
               <p className="mt-4 text-sm text-gray-700">
-                <strong className="text-red-500">Explicitly:</strong> We do NOT store your transaction details, balances, or any identifiable financial data.
+                <strong className="text-red-500">Explicitly:</strong> We do NOT store your transaction details, balances, or any identifiable financial activity. Transaction data flows through our servers for less than a second during sync, then is immediately discarded.
               </p>
             </div>
           </div>
@@ -187,7 +191,9 @@ export default function Privacy() {
 
             <div className="mt-6 rounded-lg border-2 border-sheetlink-accent bg-green-50 p-6">
               <div className="flex items-start gap-3">
-                <span className="text-2xl">🔒</span>
+                <div className="flex-shrink-0">
+                  <Lock className="h-6 w-6 text-sheetlink-green-700 stroke-[1.5]" />
+                </div>
                 <div>
                   <strong className="text-lg text-sheetlink-text">OAuth Privacy Guarantee:</strong>
                   <p className="mt-2 text-gray-700">
@@ -206,13 +212,31 @@ export default function Privacy() {
         {/* Security */}
         <section className="mx-auto max-w-4xl px-4 py-12">
           <h2 className="mb-6 text-3xl font-bold text-sheetlink-text">Security Measures</h2>
-          <div className="prose prose-md max-w-none text-gray-600">
-            <p>🔒 All API communication over HTTPS (TLS/SSL)</p>
-            <p>🔒 Plaid tokens encrypted at rest with Fernet (AES-256)</p>
-            <p>🔒 Google OAuth tokens never sent to servers (client-side only)</p>
-            <p>🔒 CORS restricted to SheetLink domains and Chrome extension only</p>
-            <p>🔒 Privacy middleware suppresses sensitive logs</p>
-            <p>🔒 Client-side transaction processing (rules engine runs in your browser)</p>
+          <div className="space-y-3 text-gray-600">
+            <div className="flex items-start gap-3">
+              <Lock className="h-5 w-5 flex-shrink-0 text-sheetlink-green-900 mt-0.5 stroke-[1.5]" />
+              <p>All API communication over HTTPS (TLS/SSL)</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Lock className="h-5 w-5 flex-shrink-0 text-sheetlink-green-900 mt-0.5 stroke-[1.5]" />
+              <p>Plaid tokens encrypted at rest with Fernet (AES-256)</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Lock className="h-5 w-5 flex-shrink-0 text-sheetlink-green-900 mt-0.5 stroke-[1.5]" />
+              <p>Google OAuth tokens never sent to servers (client-side only)</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Lock className="h-5 w-5 flex-shrink-0 text-sheetlink-green-900 mt-0.5 stroke-[1.5]" />
+              <p>CORS restricted to SheetLink domains and Chrome extension only</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Lock className="h-5 w-5 flex-shrink-0 text-sheetlink-green-900 mt-0.5 stroke-[1.5]" />
+              <p>Privacy middleware suppresses sensitive logs</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Lock className="h-5 w-5 flex-shrink-0 text-sheetlink-green-900 mt-0.5 stroke-[1.5]" />
+              <p>Client-side transaction processing (rules engine runs in your browser)</p>
+            </div>
           </div>
         </section> 
 
@@ -367,7 +391,7 @@ export default function Privacy() {
         {/* PRD v0.7.4 section start: Contact */}
         <section className="mx-auto max-w-4xl px-4 py-12">
           <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-6">
-            <p className="mb-4 text-sm text-gray-500">Last updated: November 2025</p>
+            <p className="mb-4 text-sm text-gray-500">Last updated: December 2025</p>
             <p className="text-gray-600">
               This privacy policy may be updated from time to time. Material changes will be
                 communicated via email or through the extension. Continued use of SheetLink after
