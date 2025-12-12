@@ -283,6 +283,17 @@ function attachEventListeners() {
   }
   if (learnMoreBtn) learnMoreBtn.addEventListener('click', handleLearnMore);
   saveSheetBtn.addEventListener('click', handleSaveSheet);
+
+  // Add Enter key support for sheet URL input
+  if (sheetUrlInput) {
+    sheetUrlInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        saveSheetBtn.click();
+      }
+    });
+  }
+
   if (removeSheetBtn) removeSheetBtn.addEventListener('click', handleRemoveSheet);
   if (changeSheetBtn) changeSheetBtn.addEventListener('click', handleChangeSheet);
   if (changeSheetLinkBtn) changeSheetLinkBtn.addEventListener('click', handleChangeSheet);
@@ -1020,15 +1031,16 @@ async function tryRestoreItems() {
 // Update tier display from backend
 async function updateTierDisplay() {
   try {
-    // Phase 3.16.0: Try authenticated call first, fallback to unauthenticated
+    // Phase 3.16.0: Try authenticated call first, force re-auth if expired
     let response;
     try {
       response = await authenticatedFetch(`${BACKEND_URL}/tier/status`);
     } catch (error) {
       if (error.code === 'AUTH_REQUIRED' || error.code === 'AUTH_EXPIRED') {
-        // No JWT token or expired - fallback to unauthenticated call (free tier)
-        debug('[Tier] No JWT token, using unauthenticated tier/status');
-        response = await fetch(`${BACKEND_URL}/tier/status`);
+        // JWT expired/missing - force re-authentication
+        debug('[Tier] JWT expired/missing - forcing re-authentication');
+        await handleSessionExpired();
+        return; // Exit early, user will be redirected to welcome
       } else {
         throw error;
       }
@@ -1072,23 +1084,36 @@ async function updateTierDisplay() {
       }
     }
 
-    // Update user header tier
-    if (userTier) {
-      userTier.textContent = tierText;
-    }
-
-    // Update tier badge in user panel
+    // Update tier display in user panel
     const tierBadge = document.getElementById('tierBadge');
-    if (tierBadge) {
-      if (data.tier === 'basic') {
-        tierBadge.textContent = 'BASIC';
+    const userTier = document.getElementById('userTier');
+
+    if (data.tier === 'basic') {
+      // BASIC: Show badge with Lucide plus icon, hide text
+      if (tierBadge) {
+        tierBadge.innerHTML = `BASIC <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 2px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
         tierBadge.className = 'tier-badge basic';
-      } else if (data.tier === 'pro') {
-        tierBadge.textContent = 'PRO ⭐';
+      }
+      if (userTier) {
+        userTier.style.display = 'none';
+      }
+    } else if (data.tier === 'pro') {
+      // PRO: Show badge with Lucide star icon, hide text
+      if (tierBadge) {
+        tierBadge.innerHTML = `PRO <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
         tierBadge.className = 'tier-badge pro';
-      } else {
-        // Free tier: hide badge
+      }
+      if (userTier) {
+        userTier.style.display = 'none';
+      }
+    } else {
+      // FREE: Hide badge, show text
+      if (tierBadge) {
         tierBadge.className = 'tier-badge hidden';
+      }
+      if (userTier) {
+        userTier.textContent = tierText;
+        userTier.style.display = '';
       }
     }
 
@@ -1178,10 +1203,11 @@ async function handleGoogleSignIn() {
     // Note: This opens OAuth window and doesn't wait for response
     // Service worker will reopen popup after OAuth completes
     debug('[Google Auth] Sending GET_AUTH_TOKEN message to service worker');
-    // Phase 3.11: Set forceAuth=true when user clicks button (re-authentication or returning user)
+    // Phase 3.16.0: Always set forceAuth=true when user clicks the button
+    // The button click itself is explicit user intent to authenticate
     chrome.runtime.sendMessage({
       type: 'GET_AUTH_TOKEN',
-      forceAuth: isReturningUser
+      forceAuth: true
     }, async (response) => {
       debug('[Google Auth] Received response from service worker:', response);
       if (response && response.token) {
@@ -1206,6 +1232,8 @@ async function handleGoogleSignIn() {
           await loadState();
         } else {
           // Normal onboarding flow or returning user - reload state
+          // Wait a moment for service worker storage to sync
+          await new Promise(resolve => setTimeout(resolve, 100));
           await loadState();
         }
       }
@@ -1479,6 +1507,131 @@ async function handleFixSyncIssues() {
 /**
  * Phase 3.14.0: Sync all institutions
  */
+// Phase 3.17.0: Check for existing sheet data and column mismatch
+async function checkSheetDataMismatch(sheetId, currentTier) {
+  try {
+    debug(`[Sheet Check] Checking for existing data and column mismatch (tier: ${currentTier})`);
+
+    // Get expected column count for current tier
+    const expectedColumns = currentTier === 'pro' ? 34 : 12; // 33/11 fields + Rules column
+
+    // Check if Transactions tab exists and has data
+    const token = await window.SheetsAPI.getAuthToken();
+    const tabName = 'Transactions';
+
+    try {
+      // Try to read first 2 rows (headers + first data row)
+      const response = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${tabName}!A1:ZZ2`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      if (!response.ok) {
+        // Tab doesn't exist yet, no mismatch possible
+        debug('[Sheet Check] Transactions tab does not exist yet');
+        return { hasMismatch: false };
+      }
+
+      const data = await response.json();
+      const values = data.values || [];
+
+      // If no data or only headers, no mismatch issue
+      if (values.length < 2) {
+        debug('[Sheet Check] No existing transaction data found');
+        return { hasMismatch: false };
+      }
+
+      // Check column count in existing data
+      const existingColumns = values[0]?.length || 0;
+      debug(`[Sheet Check] Existing columns: ${existingColumns}, Expected: ${expectedColumns}`);
+
+      if (existingColumns !== expectedColumns) {
+        // Column mismatch detected!
+        debug('[Sheet Check] COLUMN MISMATCH DETECTED!');
+
+        const message = `⚠️ Column Mismatch Detected!\n\n` +
+                       `Your sheet has ${existingColumns} columns but your current tier expects ${expectedColumns} columns.\n\n` +
+                       `Syncing now would append mismatched data and corrupt your sheet.\n\n` +
+                       `Options:\n` +
+                       `1. Clear existing data and re-sync (recommended)\n` +
+                       `2. Create a new sheet instead\n` +
+                       `3. Cancel sync\n\n` +
+                       `Clear existing data and continue?`;
+
+        const userConfirmed = confirm(message);
+
+        if (userConfirmed) {
+          debug('[Sheet Check] User confirmed clearing mismatched data');
+          showHomeSyncLoading('Clearing mismatched data...');
+          await window.SheetsAPI.clearTransactionsTab(sheetId, currentTier);
+          return { hasMismatch: true, cleared: true };
+        } else {
+          debug('[Sheet Check] User cancelled sync due to mismatch');
+          return { hasMismatch: true, cleared: false, cancelled: true };
+        }
+      }
+
+      return { hasMismatch: false };
+    } catch (fetchError) {
+      // If we can't fetch, assume no data exists
+      debug('[Sheet Check] Could not fetch sheet data, assuming no mismatch');
+      return { hasMismatch: false };
+    }
+  } catch (error) {
+    console.error('[Sheet Check] Error checking sheet data:', error);
+    // Don't block sync on check errors
+    return { hasMismatch: false };
+  }
+}
+
+// Phase 3.16.0: Check for tier changes and prompt user
+async function checkTierChange(sheetId) {
+  try {
+    // Get current tier from storage
+    const storage = await chrome.storage.sync.get(['userTier', 'lastSyncTier']);
+    const currentTier = storage.userTier || 'free';
+    const lastSyncTier = storage.lastSyncTier;
+
+    debug(`[Tier Check] Current tier: ${currentTier}, Last sync tier: ${lastSyncTier}`);
+
+    // If this is first sync or tier hasn't changed, no action needed
+    if (!lastSyncTier || lastSyncTier === currentTier) {
+      debug('[Tier Check] No tier change detected');
+      return { changed: false, currentTier };
+    }
+
+    // Tier has changed - show confirmation dialog
+    const tierNames = { free: 'FREE', basic: 'BASIC', pro: 'PRO' };
+    const oldTierName = tierNames[lastSyncTier] || lastSyncTier.toUpperCase();
+    const newTierName = tierNames[currentTier] || currentTier.toUpperCase();
+
+    const message = `Your subscription tier changed from ${oldTierName} to ${newTierName}!\n\n` +
+                   `To avoid data misalignment, we recommend clearing existing transactions and re-syncing with the new field format.\n\n` +
+                   `Clear existing data and re-sync now?`;
+
+    const userConfirmed = confirm(message);
+
+    if (userConfirmed) {
+      debug(`[Tier Check] User confirmed clearing data for tier change: ${lastSyncTier} → ${currentTier}`);
+
+      // Clear the Transactions tab and update headers
+      showHomeSyncLoading('Clearing old transaction data...');
+      await window.SheetsAPI.clearTransactionsTab(sheetId, currentTier);
+
+      return { changed: true, currentTier, cleared: true };
+    } else {
+      debug('[Tier Check] User declined clearing data');
+      return { changed: true, currentTier, cleared: false, cancelled: true };
+    }
+  } catch (error) {
+    console.error('[Tier Check] Error checking tier change:', error);
+    // Don't block sync on tier check errors
+    return { changed: false, currentTier: 'free' };
+  }
+}
+
 async function handleSyncNow() {
   async function attemptSync() {
     try {
@@ -1497,8 +1650,35 @@ async function handleSyncNow() {
         throw new Error('Missing sheet ID');
       }
 
+      // Phase 3.17.0: Refresh tier from backend to catch any changes made in Railway
+      debug('[Sync] Refreshing tier from backend before sync...');
+      showHomeSyncLoading('Checking your subscription...');
+      await updateTierDisplay();
+      debug('[Sync] Tier refreshed successfully');
+
+      // Phase 3.16.0: Check for tier changes before syncing
+      const tierCheck = await checkTierChange(sheetId);
+      if (tierCheck.cancelled) {
+        // User declined to clear data, cancel the sync
+        hideHomeSyncStatus();
+        return;
+      }
+
+      // Phase 3.17.0: Check for sheet data mismatch (wrong column count)
+      const mismatchCheck = await checkSheetDataMismatch(sheetId, tierCheck.currentTier);
+      if (mismatchCheck.cancelled) {
+        // User declined to clear mismatched data, cancel the sync
+        hideHomeSyncStatus();
+        return;
+      }
+
       // Check if we need to backfill (tabs deleted or empty)
       const needsBackfill = await checkIfBackfillNeeded(sheetId);
+
+      // Get user's tier for appropriate loading messages
+      const storage = await chrome.storage.sync.get(['userTier']);
+      const userTier = storage.userTier || 'free';
+      const isProTier = userTier === 'pro';
 
       // Phase 3.14.0: Fetch data from ALL institutions
       let allAccounts = [];
@@ -1506,7 +1686,11 @@ async function handleSyncNow() {
 
       for (const institution of institutions) {
         try {
-          showHomeSyncLoading(`Syncing ${institution.institutionName}...`);
+          // Show tier-aware loading message
+          const loadingMsg = needsBackfill && isProTier
+            ? `Syncing ${institution.institutionName}... (this may take 10+ seconds on first sync)`
+            : `Syncing ${institution.institutionName}...`;
+          showHomeSyncLoading(loadingMsg);
           debug(`[Sync] Processing ${institution.institutionName} (${institution.itemId})`);
 
           // Fetch data from backend (backfill if needed, otherwise incremental sync)
@@ -1632,6 +1816,13 @@ async function handleSyncNow() {
       // Phase 3.13: Update last sync time in StateManager
       await window.StateManager.set({ lastSync: Date.now() });
 
+      // Phase 3.16.0: Store current tier as lastSyncTier for future tier change detection
+      // Note: userTier is already declared earlier in this function
+      if (userTier) {
+        await chrome.storage.sync.set({ lastSyncTier: userTier });
+        debug(`[Sync] Stored lastSyncTier: ${userTier}`);
+      }
+
       // Phase 3.14.0: Show detailed success message with institution count
       const message = `Synced ${institutions.length} ${institutions.length === 1 ? 'bank' : 'banks'}! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
       showHomeSyncSuccess(message);
@@ -1710,7 +1901,16 @@ async function handleSyncNow() {
 // Handle Re-sync All Data button - Force backfill regardless of tab state
 async function handleResyncAll() {
   try {
-    showHomeSyncLoading('Re-fetching all data...');
+    // Get user's tier to show appropriate loading message
+    const storage = await chrome.storage.sync.get(['userTier']);
+    const userTier = storage.userTier || 'free';
+
+    // PRO users get 2 years of data, which takes longer
+    const loadingMessage = userTier === 'pro'
+      ? 'Re-fetching 2 years of data... (may take 15-20 seconds)'
+      : 'Re-fetching all data...';
+
+    showHomeSyncLoading(loadingMessage);
 
     // Phase 3.14.0: Use StateManager with multi-institution support
     const stateManager = window.StateManager;
@@ -1719,6 +1919,14 @@ async function handleResyncAll() {
 
     if (institutions.length === 0 || !sheetId) {
       throw new Error('No banks connected or sheet not set up');
+    }
+
+    // Phase 3.16.0: Check for tier changes before syncing
+    const tierCheck = await checkTierChange(sheetId);
+    if (tierCheck.cancelled) {
+      // User declined to clear data, cancel the sync
+      hideHomeSyncStatus();
+      return;
     }
 
     debug(`[Resync All] Forcing backfill for ${institutions.length} institution(s)`);
@@ -1767,6 +1975,13 @@ async function handleResyncAll() {
 
     // Phase 3.13: Update last sync time in StateManager
     await window.StateManager.set({ lastSync: Date.now() });
+
+    // Phase 3.16.0: Store current tier as lastSyncTier for future tier change detection
+    // Note: userTier is already declared earlier in this function
+    if (userTier) {
+      await chrome.storage.sync.set({ lastSyncTier: userTier });
+      debug(`[Resync All] Stored lastSyncTier: ${userTier}`);
+    }
 
     // Phase 3.14.0: Show detailed success message with institution count
     const message = `Re-synced ${institutions.length} ${institutions.length === 1 ? 'bank' : 'banks'}! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
@@ -1886,6 +2101,128 @@ async function handleBackfill() {
     hideLoading();
     showError('Backfill failed: ' + error.message);
   }
+}
+
+// Check and show session expired message on welcome page
+/**
+ * Phase 3.16.0: Display styled message on welcome page if session expired
+ */
+async function checkAndShowSessionExpiredMessage() {
+  const { sessionExpired } = await chrome.storage.sync.get(['sessionExpired']);
+
+  if (sessionExpired) {
+    // Clear the flag
+    await chrome.storage.sync.remove(['sessionExpired']);
+
+    // Find or create the message container
+    const welcomeSection = document.getElementById('welcomeSection');
+    if (!welcomeSection) return;
+
+    // Create styled message with blue styling and smooth transitions
+    const messageHtml = `
+      <div id="sessionExpiredMessage" style="
+        margin: 0 0 16px 0;
+        padding: 12px 16px;
+        background: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #1e40af;
+        line-height: 1.5;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+      ">
+        <strong>Session Expired</strong><br>
+        Your session has expired. Please sign in again to continue.
+      </div>
+    `;
+
+    // Insert message inside welcome-content before the sign-in button
+    const welcomeContent = welcomeSection.querySelector('.welcome-content');
+    const signInButton = welcomeSection.querySelector('#signInGoogleBtn');
+    const heroSection = welcomeSection.querySelector('.welcome-hero-bg');
+
+    if (welcomeContent && signInButton) {
+      signInButton.insertAdjacentHTML('beforebegin', messageHtml);
+    } else {
+      // Fallback: insert at beginning of welcome content
+      welcomeContent?.insertAdjacentHTML('afterbegin', messageHtml);
+    }
+
+    // Reduce padding on hero section when message is active
+    if (heroSection) {
+      heroSection.style.transition = 'padding 0.3s ease-out';
+      heroSection.style.paddingBottom = '16px';
+    }
+
+    // Trigger fade-in animation
+    const msg = document.getElementById('sessionExpiredMessage');
+    if (msg) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          msg.style.opacity = '1';
+          msg.style.transform = 'translateY(0)';
+        });
+      });
+    }
+
+    // Auto-remove message after 5 seconds with fade-out
+    setTimeout(() => {
+      const msg = document.getElementById('sessionExpiredMessage');
+      if (msg) {
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateY(-8px)';
+        // Remove from DOM after transition completes
+        setTimeout(() => {
+          msg.remove();
+          // Restore hero section padding
+          if (heroSection) {
+            heroSection.style.paddingBottom = '';
+          }
+        }, 300);
+      }
+    }, 5000);
+  }
+}
+
+// Handle Session Expired - Force Re-authentication
+/**
+ * Phase 3.16.0: When JWT expires, clear auth state and redirect to welcome
+ * This is more reliable than trying to silently refresh the token
+ */
+let sessionExpiredHandled = false; // Prevent multiple simultaneous calls
+async function handleSessionExpired() {
+  // Prevent multiple simultaneous calls
+  if (sessionExpiredHandled) {
+    debug('[Auth] Session expiry already being handled, skipping duplicate call');
+    return;
+  }
+  sessionExpiredHandled = true;
+
+  debug('[Auth] Session expired - clearing auth state and redirecting to welcome');
+
+  // Clear JWT and auth-related data (but keep onboarding state and lastSyncTier)
+  // Note: We keep lastSyncTier so tier changes can be detected after re-auth
+  await chrome.storage.sync.remove([
+    'jwtToken',
+    'jwtExpiry',
+    'userId',
+    'userEmail',
+    'userTier',
+    'tierFetchedAt',
+    'tierFeatures'
+  ]);
+
+  // Set session expired flag for welcome page to display message
+  // Note: Keep hasCompletedInitialOnboarding so user doesn't re-enter onboarding
+  await chrome.storage.sync.set({
+    sessionExpired: true,
+    googleAuthenticated: false
+  });
+
+  // Reload popup to show welcome screen with session expired message
+  window.location.reload();
 }
 
 // Handle Disconnect button
@@ -2609,6 +2946,9 @@ function showSection(section) {
       window.StateManager.set({ hasSeenWelcome: true });
       // Hide legacy footer on welcome
       if (legacyFooter) legacyFooter.classList.add('hidden');
+
+      // Phase 3.16.0: Check for session expired and show message
+      checkAndShowSessionExpiredMessage();
       break;
     case 'connect':
       connectSection.classList.remove('hidden');
@@ -3530,6 +3870,14 @@ async function loadSheetPage() {
       const sheetUrlPageInput = document.getElementById('sheetUrlPage');
 
       if (saveSheetBtnPage && sheetUrlPageInput) {
+        // Add Enter key support
+        sheetUrlPageInput.addEventListener('keypress', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            saveSheetBtnPage.click();
+          }
+        });
+
         saveSheetBtnPage.addEventListener('click', async () => {
           const url = sheetUrlPageInput.value.trim();
 
