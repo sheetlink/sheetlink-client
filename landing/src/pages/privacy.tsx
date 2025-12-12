@@ -47,7 +47,8 @@ export default function Privacy() {
 
             <p className="text-gray-700">We:</p>
             <ul className="list-disc pl-6 space-y-1 text-gray-700">
-              <li><strong>Do store</strong>: encrypted Plaid access tokens, Google user ID, linked sheet metadata (ID and title), institution names, and minimal sync metadata.</li>
+              <li><strong>Do store</strong>: encrypted Plaid access tokens, Google user ID, email address (for authenticated users), subscription tier (FREE/BASIC/PRO), linked sheet metadata (ID and title), institution names, and minimal sync metadata.</li>
+              <li><strong>Do store (in browser only)</strong>: JWT authentication tokens with 60-minute expiry, stored locally in Chrome's secure storage.</li>
               <li><strong>Do not store</strong>: transactions, balances, categories, or anything about your banking activity. We also never store your Google OAuth tokens or sheet contents.</li>
               <li><strong>Do not sell</strong> or share any data, ever.</li>
             </ul>
@@ -206,6 +207,143 @@ export default function Privacy() {
             <p className="mt-4">
               Your Google OAuth token is stored only in the extension's local storage (encrypted by Chrome) and never leaves your device.
             </p>
+          </div>
+        </section>
+
+        {/* JWT Authentication & Session Management */}
+        <section className="mx-auto max-w-4xl px-4 py-12">
+          <h2 className="mb-6 text-3xl font-bold text-sheetlink-text">
+            JWT Authentication & Session Management
+          </h2>
+
+          <div className="prose prose-lg max-w-none text-gray-600">
+            <h3 className="text-xl font-semibold text-sheetlink-text">What Are JWT Tokens?</h3>
+            <p>
+              JWT (JSON Web Tokens) are secure tokens that prove you're authenticated.
+              After you sign in with Google, our backend generates a JWT token that the
+              extension stores locally in your browser.
+            </p>
+
+            <h3 className="mt-6 text-xl font-semibold text-sheetlink-text">How They Work:</h3>
+            <ol className="list-decimal pl-6 space-y-2">
+              <li>You sign in with Google OAuth (one-time)</li>
+              <li>Backend verifies your Google identity and creates a JWT token</li>
+              <li>Extension stores JWT token in Chrome's secure storage</li>
+              <li>Extension sends JWT with each API request (Authorization header)</li>
+              <li>Backend uses JWT to identify you and apply your subscription tier</li>
+            </ol>
+
+            <h3 className="mt-6 text-xl font-semibold text-sheetlink-text">What Tokens Contain:</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Your user ID (UUID)</li>
+              <li>Your email address</li>
+              <li>Token expiration timestamp (60 minutes)</li>
+              <li>Cryptographic signature (prevents tampering)</li>
+            </ul>
+
+            <h3 className="mt-6 text-xl font-semibold text-sheetlink-text">What Tokens DON'T Contain:</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Your Google OAuth token</li>
+              <li>Your bank data or transactions</li>
+              <li>Your Google Sheets information</li>
+              <li>Any personally identifiable financial data</li>
+            </ul>
+
+            <div className="mt-6 rounded-lg border-2 border-sheetlink-accent bg-green-50 p-6">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  <Lock className="h-6 w-6 text-sheetlink-green-700 stroke-[1.5]" />
+                </div>
+                <div>
+                  <strong className="text-lg text-sheetlink-text">Session Expiry:</strong>
+                  <p className="mt-2 text-gray-700">
+                    JWT tokens expire after <strong>60 minutes</strong> for security. When your
+                    session expires, you'll be prompted to sign in again with Google. This quick
+                    re-authentication (usually one click) ensures your account stays secure.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Subscription Tiers & Data Access */}
+        <section className="mx-auto max-w-4xl px-4 py-12">
+          <h2 className="mb-6 text-3xl font-bold text-sheetlink-text">
+            Subscription Tiers & Data Access
+          </h2>
+
+          <div className="prose prose-lg max-w-none text-gray-600">
+            <p>
+              SheetLink offers three subscription tiers with different historical data access:
+            </p>
+
+            <div className="mt-6 grid gap-6 md:grid-cols-3">
+              <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">FREE Tier</h3>
+                <ul className="space-y-2 text-sm">
+                  <li><strong>7 days</strong> of transaction history</li>
+                  <li><strong>11 core fields</strong> per transaction</li>
+                  <li>Unlimited bank connections</li>
+                  <li>Manual sync control</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">BASIC Tier</h3>
+                <ul className="space-y-2 text-sm">
+                  <li><strong>90 days</strong> of transaction history</li>
+                  <li><strong>11 core fields</strong> per transaction</li>
+                  <li>All FREE features</li>
+                  <li>Extended history access</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">PRO Tier</h3>
+                <ul className="space-y-2 text-sm">
+                  <li><strong>730 days</strong> (2 years) of history</li>
+                  <li><strong>33 total fields</strong> per transaction</li>
+                  <li>All BASIC features</li>
+                  <li>Enhanced details (location, merchant IDs)</li>
+                </ul>
+              </div>
+            </div>
+
+            <h3 className="mt-8 text-xl font-semibold text-sheetlink-text">What We Store:</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Subscription tier</strong>: Your current tier (FREE/BASIC/PRO)</li>
+              <li><strong>Tier history</strong>: When you change tiers (for data integrity)</li>
+              <li><strong>Feature usage</strong>: Which features you've accessed (not usage frequency)</li>
+            </ul>
+
+            <h3 className="mt-6 text-xl font-semibold text-sheetlink-text">Tier Changes & Data:</h3>
+            <p>
+              When you change subscription tiers:
+            </p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Upgrade</strong>: Access more history and fields immediately</li>
+              <li><strong>Downgrade</strong>: Extension may clear extra data from your sheet to match new tier limits</li>
+              <li><strong>Data safety</strong>: We warn you before clearing any data from your sheets</li>
+              <li><strong>Your control</strong>: You can always reconnect to restore data within tier limits</li>
+            </ul>
+
+            <div className="mt-6 rounded-lg border-2 border-sheetlink-accent bg-green-50 p-6">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  <Lock className="h-6 w-6 text-sheetlink-green-700 stroke-[1.5]" />
+                </div>
+                <div>
+                  <strong className="text-lg text-sheetlink-text">Pass-Through Architecture:</strong>
+                  <p className="mt-2 text-gray-700">
+                    SheetLink does not store your transaction data on our servers. Data retention
+                    refers to how much <strong>historical data you can fetch</strong> from your bank
+                    via Plaid. Your Google Sheet stores transactions indefinitely. Tier limits only
+                    apply to how far back we can fetch new data.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
