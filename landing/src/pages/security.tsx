@@ -203,6 +203,24 @@ export default function Security() {
                     Item IDs, institution IDs, sync cursors, and timestamps. No transaction content.
                   </p>
                 </div>
+                <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-6">
+                  <div className="mb-3">
+                    <Shield className="h-8 w-8 text-blue-700 stroke-[1.5]" />
+                  </div>
+                  <h3 className="mb-2 text-xl font-bold text-sheetlink-text">JWT Tokens (Browser Only)</h3>
+                  <p className="text-gray-700">
+                    Stored in <strong>Chrome's secure storage</strong> (chrome.storage.sync). Tokens are never persisted on our servers. They expire after 60 minutes and are automatically deleted.
+                  </p>
+                </div>
+                <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+                  <div className="mb-3">
+                    <User className="h-8 w-8 text-sheetlink-green-700 stroke-[1.5]" />
+                  </div>
+                  <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Subscription Tier</h3>
+                  <p className="text-gray-700">
+                    Your subscription tier (FREE/BASIC/PRO) to enforce feature limits and data retention policies. Not encrypted as it's not sensitive data.
+                  </p>
+                </div>
               </div>
             </motion.div>
 
@@ -250,6 +268,92 @@ export default function Security() {
                     <p className="text-sm text-red-800">We write data but never read your spreadsheets</p>
                   </div>
                 </div>
+              </div>
+            </motion.div>
+
+            {/* JWT Authentication & Authorization */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-16"
+            >
+              <h2 className="mb-6 text-3xl font-bold text-sheetlink-text">JWT Authentication & Authorization</h2>
+              <p className="mb-6 text-lg leading-relaxed text-gray-700">
+                SheetLink uses industry-standard JWT (JSON Web Token) authentication to securely identify users and enforce subscription tier limits.
+              </p>
+
+              <div className="mb-6 rounded-lg border-2 border-sheetlink-green-700 bg-sheetlink-bg p-6">
+                <h3 className="mb-4 text-xl font-bold text-sheetlink-text">Authentication Flow:</h3>
+                <ol className="space-y-2 text-gray-700">
+                  <li><strong>1.</strong> User signs in with Google OAuth (trusted identity provider)</li>
+                  <li><strong>2.</strong> Backend verifies Google ID token with Google's API</li>
+                  <li><strong>3.</strong> Backend generates signed JWT token (60-minute expiry)</li>
+                  <li><strong>4.</strong> Extension stores JWT in Chrome's secure storage</li>
+                  <li><strong>5.</strong> All API requests include JWT in Authorization header</li>
+                  <li><strong>6.</strong> Backend verifies JWT signature and enforces tier limits</li>
+                </ol>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+                  <h3 className="mb-3 text-lg font-bold text-sheetlink-text">Token Security</h3>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 text-green-600">✓</span>
+                      <span><strong>Cryptographic signatures:</strong> Tokens can't be tampered with</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 text-green-600">✓</span>
+                      <span><strong>60-minute expiry:</strong> Limited validity window</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 text-green-600">✓</span>
+                      <span><strong>HTTPS only:</strong> Encrypted transmission</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 text-green-600">✓</span>
+                      <span><strong>Stateless design:</strong> No server-side session tracking</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+                  <h3 className="mb-3 text-lg font-bold text-sheetlink-text">Identity Verification</h3>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 text-green-600">✓</span>
+                      <span><strong>Google OAuth:</strong> Trusted identity provider</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 text-green-600">✓</span>
+                      <span><strong>ID token verification:</strong> Backend validates with Google</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 text-green-600">✓</span>
+                      <span><strong>Prevents impersonation:</strong> Can't fake user identity</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 text-green-600">✓</span>
+                      <span><strong>Re-auth on expiry:</strong> Continuous security validation</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-lg border-2 border-blue-200 bg-blue-50 p-6">
+                <h3 className="mb-3 text-lg font-bold text-sheetlink-text">Protected API Endpoints:</h3>
+                <p className="mb-3 text-sm text-gray-700">
+                  The following endpoints require JWT authentication:
+                </p>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li><code className="rounded bg-white px-2 py-1 font-mono">/tier/status</code> - Get subscription tier and features</li>
+                  <li><code className="rounded bg-white px-2 py-1 font-mono">/plaid/sync</code> - Sync transactions with tier-based field filtering</li>
+                  <li><code className="rounded bg-white px-2 py-1 font-mono">/plaid/backfill</code> - Fetch historical data within tier limits</li>
+                </ul>
+                <p className="mt-4 text-sm font-semibold text-blue-900">
+                  Tier-Based Access Control: Backend enforces limits based on authenticated user's subscription tier. FREE users can't access PRO features even if they modify the extension code.
+                </p>
               </div>
             </motion.div>
 
