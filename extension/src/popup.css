@@ -177,22 +177,28 @@ header {
   white-space: nowrap;
 }
 
+.tier-badge.free {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
 .tier-badge.basic {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
-  color: white;
+  background: transparent;
+  color: #0d9488;
+  border: 1.5px solid #0d9488;
 }
 
 .tier-badge.pro {
-  background: linear-gradient(135deg, #f59e0b 0%, #7c3aed 100%);
+  background: transparent;
   color: white;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  border: 1.5px solid white;
 }
 
 .user-tier-container {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: 2px;
+  margin-top: 4px;
   position: relative;
 }
 
