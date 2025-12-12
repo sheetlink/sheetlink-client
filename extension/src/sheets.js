@@ -537,6 +537,39 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
   await ensureTab(sheetId, tabName, headers);
   debug('[Sheets] Transactions tab ensured with headers');
 
+  // Clear any existing data rows (including placeholder rows from tier changes)
+  const token = await getAuthToken();
+  const metadata = await getSpreadsheetMetadata(token, sheetId);
+  const transactionsSheet = metadata.sheets?.find(s => s.properties.title === tabName);
+
+  if (transactionsSheet) {
+    const sheetIdNum = transactionsSheet.properties.sheetId;
+
+    // Check if there are any existing rows beyond the header
+    const allData = await readRange(token, sheetId, `${tabName}!A:A`);
+
+    if (allData.length > 1) {
+      // Delete all rows from row 2 onwards
+      debug('[Sheets] Clearing existing data rows before writing transactions');
+      const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+      const body = {
+        requests: [{
+          deleteDimension: {
+            range: {
+              sheetId: sheetIdNum,
+              dimension: 'ROWS',
+              startIndex: 1,  // Start from row 2 (0-indexed)
+              endIndex: allData.length  // Delete up to current row count
+            }
+          }
+        }]
+      };
+
+      await sheetsApiRequest(token, url, 'POST', body);
+      debug('[Sheets] Cleared', allData.length - 1, 'existing rows');
+    }
+  }
+
   // Create account lookup map for enriching transactions
   const accountMap = new Map();
   if (accountsData && accountsData.length > 0) {
@@ -727,6 +760,80 @@ async function readRangeWithAuth(sheetId, range) {
   return await readRange(token, sheetId, range);
 }
 
+/**
+ * Clear all transaction data and update headers for new tier
+ * Phase 3.16.0: Tier change detection - prevents column misalignment
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} tier - New tier ('free', 'basic', 'pro')
+ * @returns {Promise<void>}
+ */
+async function clearTransactionsTab(sheetId, tier = 'free', skipPlaceholders = false) {
+  const tabName = 'Transactions';
+  const token = await getAuthToken();
+
+  debug(`[Sheets] Clearing Transactions tab and updating headers for tier: ${tier}, skipPlaceholders: ${skipPlaceholders}`);
+
+  // Get current sheet metadata to find the Transactions tab sheet ID
+  const metadata = await getSpreadsheetMetadata(token, sheetId);
+  const transactionsSheet = metadata.sheets?.find(s => s.properties.title === tabName);
+
+  if (!transactionsSheet) {
+    debug('[Sheets] Transactions tab does not exist, nothing to clear');
+    return;
+  }
+
+  const sheetIdNum = transactionsSheet.properties.sheetId;
+
+  // Clear all data except row 1 (headers)
+  // Delete all rows from row 2 onwards
+  const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+  const body = {
+    requests: [{
+      deleteDimension: {
+        range: {
+          sheetId: sheetIdNum,
+          dimension: 'ROWS',
+          startIndex: 1,  // Start from row 2 (0-indexed)
+          endIndex: 10000  // Delete up to row 10000 (should be more than enough)
+        }
+      }
+    }]
+  };
+
+  await sheetsApiRequest(token, url, 'POST', body);
+  debug('[Sheets] Cleared all transaction data');
+
+  // Clear entire header row first (to remove any old columns)
+  const clearHeaderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(tabName + '!1:1')}:clear`;
+  await sheetsApiRequest(token, clearHeaderUrl, 'POST', {});
+  debug('[Sheets] Cleared header row');
+
+  // Update headers for new tier
+  const settings = await chrome.storage.sync.get(['enableRulesTab']);
+  const includeRules = settings.enableRulesTab || false;
+  const headers = getTransactionHeaders(tier, includeRules);
+
+  await writeHeaders(token, sheetId, tabName, headers);
+  debug(`[Sheets] Updated headers for ${tier} tier (${headers.length} columns)`);
+
+  // Add placeholder rows to show loading state (unless skipped for immediate sync)
+  if (!skipPlaceholders) {
+    const placeholderRows = 15;
+    const placeholderData = [];
+    for (let i = 0; i < placeholderRows; i++) {
+      const row = new Array(headers.length).fill('');
+      row[0] = i === 7 ? 'Loading transactions...' : '';  // Show message in middle row
+      placeholderData.push(row);
+    }
+
+    const placeholderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${tabName}!A2:append?valueInputOption=RAW`;
+    await sheetsApiRequest(token, placeholderUrl, 'POST', { values: placeholderData });
+    debug(`[Sheets] Added ${placeholderRows} placeholder rows for loading state`);
+  } else {
+    debug('[Sheets] Skipped placeholder rows (immediate sync)');
+  }
+}
+
 // Export functions and error classes for use in popup
 window.SheetsAPI = {
   ensureTab,
@@ -736,6 +843,7 @@ window.SheetsAPI = {
   writeTransactions,
   verifySheetAccess,
   readRange: readRangeWithAuth,  // Export wrapper that includes token
+  clearTransactionsTab,
   AuthenticationError,
   PermissionError
 };

@@ -23,7 +23,10 @@
     "https://api.sheetlink.app/*"
   ],
   "externally_connectable": {
-    "matches": ["https://sheetlink.app/*"]
+    "matches": [
+      "https://sheetlink.app/*",
+      "http://localhost:3002/*"
+    ]
   },
   "homepage_url": "https://sheetlink.app",
   "action": {
