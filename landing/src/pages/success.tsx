@@ -62,14 +62,14 @@ export default function Success() {
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <a
-                  href="https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.1/sheetlink-extension-v0.4.1.zip"
+                  href="https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.2/sheetlink-extension-v0.4.2.zip"
                   download
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  Download Extension (v0.4.1)
+                  Download Extension (v0.4.2)
                 </a>
                 <Link
                   href="/get-started"
