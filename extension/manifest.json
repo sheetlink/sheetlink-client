@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "SheetLink — Connect Your Bank to Google Sheets",
   "short_name": "SheetLink",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Sync your bank transactions to Google Sheets via Plaid. Privacy-first, secure, and encrypted. Free for 7 days of history.",
   "icons": {
     "16": "icons/sheetlink-16.png",
@@ -12,8 +12,6 @@
   },
   "permissions": [
     "storage",
-    "identity",
-    "tabs",
     "alarms"
   ],
   "host_permissions": [
