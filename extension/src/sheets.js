@@ -143,7 +143,7 @@ function getTransactionHeaders(tier = 'free', includeRules = false) {
 }
 
 /**
- * Get OAuth token from chrome.identity API
+ * Get OAuth token from service worker (via manual web-based OAuth flow)
  * @returns {Promise<string>} OAuth access token
  */
 async function getAuthToken() {
