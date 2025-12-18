@@ -61,11 +61,12 @@ The backend is in a **separate private repository** for:
 ### 3. Extension Permissions
 
 The Chrome extension requests minimal permissions:
-- `storage` - Store user preferences and connection status
-- `identity` - Google OAuth for Sheets access
-- `tabs` - Open Plaid Link flow in new tab
+- `storage` - Store user preferences, JWT tokens, and connection status locally
+- `alarms` - Schedule JWT token refresh (60-minute expiry)
 
 **We do NOT request**:
+- `identity` - Uses manual web-based OAuth instead of chrome.identity API
+- `tabs` - Uses basic tab methods that don't require permission
 - Browsing history
 - Access to all websites
 - Clipboard access
