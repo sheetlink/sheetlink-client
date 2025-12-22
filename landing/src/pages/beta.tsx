@@ -18,8 +18,7 @@ export default function Beta() {
   const totalSlots = 50;
   const slotsRemaining = totalSlots - slotsFilledCount;
 
-  // TODO: Replace with actual Discord invite link
-  const discordInviteLink = 'https://discord.gg/PLACEHOLDER';
+  const discordInviteLink = 'https://discord.gg/Kgc8UJXt';
 
   useEffect(() => {
     analytics.pageView('Beta Program', '/beta');
