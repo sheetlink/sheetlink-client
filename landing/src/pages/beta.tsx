@@ -1,86 +1,15 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Lock } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
-import { analytics } from '@/lib/analytics';
-
-type FormStatus = 'idle' | 'loading' | 'success' | 'error';
 
 export default function Beta() {
-  const router = useRouter();
-  const seoTitle = `Join the Beta | ${BRAND.name}`;
-  const seoDescription = 'Be among the first to connect your bank directly to Google Sheets. Live, private, and under your control.';
+  const seoTitle = `${BRAND.name} - Now Available`;
+  const seoDescription = 'SheetLink is now live on the Chrome Web Store! Install directly from Chrome.';
 
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [status, setStatus] = useState<FormStatus>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  // Track page view on mount
+  // Redirect to Chrome Web Store
   useEffect(() => {
-    analytics.pageView('Beta Signup', '/beta');
-    analytics.betaSignupFormView('/beta');
+    window.location.href = 'https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch';
   }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!email.trim()) {
-      setErrorMessage('Email is required');
-      setStatus('error');
-      return;
-    }
-
-    // Track signup start
-    analytics.betaSignupStart('/beta');
-
-    setStatus('loading');
-    setErrorMessage('');
-
-    try {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiBaseUrl}/beta/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email.trim(),
-          name: name.trim() || undefined,
-          source: 'web',
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit signup');
-      }
-
-      const data = await response.json();
-
-      if (data.status === 'ok') {
-        // Track successful signup
-        analytics.betaSignupSuccess('/beta');
-
-        // Redirect immediately to success page
-        router.push('/success');
-      } else {
-        throw new Error('Unexpected response');
-      }
-    } catch (error) {
-      // Track signup error
-      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-      analytics.betaSignupError(errorMsg, '/beta');
-
-      setStatus('error');
-      setErrorMessage('Something went wrong. Please try again later.');
-      console.error('Beta signup error:', error);
-    }
-  };
 
   return (
     <>
@@ -89,190 +18,25 @@ export default function Beta() {
         <meta name="description" content={seoDescription} />
       </Head>
 
-      <Header />
-      <main className="min-h-screen bg-[#F6F7F5] pt-16">
-        <section className="mx-auto max-w-[640px] px-4 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Hero */}
-            <div className="mb-12 text-center">
-              <h1 className="mb-4 bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 bg-clip-text text-5xl font-bold text-transparent md:text-5xl">
-                Get Early Access to SheetLink
-              </h1>
-              <p className="mb-8 text-lg leading-relaxed text-gray-700 md:text-xl">
-                Connect your real bank accounts to Google Sheets. Free forever for the last 7 days of transactions.
-              </p>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-3 text-sm font-semibold text-white shadow-md">
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-                <span>Production Beta - Real bank connections via Plaid</span>
-              </div>
-              <Link href="/privacy" className="flex items-center justify-center gap-2 text-sm text-gray-600">
-                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-                <span>Privacy-first by design</span>
-              </Link>
-            </div>
-
-            {/* Form Card */}
-            <div className="rounded-lg border border-[#E4EAE5] bg-white p-8 shadow-sm">
-              {status === 'success' ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="rounded-md bg-[#E9F4EC] p-6 text-center"
-                >
-                  <div className="mb-3 flex justify-center">
-                    <svg className="h-12 w-12 text-[#023820]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <h2 className="mb-2 text-xl font-semibold text-[#023820]">You're on the list</h2>
-                  <p className="mb-4 text-sm text-[#023820]">
-                    We'll reach out soon with early access details.
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    (No marketing, no spam, just an invite when it's ready.)
-                  </p>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="email" className="mb-2 block text-sm font-medium text-sheetlink-text">
-                      Email Address <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={status === 'loading'}
-                      className="block w-full rounded-md border border-[#C6E2CC] px-3 py-2 text-sheetlink-text focus:outline-none focus:ring-1 focus:ring-[#0B703A] disabled:cursor-not-allowed disabled:bg-gray-100"
-                      placeholder="you@example.com"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="name" className="mb-2 block text-sm font-medium text-sheetlink-text">
-                      Name <span className="text-gray-500">(optional)</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      disabled={status === 'loading'}
-                      className="block w-full rounded-md border border-[#C6E2CC] px-3 py-2 text-sheetlink-text focus:outline-none focus:ring-1 focus:ring-[#0B703A] disabled:cursor-not-allowed disabled:bg-gray-100"
-                      placeholder="Your name"
-                    />
-                  </div>
-
-                  {status === 'error' && (
-                    <div className="rounded-md border border-red-400 bg-red-50 p-3 text-sm text-red-700">
-                      ⚠️ {errorMessage}
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={status === 'loading'}
-                    className="w-full rounded-md bg-[#023820] px-6 py-2.5 font-semibold text-white transition hover:bg-[#0B703A] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {status === 'loading' ? 'Requesting Access...' : 'Request Early Access'}
-                  </button>
-
-                  <p className="text-center text-xs text-gray-600 flex items-center justify-center gap-2">
-                    <Lock className="h-3 w-3 text-sheetlink-green-700 stroke-[1.5]" />
-                    <span>
-                      We'll only use your email for beta access updates.<br />
-                      You can remove yourself anytime.
-                    </span>
-                  </p>
-                </form>
-              )}
-            </div>
-
-            {/* Privacy Links */}
-            <div className="mt-6 text-center text-xs text-gray-500">
-              <Link href="/privacy" className="underline hover:text-gray-700">
-                Privacy Policy
-              </Link>
-              {' · '}
-              <Link href="/terms" className="underline hover:text-gray-700">
-                Terms of Service
-              </Link>
-            </div>
-          </motion.div>
-
-
-          {/* Info Card */}
-          <div className="mt-12 rounded-xl border-2 border-sheetlink-green-700/20 bg-sheetlink-bg p-8">
-            <h2 className="mb-6 text-2xl font-bold text-sheetlink-text">What's Included</h2>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-sheetlink-green-900 text-sm font-bold text-white">
-                  1
-                </span>
-                <div>
-                  <strong className="text-sheetlink-text">Connect Real Bank Accounts</strong>
-                  <p className="mt-1 text-sm text-gray-600">
-                    Powered by Plaid - connect to 10,000+ US banks with secure, read-only access. Your credentials never touch our servers.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-sheetlink-green-700 text-sm font-bold text-white">
-                  2
-                </span>
-                <div>
-                  <strong className="text-sheetlink-text">7 Days of History (Free Forever)</strong>
-                  <p className="mt-1 text-sm text-gray-600">
-                    The Free Tier syncs your last 7 days of transactions. Unlimited banks, manual sync. No credit card required.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-sheetlink-accent text-sm font-bold text-white">
-                  3
-                </span>
-                <div>
-                  <strong className="text-sheetlink-text">Your Data, Your Sheet</strong>
-                  <p className="mt-1 text-sm text-gray-600">
-                    SheetLink writes directly to your Google Sheet. Build your own dashboards, formulas, and reports.
-                  </p>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-
-          {/* CTAs */}
-          <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Link
-              href="/user-guide"
-              className="rounded-lg border-2 border-sheetlink-green-700 bg-white px-6 py-3 text-center font-semibold text-sheetlink-green-700 transition-all hover:bg-sheetlink-bg"
+      <main className="flex min-h-screen items-center justify-center px-4">
+        <div className="text-center">
+          <h1 className="mb-4 text-3xl font-bold text-sheetlink-text">
+            Redirecting to Chrome Web Store...
+          </h1>
+          <p className="text-gray-600">
+            SheetLink is now live! Installing directly from the Chrome Web Store.
+          </p>
+          <p className="mt-4 text-sm text-gray-500">
+            If you're not redirected automatically,{' '}
+            <a
+              href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+              className="text-sheetlink-green-700 underline"
             >
-              User Guide →
-            </Link>
-            <Link
-              href="/security"
-              className="rounded-lg border-2 border-gray-200 bg-white px-6 py-3 text-center font-semibold text-gray-700 transition-all hover:bg-gray-50"
-            >
-              Security & Privacy
-            </Link>
-          </div>
-
-
-        </section>
-
-        <Footer />
+              click here
+            </a>
+            .
+          </p>
+        </div>
       </main>
     </>
   );
