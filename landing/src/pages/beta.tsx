@@ -113,7 +113,7 @@ export default function Beta() {
                   href={discordInviteLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => analytics.buttonClick('Join Discord - Beta Hero')}
+                  onClick={() => analytics.ctaJoinBetaClick('Beta Hero')}
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
                 >
                   <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -573,7 +573,7 @@ export default function Beta() {
                   href={discordInviteLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => analytics.buttonClick('Join Discord - Beta Footer')}
+                  onClick={() => analytics.ctaJoinBetaClick('Beta Footer')}
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
                 >
                   <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
