@@ -85,12 +85,16 @@ export default function Beta() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mb-8"
             >
-              <div className="mx-auto mb-2 max-w-md rounded-full bg-gray-200">
-                <div
-                  className="rounded-full bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 py-2 text-center text-sm font-semibold text-white transition-all duration-500"
-                  style={{ width: `${(slotsFilledCount / totalSlots) * 100}%`, minWidth: '20%' }}
-                >
-                  {slotsFilledCount}/{totalSlots} Slots Filled
+              <div className="mx-auto mb-3 max-w-md">
+                <div className="h-3 rounded-full bg-gray-200">
+                  <div
+                    className="h-3 rounded-full bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 transition-all duration-500"
+                    style={{ width: `${(slotsFilledCount / totalSlots) * 100}%` }}
+                  />
+                </div>
+                <div className="mt-2 flex justify-between text-sm font-medium text-gray-600">
+                  <span>{slotsFilledCount}</span>
+                  <span>{totalSlots}</span>
                 </div>
               </div>
               <p className="text-lg font-semibold text-sheetlink-green-900">
@@ -551,12 +555,16 @@ export default function Beta() {
 
               {/* Counter */}
               <div className="mb-8">
-                <div className="mx-auto mb-2 max-w-md rounded-full bg-gray-200">
-                  <div
-                    className="rounded-full bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 py-2 text-center text-sm font-semibold text-white transition-all duration-500"
-                    style={{ width: `${(slotsFilledCount / totalSlots) * 100}%`, minWidth: '20%' }}
-                  >
-                    {slotsFilledCount}/{totalSlots} Slots Filled
+                <div className="mx-auto mb-3 max-w-md">
+                  <div className="h-3 rounded-full bg-gray-200">
+                    <div
+                      className="h-3 rounded-full bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 transition-all duration-500"
+                      style={{ width: `${(slotsFilledCount / totalSlots) * 100}%` }}
+                    />
+                  </div>
+                  <div className="mt-2 flex justify-between text-sm font-medium text-gray-600">
+                    <span>{slotsFilledCount}</span>
+                    <span>{totalSlots}</span>
                   </div>
                 </div>
                 <p className="text-lg font-semibold text-sheetlink-green-900">
