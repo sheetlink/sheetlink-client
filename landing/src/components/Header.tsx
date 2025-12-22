@@ -60,8 +60,10 @@ export default function Header() {
           </nav>
 
           {/* Desktop CTA */}
-          <Link
-            href="/beta"
+          <a
+            href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => analytics.ctaJoinBetaClick('header')}
             className="hidden md:inline-flex items-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg"
           >
@@ -79,7 +81,7 @@ export default function Header() {
                 d="M14 5l7 7m0 0l-7 7m7-7H3"
               />
             </svg>
-          </Link>
+          </a>
 
           {/* Mobile Menu Button */}
           <button
@@ -148,8 +150,10 @@ export default function Header() {
             >
               GitHub
             </a>
-            <Link
-              href="/beta"
+            <a
+              href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => {
                 analytics.ctaJoinBetaClick('header');
                 setMobileMenuOpen(false);
@@ -170,7 +174,7 @@ export default function Header() {
                   d="M14 5l7 7m0 0l-7 7m7-7H3"
                 />
               </svg>
-            </Link>
+            </a>
           </div>
         </div>
       )}
