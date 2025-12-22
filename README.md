@@ -2,6 +2,8 @@
 
 > **Privacy-first financial data sync for Google Sheets**
 
+[![Available in the Chrome Web Store](https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/iNEddTyWiMfLSwFD6qGq.png)](https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch)
+
 SheetLink is a Chrome extension that connects your bank accounts (via Plaid) to Google Sheets, automatically syncing transactions and account balances. This repository contains the **public client-side code** — the browser extension and marketing website.
 
 **🔒 Privacy-First Design**: All client code is open for inspection. The backend is private for business and security reasons, but its minimal architecture is fully documented below.
@@ -97,55 +99,61 @@ The backend repository is private for:
 
 ---
 
-## Join the Beta
+## Get Started
 
-SheetLink is currently in **private beta** using Plaid's Sandbox environment. This means you can test all features with demo data before we launch production.
+SheetLink is **now live** on the Chrome Web Store! Connect your real bank accounts and start syncing transactions to Google Sheets.
 
-**Beta Benefits**:
-- 🎉 Lifetime free access for beta testers
-- 🧪 Full-featured sandbox environment with test data
-- 💬 Direct line to the development team
-- 🚀 Early access to new features
+**Free Forever Plan**:
+- 🎉 Last 7 days of transaction history per institution
+- 🏦 Unlimited bank connections via Plaid
+- 📊 Automatic sync to Google Sheets
+- 🔒 Privacy-first, open-source client code
 
-### How to Get Started
+### Installation
 
-#### Step 1: Join the Beta
+#### Option 1: Install from Chrome Web Store (Recommended)
 
-Sign up at [sheetlink.app/beta](https://sheetlink.app/beta) to get on the list. You'll receive an email confirmation immediately.
+**[🎯 Add to Chrome](https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch)**
 
-#### Step 2: Download the Extension
+Click the link above or search for "SheetLink" in the Chrome Web Store.
 
-Download the latest beta extension (v0.3.1):
+#### Option 2: Manual Installation (Developer Mode)
 
-**[📦 Download Extension](https://github.com/user-attachments/files/23640009/sheetlink-extension-v0.3.1-beta.zip)**
+Download the latest release (v0.4.2):
 
-#### Step 3: Install in Chrome
+**[📦 Download Extension](https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.2/sheetlink-extension-v0.4.2.zip)**
 
+Then install manually:
 1. Unzip the downloaded file
 2. Open Chrome and navigate to `chrome://extensions`
 3. Enable **Developer mode** (toggle in top-right corner)
 4. Click **"Load unpacked"**
 5. Select the unzipped `extension` folder
 
-You should see the SheetLink icon appear in your extensions toolbar.
+### Quick Start
 
-#### Step 4: Connect to Plaid Sandbox
+#### Step 1: Sign in with Google
 
 1. Click the SheetLink extension icon
-2. Click **"Connect Bank Account"**
-3. Select any bank from the list
-4. Use these test credentials:
-   - **Username**: `user_good`
-   - **Password**: `pass_good`
-5. Complete the connection flow
+2. Click **"Continue with Google"**
+3. Authorize Google Sheets access (write-only)
 
-#### Step 5: Sync to Google Sheets
+#### Step 2: Connect Your Bank
 
-1. Open the extension popup
-2. Click **"Sync to Google Sheets"**
-3. Authorize Google Sheets access
-4. Select or create a spreadsheet
-5. Watch your test transactions sync automatically
+1. Click **"Connect Bank Account"**
+2. Select your bank from 10,000+ supported institutions
+3. Securely authenticate via Plaid
+
+#### Step 3: Link a Google Sheet
+
+1. Paste any Google Sheets URL you own
+2. SheetLink will create organized tabs for your data
+
+#### Step 4: Sync Transactions
+
+1. Click **"Sync Now"**
+2. Your last 7 days of transactions will appear in your Sheet
+3. Sync anytime to pull the latest data
 
 **Need help?** Full walkthrough with screenshots: [sheetlink.app/get-started](https://sheetlink.app/get-started)
 
