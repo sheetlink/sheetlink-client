@@ -126,12 +126,14 @@ export default function Pricing() {
                 </li>
               </ul>
 
-              <Link
-                href="/beta"
+              <a
+                href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-lg border-2 border-sheetlink-green-700 bg-white px-6 py-3 font-semibold text-sheetlink-green-700 transition-all hover:bg-sheetlink-bg"
               >
                 Get Started Free
-              </Link>
+              </a>
             </motion.div>
 
             {/* Basic Plan */}
@@ -344,7 +346,7 @@ export default function Pricing() {
               <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
                 <h3 className="mb-2 font-semibold text-sheetlink-text">When will Basic and Pro plans be available?</h3>
                 <p className="text-sm text-gray-700">
-                  We're currently in beta with the Free plan. Basic and Pro plans will launch once we exit beta. Early beta users may receive special pricing.
+                  We're currently live with the Free plan. Basic and Pro plans will launch in the future. Early users may receive special pricing.
                 </p>
               </div>
               <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
@@ -376,14 +378,16 @@ export default function Pricing() {
               Ready to get started?
             </h2>
             <p className="mb-8 text-xl text-white/90">
-              Join the beta and start syncing your transactions today.
+              Start syncing your transactions today, free forever.
             </p>
-            <Link
-              href="/beta"
+            <a
+              href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-4 text-lg font-semibold text-sheetlink-green-900 transition-all hover:bg-gray-100"
             >
-              Get Started Free
-            </Link>
+              Add to Chrome
+            </a>
           </div>
         </section>
 
