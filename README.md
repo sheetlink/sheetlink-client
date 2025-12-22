@@ -119,9 +119,9 @@ Click the link above or search for "SheetLink" in the Chrome Web Store.
 
 #### Option 2: Manual Installation (Developer Mode)
 
-Download the latest release (v0.4.2):
+Download the latest release (v0.4.3):
 
-**[📦 Download Extension](https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.2/sheetlink-extension-v0.4.2.zip)**
+**[📦 Download Extension](https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.3/sheetlink-extension-v0.4.3.zip)**
 
 Then install manually:
 1. Unzip the downloaded file

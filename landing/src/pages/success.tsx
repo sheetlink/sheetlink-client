@@ -73,7 +73,7 @@ export default function Success() {
                   Add to Chrome
                 </a>
                 <a
-                  href="https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.2/sheetlink-extension-v0.4.2.zip"
+                  href="https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.3/sheetlink-extension-v0.4.3.zip"
                   download
                   className="inline-flex items-center gap-2 rounded-lg border-2 border-sheetlink-green-700 px-6 py-3 font-semibold text-sheetlink-green-700 transition-all duration-200 hover:bg-sheetlink-green-700 hover:text-white"
                 >
