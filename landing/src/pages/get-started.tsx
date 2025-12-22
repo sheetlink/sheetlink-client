@@ -46,7 +46,7 @@ export default function GetStarted() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mx-auto mb-8 max-w-2xl text-xl leading-relaxed text-gray-700"
             >
-              Follow these steps to manually install the SheetLink Chrome extension and connect your real bank accounts to Google Sheets.
+              Install SheetLink from the Chrome Web Store and connect your real bank accounts to Google Sheets in minutes.
             </motion.p>
 
             <motion.p
@@ -64,15 +64,16 @@ export default function GetStarted() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <a
-                href="/downloads/sheetlink-extension.zip"
+                href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => analytics.downloadExtensionClick('hero')}
-                download
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
               >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29zm13.342 2.166a5.446 5.446 0 0 1 1.45 7.09l.002.001h-.002l-5.344 9.257c.206.01.413.016.621.016 6.627 0 12-5.373 12-12 0-1.54-.29-3.011-.818-4.364zM12 16.364a4.364 4.364 0 1 1 0-8.728 4.364 4.364 0 0 1 0 8.728z"/>
                 </svg>
-                Download Extension (v1.0.0)
+                Add to Chrome
               </a>
             </motion.div>
           </div>
@@ -82,10 +83,10 @@ export default function GetStarted() {
         <section className="px-4 py-20">
           <div className="mx-auto max-w-4xl">
             <h2 className="mb-12 text-center text-3xl font-bold text-sheetlink-text">
-              Installation Guide
+              Quick Start Guide
             </h2>
 
-            {/* Step 1 */}
+            {/* Step 1: Install from Chrome Web Store */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -98,20 +99,20 @@ export default function GetStarted() {
               </div>
               <div className="flex-1">
                 <h3 className="mb-4 text-2xl font-bold text-sheetlink-text">
-                  Download the Extension
+                  Install from Chrome Web Store
                 </h3>
                 <p className="mb-4 text-lg text-gray-700">
-                  Download the ZIP file and unzip it to your computer. You'll get a folder called <code className="rounded bg-gray-100 px-2 py-1 font-mono text-sm">sheetlink-extension</code>.
+                  Click the button above or visit the Chrome Web Store to add SheetLink to your browser with one click.
                 </p>
-                <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
-                  <p className="text-sm text-gray-600">
-                    <strong className="text-sheetlink-text">Note:</strong> This is a manual installation because SheetLink isn't on the Chrome Web Store yet. We're working on getting it listed soon!
+                <div className="rounded-lg border-2 border-green-200 bg-green-50 p-4">
+                  <p className="text-sm text-green-900">
+                    <strong>Now Live!</strong> SheetLink is officially available on the Chrome Web Store. Installation takes just seconds.
                   </p>
                 </div>
               </div>
             </motion.div>
 
-            {/* Step 2 */}
+            {/* Step 2: Sign in with Google */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -121,51 +122,6 @@ export default function GetStarted() {
             >
               <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sheetlink-green-900 to-sheetlink-green-700 text-2xl font-bold text-white">
                 2
-              </div>
-              <div className="flex-1">
-                <h3 className="mb-4 text-2xl font-bold text-sheetlink-text">
-                  Load It in Chrome
-                </h3>
-                <ol className="mb-4 list-inside space-y-3 text-lg text-gray-700">
-                  <li className="flex items-start gap-2">
-                    <span className="flex-shrink-0 text-sheetlink-green-700">1.</span>
-                    <span>Open Chrome and go to <code className="rounded bg-gray-100 px-2 py-1 font-mono text-sm">chrome://extensions</code></span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="flex-shrink-0 text-sheetlink-green-700">2.</span>
-                    <span>Toggle <strong>Developer Mode</strong> on (top right corner)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="flex-shrink-0 text-sheetlink-green-700">3.</span>
-                    <span>Click <strong>Load unpacked</strong></span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="flex-shrink-0 text-sheetlink-green-700">4.</span>
-                    <span>Select the unzipped folder</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="flex-shrink-0 text-sheetlink-green-700">5.</span>
-                    <span>You should now see SheetLink in your extension list!</span>
-                  </li>
-                </ol>
-                <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
-                  <p className="text-sm text-blue-900">
-                    <strong>Tip:</strong> Pin the SheetLink extension to your toolbar for easy access. Click the puzzle piece icon in Chrome and pin SheetLink.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Step 3 */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="mb-16 flex flex-col gap-8 md:flex-row"
-            >
-              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sheetlink-green-900 to-sheetlink-green-700 text-2xl font-bold text-white">
-                3
               </div>
               <div className="flex-1">
                 <h3 className="mb-4 text-2xl font-bold text-sheetlink-text">
@@ -185,16 +141,16 @@ export default function GetStarted() {
               </div>
             </motion.div>
 
-            {/* Step 4 */}
+            {/* Step 3: Complete Onboarding */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               className="mb-16 flex flex-col gap-8 md:flex-row"
             >
               <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sheetlink-green-900 to-sheetlink-green-700 text-2xl font-bold text-white">
-                4
+                3
               </div>
               <div className="flex-1">
                 <h3 className="mb-4 text-2xl font-bold text-sheetlink-text">
@@ -260,19 +216,7 @@ export default function GetStarted() {
             <h2 className="mb-12 text-center text-3xl font-bold text-sheetlink-text">
               Coming Soon
             </h2>
-            <div className="grid gap-8 md:grid-cols-3">
-              <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-sheetlink-green-900 text-white">
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Chrome Web Store</h3>
-                <p className="text-gray-600">
-                  One-click installation from the official Chrome Web Store
-                </p>
-              </div>
-
+            <div className="grid gap-8 md:grid-cols-2">
               <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-sheetlink-green-700 text-white">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

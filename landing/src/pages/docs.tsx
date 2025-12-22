@@ -138,15 +138,17 @@ export default function Docs() {
                 <span className="font-medium text-sheetlink-text transition-colors group-hover:text-sheetlink-green-700">View on GitHub</span>
               </a>
 
-              <Link
-                href="/beta"
+              <a
+                href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group flex items-center gap-3 rounded-lg border border-gray-200 p-4 transition-colors hover:border-sheetlink-green-700 hover:bg-sheetlink-green-50"
               >
-                <svg className="h-6 w-6 text-sheetlink-text transition-colors group-hover:text-sheetlink-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                <svg className="h-6 w-6 text-sheetlink-text transition-colors group-hover:text-sheetlink-green-700" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29zm13.342 2.166a5.446 5.446 0 0 1 1.45 7.09l.002.001h-.002l-5.344 9.257c.206.01.413.016.621.016 6.627 0 12-5.373 12-12 0-1.54-.29-3.011-.818-4.364zM12 16.364a4.364 4.364 0 1 1 0-8.728 4.364 4.364 0 0 1 0 8.728z"/>
                 </svg>
-                <span className="font-medium text-sheetlink-text transition-colors group-hover:text-sheetlink-green-700">Get Early Access</span>
-              </Link>
+                <span className="font-medium text-sheetlink-text transition-colors group-hover:text-sheetlink-green-700">Add to Chrome</span>
+              </a>
 
               <Link
                 href="/about"
