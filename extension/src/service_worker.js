@@ -26,6 +26,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     chrome.tabs.create({ url: 'https://sheetlink.app/welcome' });
 
     // Auto-open popup after welcome page loads
+    // Will fail silently if Chrome is busy (e.g., showing "Sign in" popup)
     setTimeout(() => {
       openExtensionPopup();
     }, 2000);
@@ -420,38 +421,13 @@ async function handleClearSession(sendResponse) {
 // Helper function to open extension popup
 async function openExtensionPopup() {
   try {
-    // Try to open the normal action popup first (like clicking the icon)
-    try {
-      await chrome.action.openPopup();
-    } catch (popupError) {
-      // Check if error is because popup is already open
-      const errorMsg = popupError.message.toLowerCase();
-      if (errorMsg.includes('popup') && (errorMsg.includes('showing') || errorMsg.includes('open'))) {
-        return; // Don't open a new window if popup is already showing
-      }
-
-      // Fallback: Create a small centered window if action popup fails for other reasons
-
-      const width = 400;
-      const height = 600;
-
-      // Get current window to calculate centered position
-      const currentWindow = await chrome.windows.getCurrent();
-      const left = Math.round(currentWindow.left + (currentWindow.width - width) / 2);
-      const top = Math.round(currentWindow.top + (currentWindow.height - height) / 2);
-
-      await chrome.windows.create({
-        url: chrome.runtime.getURL('src/popup.html'),
-        type: 'popup',
-        width: width,
-        height: height,
-        left: left,
-        top: top,
-        focused: true
-      });
-    }
-  } catch (error) {
-    // Error opening popup
+    // Only open as action popup - NEVER as a window
+    // This ensures extension always appears as the normal popup UI
+    await chrome.action.openPopup();
+  } catch (popupError) {
+    // Silently fail if popup can't open (e.g., already open, Chrome busy, etc.)
+    // User can always click the extension icon manually
+    debug('[Service Worker] Could not auto-open popup:', popupError.message);
   }
 }
 
