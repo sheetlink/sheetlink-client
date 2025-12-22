@@ -56,30 +56,32 @@ export default function Success() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="space-y-4"
             >
-              <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4 text-sm text-blue-900 mb-6">
-                <strong>⚠️ Manual Installation Required:</strong> SheetLink is pending Chrome Web Store approval. Download the .zip file and follow the installation guide below.
+              <div className="rounded-lg border-2 border-green-200 bg-green-50 p-4 text-sm text-green-900 mb-6">
+                <strong>🎉 Now Available on Chrome Web Store!</strong> Install SheetLink with one click directly from the Chrome Web Store.
               </div>
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <a
-                  href="https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.2/sheetlink-extension-v0.4.2.zip"
-                  download
+                  href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
-                  Download Extension (v0.4.2)
+                  Add to Chrome
                 </a>
-                <Link
-                  href="/get-started"
+                <a
+                  href="https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.2/sheetlink-extension-v0.4.2.zip"
+                  download
                   className="inline-flex items-center gap-2 rounded-lg border-2 border-sheetlink-green-700 px-6 py-3 font-semibold text-sheetlink-green-700 transition-all duration-200 hover:bg-sheetlink-green-700 hover:text-white"
                 >
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  Installation Guide →
-                </Link>
+                  Manual Download
+                </a>
               </div>
             </motion.div>
 
