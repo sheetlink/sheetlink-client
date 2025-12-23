@@ -2,7 +2,7 @@
 
 > **Privacy-first financial data sync for Google Sheets**
 
-[![Available in the Chrome Web Store](https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/iNEddTyWiMfLSwFD6qGq.png)](https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch)
+[![Available in the Chrome Web Store](https://storage.googleapis.com/chrome-gcs-uploader.appspot.com/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png)](https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch)
 
 SheetLink is a Chrome extension that connects your bank accounts (via Plaid) to Google Sheets, automatically syncing transactions and account balances. This repository contains the **public client-side code** — the browser extension and marketing website.
 
