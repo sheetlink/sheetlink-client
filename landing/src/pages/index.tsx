@@ -12,7 +12,7 @@ export default function Home() {
   const seoTitle = `${BRAND.name} - ${BRAND.tagline}`;
   const seoDescription = BRAND.description;
   const seoUrl = 'https://sheetlink.app';
-  const seoImage = `${seoUrl}/og-image.svg`;
+  const seoImage = `${seoUrl}/og-image.png`;
 
   return (
     <>
