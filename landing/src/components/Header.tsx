@@ -35,13 +35,6 @@ export default function Header() {
               Docs
             </Link>
             <Link
-              href={URLS.pricing}
-              onClick={() => analytics.headerNavClick('pricing')}
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
-            >
-              Pricing
-            </Link>
-            <Link
               href="/beta"
               onClick={() => analytics.headerNavClick('beta')}
               className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
@@ -117,16 +110,6 @@ export default function Header() {
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
             >
               Docs
-            </Link>
-            <Link
-              href={URLS.pricing}
-              onClick={() => {
-                analytics.headerNavClick('pricing');
-                setMobileMenuOpen(false);
-              }}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
-            >
-              Pricing
             </Link>
             <Link
               href="/beta"
