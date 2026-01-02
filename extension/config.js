@@ -17,6 +17,7 @@ export const CONFIG = {
   GOOGLE_REDIRECT_URI: "https://sheetlink.app/oauth/callback",
   GOOGLE_SCOPES: [
     "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/userinfo.email"
   ]
 };
