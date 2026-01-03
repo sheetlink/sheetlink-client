@@ -14,7 +14,7 @@ export default function Beta() {
   const seoDescription = 'Join the first 50 Beta Members and get 2 years of transaction history, free forever. Shape the future of SheetLink.';
 
   // TODO: Update this counter manually as slots fill up
-  const slotsFilledCount = 0;
+  const slotsFilledCount = 2;
   const totalSlots = 50;
   const slotsRemaining = totalSlots - slotsFilledCount;
 
