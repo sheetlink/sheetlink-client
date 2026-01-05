@@ -18,7 +18,7 @@ export default function Beta() {
   const totalSlots = 50;
   const slotsRemaining = totalSlots - slotsFilledCount;
 
-  const discordInviteLink = 'https://discord.gg/knWaNXd4';
+  const discordInviteLink = 'https://discord.gg/eZUBsbAc6G';
 
   useEffect(() => {
     analytics.pageView('Beta Program', '/beta');
