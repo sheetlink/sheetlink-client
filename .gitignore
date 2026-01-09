@@ -45,6 +45,10 @@ tmp/
 # Development documentation (private until finalized)
 CONTRIBUTING.md
 
+# Private docs and templates
+docs/templates/
+docs/known-issues.md
+
 # Archive folder for unused or legacy files
 archive/
 archive/**
