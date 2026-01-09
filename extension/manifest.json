@@ -12,8 +12,6 @@
   },
   "permissions": [
     "storage",
-    "identity",
-    "tabs",
     "alarms"
   ],
   "host_permissions": [
