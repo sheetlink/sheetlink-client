@@ -48,10 +48,17 @@ CONTRIBUTING.md
 # Private docs and templates
 docs/templates/
 docs/known-issues.md
+docs/CHROME-STORE-LISTING.md
 
 # Archive folder for unused or legacy files
 archive/
 archive/**
+production-test/
+
+# Development/testing files (local only)
+oauth-server.js
+test-category-data.js
+*.zip
 
 # Editor backups
 *.old
