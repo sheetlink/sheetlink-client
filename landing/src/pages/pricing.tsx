@@ -127,7 +127,7 @@ export default function Pricing() {
               </ul>
 
               <a
-                href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+                href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-lg border-2 border-sheetlink-green-700 bg-white px-6 py-3 font-semibold text-sheetlink-green-700 transition-all hover:bg-sheetlink-bg"
@@ -381,7 +381,7 @@ export default function Pricing() {
               Start syncing your transactions today, free forever.
             </p>
             <a
-              href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+              href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-4 text-lg font-semibold text-sheetlink-green-900 transition-all hover:bg-gray-100"

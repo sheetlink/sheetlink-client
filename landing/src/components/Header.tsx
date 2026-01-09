@@ -54,7 +54,7 @@ export default function Header() {
 
           {/* Desktop CTA */}
           <a
-            href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+            href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => analytics.ctaJoinBetaClick('header')}
@@ -134,7 +134,7 @@ export default function Header() {
               GitHub
             </a>
             <a
-              href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+              href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {

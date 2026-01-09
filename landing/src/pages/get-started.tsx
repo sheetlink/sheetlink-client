@@ -64,7 +64,7 @@ export default function GetStarted() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <a
-                href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+                href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => analytics.downloadExtensionClick('hero')}

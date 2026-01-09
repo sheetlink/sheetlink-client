@@ -139,7 +139,7 @@ export default function Docs() {
               </a>
 
               <a
-                href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+                href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-3 rounded-lg border border-gray-200 p-4 transition-colors hover:border-sheetlink-green-700 hover:bg-sheetlink-green-50"

@@ -409,7 +409,7 @@ export default function Beta() {
                     Download SheetLink from the Chrome Web Store if you haven't already.
                   </p>
                   <a
-                    href="https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch"
+                    href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-sheetlink-green-700 hover:underline"
