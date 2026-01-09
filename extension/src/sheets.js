@@ -76,6 +76,8 @@ const TRANSACTIONS_HEADERS_FREE = [
   'amount',
   'iso_currency_code',
   'pending',
+  'category_primary',
+  'category_detailed',
   'payment_channel',
   'source_institution',
   'synced_at'
@@ -104,8 +106,8 @@ const TRANSACTIONS_HEADERS_FULL = [
   'pending',
   'pending_transaction_id',
   'check_number',
-  'plaid_category',
-  'personal_finance_category',
+  'category_primary',
+  'category_detailed',
   'payment_channel',
   'transaction_type',
   'transaction_code',
@@ -143,7 +145,7 @@ function getTransactionHeaders(tier = 'free', includeRules = false) {
 }
 
 /**
- * Get OAuth token from service worker (via manual web-based OAuth flow)
+ * Get OAuth token from chrome.identity API
  * @returns {Promise<string>} OAuth access token
  */
 async function getAuthToken() {
@@ -344,13 +346,19 @@ async function ensureTab(sheetId, tabName, headersArray) {
     await createTab(token, sheetId, tabName);
   }
 
-  // Check if headers exist
-  const lastColumn = columnNumberToLetter(headersArray.length);
-  const firstRow = await readRange(token, sheetId, `${tabName}!A1:${lastColumn}1`);
+  // Check if headers exist and match expected count
+  // Read wider range (34 cols = PRO max) to detect downgrades with extra columns
+  const firstRow = await readRange(token, sheetId, `${tabName}!A1:AH1`);
 
-  if (firstRow.length === 0 || firstRow[0].length === 0) {
-    // Write headers
+  // Write headers if they don't exist OR if count doesn't match (tier change)
+  if (firstRow.length === 0 || firstRow[0].length === 0 || firstRow[0].length !== headersArray.length) {
+    // Clear entire header row first to remove any old columns
+    const clearHeaderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(tabName + '!1:1')}:clear`;
+    await sheetsApiRequest(token, clearHeaderUrl, 'POST', {});
+
+    // Write new headers
     await writeHeaders(token, sheetId, tabName, headersArray);
+    debug(`[Sheets] Updated ${tabName} headers to ${headersArray.length} columns`);
   }
 }
 
@@ -615,8 +623,8 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
         txn.pending ? 'TRUE' : 'FALSE',
         txn.pending_transaction_id || '',
         txn.check_number || '',
-        txn.plaid_category ? JSON.stringify(txn.plaid_category) : '',
-        txn.personal_finance_category ? JSON.stringify(txn.personal_finance_category) : '',
+        txn.personal_finance_category?.primary || '',
+        txn.personal_finance_category?.detailed || '',
         txn.payment_channel || '',
         txn.transaction_type || '',
         txn.transaction_code || '',
@@ -633,7 +641,7 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
         syncedAt
       ];
     }
-    // FREE/BASIC tier: Essential 11 columns only
+    // FREE/BASIC tier: Essential 13 columns (including categories)
     else {
       baseRow = [
         txn.transaction_id || '',
@@ -644,6 +652,8 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
         txn.amount || '',
         txn.iso_currency_code || '',
         txn.pending ? 'TRUE' : 'FALSE',
+        txn.personal_finance_category?.primary || '',
+        txn.personal_finance_category?.detailed || '',
         txn.payment_channel || '',
         txn.source_institution || txn.institution_name || '',
         syncedAt

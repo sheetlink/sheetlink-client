@@ -44,7 +44,10 @@ tmp/
 
 # Development documentation (private until finalized)
 CONTRIBUTING.md
-CHROME-STORE-LISTING.md
+
+# Private docs and templates
+docs/templates/
+docs/known-issues.md
 
 # Archive folder for unused or legacy files
 archive/

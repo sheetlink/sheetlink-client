@@ -385,6 +385,7 @@ header {
   border-top-color: #3b82f6;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+  flex-shrink: 0; /* Prevent squishing into oval */
 }
 
 @keyframes spin {
