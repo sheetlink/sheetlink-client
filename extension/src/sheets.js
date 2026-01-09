@@ -76,6 +76,8 @@ const TRANSACTIONS_HEADERS_FREE = [
   'amount',
   'iso_currency_code',
   'pending',
+  'category_primary',
+  'category_detailed',
   'payment_channel',
   'source_institution',
   'synced_at'
@@ -104,8 +106,8 @@ const TRANSACTIONS_HEADERS_FULL = [
   'pending',
   'pending_transaction_id',
   'check_number',
-  'plaid_category',
-  'personal_finance_category',
+  'category_primary',
+  'category_detailed',
   'payment_channel',
   'transaction_type',
   'transaction_code',
@@ -615,8 +617,8 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
         txn.pending ? 'TRUE' : 'FALSE',
         txn.pending_transaction_id || '',
         txn.check_number || '',
-        txn.plaid_category ? JSON.stringify(txn.plaid_category) : '',
-        txn.personal_finance_category ? JSON.stringify(txn.personal_finance_category) : '',
+        txn.personal_finance_category?.primary || '',
+        txn.personal_finance_category?.detailed || '',
         txn.payment_channel || '',
         txn.transaction_type || '',
         txn.transaction_code || '',
@@ -633,7 +635,7 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
         syncedAt
       ];
     }
-    // FREE/BASIC tier: Essential 11 columns only
+    // FREE/BASIC tier: Essential 13 columns (including categories)
     else {
       baseRow = [
         txn.transaction_id || '',
@@ -644,6 +646,8 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
         txn.amount || '',
         txn.iso_currency_code || '',
         txn.pending ? 'TRUE' : 'FALSE',
+        txn.personal_finance_category?.primary || '',
+        txn.personal_finance_category?.detailed || '',
         txn.payment_channel || '',
         txn.source_institution || txn.institution_name || '',
         syncedAt
