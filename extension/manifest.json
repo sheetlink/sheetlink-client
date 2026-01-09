@@ -3,7 +3,7 @@
   "name": "SheetLink: Sync Bank Transactions to Google Sheets",
   "short_name": "SheetLink",
   "version": "0.4.5",
-  "description": "Sync real bank transactions directly into Google Sheets. Powered by Plaid. Privacy-first. Free for 7 days of transaction history.",
+  "description": "SheetLink syncs real bank transactions directly into Google Sheets. Powered by Plaid. Privacy-first. Free for 7 days of transaction history.",
   "icons": {
     "16": "icons/sheetlink-16.png",
     "32": "icons/sheetlink-32.png",
