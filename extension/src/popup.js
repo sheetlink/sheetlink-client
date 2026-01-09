@@ -1513,7 +1513,7 @@ async function checkSheetDataMismatch(sheetId, currentTier) {
     debug(`[Sheet Check] Checking for existing data and column mismatch (tier: ${currentTier})`);
 
     // Get expected column count for current tier
-    const expectedColumns = currentTier === 'pro' ? 34 : 12; // 33/11 fields + Rules column
+    const expectedColumns = currentTier === 'pro' ? 34 : 13; // FREE: 13 cols, PRO: 34 cols (Phase 3.21.0: split categories)
 
     // Check if Transactions tab exists and has data
     const token = await window.SheetsAPI.getAuthToken();

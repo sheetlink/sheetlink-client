@@ -153,7 +153,7 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 - Transaction data
 - Account balances
 - Bank credentials
-- Google OAuth access tokens (managed by manual OAuth flow, stored in browser)
+- Google OAuth access tokens (managed by Chrome Identity API)
 - Google OAuth ID tokens (sent to backend once, then discarded)
 
 ---
@@ -304,14 +304,19 @@ See [SECURITY.md](../SECURITY.md) for detailed security documentation.
 ### Chrome Extension Permissions
 
 **storage**
-- **Why**: Store Sheet ID, JWT tokens, sync timestamp, user preferences
+- **Why**: Store Sheet ID, sync timestamp, user preferences
 - **Scope**: Only this extension's data
 - **Access**: No other extensions can read this data
 
-**alarms**
-- **Why**: Schedule JWT token refresh (60-minute expiry)
-- **Scope**: Only for this extension's background tasks
-- **Access**: No access to user data; only triggers refresh logic
+**identity**
+- **Why**: Manage Google OAuth for Sheets API
+- **Scope**: Only Google Sheets API (`https://www.googleapis.com/auth/spreadsheets`)
+- **Access**: Chrome manages tokens; extension never sees refresh token
+
+**scripting** (if applicable)
+- **Why**: Content scripts for Plaid Link integration
+- **Scope**: Only on Plaid Link page
+- **Access**: No access to other tabs/pages
 
 ### Google API Scopes
 

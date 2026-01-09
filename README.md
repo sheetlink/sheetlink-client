@@ -103,100 +103,97 @@ The backend repository is private for:
 
 SheetLink is **now live** on the Chrome Web Store! Connect your real bank accounts and start syncing transactions to Google Sheets.
 
+### FREE Tier (Available Now)
+
+**[🎯 Add to Chrome](https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch)**
+
 **Free Forever Plan**:
-- 🎉 Last 7 days of transaction history per institution
-- 🏦 Unlimited bank connections via Plaid
-- 📊 Automatic sync to Google Sheets
-- 🔒 Privacy-first, open-source client code
+- 🔗 Real bank connections (12,000+ institutions via Plaid)
+- 📅 7 days of transaction history per institution
+- 🏦 Unlimited bank accounts
+- 🔄 Manual sync
+- ✅ FREE forever
 
-### Installation
+### PRO Tier (Beta Access)
 
-#### Option 1: Install from Chrome Web Store (Recommended)
+PRO tier features are available through our beta program:
 
-**[🎯 Add to Chrome](https://chromewebstore.google.com/detail/sheetlink-%E2%80%94-connect-your/niehncndbonfankgokhandgbaebdbpch)**
+**PRO Features:**
+- 📅 **730 days** (2 years) of transaction history
+- ⏰ **Auto-sync** (daily automatic updates)
+- 🤖 **AI-powered categorization** (coming soon)
+- 📊 **Advanced sheet templates** (coming soon)
+- 🎯 **Priority support**
 
-Click the link above or search for "SheetLink" in the Chrome Web Store.
+**Join the PRO Beta:**
+- 🔗 [sheetlink.app/beta](https://sheetlink.app/beta) - Sign up for beta access
+- 💬 [Discord Community](https://discord.gg/eZUBsbAc6G) - Join our beta testers
 
-#### Option 2: Manual Installation (Developer Mode)
-
-Download the latest release (v0.4.3):
-
-**[📦 Download Extension](https://github.com/sheetlink/sheetlink-client/releases/download/v0.4.3/sheetlink-extension-v0.4.3.zip)**
-
-Then install manually:
-1. Unzip the downloaded file
-2. Open Chrome and navigate to `chrome://extensions`
-3. Enable **Developer mode** (toggle in top-right corner)
-4. Click **"Load unpacked"**
-5. Select the unzipped `extension` folder
+**Beta Benefits:**
+- 🎉 Early access to PRO features
+- 💬 Direct line to the development team
+- 🚀 Influence product roadmap
+- 🎁 Special pricing when PRO launches
 
 ### Quick Start
 
-#### Step 1: Sign in with Google
-
-1. Click the SheetLink extension icon
-2. Click **"Continue with Google"**
-3. Authorize Google Sheets access (write-only)
-
-#### Step 2: Connect Your Bank
-
-1. Click **"Connect Bank Account"**
-2. Select your bank from 10,000+ supported institutions
-3. Securely authenticate via Plaid
-
-#### Step 3: Link a Google Sheet
-
-1. Paste any Google Sheets URL you own
-2. SheetLink will create organized tabs for your data
-
-#### Step 4: Sync Transactions
-
-1. Click **"Sync Now"**
-2. Your last 7 days of transactions will appear in your Sheet
-3. Sync anytime to pull the latest data
+1. **Install Extension** - Click the "Add to Chrome" link above
+2. **Sign in with Google** - Authorize Google Sheets access (write-only)
+3. **Connect Your Bank** - Select from 12,000+ institutions via Plaid
+4. **Link a Google Sheet** - Paste any Google Sheets URL you own
+5. **Click "Sync Now"** - Your last 7 days of transactions will appear
 
 **Need help?** Full walkthrough with screenshots: [sheetlink.app/get-started](https://sheetlink.app/get-started)
 
 ---
 
-## Known Limitations (Beta)
+## Current Features (v0.4.5)
 
-- 🧪 **Sandbox Only**: Currently using Plaid's test environment with demo data
-- ⏰ **Manual Sync**: Auto-sync is not yet enabled
-- 📊 **Basic Formatting**: Sheet formatting is minimal (more templates coming)
-- 🔄 **One Account**: Only one bank connection supported for now
-- 🌍 **US Banks**: Sandbox limited to US institutions
+### ✅ Available in Production (FREE Tier)
 
-Production launch will include:
-- Real bank connections
-- Automatic daily sync
-- Multiple accounts
-- International bank support
-- Advanced sheet templates
+- 🔗 **Real Bank Connections**: Connect any of 12,000+ institutions via Plaid Production
+- 🏦 **Multi-Institution Support**: Unlimited bank accounts
+- 📅 **7 Days History**: Transaction history per institution (FREE tier)
+- 📊 **Google Sheets Integration**: Automatic transaction and account syncing
+- 🔄 **Manual Sync**: On-demand sync via extension popup
+- 🔐 **Secure OAuth**: Google authentication with JWT tokens
+- 📱 **Cross-Device Sync**: Settings synced across Chrome instances
+- 🎯 **Smart Features**: Transaction deduplication, delta sync, categorization
+
+### 🚧 Coming Soon (PRO Tier - Beta Available)
+
+- 📅 **730 Days History**: 2 years of transaction data (beta access available)
+- ⏰ **Auto-Sync**: Daily automatic updates (beta access available)
+- 🤖 **AI Categorization**: Smart transaction categorization (in development)
+- 📊 **Advanced Templates**: Pre-built financial tracking sheets (planned)
 
 ---
 
 ## Roadmap
 
-### Current Version: v0.3.1 (Beta)
-- ✅ Plaid Sandbox integration
-- ✅ Google Sheets sync
-- ✅ Manual transaction sync
-- ✅ Basic account balance display
-- ✅ Dynamic OAuth flow (works with any extension ID)
-- ✅ OAuth token caching for faster syncs
+### ✅ Current Version: v0.4.5 (Production)
+- ✅ Plaid Production with real bank connections
+- ✅ Google OAuth + JWT authentication
+- ✅ Multi-institution support (unlimited banks)
+- ✅ FREE tier (7 days history)
+- ✅ Manual sync with delta updates
+- ✅ Transaction deduplication
+- ✅ Plaid AI-enhanced categories (split primary/detailed)
+- ✅ Post-onboarding navigation UI
+- ✅ Tier upgrade/downgrade handling
 
-### Coming Soon: v0.4.0
-- 🔄 Auto-sync scheduler
-- 📊 Multiple sheet templates
-- 🏦 Multiple bank accounts
-- 📱 Transaction categorization
+### 🚧 In Beta (PRO Tier - Join via sheetlink.app/beta)
+- 🔄 PRO tier (730 days history)
+- ⏰ Auto-sync infrastructure (UI disabled for FREE)
+- 📊 Advanced transaction fields (34 columns vs 13)
+- 🎯 Subscription tier management
 
-### Production Launch: v1.0.0
-- 🚀 Plaid Production environment
-- 🌍 International bank support
+### 🔮 Planned (v0.5.0+)
+- 🤖 AI-powered transaction categorization
+- 📊 Pre-built financial templates
+- 🌍 Expanded international bank support
 - 🔐 Enhanced security features
-- 💳 Subscription management
+- 💼 Business/team accounts
 
 ---
 
@@ -284,16 +281,6 @@ All brand assets (logos, icons, color tokens) are in `/brand`. See [brand/README
 
 ---
 
-## Sandbox Mode
-
-Currently, SheetLink operates in **Sandbox Mode** using Plaid's test environment. This means:
-- ✅ Fully functional demo with sample institutions
-- ✅ No real bank connections
-- ✅ Safe to explore all features
-- ⏳ Production mode coming soon
-
----
-
 ## Tech Stack
 
 ### Extension
@@ -339,11 +326,12 @@ We welcome contributions to the client-side code:
 
 ## Support & Contact
 
-### Beta Support
+### Support Channels
 
 - **Installation Help**: [sheetlink.app/get-started](https://sheetlink.app/get-started)
 - **Report Issues**: [GitHub Issues](https://github.com/sheetlink/sheetlink-client/issues)
-- **Beta Feedback**: rudy@sheetlink.app
+- **Discord Community**: [https://discord.gg/eZUBsbAc6G](https://discord.gg/eZUBsbAc6G)
+- **PRO Beta Access**: [sheetlink.app/beta](https://sheetlink.app/beta)
 - **General Questions**: [sheetlink.app/docs](https://sheetlink.app/docs)
 
 ### General Contact

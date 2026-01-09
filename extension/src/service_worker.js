@@ -521,6 +521,96 @@ async function handleExchangePublicTokenAsync(message) {
   }
 }
 
+// Handle Plaid OAuth callback success (production flow)
+async function handlePlaidOAuthSuccess(message, sendResponse) {
+  try {
+    const { publicToken, metadata } = message;
+
+    // Exchange the public token
+    const exchangeResult = await handleExchangePublicTokenAsync({ publicToken, metadata });
+
+    if (exchangeResult.error) {
+      sendResponse({ error: exchangeResult.error });
+      return;
+    }
+
+    // Notify popup of success
+    chrome.runtime.sendMessage({
+      type: 'PLAID_OAUTH_SUCCESS',
+      publicToken: publicToken
+    }, () => {
+      // Ignore "no receiver" errors
+      if (chrome.runtime.lastError) {
+        // Expected - popup might not be open
+      }
+    });
+
+    // Respond to callback page
+    sendResponse({ success: true, itemId: exchangeResult.itemId });
+
+    // Give the callback page time to show success message, then open popup
+    setTimeout(async () => {
+      await openExtensionPopup();
+    }, 2000);
+  } catch (error) {
+    sendResponse({ error: error.message });
+  }
+}
+
+// Async version of handleExchangePublicToken for internal use
+async function handleExchangePublicTokenAsync(message) {
+  try {
+    const { publicToken, metadata } = message;
+
+    // Phase 3.8: Get Google user ID from storage (set during sign-in)
+    const { googleUserId } = await chrome.storage.sync.get(['googleUserId']);
+
+    if (!googleUserId) {
+      throw new Error('Not authenticated with Google. Please sign in first.');
+    }
+
+    // Call backend to exchange token
+    const response = await fetch(`${CONFIG.BACKEND_URL}/plaid/exchange`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        public_token: publicToken,
+        client_user_id: googleUserId,
+        env: CONFIG.ENV
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Exchange failed: ${errorData.detail || response.statusText}`);
+    }
+
+    const data = await response.json();
+    const itemId = data.item_id;
+
+    // Phase 3.14.0: Store pending institution for popup to pick up after reopen
+    // Don't overwrite existing itemId - let popup handle adding to institutions array
+    await chrome.storage.sync.set({
+      pendingInstitution: {
+        itemId: itemId,
+        institutionName: data.institution_name || metadata?.institution?.name || 'Bank',
+        institutionId: metadata?.institution?.institution_id || null,
+        connectedAt: Date.now()
+      },
+      sheetlink_connection_status: {
+        status: 'connected',
+        mode: CONFIG.ENV,
+        institutionName: data.institution_name || metadata?.institution?.name || 'Bank',
+        justConnected: true
+      }
+    });
+
+    return { success: true, itemId };
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
 // Handle Plaid connection success - open popup
 async function handlePlaidConnected(sendResponse) {
   // Respond immediately so Plaid window can close without waiting

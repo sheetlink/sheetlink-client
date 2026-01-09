@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SheetLink</title>
+  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="components/WalkthroughModal.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="../assets/brand/sheetlink-logo-horizontal-white.svg" alt="SheetLink" class="logo" width="144" height="36">
+      <p class="subtitle" id="headerSubtitle">Forget dashboards. Feed your spreadsheet.</p>
+    </header>
+
+    <main id="mainContent">
+      <!-- Welcome Screen (First Time) -->
+      <div id="welcomeSection" class="section hidden">
+        <h2 id="welcomeTitle">Welcome to SheetLink</h2>
+        <p class="welcome-subtitle" id="welcomeSubtitle">Sandbox Preview</p>
+        <p class="welcome-description" id="welcomeDescription">
+          This demo uses Plaid's sandbox environment.
+          You'll connect to sample institutions and see mock data, not your real bank.
+        </p>
+        <div class="welcome-actions">
+          <button id="connectSandboxBtn" class="btn btn-primary">
+            Connect to Sandbox
+          </button>
+          <button id="learnMoreBtn" class="btn btn-text">
+            Learn More
+          </button>
+        </div>
+      </div>
+
+      <!-- Status Display -->
+      <div id="statusSection" class="section hidden">
+        <div class="status-card">
+          <div class="status-icon" id="statusIcon">✓</div>
+          <div class="status-text" id="statusText">Not connected</div>
+        </div>
+      </div>
+
+      <!-- Connect Bank Section -->
+      <div id="connectSection" class="section hidden">
+        <button id="connectBankBtn" class="btn btn-primary">
+          Connect Bank via Plaid
+        </button>
+      </div>
+
+      <!-- Sheet Selection Section -->
+      <div id="sheetSection" class="section hidden">
+        <h3 style="margin-bottom: 8px; font-size: 16px;">Update your Google Sheet</h3>
+        <p style="font-size: 13px; color: #666; margin-bottom: 12px;">
+          Paste the URL of the Google Sheet where you want SheetLink to send your data.
+        </p>
+
+        <!-- Inline error banner for sheet save failures -->
+        <div id="sheetErrorBanner" class="error-banner hidden" style="margin-bottom: 12px; padding: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
+          <div style="font-weight: 600; color: #991b1b; margin-bottom: 4px;">We could not access that Google Sheet</div>
+          <div style="font-size: 13px; color: #7f1d1d; margin-bottom: 8px;">
+            Double check that the link is correct and that you have edit access to the sheet.
+            If you pasted a shared link, try copying the full URL from your browser's address bar instead.
+          </div>
+          <div id="sheetErrorDetail" style="font-size: 11px; color: #991b1b; font-family: monospace;"></div>
+        </div>
+
+        <label for="sheetUrl">Google Sheet URL</label>
+        <input
+          type="text"
+          id="sheetUrl"
+          placeholder="https://docs.google.com/spreadsheets/d/..."
+        >
+        <button id="saveSheetBtn" class="btn btn-secondary">
+          Save Sheet
+        </button>
+        <button id="removeSheetBtn" class="btn btn-text" style="margin-top: 8px;">
+          Remove Sheet
+        </button>
+      </div>
+
+      <!-- Sync Section -->
+      <div id="syncSection" class="section hidden">
+        <!-- Sync error banner for sheet access issues -->
+        <div id="syncErrorBanner" class="error-banner hidden" style="margin-bottom: 12px; padding: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;">
+          <div style="font-weight: 600; color: #991b1b; margin-bottom: 4px;">We cannot access your Google Sheet</div>
+          <div style="font-size: 13px; color: #7f1d1d; margin-bottom: 8px;">
+            Check that the sheet still exists, that the link is correct, and that SheetLink has edit access.
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button id="changeSheetLinkBtn" class="btn btn-secondary" style="font-size: 13px; padding: 6px 12px;">
+              Change Sheet Link
+            </button>
+            <button id="retrySyncBtn" class="btn btn-text" style="font-size: 13px;">
+              Retry
+            </button>
+          </div>
+        </div>
+
+        <div class="sync-info">
+          <div class="sheet-row">
+            <div class="sheet-main">
+              <span class="sheet-label">Sheet:</span>
+              <span id="currentSheet" class="sheet-id">Not connected yet</span>
+            </div>
+            <button id="changeSheetBtn" class="sheet-change-btn hidden">
+              Change sheet
+            </button>
+          </div>
+          <p>Last sync: <span id="lastSync">Never</span></p>
+        </div>
+        <button id="syncNowBtn" class="btn btn-primary">
+          Sync Now
+        </button>
+        <button id="generateTestBtn" class="btn btn-secondary" style="margin-top: 8px;">
+          Generate Test Transactions (Sandbox)
+        </button>
+
+        <!-- Auto-Sync Status -->
+        <div class="auto-sync-card" style="margin-top: 16px; padding: 12px; background: #f5f5f5; border-radius: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-weight: 600;">⏰ Auto-Sync</span>
+            <span id="schedulerStatus" style="font-size: 12px; color: #666;">Checking...</span>
+          </div>
+          <div style="font-size: 13px; color: #666; margin-bottom: 8px;">
+            Next run: <span id="nextRunTime">-</span>
+          </div>
+          <details style="font-size: 12px;">
+            <summary style="cursor: pointer; color: #1a73e8;">Recent syncs</summary>
+            <div id="recentSyncs" style="margin-top: 8px; max-height: 150px; overflow-y: auto;">
+              Loading...
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Templates Section -->
+      <div id="templatesSection" class="section hidden">
+        <h2 style="margin-bottom: 12px; font-size: 18px;">📚 Template Gallery</h2>
+        <p style="font-size: 13px; color: #666; margin-bottom: 16px;">
+          Pre-built templates to jumpstart your financial tracking
+        </p>
+
+        <div id="templatesList">
+          <div style="text-align: center; padding: 20px; color: #666;">
+            Loading templates...
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Display -->
+      <div id="errorSection" class="section hidden">
+        <div class="error-card">
+          <p id="errorMessage"></p>
+          <button id="retryBtn" class="btn btn-secondary">Retry</button>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div id="loadingSection" class="section hidden">
+        <div class="loader"></div>
+        <p id="loadingMessage">Processing...</p>
+      </div>
+    </main>
+
+    <footer>
+      <button id="templatesBtn" class="btn btn-text hidden">
+        Templates
+      </button>
+      <button id="disconnectBtn" class="btn btn-text hidden">
+        Disconnect Bank
+      </button>
+      <button id="optionsBtn" class="btn btn-text">
+        Options
+      </button>
+    </footer>
+
+    <!-- Sandbox Mode Badge (moved to bottom) -->
+    <div id="sandboxBadge" class="sandbox-badge hidden">
+      <a href="#" id="sandboxLink" class="sandbox-link">🧪 Sandbox Mode</a>
+      <span class="sandbox-divider"> • </span>
+      <a href="#" id="privacyLink" class="privacy-link">🔒 Privacy First</a>
+    </div>
+
+    <!-- Connection Success Modal -->
+    <div id="connectionSuccessModal" class="modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <!-- Page 1: Celebration -->
+        <div id="modalPage1" class="modal-page">
+          <div class="modal-header">
+            <div class="modal-icon">🎉</div>
+            <h2>You're connected!</h2>
+          </div>
+
+          <p class="modal-description">
+            Your Plaid sandbox account is now linked. You're ready to sync transactions to Google Sheets.
+          </p>
+
+          <div class="modal-actions">
+            <button id="modalNextBtn" class="btn btn-primary">
+              Next
+            </button>
+          </div>
+        </div>
+
+        <!-- Page 2: Next Steps -->
+        <div id="modalPage2" class="modal-page hidden">
+          <div class="modal-header">
+            <h2>Connect a Google Sheet</h2>
+          </div>
+
+          <p class="modal-description">
+            Follow these steps to link your spreadsheet:
+          </p>
+
+          <ol class="modal-steps">
+            <li><strong>Create or open a Google Sheet</strong></li>
+            <li><strong>Copy the URL</strong> from your browser</li>
+            <li><strong>Paste it below</strong> and click "Save Sheet"</li>
+          </ol>
+
+          <div class="modal-actions">
+            <button id="closeSuccessModal" class="btn btn-primary">
+              Got it!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sheet Success Modal -->
+    <div id="sheetSuccessModal" class="modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-icon">🎉</div>
+          <h2>You synced your first data!</h2>
+        </div>
+
+        <p class="modal-description">
+          Your Google Sheet is now live with sandbox transactions including balances, categories, and sample activity powered by SheetLink.
+        </p>
+
+        <div class="modal-actions">
+          <button id="syncSuccessOpenSheet" class="btn btn-primary">
+            🔗 Open my Linked Sheet
+          </button>
+          <button id="syncSuccessViewAccounts" class="btn btn-text">
+            Done
+          </button>
+        </div>
+
+        <p class="modal-footer" style="margin-top: 16px; font-size: 12px; color: #666; text-align: center;">
+          🧪 You are in Plaid Sandbox mode. This is demo data.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Configuration -->
+  <script type="module" src="../config.js"></script>
+
+  <!-- Google Sheets API wrapper -->
+  <script src="sheets.js"></script>
+
+  <!-- Rules engine -->
+  <script type="module" src="rules.js"></script>
+
+  <!-- Drive API wrapper -->
+  <script src="drive.js"></script>
+
+  <!-- Walkthrough Modal -->
+  <script src="components/WalkthroughModal.js"></script>
+
+  <!-- Main popup logic -->
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
