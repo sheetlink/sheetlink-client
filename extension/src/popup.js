@@ -1620,7 +1620,7 @@ async function handleSyncNow() {
         const isProTier = currentTier === 'pro';
 
         const firstSyncMsg = isProTier
-          ? 'First sync loads full history. This may take 30-60 seconds...'
+          ? 'First sync loads full history. This may take 10-30 seconds...'
           : 'First sync may take longer. Please keep extension open...';
 
         showHomeSyncLoading(firstSyncMsg);
@@ -1655,10 +1655,10 @@ async function handleSyncNow() {
           // Phase 3.22.0: Add reminder to keep extension open during first sync
           // Show enhanced message for PRO tier first sync (loading 2 years of data)
           let loadingMsg = `Syncing ${institution.institutionName}...`;
-          if (isFirstSync) {
-            loadingMsg = isProTier
-              ? `Syncing ${institution.institutionName}... (Loading full history, keep open)`
-              : `Syncing ${institution.institutionName}... (Keep extension open)`;
+          if (isFirstSync && isProTier) {
+            loadingMsg = `Syncing ${institution.institutionName}... (Loading 2 years, ~10-30 sec)`;
+          } else if (isFirstSync) {
+            loadingMsg = `Syncing ${institution.institutionName}... (Keep extension open)`;
           }
           showHomeSyncLoading(loadingMsg);
           debug(`[Sync] Processing ${institution.institutionName} (${institution.itemId})`);
@@ -1747,7 +1747,11 @@ async function handleSyncNow() {
         }
       }
 
-      showHomeSyncLoading('Writing to sheet...');
+      // Phase 3.22.0: Show enhanced message for PRO tier (sorting large datasets takes time)
+      const writeMsg = (isProTier && allTransactions.length > 100)
+        ? 'Writing to sheet... (Sorting large dataset, please wait)'
+        : 'Writing to sheet...';
+      showHomeSyncLoading(writeMsg);
 
       // Write to Google Sheets (Phase 3.22.0: always append-only)
       const result = await writeToSheets(sheetId, syncData);
