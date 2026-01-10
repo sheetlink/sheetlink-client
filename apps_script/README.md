@@ -83,17 +83,25 @@ Think of them as "financial formulas on steroids" that go beyond what regular sp
 
 ---
 
-### 4. Account-Aware Ledger View *(Coming Soon)*
+### 4. Account-Aware Ledger View
 **Transforms transactions into traditional accounting ledger**
 
 **What it does:**
-- Converts to debit/credit format
-- Detects transfers between accounts
-- Groups by account and institution
+- Converts to debit/credit format (positive = debit, negative = credit)
+- Detects transfers between accounts automatically
+- Calculates running balance per account
+- Sorts by date, account, or category
+- Filters pending and transfer transactions
 
 **Output Tabs:**
-- `Ledger_View` - Accounting-style ledger
-- `Ledger_Config` - Ledger preferences
+- `Ledger_View` - Accounting-style ledger with debit/credit columns
+- `Ledger_Config` - Ledger preferences (sorting, filters)
+
+**Use cases:**
+- Double-entry bookkeeping view
+- Account balance tracking
+- Transfer detection and reconciliation
+- Accounting export preparation
 
 ---
 
@@ -235,7 +243,7 @@ A: No. Apps Script requires an internet connection to execute.
 - ✅ Budget recipe
 - ✅ Cash flow recipe
 - ✅ Recurring charges recipe
-- 🔄 Ledger recipe
+- ✅ Ledger recipe
 
 **Future Phases:**
 - Category override rules
