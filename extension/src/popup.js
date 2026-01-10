@@ -1750,11 +1750,7 @@ async function handleSyncNow() {
         }
       }
 
-      // Phase 3.22.0: Show enhanced message for PRO tier (sorting large datasets takes time)
-      const writeMsg = (isProTier && allTransactions.length > 100)
-        ? 'Writing to sheet... (Sorting large dataset, please wait)'
-        : 'Writing to sheet...';
-      showHomeSyncLoading(writeMsg);
+      showHomeSyncLoading('Writing to sheet...');
 
       // Write to Google Sheets (Phase 3.22.0: always append-only)
       const result = await writeToSheets(sheetId, syncData);
