@@ -1507,22 +1507,23 @@ async function handleFixSyncIssues() {
 /**
  * Phase 3.14.0: Sync all institutions
  */
-// Phase 3.17.0: Check for existing sheet data and column mismatch
+// Phase 3.22.0: Check for column mismatch and auto-fix headers (no prompt, no data clearing)
+// All tiers now use the same 34-column structure
 async function checkSheetDataMismatch(sheetId, currentTier) {
   try {
-    debug(`[Sheet Check] Checking for existing data and column mismatch (tier: ${currentTier})`);
+    debug(`[Sheet Check] Checking for column mismatch`);
 
-    // Get expected column count for current tier
-    const expectedColumns = currentTier === 'pro' ? 34 : 13; // FREE: 13 cols, PRO: 34 cols (Phase 3.21.0: split categories)
+    // Phase 3.22.0: All tiers use the same 34 columns (TRANSACTIONS_HEADERS_FULL)
+    const expectedColumns = 34;
 
     // Check if Transactions tab exists and has data
     const token = await window.SheetsAPI.getAuthToken();
     const tabName = 'Transactions';
 
     try {
-      // Try to read first 2 rows (headers + first data row)
+      // Try to read first row (headers)
       const response = await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${tabName}!A1:ZZ2`,
+        `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${tabName}!A1:AH1`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -1537,98 +1538,51 @@ async function checkSheetDataMismatch(sheetId, currentTier) {
       const data = await response.json();
       const values = data.values || [];
 
-      // If no data or only headers, no mismatch issue
-      if (values.length < 2) {
-        debug('[Sheet Check] No existing transaction data found');
+      // If no headers, ensureTab will create them
+      if (values.length === 0) {
+        debug('[Sheet Check] No headers found, ensureTab will create them');
         return { hasMismatch: false };
       }
 
-      // Check column count in existing data
+      // Check column count in existing headers
       const existingColumns = values[0]?.length || 0;
       debug(`[Sheet Check] Existing columns: ${existingColumns}, Expected: ${expectedColumns}`);
 
       if (existingColumns !== expectedColumns) {
-        // Column mismatch detected!
-        debug('[Sheet Check] COLUMN MISMATCH DETECTED!');
+        // Column mismatch detected - auto-fix by updating headers
+        debug('[Sheet Check] Column mismatch detected, auto-fixing headers...');
 
-        const message = `⚠️ Column Mismatch Detected!\n\n` +
-                       `Your sheet has ${existingColumns} columns but your current tier expects ${expectedColumns} columns.\n\n` +
-                       `Syncing now would append mismatched data and corrupt your sheet.\n\n` +
-                       `Options:\n` +
-                       `1. Clear existing data and re-sync (recommended)\n` +
-                       `2. Create a new sheet instead\n` +
-                       `3. Cancel sync\n\n` +
-                       `Clear existing data and continue?`;
-
-        const userConfirmed = confirm(message);
-
-        if (userConfirmed) {
-          debug('[Sheet Check] User confirmed clearing mismatched data');
-          showHomeSyncLoading('Clearing mismatched data...');
-          await window.SheetsAPI.clearTransactionsTab(sheetId, currentTier);
-          return { hasMismatch: true, cleared: true };
-        } else {
-          debug('[Sheet Check] User cancelled sync due to mismatch');
-          return { hasMismatch: true, cleared: false, cancelled: true };
-        }
+        // ensureTab() will automatically update headers
+        // This happens in writeToSheets() before data is appended
+        return { hasMismatch: true, willAutoFix: true };
       }
 
       return { hasMismatch: false };
     } catch (fetchError) {
-      // If we can't fetch, assume no data exists
-      debug('[Sheet Check] Could not fetch sheet data, assuming no mismatch');
+      debug('[Sheet Check] Could not fetch sheet data:', fetchError);
       return { hasMismatch: false };
     }
   } catch (error) {
     console.error('[Sheet Check] Error checking sheet data:', error);
-    // Don't block sync on check errors
     return { hasMismatch: false };
   }
 }
 
-// Phase 3.16.0: Check for tier changes and prompt user
+// Phase 3.22.0: Check tier (no popup, no clearing - append-only architecture)
 async function checkTierChange(sheetId) {
   try {
     // Get current tier from storage
-    const storage = await chrome.storage.sync.get(['userTier', 'lastSyncTier']);
+    const storage = await chrome.storage.sync.get(['userTier']);
     const currentTier = storage.userTier || 'free';
-    const lastSyncTier = storage.lastSyncTier;
 
-    debug(`[Tier Check] Current tier: ${currentTier}, Last sync tier: ${lastSyncTier}`);
+    debug(`[Tier Check] Current tier: ${currentTier}`);
 
-    // If this is first sync or tier hasn't changed, no action needed
-    if (!lastSyncTier || lastSyncTier === currentTier) {
-      debug('[Tier Check] No tier change detected');
-      return { changed: false, currentTier };
-    }
-
-    // Tier has changed - show confirmation dialog
-    const tierNames = { free: 'FREE', basic: 'BASIC', pro: 'PRO' };
-    const oldTierName = tierNames[lastSyncTier] || lastSyncTier.toUpperCase();
-    const newTierName = tierNames[currentTier] || currentTier.toUpperCase();
-
-    const message = `Your subscription tier changed from ${oldTierName} to ${newTierName}!\n\n` +
-                   `To avoid data misalignment, we recommend clearing existing transactions and re-syncing with the new field format.\n\n` +
-                   `Clear existing data and re-sync now?`;
-
-    const userConfirmed = confirm(message);
-
-    if (userConfirmed) {
-      debug(`[Tier Check] User confirmed clearing data for tier change: ${lastSyncTier} → ${currentTier}`);
-
-      // Clear the Transactions tab and update headers
-      showHomeSyncLoading('Clearing old transaction data...');
-      await window.SheetsAPI.clearTransactionsTab(sheetId, currentTier);
-
-      return { changed: true, currentTier, cleared: true };
-    } else {
-      debug('[Tier Check] User declined clearing data');
-      return { changed: true, currentTier, cleared: false, cancelled: true };
-    }
+    // Phase 3.22.0: No clearing, no popups - always append-only
+    // Headers will be updated automatically by ensureTab()
+    return { changed: false, currentTier, cleared: false };
   } catch (error) {
-    console.error('[Tier Check] Error checking tier change:', error);
-    // Don't block sync on tier check errors
-    return { changed: false, currentTier: 'free' };
+    console.error('[Tier Check] Error getting tier:', error);
+    return { changed: false, currentTier: 'free', cleared: false };
   }
 }
 
@@ -1656,24 +1610,18 @@ async function handleSyncNow() {
       await updateTierDisplay();
       debug('[Sync] Tier refreshed successfully');
 
-      // Phase 3.16.0: Check for tier changes before syncing
+      // Phase 3.22.0: Get current tier (no popups, no clearing)
       const tierCheck = await checkTierChange(sheetId);
-      if (tierCheck.cancelled) {
-        // User declined to clear data, cancel the sync
-        hideHomeSyncStatus();
-        return;
-      }
 
-      // Phase 3.17.0: Check for sheet data mismatch (wrong column count)
+      // Phase 3.22.0: Check for column mismatch and auto-fix headers if needed
       const mismatchCheck = await checkSheetDataMismatch(sheetId, tierCheck.currentTier);
-      if (mismatchCheck.cancelled) {
-        // User declined to clear mismatched data, cancel the sync
-        hideHomeSyncStatus();
-        return;
+      if (mismatchCheck.hasMismatch && mismatchCheck.willAutoFix) {
+        debug('[Sync] Column mismatch detected, headers will be auto-fixed by ensureTab()');
       }
 
-      // Check if we need to backfill (tabs deleted or empty)
-      const needsBackfill = await checkIfBackfillNeeded(sheetId);
+      // Phase 3.22.0: No backfill logic needed - always use incremental sync
+      // Backend now always fetches date-range and filters server-side
+      debug('[Sync] Using incremental sync (append-only architecture)');
 
       // Get user's tier for appropriate loading messages
       const storage = await chrome.storage.sync.get(['userTier']);
@@ -1686,22 +1634,14 @@ async function handleSyncNow() {
 
       for (const institution of institutions) {
         try {
-          // Show tier-aware loading message
-          const loadingMsg = needsBackfill && isProTier
-            ? `Syncing ${institution.institutionName}... (this may take 10+ seconds on first sync)`
-            : `Syncing ${institution.institutionName}...`;
+          // Show loading message
+          const loadingMsg = `Syncing ${institution.institutionName}...`;
           showHomeSyncLoading(loadingMsg);
           debug(`[Sync] Processing ${institution.institutionName} (${institution.itemId})`);
 
-          // Fetch data from backend (backfill if needed, otherwise incremental sync)
-          let syncData;
-          if (needsBackfill) {
-            debug(`[Sync] Backfilling ${institution.institutionName}`);
-            syncData = await fetchBackfillData(institution.itemId);
-          } else {
-            debug(`[Sync] Incremental sync for ${institution.institutionName}`);
-            syncData = await fetchSyncData(institution.itemId);
-          }
+          // Phase 3.22.0: Always use fetchSyncData (backend handles date-range filtering)
+          debug(`[Sync] Fetching data for ${institution.institutionName}`);
+          const syncData = await fetchSyncData(institution.itemId);
 
           // Aggregate accounts and transactions
           if (syncData.accounts) {
@@ -1715,32 +1655,7 @@ async function handleSyncNow() {
         } catch (error) {
           console.error(`[Sync] Failed to sync ${institution.institutionName}:`, error);
 
-          // Check if this is a Plaid pagination mutation error - retry with backfill
-          const errorMsg = error.message || '';
-          const isPaginationError = errorMsg.includes('TRANSACTIONS_SYNC_MUTATION_DURING_PAGINATION');
-
-          if (isPaginationError && !needsBackfill) {
-            console.warn(`[Sync] Plaid pagination error for ${institution.institutionName}, retrying with backfill...`);
-            try {
-              showHomeSyncLoading(`Re-syncing ${institution.institutionName}...`);
-              debug(`[Sync] Backfill retry for ${institution.institutionName}`);
-              const syncData = await fetchBackfillData(institution.itemId);
-
-              // Aggregate accounts and transactions
-              if (syncData.accounts) {
-                allAccounts = allAccounts.concat(syncData.accounts);
-              }
-              if (syncData.transactions) {
-                allTransactions = allTransactions.concat(syncData.transactions);
-              }
-
-              debug(`[Sync] ${institution.institutionName} backfill retry: ${syncData.transactions?.length || 0} transactions`);
-              continue; // Skip the fallback account logic
-            } catch (retryError) {
-              console.error(`[Sync] Backfill retry also failed for ${institution.institutionName}:`, retryError);
-            }
-          }
-
+          // Phase 3.22.0: Removed pagination error retry logic (no more cursors)
           // CRITICAL: Even if sync fails, preserve accounts from cache to avoid data loss
           // When we write to sheets, we need ALL accounts, not just successful syncs
           if (institution.accounts && institution.accounts.length > 0) {
@@ -1810,7 +1725,7 @@ async function handleSyncNow() {
 
       showHomeSyncLoading('Writing to sheet...');
 
-      // Write to Google Sheets
+      // Write to Google Sheets (Phase 3.22.0: always append-only)
       const result = await writeToSheets(sheetId, syncData);
 
       // Phase 3.13: Update last sync time in StateManager
@@ -2761,10 +2676,13 @@ async function openPlaidLink(linkData) {
 }
 
 // Google Sheets integration
+// Phase 3.22.0: Always append-only (clearExisting removed, always false)
 async function writeToSheets(sheetId, data) {
   if (!window.SheetsAPI) {
     throw new Error('Sheets API not loaded');
   }
+
+  const clearExisting = false; // Phase 3.22.0: Always append-only
 
   // Phase 3.9.2: Verify sheet access first with enhanced error messages
   try {
@@ -2815,9 +2733,10 @@ async function writeToSheets(sheetId, data) {
   // Always write transactions tab (creates tab even if no transactions)
   // Pass accounts data for enriching transactions with account_name and account_mask
   // Pass tier to determine which transaction fields to write
+  // Pass clearExisting flag to control whether to clear existing data or append
   const transactionsData = data.transactions || [];
   const accountsData = data.accounts || [];
-  const newCount = await window.SheetsAPI.writeTransactions(sheetId, transactionsData, accountsData, userTier);
+  const newCount = await window.SheetsAPI.writeTransactions(sheetId, transactionsData, accountsData, userTier, clearExisting);
 
   return {
     accountsWritten: data.accounts?.length || 0,
