@@ -134,9 +134,9 @@ const TRANSACTIONS_HEADERS_BASE = TRANSACTIONS_HEADERS_FREE;
  * @returns {array} Transaction headers array
  */
 function getTransactionHeaders(tier = 'free', includeRules = false) {
-  // PRO tier gets full transaction data (33 fields)
-  // FREE and BASIC tiers get essential data only (11 fields)
-  const baseHeaders = (tier === 'pro') ? TRANSACTIONS_HEADERS_FULL : TRANSACTIONS_HEADERS_FREE;
+  // Phase 3.22.0: All tiers get the same columns (full 34 fields)
+  // Only difference is number of days: FREE=7 days, PRO=730 days
+  const baseHeaders = TRANSACTIONS_HEADERS_FULL;
 
   if (includeRules) {
     return [...baseHeaders, 'final_category'];
@@ -376,35 +376,41 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
 
   const token = await getAuthToken();
 
-  // Read all existing data to find ID column
-  const allData = await readRange(token, sheetId, `${tabName}!A:ZZ`);
+  // Phase 3.22.0: Optimization - read only the header row and ID column for faster deduplication
+  // Instead of reading A:ZZ (entire sheet), read just A1:ZZ1 (headers) and then just column A (IDs)
+  const headersData = await readRange(token, sheetId, `${tabName}!A1:ZZ1`);
 
-  if (allData.length === 0) {
+  if (headersData.length === 0) {
     // No data at all, shouldn't happen if ensureTab was called
     throw new Error('Tab has no headers');
   }
 
-  const headers = allData[0];
+  const headers = headersData[0];
   const idColumnIndex = headers.indexOf(idColumnName);
 
   if (idColumnIndex === -1) {
     throw new Error(`ID column '${idColumnName}' not found in headers`);
   }
 
-  // For transactions, use fuzzy deduplication to handle Plaid's duplicate IDs
-  if (tabName === 'Transactions') {
-    return await appendUniqueFuzzyRows(token, sheetId, tabName, rows, headers, allData);
-  }
+  // Phase 3.22.0: Read only the ID column for much faster deduplication
+  // Convert column index to column letter (0 = A, 1 = B, etc.)
+  const idColumnLetter = columnNumberToLetter(idColumnIndex + 1);
+  const idColumnData = await readRange(token, sheetId, `${tabName}!${idColumnLetter}2:${idColumnLetter}`);
 
-  // For other tabs, use simple ID-based deduplication
-  // Extract existing IDs (skip header row)
+  debug(`[appendUniqueRows] Read ${idColumnData.length} existing IDs from column ${idColumnLetter}`);
+
+  // Use simple ID-based deduplication (Plaid transaction_ids are stable in production)
+  // Extract existing IDs
   const existingIds = new Set();
-  for (let i = 1; i < allData.length; i++) {
-    const row = allData[i];
-    if (row[idColumnIndex]) {
-      existingIds.add(row[idColumnIndex]);
+  for (let i = 0; i < idColumnData.length; i++) {
+    const idCell = idColumnData[i];
+    if (idCell && idCell[0]) {
+      existingIds.add(idCell[0]);
     }
   }
+
+  debug(`[appendUniqueRows] Found ${existingIds.size} existing IDs in sheet`);
+  debug(`[appendUniqueRows] Incoming rows to check: ${rows.length}`);
 
   // Filter out rows with existing IDs
   // Assuming the rows array has the same column order as headers
@@ -412,6 +418,9 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
     const rowId = row[idColumnIndex];
     return rowId && !existingIds.has(rowId);
   });
+
+  debug(`[appendUniqueRows] After deduplication: ${newRows.length} unique rows to append`);
+  debug(`[appendUniqueRows] Duplicates filtered out: ${rows.length - newRows.length}`);
 
   // Append new rows
   if (newRows.length > 0) {
@@ -434,6 +443,11 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
  * @returns {Promise<number>} Number of new rows added
  */
 async function appendUniqueFuzzyRows(token, sheetId, tabName, rows, headers, allData) {
+  debug(`[appendUniqueFuzzyRows] Starting fuzzy deduplication for Transactions`);
+  debug(`[appendUniqueFuzzyRows] Total rows in sheet: ${allData.length} (including header)`);
+  debug(`[appendUniqueFuzzyRows] Existing data rows: ${allData.length - 1}`);
+  debug(`[appendUniqueFuzzyRows] Incoming rows to process: ${rows.length}`);
+
   // Find column indices
   const dateIndex = headers.indexOf('date');
   const amountIndex = headers.indexOf('amount');
@@ -442,12 +456,16 @@ async function appendUniqueFuzzyRows(token, sheetId, tabName, rows, headers, all
     ? headers.indexOf('merchant_name')
     : headers.indexOf('description_raw');
 
+  debug(`[appendUniqueFuzzyRows] Column indices - date: ${dateIndex}, amount: ${amountIndex}, description: ${descriptionIndex}`);
+
   if (dateIndex === -1 || amountIndex === -1 || descriptionIndex === -1) {
     throw new Error('Missing required transaction columns for fuzzy deduplication');
   }
 
   // Build fuzzy key set from existing data (skip header row)
   const existingKeys = new Set();
+  const existingTransactionIds = new Set();
+
   for (let i = 1; i < allData.length; i++) {
     const row = allData[i];
     const date = row[dateIndex] || '';
@@ -457,21 +475,55 @@ async function appendUniqueFuzzyRows(token, sheetId, tabName, rows, headers, all
     // Create composite key: date|amount|description (no account_id to catch cross-account duplicates)
     const fuzzyKey = `${date}|${amount}|${description}`;
     existingKeys.add(fuzzyKey);
+
+    // Also track transaction_id (first column) for debugging
+    if (row[0]) {
+      existingTransactionIds.add(row[0]);
+    }
+  }
+
+  debug(`[appendUniqueFuzzyRows] Built ${existingKeys.size} unique fuzzy keys from existing data`);
+  debug(`[appendUniqueFuzzyRows] Found ${existingTransactionIds.size} transaction_ids in existing data`);
+
+  // Log sample of existing transaction IDs for debugging
+  const sampleIds = Array.from(existingTransactionIds).slice(0, 5);
+  if (sampleIds.length > 0) {
+    debug(`[appendUniqueFuzzyRows] Sample existing transaction_ids: ${sampleIds.join(', ')}`);
   }
 
   // Filter out duplicate rows
+  let duplicateCount = 0;
   const newRows = rows.filter(row => {
     const date = row[dateIndex] || '';
     const amount = row[amountIndex] || '';
     const description = row[descriptionIndex] || '';
 
     const fuzzyKey = `${date}|${amount}|${description}`;
-    return !existingKeys.has(fuzzyKey);
+    const isDuplicate = existingKeys.has(fuzzyKey);
+
+    if (isDuplicate) {
+      duplicateCount++;
+    }
+
+    return !isDuplicate;
   });
+
+  debug(`[appendUniqueFuzzyRows] Deduplication results:`);
+  debug(`[appendUniqueFuzzyRows]   - Unique rows to append: ${newRows.length}`);
+  debug(`[appendUniqueFuzzyRows]   - Duplicates filtered out: ${duplicateCount}`);
+  debug(`[appendUniqueFuzzyRows]   - Total processed: ${rows.length}`);
+
+  // Log sample of incoming transaction IDs for comparison
+  const incomingIds = rows.slice(0, 5).map(row => row[0]);
+  debug(`[appendUniqueFuzzyRows] Sample incoming transaction_ids: ${incomingIds.join(', ')}`);
 
   // Append new rows
   if (newRows.length > 0) {
+    debug(`[appendUniqueFuzzyRows] Appending ${newRows.length} new rows to sheet`);
     await appendRows(token, sheetId, tabName, newRows);
+    debug(`[appendUniqueFuzzyRows] Successfully appended rows`);
+  } else {
+    debug(`[appendUniqueFuzzyRows] No new rows to append - all were duplicates`);
   }
 
   return newRows.length;
@@ -524,17 +576,73 @@ async function writeAccounts(sheetId, accountsData) {
 }
 
 /**
+ * Sort a sheet by the 'date' column in ascending order (oldest first)
+ * Phase 3.22.0: Maintains chronological order after appending data
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} tabName - Tab name to sort
+ */
+async function sortSheetByDate(sheetId, tabName) {
+  const token = await getAuthToken();
+
+  // Get sheet metadata to find the sheet ID
+  const metadata = await getSpreadsheetMetadata(token, sheetId);
+  const sheet = metadata.sheets?.find(s => s.properties.title === tabName);
+
+  if (!sheet) {
+    throw new Error(`Sheet '${tabName}' not found`);
+  }
+
+  const sheetIdNum = sheet.properties.sheetId;
+
+  // Read headers to find the 'date' column index
+  const headersData = await readRange(token, sheetId, `${tabName}!A1:ZZ1`);
+  if (headersData.length === 0) {
+    throw new Error('No headers found in sheet');
+  }
+
+  const headers = headersData[0];
+  const dateColumnIndex = headers.indexOf('date');
+
+  if (dateColumnIndex === -1) {
+    throw new Error('Date column not found in headers');
+  }
+
+  // Use Google Sheets API sortRange request
+  const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+  const body = {
+    requests: [{
+      sortRange: {
+        range: {
+          sheetId: sheetIdNum,
+          startRowIndex: 1, // Skip header row
+          startColumnIndex: 0,
+          endColumnIndex: headers.length
+        },
+        sortSpecs: [{
+          dimensionIndex: dateColumnIndex,
+          sortOrder: 'ASCENDING' // Oldest first
+        }]
+      }
+    }]
+  };
+
+  await sheetsApiRequest(token, url, 'POST', body);
+  debug(`[Sheets] Sorted ${tabName} by date column (index ${dateColumnIndex})`);
+}
+
+/**
  * Write transactions data to the Transactions tab with deduplication
  * @param {string} sheetId - Spreadsheet ID
  * @param {array} transactionsData - Array of transaction objects from backend
  * @param {array} accountsData - Array of account objects for enriching transaction data (optional)
  * @param {string} tier - Subscription tier: "free", "basic", or "pro" (default: "free")
+ * @param {boolean} clearExisting - Whether to clear existing data before writing (default: true)
  * @returns {Promise<number>} Number of new transactions added
  */
-async function writeTransactions(sheetId, transactionsData, accountsData = [], tier = 'free') {
+async function writeTransactions(sheetId, transactionsData, accountsData = [], tier = 'free', clearExisting = true) {
   const tabName = 'Transactions';
 
-  debug('[Sheets] writeTransactions called with', transactionsData?.length, 'transactions,', accountsData?.length, 'accounts, tier:', tier);
+  debug('[Sheets] writeTransactions called with', transactionsData?.length, 'transactions,', accountsData?.length, 'accounts, tier:', tier, 'clearExisting:', clearExisting);
 
   // Check if rules are enabled to determine headers
   const settings = await chrome.storage.sync.get(['enableRulesTab']);
@@ -546,36 +654,41 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
   debug('[Sheets] Transactions tab ensured with headers');
 
   // Clear any existing data rows (including placeholder rows from tier changes)
-  const token = await getAuthToken();
-  const metadata = await getSpreadsheetMetadata(token, sheetId);
-  const transactionsSheet = metadata.sheets?.find(s => s.properties.title === tabName);
+  // Only clear if clearExisting is true (backfill mode)
+  if (clearExisting) {
+    const token = await getAuthToken();
+    const metadata = await getSpreadsheetMetadata(token, sheetId);
+    const transactionsSheet = metadata.sheets?.find(s => s.properties.title === tabName);
 
-  if (transactionsSheet) {
-    const sheetIdNum = transactionsSheet.properties.sheetId;
+    if (transactionsSheet) {
+      const sheetIdNum = transactionsSheet.properties.sheetId;
 
-    // Check if there are any existing rows beyond the header
-    const allData = await readRange(token, sheetId, `${tabName}!A:A`);
+      // Check if there are any existing rows beyond the header
+      const allData = await readRange(token, sheetId, `${tabName}!A:A`);
 
-    if (allData.length > 1) {
-      // Delete all rows from row 2 onwards
-      debug('[Sheets] Clearing existing data rows before writing transactions');
-      const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
-      const body = {
-        requests: [{
-          deleteDimension: {
-            range: {
-              sheetId: sheetIdNum,
-              dimension: 'ROWS',
-              startIndex: 1,  // Start from row 2 (0-indexed)
-              endIndex: allData.length  // Delete up to current row count
+      if (allData.length > 1) {
+        // Delete all rows from row 2 onwards
+        debug('[Sheets] Clearing existing data rows before writing transactions');
+        const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+        const body = {
+          requests: [{
+            deleteDimension: {
+              range: {
+                sheetId: sheetIdNum,
+                dimension: 'ROWS',
+                startIndex: 1,  // Start from row 2 (0-indexed)
+                endIndex: allData.length  // Delete up to current row count
+              }
             }
-          }
-        }]
-      };
+          }]
+        };
 
-      await sheetsApiRequest(token, url, 'POST', body);
-      debug('[Sheets] Cleared', allData.length - 1, 'existing rows');
+        await sheetsApiRequest(token, url, 'POST', body);
+        debug('[Sheets] Cleared', allData.length - 1, 'existing rows');
+      }
     }
+  } else {
+    debug('[Sheets] Skipping clear (incremental mode) - will append unique transactions');
   }
 
   // Create account lookup map for enriching transactions
@@ -600,65 +713,44 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
     // Look up account info
     const accountInfo = accountMap.get(txn.account_id) || { name: '', mask: '', persistent_account_id: '' };
 
-    let baseRow;
-
-    // PRO tier: All 33 transaction fields
-    if (tier === 'pro') {
-      baseRow = [
-        txn.transaction_id || '',
-        txn.account_id || '',
-        accountInfo.persistent_account_id || '',
-        accountInfo.name,  // account_name (enriched label)
-        accountInfo.mask,  // account_mask (last 4 digits)
-        txn.date || '',
-        txn.authorized_date || '',
-        txn.datetime || '',
-        txn.authorized_datetime || '',
-        txn.description_raw || txn.name || '',
-        txn.merchant_name || '',
-        txn.merchant_entity_id || '',
-        txn.amount || '',
-        txn.iso_currency_code || '',
-        txn.unofficial_currency_code || '',
-        txn.pending ? 'TRUE' : 'FALSE',
-        txn.pending_transaction_id || '',
-        txn.check_number || '',
-        txn.personal_finance_category?.primary || '',
-        txn.personal_finance_category?.detailed || '',
-        txn.payment_channel || '',
-        txn.transaction_type || '',
-        txn.transaction_code || '',
-        txn.location?.address || '',
-        txn.location?.city || '',
-        txn.location?.region || '',
-        txn.location?.postal_code || '',
-        txn.location?.country || '',
-        txn.location?.lat || '',
-        txn.location?.lon || '',
-        txn.website || '',
-        txn.logo_url || '',
-        txn.source_institution || txn.institution_name || '',
-        syncedAt
-      ];
-    }
-    // FREE/BASIC tier: Essential 13 columns (including categories)
-    else {
-      baseRow = [
-        txn.transaction_id || '',
-        accountInfo.name,  // account_name (enriched label)
-        accountInfo.mask,  // account_mask (last 4 digits)
-        txn.date || '',
-        txn.merchant_name || '',
-        txn.amount || '',
-        txn.iso_currency_code || '',
-        txn.pending ? 'TRUE' : 'FALSE',
-        txn.personal_finance_category?.primary || '',
-        txn.personal_finance_category?.detailed || '',
-        txn.payment_channel || '',
-        txn.source_institution || txn.institution_name || '',
-        syncedAt
-      ];
-    }
+    // Phase 3.22.0: All tiers get the same columns (full 34 fields)
+    // Only difference is number of days: FREE=7 days, PRO=730 days
+    const baseRow = [
+      txn.transaction_id || '',
+      txn.account_id || '',
+      accountInfo.persistent_account_id || '',
+      accountInfo.name,  // account_name (enriched label)
+      accountInfo.mask,  // account_mask (last 4 digits)
+      txn.date || '',
+      txn.authorized_date || '',
+      txn.datetime || '',
+      txn.authorized_datetime || '',
+      txn.description_raw || txn.name || '',
+      txn.merchant_name || '',
+      txn.merchant_entity_id || '',
+      txn.amount || '',
+      txn.iso_currency_code || '',
+      txn.unofficial_currency_code || '',
+      txn.pending ? 'TRUE' : 'FALSE',
+      txn.pending_transaction_id || '',
+      txn.check_number || '',
+      txn.personal_finance_category?.primary || '',
+      txn.personal_finance_category?.detailed || '',
+      txn.payment_channel || '',
+      txn.transaction_type || '',
+      txn.transaction_code || '',
+      txn.location?.address || '',
+      txn.location?.city || '',
+      txn.location?.region || '',
+      txn.location?.postal_code || '',
+      txn.location?.country || '',
+      txn.location?.lat || '',
+      txn.location?.lon || '',
+      txn.website || '',
+      txn.logo_url || '',
+      txn.source_institution || txn.institution_name || '',
+      syncedAt
+    ];
 
     // Add final_category if rules are enabled
     if (includeRules) {
@@ -674,6 +766,15 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
   const newCount = await appendUniqueRows(sheetId, tabName, rows, 'transaction_id');
 
   debug('[Sheets] Wrote', newCount, 'new transactions (out of', rows.length, 'total)');
+
+  // Phase 3.22.0: Sort sheet by date after appending to maintain chronological order
+  // This is especially important when upgrading tiers (FREE → PRO adds historical data)
+  if (newCount > 0) {
+    debug('[Sheets] Sorting transactions by date...');
+    await sortSheetByDate(sheetId, tabName);
+    debug('[Sheets] Transactions sorted successfully');
+  }
+
   return newCount;
 }
 
