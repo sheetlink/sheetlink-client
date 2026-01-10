@@ -1657,9 +1657,9 @@ async function handleSyncNow() {
 
           // PRO tier: Always show time estimate since syncs can be slow
           if (isProTier && isFirstSync) {
-            loadingMsg = `Syncing ${institution.institutionName}... (Loading 2 years, 10+ sec)`;
+            loadingMsg = `Syncing ${institution.institutionName}... (Loading 2 years, 10+ seconds)`;
           } else if (isProTier) {
-            loadingMsg = `Syncing ${institution.institutionName}... (This may take 10+ sec)`;
+            loadingMsg = `Syncing ${institution.institutionName}... (This may take 10+ seconds)`;
           } else if (isFirstSync) {
             loadingMsg = `Syncing ${institution.institutionName}... (Keep extension open)`;
           }
