@@ -576,6 +576,61 @@ async function writeAccounts(sheetId, accountsData) {
 }
 
 /**
+ * Sort a sheet by the 'date' column in ascending order (oldest first)
+ * Phase 3.22.0: Maintains chronological order after appending data
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} tabName - Tab name to sort
+ */
+async function sortSheetByDate(sheetId, tabName) {
+  const token = await getAuthToken();
+
+  // Get sheet metadata to find the sheet ID
+  const metadata = await getSpreadsheetMetadata(token, sheetId);
+  const sheet = metadata.sheets?.find(s => s.properties.title === tabName);
+
+  if (!sheet) {
+    throw new Error(`Sheet '${tabName}' not found`);
+  }
+
+  const sheetIdNum = sheet.properties.sheetId;
+
+  // Read headers to find the 'date' column index
+  const headersData = await readRange(token, sheetId, `${tabName}!A1:ZZ1`);
+  if (headersData.length === 0) {
+    throw new Error('No headers found in sheet');
+  }
+
+  const headers = headersData[0];
+  const dateColumnIndex = headers.indexOf('date');
+
+  if (dateColumnIndex === -1) {
+    throw new Error('Date column not found in headers');
+  }
+
+  // Use Google Sheets API sortRange request
+  const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+  const body = {
+    requests: [{
+      sortRange: {
+        range: {
+          sheetId: sheetIdNum,
+          startRowIndex: 1, // Skip header row
+          startColumnIndex: 0,
+          endColumnIndex: headers.length
+        },
+        sortSpecs: [{
+          dimensionIndex: dateColumnIndex,
+          sortOrder: 'ASCENDING' // Oldest first
+        }]
+      }
+    }]
+  };
+
+  await sheetsApiRequest(token, url, 'POST', body);
+  debug(`[Sheets] Sorted ${tabName} by date column (index ${dateColumnIndex})`);
+}
+
+/**
  * Write transactions data to the Transactions tab with deduplication
  * @param {string} sheetId - Spreadsheet ID
  * @param {array} transactionsData - Array of transaction objects from backend
@@ -711,6 +766,15 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
   const newCount = await appendUniqueRows(sheetId, tabName, rows, 'transaction_id');
 
   debug('[Sheets] Wrote', newCount, 'new transactions (out of', rows.length, 'total)');
+
+  // Phase 3.22.0: Sort sheet by date after appending to maintain chronological order
+  // This is especially important when upgrading tiers (FREE → PRO adds historical data)
+  if (newCount > 0) {
+    debug('[Sheets] Sorting transactions by date...');
+    await sortSheetByDate(sheetId, tabName);
+    debug('[Sheets] Transactions sorted successfully');
+  }
+
   return newCount;
 }
 
