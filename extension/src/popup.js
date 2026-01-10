@@ -1610,8 +1610,7 @@ async function handleSyncNow() {
       debug('[Sync] Tier refreshed successfully');
 
       // Phase 3.22.0: Check if this is first sync
-      const lastSync = stateManager.get('lastSync');
-      const isFirstSync = !lastSync;
+      const isFirstSync = !stateManager.get('lastSync');
 
       if (isFirstSync) {
         // Phase 3.22.0: Show message about first sync taking longer
