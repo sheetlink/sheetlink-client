@@ -65,7 +65,7 @@ let sheetErrorBanner, sheetErrorDetail, syncErrorBanner;
 // Phase 3.10: Post-onboarding navigation
 let footerNav, legacyFooter;
 let pageHome, pageBank, pageSheet, pageSettings;
-let homeSyncBtn, homeResyncAllBtn, homeLastSync, homePlanTier, homeStatusPlaid, homeStatusSheet, homeSyncStatus;
+let homeSyncBtn, homeLastSync, homePlanTier, homeStatusPlaid, homeStatusSheet, homeSyncStatus;
 let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn;
 let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBtn;
 let settingsUserEmail, settingsUserPicture, settingsUserInitial, logoutBtn;
@@ -205,7 +205,6 @@ function initializeElements() {
 
   // Home page elements
   homeSyncBtn = document.getElementById('homeSyncBtn');
-  homeResyncAllBtn = document.getElementById('homeResyncAllBtn');
   homeLastSync = document.getElementById('homeLastSync');
   homePlanTier = document.getElementById('homePlanTier');
   homeStatusPlaid = document.getElementById('homeStatusPlaid');
@@ -1813,139 +1812,6 @@ async function handleSyncNow() {
   await attemptSync();
 }
 
-// Handle Re-sync All Data button - Force backfill regardless of tab state
-async function handleResyncAll() {
-  try {
-    // Get user's tier to show appropriate loading message
-    const storage = await chrome.storage.sync.get(['userTier']);
-    const userTier = storage.userTier || 'free';
-
-    // PRO users get 2 years of data, which takes longer
-    const loadingMessage = userTier === 'pro'
-      ? 'Re-fetching 2 years of data... (may take 15-20 seconds)'
-      : 'Re-fetching all data...';
-
-    showHomeSyncLoading(loadingMessage);
-
-    // Phase 3.14.0: Use StateManager with multi-institution support
-    const stateManager = window.StateManager;
-    const institutions = stateManager.getInstitutions();
-    const sheetId = stateManager.get('sheetId');
-
-    if (institutions.length === 0 || !sheetId) {
-      throw new Error('No banks connected or sheet not set up');
-    }
-
-    // Phase 3.16.0: Check for tier changes before syncing
-    const tierCheck = await checkTierChange(sheetId);
-    if (tierCheck.cancelled) {
-      // User declined to clear data, cancel the sync
-      hideHomeSyncStatus();
-      return;
-    }
-
-    debug(`[Resync All] Forcing backfill for ${institutions.length} institution(s)`);
-
-    // Phase 3.14.0: Fetch backfill data from ALL institutions
-    let allAccounts = [];
-    let allTransactions = [];
-
-    for (const institution of institutions) {
-      try {
-        showHomeSyncLoading(`Re-syncing ${institution.institutionName}...`);
-        debug(`[Resync All] Backfilling ${institution.institutionName}`);
-
-        const syncData = await fetchBackfillData(institution.itemId);
-
-        // Aggregate accounts and transactions
-        if (syncData.accounts) {
-          allAccounts = allAccounts.concat(syncData.accounts);
-        }
-        if (syncData.transactions) {
-          allTransactions = allTransactions.concat(syncData.transactions);
-        }
-
-        debug(`[Resync All] ${institution.institutionName}: ${syncData.transactions?.length || 0} transactions`);
-      } catch (error) {
-        console.error(`[Resync All] Failed to backfill ${institution.institutionName}:`, error);
-
-        // Use cached accounts as fallback
-        if (institution.accounts && institution.accounts.length > 0) {
-          allAccounts = allAccounts.concat(institution.accounts);
-        }
-      }
-    }
-
-    const syncData = {
-      accounts: allAccounts,
-      transactions: allTransactions
-    };
-
-    debug(`[Resync All] Total: ${allAccounts.length} accounts, ${allTransactions.length} transactions`);
-
-    showHomeSyncLoading('Writing to sheet...');
-
-    // Write to Google Sheets
-    const result = await writeToSheets(sheetId, syncData);
-
-    // Phase 3.13: Update last sync time in StateManager
-    await window.StateManager.set({ lastSync: Date.now() });
-
-    // Phase 3.16.0: Store current tier as lastSyncTier for future tier change detection
-    // Note: userTier is already declared earlier in this function
-    if (userTier) {
-      await chrome.storage.sync.set({ lastSyncTier: userTier });
-      debug(`[Resync All] Stored lastSyncTier: ${userTier}`);
-    }
-
-    // Phase 3.14.0: Show detailed success message with institution count
-    const message = `Re-synced ${institutions.length} ${institutions.length === 1 ? 'bank' : 'banks'}! ${result.accountsWritten} accounts, ${result.transactionsNew} new transactions (${result.transactionsTotal} total)`;
-    showHomeSyncSuccess(message);
-
-    await loadState();
-
-  } catch (error) {
-    debug('[Resync All] Error:', error);
-
-    // Check for authentication errors
-    if (error.isAuthError || error.name === 'AuthenticationError') {
-      debug('[Resync All] Auth error detected, showing welcome page for re-authentication');
-      hideHomeSyncStatus();
-      showReAuthPage();
-      return;
-    }
-
-    // Check for permission errors
-    if (error.isPermissionError || error.name === 'PermissionError') {
-      showHomeSyncError('Permission denied. Check sheet access.');
-      showSyncError();
-      return;
-    }
-
-    // Handle other errors
-    const errorMsg = error.message || '';
-    const isSheetAccessError = errorMsg.includes('403') ||
-                                errorMsg.includes('404') ||
-                                errorMsg.includes('Cannot access sheet') ||
-                                errorMsg.includes('edit permissions');
-
-    if (isSheetAccessError) {
-      showHomeSyncError('Cannot access sheet. Check permissions.');
-      showSyncError();
-    } else {
-      let userFriendlyMsg = errorMsg;
-      if (errorMsg.includes('429') || errorMsg.toLowerCase().includes('rate limit')) {
-        userFriendlyMsg = 'Rate limit exceeded. Please wait a moment.';
-      } else if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
-        userFriendlyMsg = 'Network error. Check your connection.';
-      } else {
-        userFriendlyMsg = 'Re-sync failed: ' + errorMsg;
-      }
-      showHomeSyncError(userFriendlyMsg);
-    }
-  }
-}
-
 // Handle Backfill button - Fetch full transaction history
 async function handleBackfill() {
   try {
@@ -3383,20 +3249,6 @@ async function loadHomePage() {
     }
   }
 
-  if (homeResyncAllBtn) {
-    homeResyncAllBtn.disabled = !isFullyConnected;
-
-    if (!isFullyConnected) {
-      homeResyncAllBtn.style.opacity = '0.5';
-      homeResyncAllBtn.style.cursor = 'not-allowed';
-      homeResyncAllBtn.title = 'Connect both Plaid and Sheet to sync';
-    } else {
-      homeResyncAllBtn.style.opacity = '1';
-      homeResyncAllBtn.style.cursor = 'pointer';
-      homeResyncAllBtn.title = '';
-    }
-  }
-
   // Update user header
   updateUserHeader(googleEmail, !!itemId, !!sheetId);
 
@@ -3997,7 +3849,6 @@ function formatRelativeTime(date) {
 function attachNavigationEventListeners() {
   // Home page
   if (homeSyncBtn) homeSyncBtn.addEventListener('click', handleSyncNow);
-  if (homeResyncAllBtn) homeResyncAllBtn.addEventListener('click', handleResyncAll);
 
   // Bank page
   if (updateBankConnectionBtn) updateBankConnectionBtn.addEventListener('click', handleConnectBank);
