@@ -376,30 +376,36 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
 
   const token = await getAuthToken();
 
-  // Read all existing data to find ID column
-  const allData = await readRange(token, sheetId, `${tabName}!A:ZZ`);
+  // Phase 3.22.0: Optimization - read only the header row and ID column for faster deduplication
+  // Instead of reading A:ZZ (entire sheet), read just A1:ZZ1 (headers) and then just column A (IDs)
+  const headersData = await readRange(token, sheetId, `${tabName}!A1:ZZ1`);
 
-  debug(`[appendUniqueRows] Read ${allData.length} total rows from sheet (including header)`);
-
-  if (allData.length === 0) {
+  if (headersData.length === 0) {
     // No data at all, shouldn't happen if ensureTab was called
     throw new Error('Tab has no headers');
   }
 
-  const headers = allData[0];
+  const headers = headersData[0];
   const idColumnIndex = headers.indexOf(idColumnName);
 
   if (idColumnIndex === -1) {
     throw new Error(`ID column '${idColumnName}' not found in headers`);
   }
 
+  // Phase 3.22.0: Read only the ID column for much faster deduplication
+  // Convert column index to column letter (0 = A, 1 = B, etc.)
+  const idColumnLetter = columnNumberToLetter(idColumnIndex + 1);
+  const idColumnData = await readRange(token, sheetId, `${tabName}!${idColumnLetter}2:${idColumnLetter}`);
+
+  debug(`[appendUniqueRows] Read ${idColumnData.length} existing IDs from column ${idColumnLetter}`);
+
   // Use simple ID-based deduplication (Plaid transaction_ids are stable in production)
-  // Extract existing IDs (skip header row)
+  // Extract existing IDs
   const existingIds = new Set();
-  for (let i = 1; i < allData.length; i++) {
-    const row = allData[i];
-    if (row[idColumnIndex]) {
-      existingIds.add(row[idColumnIndex]);
+  for (let i = 0; i < idColumnData.length; i++) {
+    const idCell = idColumnData[i];
+    if (idCell && idCell[0]) {
+      existingIds.add(idCell[0]);
     }
   }
 
