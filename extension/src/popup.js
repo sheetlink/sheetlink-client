@@ -1652,11 +1652,14 @@ async function handleSyncNow() {
       for (const institution of institutions) {
         try {
           // Show loading message
-          // Phase 3.22.0: Add reminder to keep extension open during first sync
-          // Show enhanced message for PRO tier first sync (loading 2 years of data)
+          // Phase 3.22.0: Enhanced messaging for sync operations
           let loadingMsg = `Syncing ${institution.institutionName}...`;
-          if (isFirstSync && isProTier) {
+
+          // PRO tier: Always show time estimate since syncs can be slow
+          if (isProTier && isFirstSync) {
             loadingMsg = `Syncing ${institution.institutionName}... (Loading 2 years, ~10-30 sec)`;
+          } else if (isProTier) {
+            loadingMsg = `Syncing ${institution.institutionName}... (This may take 10-20 sec)`;
           } else if (isFirstSync) {
             loadingMsg = `Syncing ${institution.institutionName}... (Keep extension open)`;
           }
