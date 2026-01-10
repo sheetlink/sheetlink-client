@@ -1614,8 +1614,17 @@ async function handleSyncNow() {
 
       if (isFirstSync) {
         // Phase 3.22.0: Show message about first sync taking longer
-        showHomeSyncLoading('First sync may take longer. Please keep extension open...');
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Show message for 2 seconds
+        // Show tier-specific messaging for PRO users (2 years of data)
+        const storage = await chrome.storage.sync.get(['userTier']);
+        const currentTier = storage.userTier || 'free';
+        const isProTier = currentTier === 'pro';
+
+        const firstSyncMsg = isProTier
+          ? 'First sync loads full history. This may take 30-60 seconds...'
+          : 'First sync may take longer. Please keep extension open...';
+
+        showHomeSyncLoading(firstSyncMsg);
+        await new Promise(resolve => setTimeout(resolve, 2500)); // Show message for 2.5 seconds
       }
 
       // Phase 3.22.0: Get current tier (no popups, no clearing)
@@ -1644,9 +1653,13 @@ async function handleSyncNow() {
         try {
           // Show loading message
           // Phase 3.22.0: Add reminder to keep extension open during first sync
-          const loadingMsg = isFirstSync
-            ? `Syncing ${institution.institutionName}... (Keep extension open)`
-            : `Syncing ${institution.institutionName}...`;
+          // Show enhanced message for PRO tier first sync (loading 2 years of data)
+          let loadingMsg = `Syncing ${institution.institutionName}...`;
+          if (isFirstSync) {
+            loadingMsg = isProTier
+              ? `Syncing ${institution.institutionName}... (Loading full history, keep open)`
+              : `Syncing ${institution.institutionName}... (Keep extension open)`;
+          }
           showHomeSyncLoading(loadingMsg);
           debug(`[Sync] Processing ${institution.institutionName} (${institution.itemId})`);
 
