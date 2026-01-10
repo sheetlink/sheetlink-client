@@ -86,6 +86,9 @@ function setupBudgetConfig(sheet, ss) {
 
   sheet.getRange(2, 1, configData.length, headers.length).setValues(configData);
 
+  // Force B2 to be plain text (not a date)
+  sheet.getRange("B2").setNumberFormat("@"); // @ means plain text
+
   // Create named range for target month
   createNamedRange(sheet, "Budget_TargetMonth", "B2");
 
@@ -119,8 +122,15 @@ function setupBudgetMonthly(sheet, transactionsSheet, headerMap, ss) {
   const transactions = getTransactionData(transactionsSheet);
 
   // Get target month from config
-  const targetMonth = ss.getRangeByName("Budget_TargetMonth") ?
+  let targetMonth = ss.getRangeByName("Budget_TargetMonth") ?
     ss.getRangeByName("Budget_TargetMonth").getValue() : getCurrentMonth();
+
+  // Handle case where target month might be a Date object instead of string
+  if (targetMonth instanceof Date) {
+    const month = (targetMonth.getMonth() + 1).toString().padStart(2, '0');
+    targetMonth = `${targetMonth.getFullYear()}-${month}`;
+    Logger.log(`Converted Date object to string: ${targetMonth}`);
+  }
 
   // Filter transactions
   const filteredTxns = transactions.filter(txn => {
