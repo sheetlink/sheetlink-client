@@ -71,10 +71,14 @@ function setupBudgetConfig(sheet, ss) {
   const headers = ["Setting", "Value", "Description"];
   setHeaders(sheet, headers);
 
+  // Get transactions to find most recent month
+  const transactionsSheet = getTransactionsSheet(ss);
+  const transactions = getTransactionData(transactionsSheet);
+  const recentMonth = getMostRecentMonth(transactions);
+
   // Add configuration rows
-  const currentMonth = getCurrentMonth();
   const configData = [
-    ["Target Month", currentMonth, "Month to analyze (format: YYYY-MM)"],
+    ["Target Month", recentMonth, "Month to analyze (format: YYYY-MM)"],
     ["", "", ""],
     ["Category", "Monthly Budget", "Amount budgeted for this category"],
     ["", "", "Leave blank to set budgets below"]

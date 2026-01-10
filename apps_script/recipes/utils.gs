@@ -194,6 +194,33 @@ function getCurrentMonth() {
 }
 
 /**
+ * Get the most recent month from transaction data
+ * @param {Object[]} transactions - Array of transaction objects
+ * @returns {string} Most recent month in format "YYYY-MM"
+ */
+function getMostRecentMonth(transactions) {
+  if (!transactions || transactions.length === 0) {
+    return getCurrentMonth();
+  }
+
+  // Find the most recent date
+  let mostRecentDate = null;
+  transactions.forEach(txn => {
+    const date = parseDate(txn.date);
+    if (date && (!mostRecentDate || date > mostRecentDate)) {
+      mostRecentDate = date;
+    }
+  });
+
+  if (!mostRecentDate) {
+    return getCurrentMonth();
+  }
+
+  const month = (mostRecentDate.getMonth() + 1).toString().padStart(2, '0');
+  return `${mostRecentDate.getFullYear()}-${month}`;
+}
+
+/**
  * Check if transaction is in specific month
  * @param {Date|string} date - Transaction date
  * @param {string} targetMonth - Target month in format "YYYY-MM"
