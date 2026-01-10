@@ -59,6 +59,46 @@ function runBudgetRecipe(ss) {
 }
 
 /**
+ * Get the most recent month from transaction data (inline helper)
+ * @param {Object[]} transactions - Array of transaction objects
+ * @returns {string} Most recent month in format "YYYY-MM"
+ */
+function getMostRecentMonthForBudget(transactions) {
+  if (!transactions || transactions.length === 0) {
+    const now = new Date();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    return `${now.getFullYear()}-${month}`;
+  }
+
+  // Find the most recent date
+  let mostRecentDate = null;
+  transactions.forEach(txn => {
+    let date = null;
+    if (txn.date instanceof Date) {
+      date = txn.date;
+    } else if (typeof txn.date === 'string') {
+      const parsed = new Date(txn.date);
+      if (!isNaN(parsed.getTime())) {
+        date = parsed;
+      }
+    }
+
+    if (date && (!mostRecentDate || date > mostRecentDate)) {
+      mostRecentDate = date;
+    }
+  });
+
+  if (!mostRecentDate) {
+    const now = new Date();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    return `${now.getFullYear()}-${month}`;
+  }
+
+  const month = (mostRecentDate.getMonth() + 1).toString().padStart(2, '0');
+  return `${mostRecentDate.getFullYear()}-${month}`;
+}
+
+/**
  * Setup Budget Config sheet
  * @param {Sheet} sheet - Config sheet
  * @param {Spreadsheet} ss - Active spreadsheet
@@ -74,7 +114,7 @@ function setupBudgetConfig(sheet, ss) {
   // Get transactions to find most recent month
   const transactionsSheet = getTransactionsSheet(ss);
   const transactions = getTransactionData(transactionsSheet);
-  const recentMonth = getMostRecentMonth(transactions);
+  const recentMonth = getMostRecentMonthForBudget(transactions);
 
   // Add configuration rows
   const configData = [
