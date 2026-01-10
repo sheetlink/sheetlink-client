@@ -1609,6 +1609,16 @@ async function handleSyncNow() {
       await updateTierDisplay();
       debug('[Sync] Tier refreshed successfully');
 
+      // Phase 3.22.0: Check if this is first sync
+      const lastSync = stateManager.get('lastSync');
+      const isFirstSync = !lastSync;
+
+      if (isFirstSync) {
+        // Phase 3.22.0: Show message about first sync taking longer
+        showHomeSyncLoading('First sync may take longer. Please keep extension open...');
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Show message for 2 seconds
+      }
+
       // Phase 3.22.0: Get current tier (no popups, no clearing)
       const tierCheck = await checkTierChange(sheetId);
 
@@ -1634,7 +1644,10 @@ async function handleSyncNow() {
       for (const institution of institutions) {
         try {
           // Show loading message
-          const loadingMsg = `Syncing ${institution.institutionName}...`;
+          // Phase 3.22.0: Add reminder to keep extension open during first sync
+          const loadingMsg = isFirstSync
+            ? `Syncing ${institution.institutionName}... (Keep extension open)`
+            : `Syncing ${institution.institutionName}...`;
           showHomeSyncLoading(loadingMsg);
           debug(`[Sync] Processing ${institution.institutionName} (${institution.itemId})`);
 
