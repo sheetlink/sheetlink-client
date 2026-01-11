@@ -84,7 +84,7 @@ function setupMultiMonthBudget(sheet, transactionsSheet, headerMap, ss) {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const yearMonth = `${date.getFullYear()}-${month}`;
     const category = txn.category_primary || "Uncategorized";
-    const amount = Math.abs(parseFloat(txn.amount) || 0);
+    const amount = parseFloat(txn.amount) || 0; // Keep the sign (positive = expense, negative = income)
 
     if (!monthlyData[yearMonth]) {
       monthlyData[yearMonth] = {};
@@ -102,7 +102,7 @@ function setupMultiMonthBudget(sheet, transactionsSheet, headerMap, ss) {
   // Sort months chronologically
   const sortedMonths = Array.from(allMonths).sort();
 
-  // Sort categories by total spend (descending)
+  // Sort categories by total spend magnitude (descending), but preserve sign in data
   const categorySums = {};
   Object.values(monthlyData).forEach(monthData => {
     Object.entries(monthData).forEach(([category, amount]) => {
@@ -111,7 +111,8 @@ function setupMultiMonthBudget(sheet, transactionsSheet, headerMap, ss) {
   });
 
   const sortedCategories = Array.from(allCategories).sort((a, b) => {
-    return (categorySums[b] || 0) - (categorySums[a] || 0);
+    // Sort by absolute value (biggest impact first, regardless of income/expense)
+    return Math.abs(categorySums[b] || 0) - Math.abs(categorySums[a] || 0);
   });
 
   // Calculate column layout
