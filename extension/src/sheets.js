@@ -576,6 +576,96 @@ async function writeAccounts(sheetId, accountsData) {
 }
 
 /**
+ * Format date columns to display as dates (not serial numbers)
+ * Phase 3.23.0: Ensures dates display correctly in Google Sheets
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} tabName - Tab name
+ */
+async function formatDateColumns(sheetId, tabName) {
+  const token = await getAuthToken();
+
+  // Get sheet metadata to find the sheet ID
+  const metadata = await getSpreadsheetMetadata(token, sheetId);
+  const sheet = metadata.sheets?.find(s => s.properties.title === tabName);
+
+  if (!sheet) {
+    throw new Error(`Sheet '${tabName}' not found`);
+  }
+
+  const sheetIdNum = sheet.properties.sheetId;
+
+  // Read headers to find date column indices
+  const headersData = await readRange(token, sheetId, `${tabName}!A1:ZZ1`);
+  if (headersData.length === 0) {
+    throw new Error('No headers found in sheet');
+  }
+
+  const headers = headersData[0];
+  const dateColumnIndex = headers.indexOf('date');
+  const authorizedDateColumnIndex = headers.indexOf('authorized_date');
+
+  if (dateColumnIndex === -1) {
+    debug('[Sheets] Date column not found, skipping date formatting');
+    return;
+  }
+
+  // Build formatting requests for date columns
+  const requests = [];
+
+  // Format 'date' column
+  if (dateColumnIndex !== -1) {
+    requests.push({
+      repeatCell: {
+        range: {
+          sheetId: sheetIdNum,
+          startRowIndex: 1, // Skip header
+          startColumnIndex: dateColumnIndex,
+          endColumnIndex: dateColumnIndex + 1
+        },
+        cell: {
+          userEnteredFormat: {
+            numberFormat: {
+              type: 'DATE',
+              pattern: 'yyyy-mm-dd'
+            }
+          }
+        },
+        fields: 'userEnteredFormat.numberFormat'
+      }
+    });
+  }
+
+  // Format 'authorized_date' column
+  if (authorizedDateColumnIndex !== -1) {
+    requests.push({
+      repeatCell: {
+        range: {
+          sheetId: sheetIdNum,
+          startRowIndex: 1, // Skip header
+          startColumnIndex: authorizedDateColumnIndex,
+          endColumnIndex: authorizedDateColumnIndex + 1
+        },
+        cell: {
+          userEnteredFormat: {
+            numberFormat: {
+              type: 'DATE',
+              pattern: 'yyyy-mm-dd'
+            }
+          }
+        },
+        fields: 'userEnteredFormat.numberFormat'
+      }
+    });
+  }
+
+  if (requests.length > 0) {
+    const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+    const body = { requests };
+    await sheetsApiRequest(token, url, 'POST', body);
+  }
+}
+
+/**
  * Sort a sheet by the 'date' column in ascending order (oldest first)
  * Phase 3.22.0: Maintains chronological order after appending data
  * @param {string} sheetId - Spreadsheet ID
@@ -781,6 +871,11 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
     debug('[Sheets] Sorting transactions by date...');
     await sortSheetByDate(sheetId, tabName);
     debug('[Sheets] Transactions sorted successfully');
+
+    // Phase 3.23.0: Format date columns as dates (not numbers)
+    debug('[Sheets] Formatting date columns...');
+    await formatDateColumns(sheetId, tabName);
+    debug('[Sheets] Date columns formatted successfully');
   }
 
   return newCount;
