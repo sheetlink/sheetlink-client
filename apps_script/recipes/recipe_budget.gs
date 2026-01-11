@@ -180,16 +180,16 @@ function setupMultiMonthBudget(sheet, transactionsSheet, headerMap, ss) {
   sheet.getRange(1, varianceStartCol).setBackground("#cfe2f3"); // Variance = blue
 
   // Get Transactions sheet column positions for SUMIFS formulas
-  const dateCol = getColumnIndex(headerMap, 'date');
-  const amountCol = getColumnIndex(headerMap, 'amount');
-  const categoryCol = getColumnIndex(headerMap, 'category_primary');
-  const pendingCol = getColumnIndex(headerMap, 'pending');
+  const txnDateCol = getColumnIndex(headerMap, 'date');
+  const txnAmountCol = getColumnIndex(headerMap, 'amount');
+  const txnCategoryCol = getColumnIndex(headerMap, 'category_primary');
+  const txnPendingCol = getColumnIndex(headerMap, 'pending');
 
   // Convert to column letters for formulas
-  const dateColLetter = columnToLetter(dateCol);
-  const amountColLetter = columnToLetter(amountCol);
-  const categoryColLetter = columnToLetter(categoryCol);
-  const pendingColLetter = columnToLetter(pendingCol);
+  const dateColLetter = columnToLetter(txnDateCol);
+  const amountColLetter = columnToLetter(txnAmountCol);
+  const categoryColLetter = columnToLetter(txnCategoryCol);
+  const pendingColLetter = columnToLetter(txnPendingCol);
 
   // Build data rows
   const dataRows = [];
