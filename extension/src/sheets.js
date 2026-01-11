@@ -713,6 +713,14 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
     // Look up account info
     const accountInfo = accountMap.get(txn.account_id) || { name: '', mask: '', persistent_account_id: '' };
 
+    // Phase 3.23.0: Convert date strings to Date objects for proper Google Sheets formatting
+    // This allows formulas to work with dates instead of text strings
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      return isNaN(date.getTime()) ? dateStr : date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    };
+
     // Phase 3.22.0: All tiers get the same columns (full 34 fields)
     // Only difference is number of days: FREE=7 days, PRO=730 days
     const baseRow = [
@@ -721,8 +729,8 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
       accountInfo.persistent_account_id || '',
       accountInfo.name,  // account_name (enriched label)
       accountInfo.mask,  // account_mask (last 4 digits)
-      txn.date || '',
-      txn.authorized_date || '',
+      formatDate(txn.date),
+      formatDate(txn.authorized_date),
       txn.datetime || '',
       txn.authorized_datetime || '',
       txn.description_raw || txn.name || '',

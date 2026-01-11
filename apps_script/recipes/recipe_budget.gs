@@ -196,16 +196,21 @@ function setupMultiMonthBudget(sheet, transactionsSheet, headerMap, ss) {
   sortedCategories.forEach(category => {
     const row = [category];
 
-    // Actuals columns - use SUMPRODUCT formulas (text-based date matching)
+    // Actuals columns - use SUMIFS formulas (Phase 3.23.0: dates are now proper date values)
     sortedMonths.forEach(month => {
       const rowNum = dataRows.length + 3; // +3 because of 2 header rows + 1-indexed
 
-      // Use SUMPRODUCT with FIND to match year-month prefix in text dates
-      // This works with text dates like '2024-02-01 by matching the "2024-02" prefix
-      const formula = `=SUMPRODUCT((ISNUMBER(FIND("${month}", Transactions!${dateColLetter}:${dateColLetter})))*` +
-                     `(Transactions!${categoryColLetter}:${categoryColLetter}=$A${rowNum})*` +
-                     `(Transactions!${pendingColLetter}:${pendingColLetter}=FALSE)*` +
-                     `Transactions!${amountColLetter}:${amountColLetter})`;
+      // Calculate start and end dates for the month
+      const [year, monthNum] = month.split('-');
+      const startDate = `${year}-${monthNum}-01`;
+      const nextMonth = parseInt(monthNum) === 12 ? `${parseInt(year) + 1}-01-01` : `${year}-${String(parseInt(monthNum) + 1).padStart(2, '0')}-01`;
+
+      // SUMIFS: sum amounts where category matches, pending is FALSE, and date is in month range
+      const formula = `=SUMIFS(Transactions!${amountColLetter}:${amountColLetter}, ` +
+                     `Transactions!${categoryColLetter}:${categoryColLetter}, $A${rowNum}, ` +
+                     `Transactions!${pendingColLetter}:${pendingColLetter}, FALSE, ` +
+                     `Transactions!${dateColLetter}:${dateColLetter}, ">="&DATE(${year},${monthNum},1), ` +
+                     `Transactions!${dateColLetter}:${dateColLetter}, "<"&DATE(${nextMonth.split('-')[0]},${nextMonth.split('-')[1]},1))`;
 
       row.push(formula);
     });
