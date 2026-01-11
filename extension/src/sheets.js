@@ -281,7 +281,7 @@ async function createTab(token, sheetId, tabName) {
 async function writeHeaders(token, sheetId, tabName, headers) {
   const lastColumn = columnNumberToLetter(headers.length);
   const range = `${tabName}!A1:${lastColumn}1`;
-  const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
+  const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`;
 
   const body = {
     range,
@@ -315,7 +315,7 @@ async function appendRows(token, sheetId, tabName, rows) {
   if (rows.length === 0) return;
 
   const range = `${tabName}!A:A`;
-  const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
+  const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
   const body = {
     range,
@@ -945,7 +945,7 @@ async function clearTransactionsTab(sheetId, tier = 'free', skipPlaceholders = f
       placeholderData.push(row);
     }
 
-    const placeholderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${tabName}!A2:append?valueInputOption=RAW`;
+    const placeholderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${tabName}!A2:append?valueInputOption=USER_ENTERED`;
     await sheetsApiRequest(token, placeholderUrl, 'POST', { values: placeholderData });
     debug(`[Sheets] Added ${placeholderRows} placeholder rows for loading state`);
   } else {
