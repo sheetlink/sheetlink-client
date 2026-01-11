@@ -179,15 +179,42 @@ function setupMultiMonthBudget(sheet, transactionsSheet, headerMap, ss) {
   sheet.getRange(1, budgetStartCol).setBackground("#fff2cc"); // Budget = yellow
   sheet.getRange(1, varianceStartCol).setBackground("#cfe2f3"); // Variance = blue
 
+  // Get Transactions sheet column positions for SUMIFS formulas
+  const dateCol = getColumnIndex(headerMap, 'date');
+  const amountCol = getColumnIndex(headerMap, 'amount');
+  const categoryCol = getColumnIndex(headerMap, 'category_primary');
+  const pendingCol = getColumnIndex(headerMap, 'pending');
+
+  // Convert to column letters for formulas
+  const dateColLetter = columnToLetter(dateCol);
+  const amountColLetter = columnToLetter(amountCol);
+  const categoryColLetter = columnToLetter(categoryCol);
+  const pendingColLetter = columnToLetter(pendingCol);
+
   // Build data rows
   const dataRows = [];
   sortedCategories.forEach(category => {
     const row = [category];
 
-    // Actuals columns
+    // Actuals columns - use SUMIFS formulas
     sortedMonths.forEach(month => {
-      const amount = (monthlyData[month] && monthlyData[month][category]) || 0;
-      row.push(amount);
+      const rowNum = dataRows.length + 3; // +3 because of 2 header rows + 1-indexed
+
+      // Extract year and month for date criteria
+      const [year, monthNum] = month.split('-');
+
+      // SUMIFS formula: Sum amounts where category matches AND date is in target month AND not pending
+      // Formula structure: =SUMIFS(Transactions!amount, Transactions!category, "Food", Transactions!date, ">=2025-01-01", Transactions!date, "<2025-02-01", Transactions!pending, FALSE)
+      const startDate = `${year}-${monthNum}-01`;
+      const nextMonth = monthNum === '12' ? `${parseInt(year) + 1}-01-01` : `${year}-${(parseInt(monthNum) + 1).toString().padStart(2, '0')}-01`;
+
+      const formula = `=SUMIFS(Transactions!${amountColLetter}:${amountColLetter}, ` +
+                     `Transactions!${categoryColLetter}:${categoryColLetter}, $A${rowNum}, ` +
+                     `Transactions!${dateColLetter}:${dateColLetter}, ">="${startDate}", ` +
+                     `Transactions!${dateColLetter}:${dateColLetter}, "<"&"${nextMonth}", ` +
+                     `Transactions!${pendingColLetter}:${pendingColLetter}, FALSE)`;
+
+      row.push(formula);
     });
 
     // Spacer
