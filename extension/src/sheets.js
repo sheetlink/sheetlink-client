@@ -281,7 +281,7 @@ async function createTab(token, sheetId, tabName) {
 async function writeHeaders(token, sheetId, tabName, headers) {
   const lastColumn = columnNumberToLetter(headers.length);
   const range = `${tabName}!A1:${lastColumn}1`;
-  const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`;
+  const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
 
   const body = {
     range,
@@ -315,7 +315,7 @@ async function appendRows(token, sheetId, tabName, rows) {
   if (rows.length === 0) return;
 
   const range = `${tabName}!A:A`;
-  const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
 
   const body = {
     range,
@@ -578,6 +578,7 @@ async function writeAccounts(sheetId, accountsData) {
 /**
  * Format date columns to display as dates (not serial numbers)
  * Phase 3.23.0: Ensures dates display correctly in Google Sheets
+ * Strategy: Read date columns, rewrite with USER_ENTERED to parse dates, then apply formatting
  * @param {string} sheetId - Spreadsheet ID
  * @param {string} tabName - Tab name
  */
@@ -609,10 +610,42 @@ async function formatDateColumns(sheetId, tabName) {
     return;
   }
 
-  // Build formatting requests for date columns
+  // Get the date column letter (e.g., F for index 5)
+  const dateColLetter = columnNumberToLetter(dateColumnIndex + 1);
+  const authorizedDateColLetter = authorizedDateColumnIndex !== -1 ? columnNumberToLetter(authorizedDateColumnIndex + 1) : null;
+
+  // Step 1: Read the date column values
+  const dateRange = `${tabName}!${dateColLetter}2:${dateColLetter}`;
+  const dateValues = await readRange(token, sheetId, dateRange);
+
+  // Step 2: Rewrite date column with USER_ENTERED to parse as dates
+  if (dateValues && dateValues.length > 0) {
+    const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(dateRange)}?valueInputOption=USER_ENTERED`;
+    const body = {
+      range: dateRange,
+      values: dateValues
+    };
+    await sheetsApiRequest(token, url, 'PUT', body);
+  }
+
+  // Step 3: Rewrite authorized_date column if it exists
+  if (authorizedDateColLetter) {
+    const authDateRange = `${tabName}!${authorizedDateColLetter}2:${authorizedDateColLetter}`;
+    const authDateValues = await readRange(token, sheetId, authDateRange);
+
+    if (authDateValues && authDateValues.length > 0) {
+      const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(authDateRange)}?valueInputOption=USER_ENTERED`;
+      const body = {
+        range: authDateRange,
+        values: authDateValues
+      };
+      await sheetsApiRequest(token, url, 'PUT', body);
+    }
+  }
+
+  // Step 4: Apply date formatting
   const requests = [];
 
-  // Format 'date' column
   if (dateColumnIndex !== -1) {
     requests.push({
       repeatCell: {
@@ -635,7 +668,6 @@ async function formatDateColumns(sheetId, tabName) {
     });
   }
 
-  // Format 'authorized_date' column
   if (authorizedDateColumnIndex !== -1) {
     requests.push({
       repeatCell: {
@@ -1040,7 +1072,7 @@ async function clearTransactionsTab(sheetId, tier = 'free', skipPlaceholders = f
       placeholderData.push(row);
     }
 
-    const placeholderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${tabName}!A2:append?valueInputOption=USER_ENTERED`;
+    const placeholderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${tabName}!A2:append?valueInputOption=RAW`;
     await sheetsApiRequest(token, placeholderUrl, 'POST', { values: placeholderData });
     debug(`[Sheets] Added ${placeholderRows} placeholder rows for loading state`);
   } else {
