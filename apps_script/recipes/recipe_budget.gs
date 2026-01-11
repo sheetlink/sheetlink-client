@@ -196,23 +196,16 @@ function setupMultiMonthBudget(sheet, transactionsSheet, headerMap, ss) {
   sortedCategories.forEach(category => {
     const row = [category];
 
-    // Actuals columns - use SUMIFS formulas
+    // Actuals columns - use SUMPRODUCT formulas (text-based date matching)
     sortedMonths.forEach(month => {
       const rowNum = dataRows.length + 3; // +3 because of 2 header rows + 1-indexed
 
-      // Extract year and month for date criteria
-      const [year, monthNum] = month.split('-');
-
-      // SUMIFS formula: Sum amounts where category matches AND date is in target month AND not pending
-      // Formula structure: =SUMIFS(Transactions!amount, Transactions!category, "Food", Transactions!date, ">=2025-01-01", Transactions!date, "<2025-02-01", Transactions!pending, FALSE)
-      const startDate = `${year}-${monthNum}-01`;
-      const nextMonth = monthNum === '12' ? `${parseInt(year) + 1}-01-01` : `${year}-${(parseInt(monthNum) + 1).toString().padStart(2, '0')}-01`;
-
-      const formula = `=SUMIFS(Transactions!${amountColLetter}:${amountColLetter}, ` +
-                     `Transactions!${categoryColLetter}:${categoryColLetter}, $A${rowNum}, ` +
-                     `Transactions!${dateColLetter}:${dateColLetter}, ">="${startDate}", ` +
-                     `Transactions!${dateColLetter}:${dateColLetter}, "<"&"${nextMonth}", ` +
-                     `Transactions!${pendingColLetter}:${pendingColLetter}, FALSE)`;
+      // Use SUMPRODUCT with FIND to match year-month prefix in text dates
+      // This works with text dates like '2024-02-01 by matching the "2024-02" prefix
+      const formula = `=SUMPRODUCT((ISNUMBER(FIND("${month}", Transactions!${dateColLetter}:${dateColLetter})))*` +
+                     `(Transactions!${categoryColLetter}:${categoryColLetter}=$A${rowNum})*` +
+                     `(Transactions!${pendingColLetter}:${pendingColLetter}=FALSE)*` +
+                     `Transactions!${amountColLetter}:${amountColLetter})`;
 
       row.push(formula);
     });
