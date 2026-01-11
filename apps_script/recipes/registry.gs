@@ -9,10 +9,10 @@
 const RECIPE_REGISTRY = {
   budget: {
     name: "Plaid Category Budget",
-    description: "Creates a live monthly budget using Plaid's AI-enhanced categories",
-    version: "1.0.0",
+    description: "Multi-month budget tracker with actuals, budget, and variance by category",
+    version: "2.0.0",
     entry: runBudgetRecipe,
-    outputTabs: ["Budget_Config", "Budget_Monthly", "Budget_Variance"]
+    outputTabs: ["Budget_Monthly"]
   },
 
   cashflow: {

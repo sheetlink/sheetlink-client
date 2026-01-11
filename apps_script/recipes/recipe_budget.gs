@@ -2,8 +2,8 @@
  * SheetLink Recipe: Plaid Category Budget
  * Phase 3.23.0 - Recipes Framework
  *
- * Creates a live monthly budget using Plaid's AI-enhanced categories
- * (category_primary, category_detailed) with zero manual tagging.
+ * Creates a multi-month budget tracker with actuals, budget inputs, and variance.
+ * Layout: Category | Actuals (by month) | Budget (by month) | Variance (by month)
  */
 
 /**
@@ -30,24 +30,14 @@ function runBudgetRecipe(ss) {
       }
     }
 
-    // Create output sheets
-    const configSheet = getOrCreateSheet(ss, "Budget_Config");
-    const monthlySheet = getOrCreateSheet(ss, "Budget_Monthly");
-    const varianceSheet = getOrCreateSheet(ss, "Budget_Variance");
+    // Create output sheet (consolidate everything into Budget_Monthly)
+    const budgetSheet = getOrCreateSheet(ss, "Budget_Monthly");
 
-    // Setup config sheet
-    setupBudgetConfig(configSheet, ss);
+    // Setup the multi-month budget tracker
+    setupMultiMonthBudget(budgetSheet, transactionsSheet, headerMap, ss);
 
-    // Setup monthly sheet
-    setupBudgetMonthly(monthlySheet, transactionsSheet, headerMap, ss);
-
-    // Setup variance sheet
-    setupBudgetVariance(varianceSheet, ss);
-
-    // Format all sheets
-    formatSheet(configSheet);
-    formatSheet(monthlySheet);
-    formatSheet(varianceSheet);
+    // Format sheet
+    formatSheet(budgetSheet);
 
     logRecipe("Budget", "Recipe completed successfully");
     return { success: true, error: null };
@@ -59,253 +49,265 @@ function runBudgetRecipe(ss) {
 }
 
 /**
- * Get the most recent month from transaction data (inline helper)
- * @param {Object[]} transactions - Array of transaction objects
- * @returns {string} Most recent month in format "YYYY-MM"
- */
-function getMostRecentMonthForBudget(transactions) {
-  if (!transactions || transactions.length === 0) {
-    const now = new Date();
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    return `${now.getFullYear()}-${month}`;
-  }
-
-  // Find the most recent date
-  let mostRecentDate = null;
-  transactions.forEach(txn => {
-    let date = null;
-    if (txn.date instanceof Date) {
-      date = txn.date;
-    } else if (typeof txn.date === 'string') {
-      const parsed = new Date(txn.date);
-      if (!isNaN(parsed.getTime())) {
-        date = parsed;
-      }
-    }
-
-    if (date && (!mostRecentDate || date > mostRecentDate)) {
-      mostRecentDate = date;
-    }
-  });
-
-  if (!mostRecentDate) {
-    const now = new Date();
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    return `${now.getFullYear()}-${month}`;
-  }
-
-  const month = (mostRecentDate.getMonth() + 1).toString().padStart(2, '0');
-  return `${mostRecentDate.getFullYear()}-${month}`;
-}
-
-/**
- * Setup Budget Config sheet
- * @param {Sheet} sheet - Config sheet
- * @param {Spreadsheet} ss - Active spreadsheet
- */
-function setupBudgetConfig(sheet, ss) {
-  // Clear existing data
-  sheet.clear();
-
-  // Set headers and instructions
-  const headers = ["Setting", "Value", "Description"];
-  setHeaders(sheet, headers);
-
-  // Get transactions to find most recent month
-  const transactionsSheet = getTransactionsSheet(ss);
-  const transactions = getTransactionData(transactionsSheet);
-  const recentMonth = getMostRecentMonthForBudget(transactions);
-
-  // Add configuration rows
-  const configData = [
-    ["Target Month", recentMonth, "Month to analyze (format: YYYY-MM)"],
-    ["", "", ""],
-    ["Category", "Monthly Budget", "Amount budgeted for this category"],
-    ["", "", "Leave blank to set budgets below"]
-  ];
-
-  sheet.getRange(2, 1, configData.length, headers.length).setValues(configData);
-
-  // Force B2 to be plain text (not a date)
-  sheet.getRange("B2").setNumberFormat("@"); // @ means plain text
-
-  // Create named range for target month
-  createNamedRange(sheet, "Budget_TargetMonth", "B2");
-
-  // Style the config sheet
-  sheet.getRange("A1:C1").setBackground("#4285f4").setFontColor("white");
-  sheet.getRange("A2:C2").setBackground("#fff3cd");
-  sheet.setColumnWidth(1, 200);
-  sheet.setColumnWidth(2, 150);
-  sheet.setColumnWidth(3, 300);
-}
-
-/**
- * Setup Budget Monthly sheet
- * @param {Sheet} sheet - Monthly sheet
+ * Setup multi-month budget tracker with actuals, budget, and variance
+ * @param {Sheet} sheet - Budget sheet
  * @param {Sheet} transactionsSheet - Transactions sheet
  * @param {Object} headerMap - Header map
  * @param {Spreadsheet} ss - Active spreadsheet
  */
-function setupBudgetMonthly(sheet, transactionsSheet, headerMap, ss) {
-  // Clear existing data (preserve headers if they exist)
-  const existingHeaders = sheet.getLastColumn() > 0 ?
-    sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0] : [];
-
-  if (existingHeaders.length === 0 || existingHeaders[0] !== "Category") {
-    // Set up fresh headers
-    const headers = ["Category", "Actual Spend", "Budget", "Variance", "% of Budget"];
-    setHeaders(sheet, headers);
-  }
+function setupMultiMonthBudget(sheet, transactionsSheet, headerMap, ss) {
+  // Clear existing data
+  sheet.clear();
 
   // Get all transactions
   const transactions = getTransactionData(transactionsSheet);
 
-  // Get target month from config
-  let targetMonth = ss.getRangeByName("Budget_TargetMonth") ?
-    ss.getRangeByName("Budget_TargetMonth").getValue() : getCurrentMonth();
-
-  // Handle case where target month might be a Date object instead of string
-  if (targetMonth instanceof Date) {
-    const month = (targetMonth.getMonth() + 1).toString().padStart(2, '0');
-    targetMonth = `${targetMonth.getFullYear()}-${month}`;
-    Logger.log(`Converted Date object to string: ${targetMonth}`);
-  }
-
-  // Filter transactions
-  const filteredTxns = transactions.filter(txn => {
-    // Exclude pending
-    if (txn.pending === true || txn.pending === "TRUE") return false;
-
-    // Filter by month
-    return isInMonth(txn.date, targetMonth);
+  // Filter out pending transactions
+  const validTxns = transactions.filter(txn => {
+    return !(txn.pending === true || txn.pending === "TRUE" || txn.pending === "true");
   });
 
-  // Aggregate by category_primary
-  const categoryTotals = {};
-  filteredTxns.forEach(txn => {
+  if (validTxns.length === 0) {
+    sheet.getRange("A1").setValue("No transaction data available. Please sync transactions first.");
+    return;
+  }
+
+  // Group transactions by month and category
+  const monthlyData = {}; // { "2025-01": { "Food": 500, "Transport": 200 } }
+  const allCategories = new Set();
+  const allMonths = new Set();
+
+  validTxns.forEach(txn => {
+    const date = parseDate(txn.date);
+    if (!date) return;
+
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const yearMonth = `${date.getFullYear()}-${month}`;
     const category = txn.category_primary || "Uncategorized";
     const amount = Math.abs(parseFloat(txn.amount) || 0);
 
-    if (!categoryTotals[category]) {
-      categoryTotals[category] = 0;
+    if (!monthlyData[yearMonth]) {
+      monthlyData[yearMonth] = {};
     }
-    categoryTotals[category] += amount;
+
+    if (!monthlyData[yearMonth][category]) {
+      monthlyData[yearMonth][category] = 0;
+    }
+
+    monthlyData[yearMonth][category] += amount;
+    allCategories.add(category);
+    allMonths.add(yearMonth);
   });
 
-  // Sort categories by spend (descending)
-  const sortedCategories = Object.entries(categoryTotals)
-    .sort((a, b) => b[1] - a[1]);
+  // Sort months chronologically
+  const sortedMonths = Array.from(allMonths).sort();
 
-  // Write data to sheet
+  // Sort categories by total spend (descending)
+  const categorySums = {};
+  Object.values(monthlyData).forEach(monthData => {
+    Object.entries(monthData).forEach(([category, amount]) => {
+      categorySums[category] = (categorySums[category] || 0) + amount;
+    });
+  });
+
+  const sortedCategories = Array.from(allCategories).sort((a, b) => {
+    return (categorySums[b] || 0) - (categorySums[a] || 0);
+  });
+
+  // Calculate column layout
+  const numMonths = sortedMonths.length;
+  const categoryCol = 1; // Column A
+  const actualsStartCol = 2; // Column B
+  const budgetStartCol = actualsStartCol + numMonths + 1; // Skip a column for spacing
+  const varianceStartCol = budgetStartCol + numMonths + 1; // Skip a column for spacing
+
+  // Build headers
+  const headerRow1 = ["Category"];
+  const headerRow2 = [""];
+
+  // Actuals section headers
+  for (let i = 0; i < numMonths; i++) {
+    if (i === 0) {
+      headerRow1.push("ACTUALS");
+    } else {
+      headerRow1.push("");
+    }
+    headerRow2.push(sortedMonths[i]);
+  }
+
+  // Spacer column
+  headerRow1.push("");
+  headerRow2.push("");
+
+  // Budget section headers
+  for (let i = 0; i < numMonths; i++) {
+    if (i === 0) {
+      headerRow1.push("BUDGET");
+    } else {
+      headerRow1.push("");
+    }
+    headerRow2.push(sortedMonths[i]);
+  }
+
+  // Spacer column
+  headerRow1.push("");
+  headerRow2.push("");
+
+  // Variance section headers
+  for (let i = 0; i < numMonths; i++) {
+    if (i === 0) {
+      headerRow1.push("VARIANCE");
+    } else {
+      headerRow1.push("");
+    }
+    headerRow2.push(sortedMonths[i]);
+  }
+
+  // Write headers
+  sheet.getRange(1, 1, 1, headerRow1.length).setValues([headerRow1]);
+  sheet.getRange(2, 1, 1, headerRow2.length).setValues([headerRow2]);
+
+  // Style headers
+  sheet.getRange(1, 1, 2, headerRow1.length)
+    .setFontWeight("bold")
+    .setBackground("#f3f3f3")
+    .setHorizontalAlignment("center");
+
+  // Highlight section labels
+  sheet.getRange(1, actualsStartCol).setBackground("#d9ead3"); // Actuals = green
+  sheet.getRange(1, budgetStartCol).setBackground("#fff2cc"); // Budget = yellow
+  sheet.getRange(1, varianceStartCol).setBackground("#cfe2f3"); // Variance = blue
+
+  // Build data rows
   const dataRows = [];
-  sortedCategories.forEach(([category, total]) => {
-    dataRows.push([
-      category,
-      total,
-      0, // Budget (user will fill in)
-      `=C${dataRows.length + 2}-B${dataRows.length + 2}`, // Variance
-      `=IF(C${dataRows.length + 2}>0, B${dataRows.length + 2}/C${dataRows.length + 2}, 0)` // % of Budget
-    ]);
+  sortedCategories.forEach(category => {
+    const row = [category];
+
+    // Actuals columns
+    sortedMonths.forEach(month => {
+      const amount = (monthlyData[month] && monthlyData[month][category]) || 0;
+      row.push(amount);
+    });
+
+    // Spacer
+    row.push("");
+
+    // Budget columns (empty for user input)
+    sortedMonths.forEach(() => {
+      row.push(0); // Default to 0
+    });
+
+    // Spacer
+    row.push("");
+
+    // Variance columns (formula: Budget - Actuals)
+    sortedMonths.forEach((month, i) => {
+      const rowNum = dataRows.length + 3; // +3 because of 2 header rows + 1-indexed
+      const actualsCol = actualsStartCol + i;
+      const budgetCol = budgetStartCol + i;
+
+      // Convert column numbers to A1 notation
+      const actualsColLetter = columnToLetter(actualsCol);
+      const budgetColLetter = columnToLetter(budgetCol);
+
+      row.push(`=${budgetColLetter}${rowNum}-${actualsColLetter}${rowNum}`);
+    });
+
+    dataRows.push(row);
   });
 
+  // Write data rows
   if (dataRows.length > 0) {
-    // Clear old data
-    if (sheet.getLastRow() > 1) {
-      sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).clear();
-    }
+    sheet.getRange(3, 1, dataRows.length, headerRow1.length).setValues(dataRows);
 
-    // Write new data
-    sheet.getRange(2, 1, dataRows.length, 5).setValues(dataRows);
+    // Format actuals as currency (read-only style)
+    sheet.getRange(3, actualsStartCol, dataRows.length, numMonths)
+      .setNumberFormat("$#,##0.00")
+      .setBackground("#f9f9f9"); // Light gray to indicate read-only
 
-    // Format currency columns
-    sheet.getRange(2, 2, dataRows.length, 1).setNumberFormat("$#,##0.00");
-    sheet.getRange(2, 3, dataRows.length, 1).setNumberFormat("$#,##0.00");
-    sheet.getRange(2, 4, dataRows.length, 1).setNumberFormat("$#,##0.00");
-    sheet.getRange(2, 5, dataRows.length, 1).setNumberFormat("0.0%");
+    // Format budget as currency (highlighted for input)
+    sheet.getRange(3, budgetStartCol, dataRows.length, numMonths)
+      .setNumberFormat("$#,##0.00")
+      .setBackground("#fffbea"); // Light yellow for input
 
-    // Add conditional formatting for variance
-    const varianceRange = sheet.getRange(2, 4, dataRows.length, 1);
-    const rule = SpreadsheetApp.newConditionalFormatRule()
+    // Format variance as currency
+    sheet.getRange(3, varianceStartCol, dataRows.length, numMonths)
+      .setNumberFormat("$#,##0.00");
+
+    // Add conditional formatting for variance (negative = red, positive = green)
+    const varianceRange = sheet.getRange(3, varianceStartCol, dataRows.length, numMonths);
+
+    const negativeRule = SpreadsheetApp.newConditionalFormatRule()
       .whenNumberLessThan(0)
       .setBackground("#f4cccc")
       .setRanges([varianceRange])
       .build();
 
-    const rules = sheet.getConditionalFormatRules();
-    rules.push(rule);
-    sheet.setConditionalFormatRules(rules);
+    const positiveRule = SpreadsheetApp.newConditionalFormatRule()
+      .whenNumberGreaterThan(0)
+      .setBackground("#d9ead3")
+      .setRanges([varianceRange])
+      .build();
 
-    // Add total row
-    const totalRow = sheet.getLastRow() + 1;
-    sheet.getRange(totalRow, 1).setValue("TOTAL");
-    sheet.getRange(totalRow, 2).setFormula(`=SUM(B2:B${totalRow - 1})`);
-    sheet.getRange(totalRow, 3).setFormula(`=SUM(C2:C${totalRow - 1})`);
-    sheet.getRange(totalRow, 4).setFormula(`=C${totalRow}-B${totalRow}`);
-    sheet.getRange(totalRow, 1, 1, 5).setFontWeight("bold").setBackground("#f3f3f3");
-    sheet.getRange(totalRow, 2, 1, 3).setNumberFormat("$#,##0.00");
+    sheet.setConditionalFormatRules([negativeRule, positiveRule]);
+
+    // Add total rows
+    const totalRow = dataRows.length + 3;
+
+    // Total label
+    sheet.getRange(totalRow, categoryCol).setValue("TOTAL");
+
+    // Total actuals
+    for (let i = 0; i < numMonths; i++) {
+      const col = actualsStartCol + i;
+      const colLetter = columnToLetter(col);
+      sheet.getRange(totalRow, col).setFormula(`=SUM(${colLetter}3:${colLetter}${totalRow - 1})`);
+    }
+
+    // Total budget
+    for (let i = 0; i < numMonths; i++) {
+      const col = budgetStartCol + i;
+      const colLetter = columnToLetter(col);
+      sheet.getRange(totalRow, col).setFormula(`=SUM(${colLetter}3:${colLetter}${totalRow - 1})`);
+    }
+
+    // Total variance
+    for (let i = 0; i < numMonths; i++) {
+      const col = varianceStartCol + i;
+      const colLetter = columnToLetter(col);
+      sheet.getRange(totalRow, col).setFormula(`=SUM(${colLetter}3:${colLetter}${totalRow - 1})`);
+    }
+
+    // Format total row
+    sheet.getRange(totalRow, 1, 1, headerRow1.length)
+      .setFontWeight("bold")
+      .setBackground("#e0e0e0");
+
+    sheet.getRange(totalRow, actualsStartCol, 1, numMonths).setNumberFormat("$#,##0.00");
+    sheet.getRange(totalRow, budgetStartCol, 1, numMonths).setNumberFormat("$#,##0.00");
+    sheet.getRange(totalRow, varianceStartCol, 1, numMonths).setNumberFormat("$#,##0.00");
   }
+
+  // Freeze headers and category column
+  sheet.setFrozenRows(2);
+  sheet.setFrozenColumns(1);
+
+  // Set column widths
+  sheet.setColumnWidth(categoryCol, 150);
 }
 
 /**
- * Setup Budget Variance sheet
- * @param {Sheet} sheet - Variance sheet
- * @param {Spreadsheet} ss - Active spreadsheet
+ * Convert column number to letter (e.g., 1 -> A, 27 -> AA)
+ * @param {number} column - Column number (1-indexed)
+ * @returns {string} Column letter
  */
-function setupBudgetVariance(sheet, ss) {
-  // Clear existing data
-  sheet.clear();
-
-  // Set headers
-  const headers = ["Category", "Budget", "Actual", "Variance", "Status"];
-  setHeaders(sheet, headers);
-
-  // Add note
-  sheet.getRange("A2").setValue("This sheet shows categories with budget vs actual comparison");
-  sheet.getRange("A2").setFontStyle("italic").setFontColor("#666666");
-
-  // Reference to monthly sheet
-  const monthlySheet = ss.getSheetByName("Budget_Monthly");
-  if (!monthlySheet) return;
-
-  const lastRow = monthlySheet.getLastRow();
-  if (lastRow < 2) return;
-
-  // Copy data with formulas
-  const dataRows = [];
-  for (let i = 2; i <= lastRow; i++) {
-    const hasTotal = monthlySheet.getRange(i, 1).getValue() === "TOTAL";
-    if (hasTotal) break;
-
-    dataRows.push([
-      `=Budget_Monthly!A${i}`,
-      `=Budget_Monthly!C${i}`,
-      `=Budget_Monthly!B${i}`,
-      `=Budget_Monthly!D${i}`,
-      `=IF(D${dataRows.length + 3}<0, "OVER", IF(D${dataRows.length + 3}>0, "UNDER", "ON TARGET"))`
-    ]);
+function columnToLetter(column) {
+  let temp;
+  let letter = '';
+  while (column > 0) {
+    temp = (column - 1) % 26;
+    letter = String.fromCharCode(temp + 65) + letter;
+    column = (column - temp - 1) / 26;
   }
-
-  if (dataRows.length > 0) {
-    sheet.getRange(3, 1, dataRows.length, 5).setValues(dataRows);
-
-    // Format currency
-    sheet.getRange(3, 2, dataRows.length, 3).setNumberFormat("$#,##0.00");
-
-    // Conditional formatting for status
-    const statusRange = sheet.getRange(3, 5, dataRows.length, 1);
-    const overRule = SpreadsheetApp.newConditionalFormatRule()
-      .whenTextEqualTo("OVER")
-      .setBackground("#f4cccc")
-      .setRanges([statusRange])
-      .build();
-
-    const underRule = SpreadsheetApp.newConditionalFormatRule()
-      .whenTextEqualTo("UNDER")
-      .setBackground("#d9ead3")
-      .setRanges([statusRange])
-      .build();
-
-    sheet.setConditionalFormatRules([overRule, underRule]);
-  }
+  return letter;
 }
