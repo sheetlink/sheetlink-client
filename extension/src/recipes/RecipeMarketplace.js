@@ -113,9 +113,9 @@ export class RecipeMarketplace {
 
   async handleInstall(recipeId) {
     try {
-      // Get current spreadsheet ID
-      const { spreadsheetId } = await chrome.storage.local.get('spreadsheetId');
-      if (!spreadsheetId) {
+      // Get current spreadsheet ID (stored as 'sheetId' in chrome.storage.sync)
+      const { sheetId } = await chrome.storage.sync.get('sheetId');
+      if (!sheetId) {
         alert('Please select a spreadsheet first.\n\nGo to the "Sheet" tab to create or select a spreadsheet.');
         return;
       }
@@ -134,7 +134,7 @@ export class RecipeMarketplace {
       this.showProgress(recipeId);
 
       // Install
-      await installRecipe(recipeId, spreadsheetId, (status) => {
+      await installRecipe(recipeId, sheetId, (status) => {
         this.updateProgress(recipeId, status);
       });
 
