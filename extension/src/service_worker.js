@@ -40,6 +40,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       handleGetAuthToken(sendResponse, message.forceAuth || false);
       return true; // Keep channel open for async response
 
+    case 'REQUEST_RECIPE_SCOPE':
+      handleRequestRecipeScope(sendResponse);
+      return true;
+
     case 'EXCHANGE_PUBLIC_TOKEN':
       handleExchangePublicToken(message, sendResponse);
       return true;
@@ -155,11 +159,15 @@ async function clearExpiredToken() {
 }
 
 // Launch OAuth flow via regular window
-async function launchOAuthFlow(sendResponse) {
-  const scopes = CONFIG.GOOGLE_SCOPES.join(' ');
+async function launchOAuthFlow(sendResponse, includeRecipeScope = false) {
+  const scopeArray = includeRecipeScope ? CONFIG.GOOGLE_RECIPE_SCOPES : CONFIG.GOOGLE_SCOPES;
+  const scopes = scopeArray.join(' ');
   const extensionId = chrome.runtime.id;
   // Add extension_id as state parameter so it gets passed through OAuth
-  const state = JSON.stringify({ extension_id: extensionId });
+  const state = JSON.stringify({
+    extension_id: extensionId,
+    recipe_scope: includeRecipeScope
+  });
   // Generate nonce for ID token security (required by Google for implicit flow)
   const nonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
@@ -181,6 +189,18 @@ async function launchOAuthFlow(sendResponse) {
     height: 600,
     focused: true
   });
+}
+
+// Request recipe scope via OAuth flow with Apps Script included
+async function handleRequestRecipeScope(sendResponse) {
+  try {
+    debug('[Recipe Auth] Requesting Apps Script scope via OAuth');
+    await clearExpiredToken();
+    await launchOAuthFlow(sendResponse, true); // true = include recipe scope
+  } catch (error) {
+    console.error('[Recipe Auth] Error requesting recipe scope:', error);
+    sendResponse({ success: false, error: error.message });
+  }
 }
 
 // Get Google OAuth token using manual OAuth flow
@@ -245,14 +265,22 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
 
   if (message.type === 'OAUTH_SUCCESS') {
     debug('[Service Worker] Processing OAUTH_SUCCESS callback');
-    const { accessToken, idToken, expiresIn } = message;  // Phase 3.16.0: Also receive ID token
+    const { accessToken, idToken, expiresIn, recipeScope } = message;  // Phase 3.16.0: ID token, Phase 3.25.0: recipe scope
 
     // Cache the token with expiry
     const expiry = Date.now() + (parseInt(expiresIn) * 1000);
-    await chrome.storage.local.set({
+    const storageData = {
       googleAccessToken: accessToken,
       googleTokenExpiry: expiry
-    });
+    };
+
+    // Phase 3.25.0: If recipe scope was requested, mark it as enabled
+    if (recipeScope) {
+      debug('[Recipe Auth] Recipe scope granted, marking recipes as enabled');
+      storageData.recipesEnabled = true;
+    }
+
+    await chrome.storage.local.set(storageData);
 
     // Phase 3.8: Get Google user ID from Google's API using the access token
     try {

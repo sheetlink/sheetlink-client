@@ -1,6 +1,6 @@
 /**
  * Recipe-specific authentication module
- * Handles incremental OAuth for Apps Script API access
+ * Uses the existing web OAuth flow to request Apps Script scope
  */
 
 const RECIPE_SCOPE = 'https://www.googleapis.com/auth/script.projects';
@@ -8,7 +8,6 @@ const RECIPE_ENABLED_KEY = 'recipesEnabled';
 
 /**
  * Check if user has granted recipe OAuth scope
- * We check this by attempting to get a token non-interactively
  */
 export async function hasRecipePermissions() {
   try {
@@ -22,27 +21,20 @@ export async function hasRecipePermissions() {
 
 /**
  * Request recipe OAuth scope from user
- * This triggers the OAuth consent screen
+ * Opens a new OAuth flow with the Apps Script scope included
  */
 export async function requestRecipePermissions() {
-  try {
-    // Request OAuth token with the Apps Script scope
-    // This will show the OAuth consent screen if the user hasn't granted it yet
-    const token = await chrome.identity.getAuthToken({
-      interactive: true,
-      scopes: [RECIPE_SCOPE]
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({
+      type: 'REQUEST_RECIPE_SCOPE'
+    }, (response) => {
+      if (response && response.success) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
     });
-
-    if (token) {
-      // Mark as enabled
-      await chrome.storage.local.set({ [RECIPE_ENABLED_KEY]: true });
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error('[recipeAuth] Error requesting OAuth scope:', error);
-    return false;
-  }
+  });
 }
 
 /**
@@ -57,19 +49,21 @@ export async function ensureRecipePermissions() {
 
 /**
  * Get an OAuth token with the Apps Script scope
- * This is used by the installer to make API calls
+ * Uses the existing Google access token
  */
 export async function getRecipeAuthToken() {
-  try {
-    const token = await chrome.identity.getAuthToken({
-      interactive: false,  // Don't show UI, should already be granted
-      scopes: [RECIPE_SCOPE]
-    });
-    return token;
-  } catch (error) {
-    console.error('[recipeAuth] Error getting auth token:', error);
-    throw new Error('Failed to get Apps Script authorization. Please try again.');
-  }
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(
+      { type: 'GET_AUTH_TOKEN' },
+      (response) => {
+        if (response && response.token) {
+          resolve(response.token);
+        } else {
+          reject(new Error('Failed to get Apps Script authorization. Please try again.'));
+        }
+      }
+    );
+  });
 }
 
 /**
@@ -77,16 +71,6 @@ export async function getRecipeAuthToken() {
  */
 export async function revokeRecipePermissions() {
   try {
-    // Remove the OAuth token
-    const token = await chrome.identity.getAuthToken({
-      interactive: false,
-      scopes: [RECIPE_SCOPE]
-    });
-
-    if (token) {
-      await chrome.identity.removeCachedAuthToken({ token });
-    }
-
     await chrome.storage.local.set({ [RECIPE_ENABLED_KEY]: false });
     return true;
   } catch (error) {

@@ -24,14 +24,16 @@ export default function OAuthCallback() {
     }
 
     if (accessToken) {
-      // Get extension ID from the state parameter (passed through by Google OAuth)
+      // Get extension ID and recipe scope flag from the state parameter (passed through by Google OAuth)
       const state = params.get('state');
       let extensionId = null;
+      let recipeScope = false;
 
       if (state) {
         try {
           const stateData = JSON.parse(state);
           extensionId = stateData.extension_id;
+          recipeScope = stateData.recipe_scope || false;
         } catch (e) {
           // Failed to parse state
         }
@@ -50,7 +52,8 @@ export default function OAuthCallback() {
             type: 'OAUTH_SUCCESS',
             accessToken: accessToken,
             idToken: idToken,  // Phase 3.16.0: Send ID token for JWT auth
-            expiresIn: expiresIn
+            expiresIn: expiresIn,
+            recipeScope: recipeScope  // Phase 3.25.0: Pass recipe scope flag
           },
           (response: any) => {
             // @ts-ignore
