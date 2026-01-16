@@ -1,6 +1,7 @@
 // popup.js - Main UI controller for extension popup
 
 import { CONFIG } from '../config.js';
+import { RecipeMarketplace } from './recipes/RecipeMarketplace.js';
 
 // Update global debug flag from CONFIG (in case it was changed)
 window.SHEETLINK_DEBUG = CONFIG.DEBUG;
@@ -64,7 +65,7 @@ let sheetErrorBanner, sheetErrorDetail, syncErrorBanner;
 
 // Phase 3.10: Post-onboarding navigation
 let footerNav, legacyFooter;
-let pageHome, pageBank, pageSheet, pageSettings;
+let pageHome, pageBank, pageSheet, pageRecipes, pageSettings;
 let homeSyncBtn, homeLastSync, homePlanTier, homeStatusPlaid, homeStatusSheet, homeSyncStatus;
 let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn;
 let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBtn;
@@ -201,6 +202,7 @@ function initializeElements() {
   pageHome = document.getElementById('page-home');
   pageBank = document.getElementById('page-bank');
   pageSheet = document.getElementById('page-sheet');
+  pageRecipes = document.getElementById('page-recipes');
   pageSettings = document.getElementById('page-settings');
 
   // Home page elements
@@ -3129,7 +3131,7 @@ async function switchTab(tabName) {
   document.body.classList.remove('welcome-active');
 
   // Hide all pages
-  const pages = [pageHome, pageBank, pageSheet, pageSettings];
+  const pages = [pageHome, pageBank, pageSheet, pageRecipes, pageSettings];
   pages.forEach(page => {
     if (page) {
       page.classList.remove('active');
@@ -3142,6 +3144,7 @@ async function switchTab(tabName) {
   if (tabName === 'home') targetPage = pageHome;
   if (tabName === 'bank') targetPage = pageBank;
   if (tabName === 'sheet') targetPage = pageSheet;
+  if (tabName === 'recipes') targetPage = pageRecipes;
   if (tabName === 'settings') targetPage = pageSettings;
 
   if (targetPage) {
@@ -3166,6 +3169,7 @@ async function switchTab(tabName) {
   if (tabName === 'home') await loadHomePage();
   if (tabName === 'bank') await loadBankPage();
   if (tabName === 'sheet') await loadSheetPage();
+  if (tabName === 'recipes') await loadRecipesPage();
   if (tabName === 'settings') await loadSettingsPage();
 }
 
@@ -4081,6 +4085,25 @@ function attachNavigationEventListeners() {
   // Settings page event listeners
   if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
   if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', handleSaveSettings);
+}
+
+/**
+ * Load Recipes page
+ */
+let recipeMarketplace = null;
+
+async function loadRecipesPage() {
+  debug('[Recipes] Loading recipes page');
+
+  // Initialize recipe marketplace if not already done
+  if (!recipeMarketplace) {
+    recipeMarketplace = new RecipeMarketplace('recipe-container');
+    try {
+      await recipeMarketplace.init();
+    } catch (error) {
+      console.error('[Recipes] Error initializing marketplace:', error);
+    }
+  }
 }
 
 /**

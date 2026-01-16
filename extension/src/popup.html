@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SheetLink</title>
   <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="styles/recipes.css">
 </head>
 <body>
   <!-- Phase 3.13: Unified loading screen (hidden by JS when ready) -->
@@ -408,6 +409,11 @@
         </div>
       </div>
 
+      <!-- Recipes Page -->
+      <div id="page-recipes" class="page hidden">
+        <div id="recipe-container"></div>
+      </div>
+
       <!-- Settings Page -->
       <div id="page-settings" class="page hidden">
         <h2 style="margin-bottom: 16px; font-size: 18px; font-weight: 600;">Settings</h2>
@@ -729,6 +735,17 @@
           </svg>
         </span>
         <span class="nav-label">Sheet</span>
+      </button>
+      <button class="nav-tab" data-page="recipes">
+        <span class="nav-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            <path d="M8 7h8"/>
+            <path d="M8 11h8"/>
+          </svg>
+        </span>
+        <span class="nav-label">Recipes</span>
       </button>
       <button class="nav-tab" data-page="settings">
         <span class="nav-icon">
