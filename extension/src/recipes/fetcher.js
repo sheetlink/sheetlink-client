@@ -3,7 +3,7 @@
  * Fetches recipe metadata and code from GitHub
  */
 
-const GITHUB_BASE = 'https://raw.githubusercontent.com/sheetlink/recipes/main';
+const GITHUB_BASE = 'https://raw.githubusercontent.com/sheetlink/sheetlink-recipes/main';
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 
 /**
