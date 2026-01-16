@@ -3,25 +3,10 @@
  * Installs recipes to user's Apps Script project using Apps Script API
  */
 
-import { ensureRecipePermissions } from '../auth/recipeAuth.js';
+import { ensureRecipePermissions, getRecipeAuthToken } from '../auth/recipeAuth.js';
 import { fetchRecipeCode } from './fetcher.js';
 
 const SCRIPT_API_BASE = 'https://script.googleapis.com/v1';
-
-/**
- * Get OAuth token for API calls
- */
-async function getAuthToken() {
-  return new Promise((resolve, reject) => {
-    chrome.identity.getAuthToken({ interactive: true }, (token) => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
-      } else {
-        resolve(token);
-      }
-    });
-  });
-}
 
 /**
  * Get or create Apps Script project for spreadsheet
@@ -105,7 +90,7 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
 
     // Step 2: Get auth token
     onProgress?.('Authenticating...');
-    const token = await getAuthToken();
+    const token = await getRecipeAuthToken();
 
     // Step 3: Get or create script project
     onProgress?.('Setting up Apps Script project...');
