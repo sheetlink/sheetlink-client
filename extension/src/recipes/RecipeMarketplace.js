@@ -100,7 +100,7 @@ export class RecipeMarketplace {
       btn.addEventListener('click', (e) => {
         const recipeId = e.target.dataset.recipeId;
         const recipe = this.recipes.find(r => r.id === recipeId);
-        const url = `https://github.com/sheetlink/recipes/tree/main/recipes/official/${recipeId}`;
+        const url = `https://github.com/sheetlink/sheetlink-recipes/tree/main/recipes/official/${recipeId}`;
         chrome.tabs.create({ url });
       });
     });
@@ -116,7 +116,7 @@ export class RecipeMarketplace {
       // Get current spreadsheet ID
       const { spreadsheetId } = await chrome.storage.local.get('spreadsheetId');
       if (!spreadsheetId) {
-        alert('Please select a spreadsheet first');
+        alert('Please select a spreadsheet first.\n\nGo to the "Sheet" tab to create or select a spreadsheet.');
         return;
       }
 
