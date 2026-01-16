@@ -11,6 +11,7 @@
     "128": "icons/sheetlink-128.png"
   },
   "permissions": [
+    "identity",
     "storage",
     "alarms"
   ],
