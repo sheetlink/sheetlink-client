@@ -10,33 +10,37 @@ const RECIPE_REGISTRY = {
   budget: {
     name: "Plaid Category Budget",
     description: "Multi-month budget tracker with actuals, budget, and variance by category",
-    version: "2.0.0",
+    version: "2.1.0",
     entry: runBudgetRecipe,
-    outputTabs: ["Budget_Monthly"]
+    outputTabs: ["Budget Monthly", "Budget Monthly (by Account)"]
   },
-
   cashflow: {
     name: "Weekly Cash Flow Forecast",
-    description: "Creates a rolling weekly cash flow view using historical data",
-    version: "1.0.0",
+    description: "Rolling weekly view with income, expenses, net flow, and ending balance",
+    version: "2.0.0",
     entry: runCashFlowRecipe,
-    outputTabs: ["CashFlow_Config", "CashFlow_Weekly"]
+    outputTabs: ["CashFlow Weekly"]
   },
-
   recurring: {
-    name: "Recurring Spend Detector",
-    description: "Identifies likely subscriptions and recurring charges",
+    name: "Subscription & Recurring Spend Detector",
+    description: "Identifies subscriptions and recurring charges with annualized costs and monthly trends",
     version: "1.0.0",
     entry: runRecurringRecipe,
-    outputTabs: ["Recurring_Detected", "Recurring_Config"]
+    outputTabs: ["Recurring Analysis"]
   },
-
   ledger: {
     name: "Account-Aware Ledger View",
-    description: "Transforms transactions into a traditional accounting ledger",
-    version: "1.0.0",
+    description: "Traditional accounting ledger with debit/credit format and transfer detection",
+    version: "2.0.0",
     entry: runLedgerRecipe,
-    outputTabs: ["Ledger_View", "Ledger_Config"]
+    outputTabs: ["Ledger View"]
+  },
+  financials: {
+    name: "Financial Statements Suite",
+    description: "Complete formula-driven financial reporting: Chart of Accounts, General Ledger with date-aware balances, consolidated Financial Statements (P&L, Balance Sheet, Cash Flow) with monthly trending",
+    version: "2.0.0",
+    entry: runFinancialsRecipe,
+    outputTabs: ["Chart of Accounts", "General Ledger", "Financial Statements"]
   }
 };
 

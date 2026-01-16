@@ -21,6 +21,9 @@ function getOrCreateSheet(ss, sheetName) {
   let sheet = ss.getSheetByName(sheetName);
   if (!sheet) {
     sheet = ss.insertSheet(sheetName);
+    // Move newly created sheet to the end (furthest right)
+    sheet.activate();
+    ss.moveActiveSheet(ss.getNumSheets());
     Logger.log(`Created new sheet: ${sheetName}`);
   }
   return sheet;
@@ -274,6 +277,32 @@ function showError(message) {
 }
 
 /**
+ * Check for transactions and show helpful modal if missing
+ * @param {Spreadsheet} ss - Active spreadsheet
+ * @returns {boolean} True if transactions exist, false otherwise
+ */
+function checkTransactionsOrPrompt(ss) {
+  const validation = validateTransactionsSheet(ss);
+
+  if (!validation.valid) {
+    const ui = SpreadsheetApp.getUi();
+    const response = ui.alert(
+      'No Transaction Data Found',
+      'This recipe requires transaction data to run.\n\n' +
+      'Please either:\n' +
+      '• Sync your transactions with SheetLink, or\n' +
+      '• Run "Populate Dummy Data" from Settings menu to test with sample data\n\n' +
+      'Would you like to continue anyway?',
+      ui.ButtonSet.YES_NO
+    );
+
+    return response == ui.Button.YES;
+  }
+
+  return true;
+}
+
+/**
  * Create named range
  * @param {Sheet} sheet - Sheet containing the range
  * @param {string} name - Name for the range
@@ -289,4 +318,89 @@ function createNamedRange(sheet, name, a1Notation) {
 
   const range = sheet.getRange(a1Notation);
   ss.setNamedRange(name, range);
+}
+
+/**
+ * Format date columns in Transactions sheet
+ * Phase 3.23.0: Extension writes dates as text (RAW mode) for speed
+ * Recipes format date columns when needed for formulas
+ * @param {Sheet} transactionsSheet - Transactions sheet
+ * @param {Object} headerMap - Header map
+ */
+function formatTransactionDateColumns(transactionsSheet, headerMap) {
+  const dateCol = getColumnIndex(headerMap, 'date');
+  const authorizedDateCol = getColumnIndex(headerMap, 'authorized_date');
+
+  if (!dateCol && !authorizedDateCol) {
+    Logger.log('[formatTransactionDateColumns] No date columns found');
+    return;
+  }
+
+  const lastRow = transactionsSheet.getLastRow();
+  if (lastRow < 2) {
+    Logger.log('[formatTransactionDateColumns] No data to format');
+    return;
+  }
+
+  Logger.log('[formatTransactionDateColumns] Formatting date columns...');
+
+  // Format 'date' column
+  if (dateCol) {
+    const dateRange = transactionsSheet.getRange(2, dateCol, lastRow - 1, 1);
+    dateRange.setNumberFormat('yyyy-mm-dd');
+    Logger.log(`[formatTransactionDateColumns] Formatted 'date' column (${dateCol})`);
+  }
+
+  // Format 'authorized_date' column
+  if (authorizedDateCol) {
+    const authDateRange = transactionsSheet.getRange(2, authorizedDateCol, lastRow - 1, 1);
+    authDateRange.setNumberFormat('yyyy-mm-dd');
+    Logger.log(`[formatTransactionDateColumns] Formatted 'authorized_date' column (${authorizedDateCol})`);
+  }
+
+  Logger.log('[formatTransactionDateColumns] Date formatting complete');
+}
+
+/**
+ * Format pending column in Transactions sheet to convert text to boolean
+ * Phase 3.23.0: Extension writes pending as text "FALSE"/"TRUE" (RAW mode) for speed
+ * Recipes format pending column when needed for formulas
+ * @param {Sheet} transactionsSheet - Transactions sheet
+ * @param {Object} headerMap - Header map
+ */
+function formatTransactionPendingColumn(transactionsSheet, headerMap) {
+  const pendingCol = getColumnIndex(headerMap, 'pending');
+
+  if (!pendingCol) {
+    Logger.log('[formatTransactionPendingColumn] Pending column not found');
+    return;
+  }
+
+  const lastRow = transactionsSheet.getLastRow();
+  if (lastRow < 2) {
+    Logger.log('[formatTransactionPendingColumn] No data to format');
+    return;
+  }
+
+  Logger.log('[formatTransactionPendingColumn] Converting text to boolean in pending column...');
+
+  // Read current values
+  const pendingRange = transactionsSheet.getRange(2, pendingCol, lastRow - 1, 1);
+  const values = pendingRange.getValues();
+
+  // Convert text "FALSE"/"TRUE" to boolean
+  const booleanValues = values.map(row => {
+    const val = row[0];
+    if (val === 'FALSE' || val === 'false' || val === false) {
+      return [false];
+    } else if (val === 'TRUE' || val === 'true' || val === true) {
+      return [true];
+    }
+    return [false]; // Default to false if unclear
+  });
+
+  // Write back boolean values
+  pendingRange.setValues(booleanValues);
+
+  Logger.log(`[formatTransactionPendingColumn] Converted ${booleanValues.length} rows to boolean`);
 }
