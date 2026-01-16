@@ -13,20 +13,8 @@ const SCRIPT_API_BASE = 'https://script.googleapis.com/v1';
  */
 async function getOrCreateScriptProject(spreadsheetId, token) {
   try {
-    // List existing projects to find container-bound script
-    const listUrl = `${SCRIPT_API_BASE}/projects?pageSize=100`;
-    const listResponse = await fetch(listUrl, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    if (!listResponse.ok) throw new Error(`HTTP ${listResponse.status}`);
-    const { projects = [] } = await listResponse.json();
-
-    // Find project bound to this spreadsheet
-    const existing = projects.find(p => p.parentId === spreadsheetId);
-    if (existing) return existing.scriptId;
-
     // Create new container-bound script
+    // Note: If one already exists, Google will return the existing project
     const createUrl = `${SCRIPT_API_BASE}/projects`;
     const createResponse = await fetch(createUrl, {
       method: 'POST',
@@ -40,8 +28,14 @@ async function getOrCreateScriptProject(spreadsheetId, token) {
       })
     });
 
-    if (!createResponse.ok) throw new Error(`HTTP ${createResponse.status}`);
+    if (!createResponse.ok) {
+      const errorBody = await createResponse.text();
+      console.error('[installer] Create project error:', errorBody);
+      throw new Error(`HTTP ${createResponse.status}: ${errorBody}`);
+    }
+
     const project = await createResponse.json();
+    console.log('[installer] Project created/retrieved:', project.scriptId);
     return project.scriptId;
   } catch (error) {
     console.error('[installer] Error getting/creating project:', error);
