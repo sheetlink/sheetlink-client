@@ -151,6 +151,7 @@ async function handleExchangePublicToken(message, sendResponse) {
 
 // Store pending OAuth callback
 let pendingOAuthCallback = null;
+let isRecipeAuthFlow = false;
 
 // Helper function to clear expired token
 async function clearExpiredToken() {
@@ -195,10 +196,12 @@ async function launchOAuthFlow(sendResponse, includeRecipeScope = false) {
 async function handleRequestRecipeScope(sendResponse) {
   try {
     debug('[Recipe Auth] Requesting Apps Script scope via OAuth');
+    isRecipeAuthFlow = true; // Mark this as a recipe auth flow
     await clearExpiredToken();
     await launchOAuthFlow(sendResponse, true); // true = include recipe scope
   } catch (error) {
     console.error('[Recipe Auth] Error requesting recipe scope:', error);
+    isRecipeAuthFlow = false;
     sendResponse({ success: false, error: error.message });
   }
 }
@@ -397,7 +400,14 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
 
     // Call the pending callback if it exists
     if (pendingOAuthCallback) {
-      pendingOAuthCallback({ token: accessToken });
+      // Recipe auth flow expects { success: true }, normal auth expects { token: accessToken }
+      if (isRecipeAuthFlow) {
+        debug('[Recipe Auth] Recipe auth flow complete, sending success response');
+        pendingOAuthCallback({ success: true });
+        isRecipeAuthFlow = false;
+      } else {
+        pendingOAuthCallback({ token: accessToken });
+      }
       pendingOAuthCallback = null;
     }
 
