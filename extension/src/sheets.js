@@ -281,6 +281,8 @@ async function createTab(token, sheetId, tabName) {
 async function writeHeaders(token, sheetId, tabName, headers) {
   const lastColumn = columnNumberToLetter(headers.length);
   const range = `${tabName}!A1:${lastColumn}1`;
+  // Phase 3.23.0: Use RAW mode for fast writes (no parsing overhead)
+  // Apps Script recipes will format date columns when needed for formulas
   const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
 
   const body = {
@@ -315,6 +317,8 @@ async function appendRows(token, sheetId, tabName, rows) {
   if (rows.length === 0) return;
 
   const range = `${tabName}!A:A`;
+  // Phase 3.23.0: Use RAW mode for fast writes (no parsing overhead)
+  // Apps Script recipes will format date columns when needed for formulas
   const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
 
   const body = {
@@ -374,11 +378,59 @@ async function ensureTab(sheetId, tabName, headersArray) {
 async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
   if (rows.length === 0) return 0;
 
+  const perfStart = performance.now();
   const token = await getAuthToken();
 
+  // Phase 3.23.0: Fast path - check if sheet is empty with timeout fallback
+  // Some sheets have "phantom rows" that make reads extremely slow
+  debug(`[PERF] Checking if sheet is empty (with 5s timeout)...`);
+  const emptyCheckStart = performance.now();
+
+  try {
+    // Race between reading A2 and a 5-second timeout
+    const firstDataCell = await Promise.race([
+      readRange(token, sheetId, `${tabName}!A2:A2`),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
+    ]);
+
+    const checkTime = Math.round(performance.now() - emptyCheckStart);
+    debug(`[PERF] Empty check took ${checkTime}ms`);
+
+    const isEmpty = firstDataCell.length === 0 || !firstDataCell[0] || !firstDataCell[0][0];
+
+    if (isEmpty) {
+      // Sheet is empty, skip deduplication entirely
+      debug(`[appendUniqueRows] Sheet is empty, skipping deduplication`);
+      debug(`[PERF] Starting appendRows (${rows.length} rows)...`);
+      const appendStart = performance.now();
+      await appendRows(token, sheetId, tabName, rows);
+      debug(`[PERF] appendRows took ${Math.round(performance.now() - appendStart)}ms`);
+      debug(`[PERF] Total appendUniqueRows took ${Math.round(performance.now() - perfStart)}ms`);
+      return rows.length;
+    }
+  } catch (error) {
+    if (error.message === 'timeout') {
+      // Sheet read timed out - likely has phantom rows
+      // Skip deduplication and just append (user will need to clear duplicates manually)
+      debug(`[appendUniqueRows] WARNING: Sheet read timed out after 5s - skipping deduplication`);
+      debug(`[appendUniqueRows] This sheet may have "phantom rows". Consider creating a fresh sheet.`);
+      debug(`[PERF] Starting appendRows (${rows.length} rows)...`);
+      const appendStart = performance.now();
+      await appendRows(token, sheetId, tabName, rows);
+      debug(`[PERF] appendRows took ${Math.round(performance.now() - appendStart)}ms`);
+      debug(`[PERF] Total appendUniqueRows took ${Math.round(performance.now() - perfStart)}ms`);
+      return rows.length;
+    }
+    throw error; // Re-throw other errors
+  }
+
+  // Sheet has data, do full deduplication
   // Phase 3.22.0: Optimization - read only the header row and ID column for faster deduplication
   // Instead of reading A:ZZ (entire sheet), read just A1:ZZ1 (headers) and then just column A (IDs)
+  debug(`[PERF] Starting header read...`);
+  const headerStart = performance.now();
   const headersData = await readRange(token, sheetId, `${tabName}!A1:ZZ1`);
+  debug(`[PERF] Header read took ${Math.round(performance.now() - headerStart)}ms`);
 
   if (headersData.length === 0) {
     // No data at all, shouldn't happen if ensureTab was called
@@ -395,7 +447,10 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
   // Phase 3.22.0: Read only the ID column for much faster deduplication
   // Convert column index to column letter (0 = A, 1 = B, etc.)
   const idColumnLetter = columnNumberToLetter(idColumnIndex + 1);
+  debug(`[PERF] Starting ID column read (${idColumnLetter}2:${idColumnLetter})...`);
+  const idReadStart = performance.now();
   const idColumnData = await readRange(token, sheetId, `${tabName}!${idColumnLetter}2:${idColumnLetter}`);
+  debug(`[PERF] ID column read took ${Math.round(performance.now() - idReadStart)}ms`);
 
   debug(`[appendUniqueRows] Read ${idColumnData.length} existing IDs from column ${idColumnLetter}`);
 
@@ -424,9 +479,13 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
 
   // Append new rows
   if (newRows.length > 0) {
+    debug(`[PERF] Starting appendRows (${newRows.length} rows)...`);
+    const appendStart = performance.now();
     await appendRows(token, sheetId, tabName, newRows);
+    debug(`[PERF] appendRows took ${Math.round(performance.now() - appendStart)}ms`);
   }
 
+  debug(`[PERF] Total appendUniqueRows took ${Math.round(performance.now() - perfStart)}ms`);
   return newRows.length;
 }
 
@@ -573,6 +632,94 @@ async function writeAccounts(sheetId, accountsData) {
 
   // Append the current accounts
   await appendRows(token, sheetId, tabName, rows);
+}
+
+/**
+ * Format date columns to display as dates (not serial numbers)
+ * Phase 3.23.0: Ensures dates display correctly in Google Sheets
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} tabName - Tab name
+ */
+async function formatDateColumns(sheetId, tabName) {
+  const token = await getAuthToken();
+
+  // Get sheet metadata to find the sheet ID
+  const metadata = await getSpreadsheetMetadata(token, sheetId);
+  const sheet = metadata.sheets?.find(s => s.properties.title === tabName);
+
+  if (!sheet) {
+    throw new Error(`Sheet '${tabName}' not found`);
+  }
+
+  const sheetIdNum = sheet.properties.sheetId;
+
+  // Read headers to find date column indices
+  const headersData = await readRange(token, sheetId, `${tabName}!A1:ZZ1`);
+  if (headersData.length === 0) {
+    throw new Error('No headers found in sheet');
+  }
+
+  const headers = headersData[0];
+  const dateColumnIndex = headers.indexOf('date');
+  const authorizedDateColumnIndex = headers.indexOf('authorized_date');
+
+  if (dateColumnIndex === -1) {
+    debug('[Sheets] Date column not found, skipping date formatting');
+    return;
+  }
+
+  // Apply date formatting to date columns
+  const requests = [];
+
+  if (dateColumnIndex !== -1) {
+    requests.push({
+      repeatCell: {
+        range: {
+          sheetId: sheetIdNum,
+          startRowIndex: 1, // Skip header
+          startColumnIndex: dateColumnIndex,
+          endColumnIndex: dateColumnIndex + 1
+        },
+        cell: {
+          userEnteredFormat: {
+            numberFormat: {
+              type: 'DATE',
+              pattern: 'yyyy-mm-dd'
+            }
+          }
+        },
+        fields: 'userEnteredFormat.numberFormat'
+      }
+    });
+  }
+
+  if (authorizedDateColumnIndex !== -1) {
+    requests.push({
+      repeatCell: {
+        range: {
+          sheetId: sheetIdNum,
+          startRowIndex: 1, // Skip header
+          startColumnIndex: authorizedDateColumnIndex,
+          endColumnIndex: authorizedDateColumnIndex + 1
+        },
+        cell: {
+          userEnteredFormat: {
+            numberFormat: {
+              type: 'DATE',
+              pattern: 'yyyy-mm-dd'
+            }
+          }
+        },
+        fields: 'userEnteredFormat.numberFormat'
+      }
+    });
+  }
+
+  if (requests.length > 0) {
+    const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+    const body = { requests };
+    await sheetsApiRequest(token, url, 'POST', body);
+  }
 }
 
 /**
@@ -767,13 +914,9 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
 
   debug('[Sheets] Wrote', newCount, 'new transactions (out of', rows.length, 'total)');
 
-  // Phase 3.22.0: Sort sheet by date after appending to maintain chronological order
-  // This is especially important when upgrading tiers (FREE → PRO adds historical data)
-  if (newCount > 0) {
-    debug('[Sheets] Sorting transactions by date...');
-    await sortSheetByDate(sheetId, tabName);
-    debug('[Sheets] Transactions sorted successfully');
-  }
+  // Phase 3.23.0: Removed sorting step for performance
+  // Transactions from Plaid API are already in reverse chronological order
+  // If users need sorting, they can manually sort in Google Sheets (Data > Sort range)
 
   return newCount;
 }
@@ -937,6 +1080,7 @@ async function clearTransactionsTab(sheetId, tier = 'free', skipPlaceholders = f
       placeholderData.push(row);
     }
 
+    // Phase 3.23.0: Use RAW mode for fast writes (no parsing overhead)
     const placeholderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${tabName}!A2:append?valueInputOption=RAW`;
     await sheetsApiRequest(token, placeholderUrl, 'POST', { values: placeholderData });
     debug(`[Sheets] Added ${placeholderRows} placeholder rows for loading state`);
