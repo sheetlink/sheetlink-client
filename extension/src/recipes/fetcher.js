@@ -54,8 +54,15 @@ export async function fetchRecipeCode(recipeId) {
     // The menu system will provide its own onOpen()
     code = code.replace(/function\s+onOpen\s*\([^)]*\)\s*\{[^}]*\}/g, '');
 
-    // Wrap the entire recipe in a namespace to avoid variable conflicts
-    // Each recipe gets isolated scope for its constants and utility functions
+    // Remove the utilities section since we have a shared utils.gs file
+    // Match from "// UTILITIES (inlined from utils.gs)" to the next major section marker
+    code = code.replace(/\/\/ ={40,}\n\/\/ UTILITIES.*?\n\/\/ ={40,}\n[\s\S]*?(?=\/\/ ={40,}\n\/\/ [A-Z]|$)/m, '');
+
+    // Also remove standalone utility constants and functions that duplicate utils.gs
+    code = code.replace(/^const TRANSACTIONS_SHEET_NAME = .*?;\n/gm, '');
+    code = code.replace(/^function (getOrCreateSheet|getTransactionsSheet|validateTransactionsSheet|formatCurrency|getColumnIndexByHeader|parseDate|formatDate|getMonthKey|clearSheetKeepHeaders)\([\s\S]*?\n\}\n/gm, '');
+
+    // Create menu entry point function name
     const menuFunctionName = `run_${recipeId.replace(/-/g, '_')}`;
 
     // Find the main run function name (e.g., runFinancialStatements, runBudgetTracker)
@@ -66,29 +73,20 @@ export async function fetchRecipeCode(recipeId) {
       console.warn(`[fetcher] Could not find main run function in ${recipeId}`);
     }
 
-    // Wrap in namespace to isolate constants and utilities
-    const wrappedCode = `
-// ========================================
+    // Add menu entry point that calls the recipe's main function
+    const wrappedCode = `// ========================================
 // Recipe: ${recipeId}
 // ========================================
-(function() {
-  // Recipe code with isolated scope
-${code.split('\n').map(line => '  ' + line).join('\n')}
 
-  // Export main function to global scope for menu
-  if (typeof ${mainFunctionName} !== 'undefined') {
-    globalThis.${menuFunctionName} = ${mainFunctionName};
-  }
-})();
+${code}
 
 /**
  * Menu entry point for ${recipeId}
  * Called from SheetLink Recipes menu
  */
 function ${menuFunctionName}() {
-  // Call the exported function from the recipe namespace
-  if (typeof globalThis.${menuFunctionName} === 'function') {
-    return globalThis.${menuFunctionName}();
+  if (typeof ${mainFunctionName} === 'function') {
+    return ${mainFunctionName}();
   }
 
   // Fallback: show error
