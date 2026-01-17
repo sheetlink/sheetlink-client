@@ -4,19 +4,21 @@
  */
 
 import { fetchRecipeList, fetchRecipeMetadata } from './fetcher.js';
-import { installRecipe } from './installer.js';
+import { installRecipe, getInstalledRecipeIds } from './installer.js';
 import { hasRecipePermissions } from '../auth/recipeAuth.js';
 
 export class RecipeMarketplace {
   constructor(containerId) {
     this.container = document.getElementById(containerId);
     this.recipes = [];
+    this.installedRecipeIds = [];
     this.filter = 'all';
   }
 
   async init() {
     try {
       await this.loadRecipes();
+      await this.loadInstalledRecipes();
       this.render();
     } catch (error) {
       this.renderError(error.message);
@@ -25,6 +27,15 @@ export class RecipeMarketplace {
 
   async loadRecipes() {
     this.recipes = await fetchRecipeList();
+  }
+
+  async loadInstalledRecipes() {
+    // Get current spreadsheet ID
+    const { sheetId } = await chrome.storage.sync.get('sheetId');
+    if (sheetId) {
+      this.installedRecipeIds = await getInstalledRecipeIds(sheetId);
+      console.log('[RecipeMarketplace] Installed recipes:', this.installedRecipeIds);
+    }
   }
 
   render() {
@@ -55,11 +66,14 @@ export class RecipeMarketplace {
   }
 
   renderRecipeCard(recipe) {
+    const isInstalled = this.installedRecipeIds.includes(recipe.id);
+
     return `
-      <div class="recipe-card" data-recipe-id="${recipe.id}">
+      <div class="recipe-card ${isInstalled ? 'installed' : ''}" data-recipe-id="${recipe.id}">
         <div class="recipe-card-header">
           <h3>${recipe.menuName || recipe.name}</h3>
           <span class="recipe-badge">${recipe.type}</span>
+          ${isInstalled ? '<span class="installed-badge">✓ Installed</span>' : ''}
         </div>
         <p class="recipe-description">${recipe.description}</p>
         <div class="recipe-stats">
@@ -69,8 +83,10 @@ export class RecipeMarketplace {
           <button class="btn-secondary view-code" data-recipe-id="${recipe.id}">
             View Code
           </button>
-          <button class="btn-primary install-recipe" data-recipe-id="${recipe.id}">
-            Install
+          <button class="btn-primary install-recipe"
+                  data-recipe-id="${recipe.id}"
+                  ${isInstalled ? 'disabled' : ''}>
+            ${isInstalled ? 'Installed' : 'Install'}
           </button>
         </div>
       </div>
@@ -137,6 +153,9 @@ export class RecipeMarketplace {
       await installRecipe(recipeId, sheetId, (status) => {
         this.updateProgress(recipeId, status);
       });
+
+      // Refresh installed recipes list
+      await this.loadInstalledRecipes();
 
       // Show success
       this.showSuccess(recipeId);

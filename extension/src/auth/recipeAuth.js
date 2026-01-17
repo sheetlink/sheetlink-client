@@ -12,7 +12,11 @@ const RECIPE_ENABLED_KEY = 'recipesEnabled';
 export async function hasRecipePermissions() {
   try {
     const result = await chrome.storage.local.get(RECIPE_ENABLED_KEY);
-    return result[RECIPE_ENABLED_KEY] === true;
+    console.log('[recipeAuth] Checking permissions - storage result:', result);
+    console.log('[recipeAuth] recipesEnabled value:', result[RECIPE_ENABLED_KEY]);
+    const hasPermission = result[RECIPE_ENABLED_KEY] === true;
+    console.log('[recipeAuth] Has permission:', hasPermission);
+    return hasPermission;
   } catch (error) {
     console.error('[recipeAuth] Error checking permissions:', error);
     return false;
