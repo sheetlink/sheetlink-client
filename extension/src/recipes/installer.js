@@ -94,10 +94,9 @@ async function getOrCreateScriptProject(spreadsheetId, token) {
         return stored[storageKey];
       } catch (error) {
         console.log('[installer] Stored project no longer accessible, creating new one');
-        // Clear the installed recipes list since the project was deleted
-        const installedRecipesKey = `installedRecipes_${spreadsheetId}`;
-        await chrome.storage.local.remove([storageKey, installedRecipesKey]);
-        console.log('[installer] Cleared stale scriptId and installed recipes list');
+        // Clear the stale script ID
+        await chrome.storage.local.remove(storageKey);
+        console.log('[installer] Cleared stale scriptId');
         // Fall through to create new project
       }
     }
@@ -484,13 +483,6 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
     onProgress?.('Installing recipe...');
     await updateScriptProject(scriptId, allFiles, token);
 
-    // Step 9: Store installed recipes list in extension storage for UI state
-    const installedRecipesKey = `installedRecipes_${spreadsheetId}`;
-    await chrome.storage.local.set({
-      [installedRecipesKey]: updatedRecipes.map(r => r.id)
-    });
-    console.log('[installer] Updated installed recipes list:', updatedRecipes.map(r => r.id));
-
     onProgress?.('Complete!');
     return { success: true, scriptId, installedRecipes: updatedRecipes.map(r => r.id) };
   } catch (error) {
@@ -501,43 +493,49 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
 
 /**
  * Get list of installed recipe IDs for current spreadsheet
- * Verifies the script project still exists and clears stale data if not
+ * Checks the actual Apps Script project to see which recipes are installed
  */
 export async function getInstalledRecipeIds(spreadsheetId) {
   try {
-    const installedRecipesKey = `installedRecipes_${spreadsheetId}`;
     const scriptIdKey = `recipeScriptId_${spreadsheetId}`;
-    const stored = await chrome.storage.local.get([installedRecipesKey, scriptIdKey]);
-
-    const installedRecipes = stored[installedRecipesKey] || [];
+    const stored = await chrome.storage.local.get(scriptIdKey);
     const scriptId = stored[scriptIdKey];
 
-    // If we have installed recipes but no script ID, something is wrong - clear it
-    if (installedRecipes.length > 0 && !scriptId) {
-      console.log('[installer] Found installed recipes but no script ID - clearing stale data');
-      await chrome.storage.local.remove(installedRecipesKey);
+    // If no script project exists yet, no recipes are installed
+    if (!scriptId) {
+      console.log('[installer] No script project exists yet');
       return [];
     }
 
-    // If we have a script ID, verify it still exists
-    if (scriptId && installedRecipes.length > 0) {
-      try {
-        const recipeAuth = await import('../auth/recipeAuth.js');
-        if (await recipeAuth.hasRecipePermissions()) {
-          const token = await recipeAuth.getRecipeAuthToken();
-          await getProjectContent(scriptId, token);
-          // Project exists, return the installed recipes
-          return installedRecipes;
-        }
-      } catch (error) {
-        // Project doesn't exist or can't be accessed - clear stale data
-        console.log('[installer] Script project no longer exists - clearing stale installed recipes');
-        await chrome.storage.local.remove([installedRecipesKey, scriptIdKey]);
-        return [];
-      }
+    // Check if we have recipe permissions
+    const recipeAuth = await import('../auth/recipeAuth.js');
+    if (!await recipeAuth.hasRecipePermissions()) {
+      console.log('[installer] No recipe permissions, cannot check installed recipes');
+      return [];
     }
 
-    return installedRecipes;
+    // Get the project content to see which recipes are installed
+    try {
+      const token = await recipeAuth.getRecipeAuthToken();
+      const content = await getProjectContent(scriptId, token);
+
+      // Extract recipe IDs from file names (recipe_<id>.gs)
+      const installedRecipes = [];
+      for (const file of content.files || []) {
+        if (file.name.startsWith('recipe_')) {
+          const recipeId = file.name.replace('recipe_', '');
+          installedRecipes.push(recipeId);
+        }
+      }
+
+      console.log('[installer] Found installed recipes:', installedRecipes);
+      return installedRecipes;
+    } catch (error) {
+      // Project doesn't exist or can't be accessed - clear the stored script ID
+      console.log('[installer] Script project no longer exists, clearing stored ID');
+      await chrome.storage.local.remove(scriptIdKey);
+      return [];
+    }
   } catch (error) {
     console.error('[installer] Error getting installed recipe IDs:', error);
     return [];
