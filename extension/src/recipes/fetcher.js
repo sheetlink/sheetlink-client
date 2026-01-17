@@ -54,26 +54,42 @@ export async function fetchRecipeCode(recipeId) {
     // The menu system will provide its own onOpen()
     code = code.replace(/function\s+onOpen\s*\([^)]*\)\s*\{[^}]*\}/g, '');
 
-    // Wrap the code to add a standardized function name for the menu
-    // The menu expects run_<recipe_id> format (e.g., run_financial_statements)
+    // Wrap the entire recipe in a namespace to avoid variable conflicts
+    // Each recipe gets isolated scope for its constants and utility functions
     const menuFunctionName = `run_${recipeId.replace(/-/g, '_')}`;
 
-    // Find the main function in the recipe (usually starts with 'function run')
-    // and create an alias for the menu system
-    const wrappedCode = `${code}
+    // Find the main run function name (e.g., runFinancialStatements, runBudgetTracker)
+    const mainFunctionMatch = code.match(/function\s+(run[A-Z][a-zA-Z]*)\s*\(/);
+    const mainFunctionName = mainFunctionMatch ? mainFunctionMatch[1] : null;
+
+    if (!mainFunctionName) {
+      console.warn(`[fetcher] Could not find main run function in ${recipeId}`);
+    }
+
+    // Wrap in namespace to isolate constants and utilities
+    const wrappedCode = `
+// ========================================
+// Recipe: ${recipeId}
+// ========================================
+(function() {
+  // Recipe code with isolated scope
+${code.split('\n').map(line => '  ' + line).join('\n')}
+
+  // Export main function to global scope for menu
+  if (typeof ${mainFunctionName} !== 'undefined') {
+    globalThis.${menuFunctionName} = ${mainFunctionName};
+  }
+})();
 
 /**
  * Menu entry point for ${recipeId}
  * Called from SheetLink Recipes menu
  */
 function ${menuFunctionName}() {
-  // Find and call the main recipe function
-  // Most recipes export a function starting with 'run'
-  if (typeof runFinancialStatements === 'function') return runFinancialStatements();
-  if (typeof runBudgetTracker === 'function') return runBudgetTracker();
-  if (typeof runCashFlow === 'function') return runCashFlow();
-  if (typeof runRecurringAnalysis === 'function') return runRecurringAnalysis();
-  if (typeof runBudgetByAccount === 'function') return runBudgetByAccount();
+  // Call the exported function from the recipe namespace
+  if (typeof globalThis.${menuFunctionName} === 'function') {
+    return globalThis.${menuFunctionName}();
+  }
 
   // Fallback: show error
   SpreadsheetApp.getUi().alert('Recipe function not found. Please reinstall this recipe.');
