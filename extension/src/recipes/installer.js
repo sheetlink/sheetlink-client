@@ -1031,6 +1031,16 @@ export async function getInstalledRecipeIds(spreadsheetId) {
       console.log('[installer] Found installed recipes:', installedRecipes);
       return installedRecipes;
     } catch (error) {
+      // Check if it's a 403 error (missing/invalid permissions)
+      if (error.status === 403) {
+        console.log('[installer] 403 Forbidden - token missing script.projects scope, clearing recipesEnabled');
+        // Clear recipe permissions flag to force re-authentication
+        await chrome.storage.local.remove('recipesEnabled');
+        await chrome.storage.sync.remove('recipesEnabled');
+        console.log('[installer] Cleared recipesEnabled flag - user will be prompted to re-authenticate');
+        return [];
+      }
+
       // Project doesn't exist or can't be accessed - clear the stored script ID
       console.log('[installer] Script project no longer exists, clearing stored ID');
       await chrome.storage.local.remove(scriptIdKey);
@@ -1054,7 +1064,9 @@ async function getProjectContent(scriptId, token) {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to get project content: ${response.status}`);
+    const error = new Error(`Failed to get project content: ${response.status}`);
+    error.status = response.status;
+    throw error;
   }
 
   return await response.json();
