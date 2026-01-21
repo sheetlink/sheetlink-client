@@ -7,6 +7,144 @@ import { ensureRecipePermissions, getRecipeAuthToken } from '../auth/recipeAuth.
 import { fetchRecipeCode, fetchRecipeMetadata } from './fetcher.js';
 
 const SCRIPT_API_BASE = 'https://script.googleapis.com/v1';
+const CONFIG_SHEET_NAME = '__SheetLink_Config__';
+
+/**
+ * Get script ID from hidden config sheet
+ */
+async function getScriptIdFromHiddenSheet(spreadsheetId, token) {
+  try {
+    // Get all sheets to find the config sheet
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?fields=sheets.properties`;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    const configSheet = data.sheets?.find(s => s.properties?.title === CONFIG_SHEET_NAME);
+
+    if (!configSheet) {
+      console.log('[installer] Config sheet does not exist yet');
+      return null;
+    }
+
+    // Read the script ID from cell B4
+    const readUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${CONFIG_SHEET_NAME}!B4`;
+    const readResponse = await fetch(readUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!readResponse.ok) return null;
+
+    const readData = await readResponse.json();
+    const scriptId = readData.values?.[0]?.[0];
+
+    return scriptId || null;
+  } catch (error) {
+    console.error('[installer] Error reading from hidden sheet:', error);
+    return null;
+  }
+}
+
+/**
+ * Store script ID in hidden config sheet
+ */
+async function storeScriptIdInHiddenSheet(spreadsheetId, scriptId, token) {
+  try {
+    // First, check if the config sheet exists
+    const checkUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?fields=sheets.properties`;
+    const checkResponse = await fetch(checkUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const checkData = await checkResponse.json();
+    const configSheet = checkData.sheets?.find(s => s.properties?.title === CONFIG_SHEET_NAME);
+
+    // Create the config sheet if it doesn't exist
+    if (!configSheet) {
+      console.log('[installer] Creating hidden config sheet');
+      const createUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`;
+      const createResponse = await fetch(createUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          requests: [
+            {
+              addSheet: {
+                properties: {
+                  title: CONFIG_SHEET_NAME,
+                  hidden: true,
+                  gridProperties: {
+                    rowCount: 10,
+                    columnCount: 2
+                  }
+                }
+              }
+            }
+          ]
+        })
+      });
+
+      if (!createResponse.ok) {
+        console.error('[installer] Failed to create config sheet');
+        return false;
+      }
+      console.log('[installer] Config sheet created successfully');
+
+      // Add header and description on first creation
+      const headerUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${CONFIG_SHEET_NAME}!A1:B3?valueInputOption=RAW`;
+      await fetch(headerUrl, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          values: [
+            ['SheetLink Configuration', ''],
+            ['This sheet stores system settings. Do not delete.', ''],
+            ['', '']
+          ]
+        })
+      });
+    }
+
+    // Write the script ID to cells A4 and B4 (label in A4, ID in B4)
+    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${CONFIG_SHEET_NAME}!A4:B4?valueInputOption=RAW`;
+    const writeResponse = await fetch(writeUrl, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        values: [['Apps Script Project ID', scriptId]]
+      })
+    });
+
+    if (!writeResponse.ok) {
+      console.error('[installer] Failed to write script ID to config sheet');
+      return false;
+    }
+
+    console.log('[installer] Script ID stored in hidden config sheet');
+    return true;
+  } catch (error) {
+    console.error('[installer] Error storing script ID in hidden sheet:', error);
+    return false;
+  }
+}
 
 /**
  * Verify spreadsheet access with current token
@@ -38,84 +176,90 @@ async function verifySpreadsheetAccess(spreadsheetId, token) {
 }
 
 /**
- * Test creating a standalone script (diagnostic)
- */
-async function testStandaloneScript(token) {
-  try {
-    console.log('[installer] Testing standalone script creation...');
-    const createUrl = `${SCRIPT_API_BASE}/projects`;
-    const requestBody = {
-      title: 'SheetLink Test Script'
-    };
-
-    const createResponse = await fetch(createUrl, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!createResponse.ok) {
-      const errorBody = await createResponse.text();
-      console.error('[installer] Standalone test failed:', errorBody);
-      return { success: false, error: errorBody };
-    }
-
-    const project = await createResponse.json();
-    console.log('[installer] Standalone script created successfully:', project.scriptId);
-    return { success: true, scriptId: project.scriptId };
-  } catch (error) {
-    console.error('[installer] Error testing standalone script:', error);
-    return { success: false, error: error.message };
-  }
-}
-
-/**
  * Get or create Apps Script project for spreadsheet
  */
 async function getOrCreateScriptProject(spreadsheetId, token) {
   try {
-    // Step 1: Check if we already have a script project for this spreadsheet
     const storageKey = `recipeScriptId_${spreadsheetId}`;
-    console.log('[installer] Looking for existing project with key:', storageKey);
+
+    // Step 1: Check if we have a cached script ID
+    console.log('[installer] Looking for cached project with key:', storageKey);
     const stored = await chrome.storage.local.get(storageKey);
-    console.log('[installer] Storage lookup result:', stored);
-    console.log('[installer] Stored script ID:', stored[storageKey]);
+    console.log('[installer] Cached script ID:', stored[storageKey]);
 
     if (stored[storageKey]) {
-      console.log('[installer] Found existing script project:', stored[storageKey]);
-
-      // Verify the project still exists and is accessible
+      // Verify the cached project still exists
       try {
         await getProjectContent(stored[storageKey], token);
-        console.log('[installer] Existing project verified, reusing it');
+        console.log('[installer] Cached project verified, reusing it');
         return stored[storageKey];
       } catch (error) {
-        console.log('[installer] Stored project no longer accessible, creating new one');
-        // Clear the stale script ID
+        console.log('[installer] Cached project no longer accessible, will search for existing projects');
         await chrome.storage.local.remove(storageKey);
-        console.log('[installer] Cleared stale scriptId');
-        // Fall through to create new project
       }
     }
 
-    // Step 2: Verify we can access the spreadsheet
+    // Step 2: Check if the spreadsheet has the script ID stored in metadata
+    console.log('[installer] Checking spreadsheet metadata for existing script ID...');
+    try {
+      const metadataResponse = await new Promise((resolve) => {
+        chrome.runtime.sendMessage({
+          type: 'GET_SPREADSHEET_METADATA',
+          spreadsheetId,
+          token
+        }, resolve);
+      });
+
+      if (metadataResponse && metadataResponse.success && metadataResponse.scriptId) {
+        const scriptId = metadataResponse.scriptId;
+        console.log('[installer] Found script ID in spreadsheet metadata:', scriptId);
+
+        // Verify this script still exists
+        try {
+          await getProjectContent(scriptId, token);
+          console.log('[installer] Spreadsheet-stored project verified, reusing it');
+          // Cache it for faster future lookups
+          await chrome.storage.local.set({ [storageKey]: scriptId });
+          return scriptId;
+        } catch (error) {
+          console.log('[installer] Spreadsheet-stored project no longer accessible');
+        }
+      }
+    } catch (error) {
+      console.log('[installer] Could not check spreadsheet metadata:', error);
+    }
+
+    // Step 3: Check hidden config sheet for existing script ID
+    console.log('[installer] Checking hidden config sheet for existing script ID...');
+    try {
+      const storedScriptId = await getScriptIdFromHiddenSheet(spreadsheetId, token);
+      if (storedScriptId) {
+        console.log('[installer] Found script ID in hidden sheet:', storedScriptId);
+
+        // Verify it's accessible via Apps Script API
+        try {
+          await getProjectContent(storedScriptId, token);
+          console.log('[installer] Hidden sheet script ID verified, reusing it');
+          // Cache it for faster future lookups
+          await chrome.storage.local.set({ [storageKey]: storedScriptId });
+          return storedScriptId;
+        } catch (error) {
+          console.log('[installer] Hidden sheet script ID not accessible, will create new one');
+        }
+      } else {
+        console.log('[installer] No script ID found in hidden sheet');
+      }
+    } catch (error) {
+      console.log('[installer] Error checking hidden sheet:', error);
+    }
+
+    // Step 4: Verify we can access the spreadsheet
     const hasAccess = await verifySpreadsheetAccess(spreadsheetId, token);
     if (!hasAccess) {
       throw new Error('Cannot access spreadsheet. Token may not have spreadsheet permissions.');
     }
 
-    // Step 3: Test standalone script creation (diagnostic - only on first install)
-    console.log('[installer] Running diagnostic test...');
-    const standaloneTest = await testStandaloneScript(token);
-    if (!standaloneTest.success) {
-      throw new Error(`Apps Script API test failed: ${standaloneTest.error}`);
-    }
-    console.log('[installer] Diagnostic passed. Apps Script API is accessible.');
-
-    // Step 4: Create container-bound script
+    // Step 5: Create container-bound script
     const createUrl = `${SCRIPT_API_BASE}/projects`;
     const requestBody = {
       title: 'SheetLink Recipes',
@@ -157,9 +301,21 @@ async function getOrCreateScriptProject(spreadsheetId, token) {
     const project = await createResponse.json();
     console.log('[installer] Container-bound script created:', project.scriptId);
 
-    // Step 5: Store the script ID for future use
+    // Step 6: Store the script ID in hidden config sheet (survives extension reinstalls)
+    try {
+      const stored = await storeScriptIdInHiddenSheet(spreadsheetId, project.scriptId, token);
+      if (stored) {
+        console.log('[installer] Stored script ID in hidden config sheet');
+      } else {
+        console.warn('[installer] Could not store script ID in hidden config sheet');
+      }
+    } catch (error) {
+      console.warn('[installer] Error storing script ID in hidden config sheet:', error);
+    }
+
+    // Step 7: Also cache the script ID locally for faster lookups
     await chrome.storage.local.set({ [storageKey]: project.scriptId });
-    console.log('[installer] Stored script ID for future recipe installations');
+    console.log('[installer] Cached script ID locally for future recipe installations');
 
     return project.scriptId;
   } catch (error) {
@@ -255,22 +411,39 @@ function getTransactionsSheet(ss) {
 /**
  * Validate transactions sheet exists and has data
  * @param {Spreadsheet} ss - Active spreadsheet
- * @returns {boolean} True if valid, false otherwise
+ * @returns {Object} {valid: boolean, error: string|null}
  */
 function validateTransactionsSheet(ss) {
   const sheet = getTransactionsSheet(ss);
+
   if (!sheet) {
-    SpreadsheetApp.getUi().alert('Error: Transactions sheet not found. Please ensure your sheet is named "Transactions".');
-    return false;
+    return {
+      valid: false,
+      error: \`Sheet "\${TRANSACTIONS_SHEET_NAME}" not found. Please sync your transactions first.\`
+    };
   }
 
-  const lastRow = sheet.getLastRow();
-  if (lastRow <= 1) {
-    SpreadsheetApp.getUi().alert('Error: Transactions sheet has no data.');
-    return false;
+  // Check for actual data by reading first data cell (A2)
+  // This is more reliable than getLastRow() which can be inconsistent
+  try {
+    const firstDataCell = sheet.getRange(2, 1).getValue();
+    // Convert to string and trim to handle whitespace and non-string types
+    const cellValue = String(firstDataCell || '').trim();
+
+    if (!cellValue) {
+      return {
+        valid: false,
+        error: "No transaction data found. Please sync your transactions first."
+      };
+    }
+  } catch (error) {
+    return {
+      valid: false,
+      error: "Could not read transaction data. Please sync your transactions first."
+    };
   }
 
-  return true;
+  return { valid: true, error: null };
 }
 
 /**
@@ -357,7 +530,7 @@ function clearSheetKeepHeaders(sheet) {
 function createMenuFile(installedRecipes) {
   const recipeMenuItems = installedRecipes.map(recipe => {
     const functionName = `run_${recipe.id.replace(/-/g, '_')}`;
-    return `    .addItem('${recipe.name}', '${functionName}')`;
+    return `    .addItem('▸ ${recipe.name}', '${functionName}')`;
   }).join('\n');
 
   const source = `/**
@@ -369,7 +542,39 @@ function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('SheetLink Recipes')
 ${recipeMenuItems}
+    .addSeparator()
+    .addSubMenu(ui.createMenu('ⓘ Help')
+      .addItem('View Documentation', 'menuShowDocs')
+      .addItem('About SheetLink Recipes', 'menuShowAbout'))
     .addToUi();
+}
+
+// Help menu handlers
+function menuShowDocs() {
+  var html = HtmlService.createHtmlOutput(
+    '<div style="font-family: Arial, sans-serif; padding: 30px; text-align: center;">' +
+    '<h2>SheetLink Recipes Documentation</h2>' +
+    '<p style="margin: 20px 0;">View complete documentation and guides online:</p>' +
+    '<a href="https://sheetlink.app/recipes" target="_blank" style="display: inline-block; padding: 12px 24px; background-color: #023820; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">Open Documentation</a>' +
+    '<p style="margin-top: 30px; font-size: 12px; color: #666;">Opens in a new tab</p>' +
+    '</div>'
+  ).setWidth(400).setHeight(200);
+
+  SpreadsheetApp.getUi().showModalDialog(html, 'Documentation');
+}
+
+function menuShowAbout() {
+  var html = HtmlService.createHtmlOutput(
+    '<div style="text-align: center; padding: 30px; font-family: Arial, sans-serif;">' +
+    '<h1 style="color: #023820;">SheetLink Recipes</h1>' +
+    '<p style="font-size: 18px; color: #666;"><strong>Version 2.0.0</strong></p>' +
+    '<p style="font-size: 14px; margin: 20px 0;">Financial Analysis Suite</p>' +
+    '<hr style="border: 1px solid #eee; margin: 20px 0;">' +
+    '<p style="font-size: 12px; color: #999; margin-top: 30px;">© 2026 SheetLink</p>' +
+    '</div>'
+  ).setWidth(400).setHeight(300);
+
+  SpreadsheetApp.getUi().showModalDialog(html, 'About SheetLink Recipes');
 }`;
 
   return {
