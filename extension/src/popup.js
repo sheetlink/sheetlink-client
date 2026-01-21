@@ -70,7 +70,7 @@ let homeSyncBtn, homeLastSync, homePlanTier, homeStatusPlaid, homeStatusSheet, h
 let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn;
 let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBtn;
 let settingsUserEmail, settingsUserPicture, settingsUserInitial, logoutBtn;
-let settingsAccountsTabName, settingsTransactionsTabName, settingsAppendOnly, saveSettingsBtn, settingsStatusMessage;
+let settingsAppendOnly, saveSettingsBtn, settingsStatusMessage;
 let currentTab = 'home';
 
 // User control panel header elements
@@ -232,8 +232,6 @@ function initializeElements() {
   settingsUserPicture = document.getElementById('settingsUserPicture');
   settingsUserInitial = document.getElementById('settingsUserInitial');
   logoutBtn = document.getElementById('logoutBtn');
-  settingsAccountsTabName = document.getElementById('settingsAccountsTabName');
-  settingsTransactionsTabName = document.getElementById('settingsTransactionsTabName');
   settingsAppendOnly = document.getElementById('settingsAppendOnly');
   saveSettingsBtn = document.getElementById('saveSettingsBtn');
   settingsStatusMessage = document.getElementById('settingsStatusMessage');
@@ -4141,8 +4139,7 @@ async function loadSettingsPage() {
     transactionsTabName: 'Transactions',
     appendOnly: true
   }, (settings) => {
-    if (settingsAccountsTabName) settingsAccountsTabName.value = settings.accountsTabName;
-    if (settingsTransactionsTabName) settingsTransactionsTabName.value = settings.transactionsTabName;
+    // Tab names are now fixed as 'Transactions' and 'Accounts' for recipe compatibility
     if (settingsAppendOnly) settingsAppendOnly.checked = settings.appendOnly;
   });
 }
@@ -4154,9 +4151,9 @@ async function handleSaveSettings() {
   debug('[Settings] Saving settings');
 
   try {
-    // Get values from inputs
-    const accountsTabName = settingsAccountsTabName?.value || 'Accounts';
-    const transactionsTabName = settingsTransactionsTabName?.value || 'Transactions';
+    // Tab names are now fixed as 'Transactions' and 'Accounts' for recipe compatibility
+    const accountsTabName = 'Accounts';
+    const transactionsTabName = 'Transactions';
     const appendOnly = settingsAppendOnly?.checked ?? true;
 
     // Save to storage
