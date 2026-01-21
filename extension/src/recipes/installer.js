@@ -984,19 +984,34 @@ export async function getInstalledRecipeIds(spreadsheetId) {
   try {
     const scriptIdKey = `recipeScriptId_${spreadsheetId}`;
     const stored = await chrome.storage.local.get(scriptIdKey);
-    const scriptId = stored[scriptIdKey];
-
-    // If no script project exists yet, no recipes are installed
-    if (!scriptId) {
-      console.log('[installer] No script project exists yet');
-      return [];
-    }
+    let scriptId = stored[scriptIdKey];
 
     // Check if we have recipe permissions
     const recipeAuth = await import('../auth/recipeAuth.js');
     if (!await recipeAuth.hasRecipePermissions()) {
       console.log('[installer] No recipe permissions, cannot check installed recipes');
       return [];
+    }
+
+    // If no script ID in chrome.storage, try reading from hidden sheet
+    if (!scriptId) {
+      console.log('[installer] No script ID in chrome.storage, checking hidden sheet');
+      try {
+        const token = await recipeAuth.getRecipeAuthToken();
+        scriptId = await getScriptIdFromHiddenSheet(spreadsheetId, token);
+
+        if (scriptId) {
+          console.log('[installer] Found script ID in hidden sheet, syncing to chrome.storage');
+          // Sync it back to chrome.storage for performance
+          await chrome.storage.local.set({ [scriptIdKey]: scriptId });
+        } else {
+          console.log('[installer] No script project exists yet');
+          return [];
+        }
+      } catch (error) {
+        console.error('[installer] Error reading from hidden sheet:', error);
+        return [];
+      }
     }
 
     // Get the project content to see which recipes are installed
