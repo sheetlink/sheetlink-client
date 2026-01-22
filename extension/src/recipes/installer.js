@@ -823,10 +823,43 @@ function onOpen() {
   ui.createMenu('SheetLink Recipes')
 \${recipeMenuItems}
     .addSeparator()
+    .addItem('★ Format Transaction Dates', 'menuFormatDates')
     .addSubMenu(ui.createMenu('ⓘ Help')
       .addItem('View Documentation', 'menuShowDocs')
       .addItem('About SheetLink Recipes', 'menuShowAbout'))
     .addToUi();
+}
+
+// Format Transaction Dates utility handler
+function menuFormatDates() {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // Check for Transactions sheet
+    if (!checkTransactionsOrPrompt(ss)) {
+      return;
+    }
+
+    var transactionsSheet = getTransactionsSheet(ss);
+    var headerMap = getHeaderMap(transactionsSheet);
+
+    // Format date and pending columns
+    formatTransactionDateColumns(transactionsSheet, headerMap);
+    formatTransactionPendingColumn(transactionsSheet, headerMap);
+
+    // Show success message
+    SpreadsheetApp.getUi().alert(
+      'Success',
+      'Date and pending columns have been formatted.',
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+  } catch (error) {
+    SpreadsheetApp.getUi().alert(
+      'Error',
+      'Failed to format dates: ' + error.message,
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+  }
 }
 
 // Help menu handlers
