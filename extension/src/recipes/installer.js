@@ -821,7 +821,7 @@ function createMenuFile(installedRecipes) {
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('SheetLink Recipes')
-\${recipeMenuItems}
+${recipeMenuItems}
     .addSeparator()
     .addItem('★ Format Transaction Dates', 'menuFormatDates')
     .addSubMenu(ui.createMenu('ⓘ Help')
