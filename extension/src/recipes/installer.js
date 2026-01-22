@@ -823,7 +823,7 @@ function onOpen() {
   ui.createMenu('SheetLink Recipes')
 ${recipeMenuItems}
     .addSeparator()
-    .addItem('★ Format Transaction Dates', 'menuFormatDates')
+    .addItem('☆ Format Transaction Dates', 'menuFormatDates')
     .addSubMenu(ui.createMenu('ⓘ Help')
       .addItem('View Documentation', 'menuShowDocs')
       .addItem('About SheetLink Recipes', 'menuShowAbout'))
