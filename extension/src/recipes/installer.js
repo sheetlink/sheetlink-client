@@ -753,7 +753,7 @@ function formatTransactionDateColumns(transactionsSheet, headerMap) {
     });
 
     dateRange.setValues(dateValues);
-    dateRange.setNumberFormat('M/d/yyyy');
+    dateRange.setNumberFormat('yyyy-mm-dd');
     Logger.log(\`[formatTransactionDateColumns] Formatted 'date' column (\${dateCol})\`);
   }
 
@@ -776,7 +776,7 @@ function formatTransactionDateColumns(transactionsSheet, headerMap) {
     });
 
     authDateRange.setValues(dateValues);
-    authDateRange.setNumberFormat('M/d/yyyy');
+    authDateRange.setNumberFormat('yyyy-mm-dd');
     Logger.log(\`[formatTransactionDateColumns] Formatted 'authorized_date' column (\${authorizedDateCol})\`);
   }
 
@@ -842,7 +842,7 @@ function formatTransactionPendingColumn(transactionsSheet, headerMap) {
 function createMenuFile(installedRecipes) {
   const recipeMenuItems = installedRecipes.map(recipe => {
     const functionName = `run_${recipe.id.replace(/-/g, '_')}`;
-    return `    .addItem('▶ ${recipe.name}', '${functionName}')`;
+    return `    .addItem('▸ ${recipe.name}', '${functionName}')`;
   }).join('\n');
 
   const source = `/**
