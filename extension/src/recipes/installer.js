@@ -737,14 +737,46 @@ function formatTransactionDateColumns(transactionsSheet, headerMap) {
   // Format 'date' column
   if (dateCol) {
     const dateRange = transactionsSheet.getRange(2, dateCol, lastRow - 1, 1);
-    dateRange.setNumberFormat('yyyy-mm-dd');
+    const values = dateRange.getValues();
+
+    // Convert text date strings to actual date values
+    const dateValues = values.map(row => {
+      const val = row[0];
+      if (!val) return [val];
+
+      // If already a date, keep it
+      if (val instanceof Date) return [val];
+
+      // Parse text date string (format: "YYYY-MM-DD" or "MM/DD/YYYY")
+      const dateObj = new Date(val);
+      return [isNaN(dateObj.getTime()) ? val : dateObj];
+    });
+
+    dateRange.setValues(dateValues);
+    dateRange.setNumberFormat('M/d/yyyy');
     Logger.log(\`[formatTransactionDateColumns] Formatted 'date' column (\${dateCol})\`);
   }
 
   // Format 'authorized_date' column
   if (authorizedDateCol) {
     const authDateRange = transactionsSheet.getRange(2, authorizedDateCol, lastRow - 1, 1);
-    authDateRange.setNumberFormat('yyyy-mm-dd');
+    const values = authDateRange.getValues();
+
+    // Convert text date strings to actual date values
+    const dateValues = values.map(row => {
+      const val = row[0];
+      if (!val) return [val];
+
+      // If already a date, keep it
+      if (val instanceof Date) return [val];
+
+      // Parse text date string
+      const dateObj = new Date(val);
+      return [isNaN(dateObj.getTime()) ? val : dateObj];
+    });
+
+    authDateRange.setValues(dateValues);
+    authDateRange.setNumberFormat('M/d/yyyy');
     Logger.log(\`[formatTransactionDateColumns] Formatted 'authorized_date' column (\${authorizedDateCol})\`);
   }
 
