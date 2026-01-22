@@ -810,7 +810,7 @@ function formatTransactionPendingColumn(transactionsSheet, headerMap) {
 function createMenuFile(installedRecipes) {
   const recipeMenuItems = installedRecipes.map(recipe => {
     const functionName = `run_${recipe.id.replace(/-/g, '_')}`;
-    return `    .addItem('▸ ${recipe.name}', '${functionName}')`;
+    return `    .addItem('▶ ${recipe.name}', '${functionName}')`;
   }).join('\n');
 
   const source = `/**
