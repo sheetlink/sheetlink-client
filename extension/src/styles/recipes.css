@@ -194,16 +194,27 @@
   overflow: visible;
 }
 
-.recipe-card.installing-state::before {
+.recipe-card.installing-state::before,
+.recipe-card.installing-state::after {
   content: '';
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   background: linear-gradient(135deg, #0B703A 0%, #00C474 100%);
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(0, 196, 116, 0.8), 0 0 16px rgba(0, 196, 116, 0.4);
-  animation: traceBorder 3s linear infinite;
+  box-shadow:
+    0 0 8px rgba(0, 196, 116, 0.8),
+    0 0 16px rgba(0, 196, 116, 0.5),
+    0 0 24px rgba(0, 196, 116, 0.3);
   z-index: 10;
+}
+
+.recipe-card.installing-state::before {
+  animation: traceBorder 3s linear infinite;
+}
+
+.recipe-card.installing-state::after {
+  animation: traceBorder 3s linear infinite 1.5s;
 }
 
 @keyframes traceBorder {
@@ -211,26 +222,61 @@
     top: 0;
     left: 0;
     transform: translate(-50%, -50%);
+    box-shadow:
+      0 0 8px rgba(0, 196, 116, 0.8),
+      0 0 16px rgba(0, 196, 116, 0.5),
+      0 0 24px rgba(0, 196, 116, 0.3),
+      -20px 0 20px rgba(0, 196, 116, 0.4),
+      -40px 0 30px rgba(0, 196, 116, 0.2),
+      -60px 0 40px rgba(0, 196, 116, 0.1);
   }
   25% {
     top: 0;
     left: 100%;
     transform: translate(-50%, -50%);
+    box-shadow:
+      0 0 8px rgba(0, 196, 116, 0.8),
+      0 0 16px rgba(0, 196, 116, 0.5),
+      0 0 24px rgba(0, 196, 116, 0.3),
+      0 -20px 20px rgba(0, 196, 116, 0.4),
+      0 -40px 30px rgba(0, 196, 116, 0.2),
+      0 -60px 40px rgba(0, 196, 116, 0.1);
   }
   50% {
     top: 100%;
     left: 100%;
     transform: translate(-50%, -50%);
+    box-shadow:
+      0 0 8px rgba(0, 196, 116, 0.8),
+      0 0 16px rgba(0, 196, 116, 0.5),
+      0 0 24px rgba(0, 196, 116, 0.3),
+      20px 0 20px rgba(0, 196, 116, 0.4),
+      40px 0 30px rgba(0, 196, 116, 0.2),
+      60px 0 40px rgba(0, 196, 116, 0.1);
   }
   75% {
     top: 100%;
     left: 0;
     transform: translate(-50%, -50%);
+    box-shadow:
+      0 0 8px rgba(0, 196, 116, 0.8),
+      0 0 16px rgba(0, 196, 116, 0.5),
+      0 0 24px rgba(0, 196, 116, 0.3),
+      0 20px 20px rgba(0, 196, 116, 0.4),
+      0 40px 30px rgba(0, 196, 116, 0.2),
+      0 60px 40px rgba(0, 196, 116, 0.1);
   }
   100% {
     top: 0;
     left: 0;
     transform: translate(-50%, -50%);
+    box-shadow:
+      0 0 8px rgba(0, 196, 116, 0.8),
+      0 0 16px rgba(0, 196, 116, 0.5),
+      0 0 24px rgba(0, 196, 116, 0.3),
+      -20px 0 20px rgba(0, 196, 116, 0.4),
+      -40px 0 30px rgba(0, 196, 116, 0.2),
+      -60px 0 40px rgba(0, 196, 116, 0.1);
   }
 }
 
