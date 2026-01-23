@@ -736,72 +736,16 @@ function formatTransactionDateColumns(transactionsSheet, headerMap) {
 
   // Format 'date' column
   if (dateCol) {
-    const dateRange = transactionsSheet.getRange(2, dateCol, lastRow - 1, 1);
-    const values = dateRange.getValues();
-
-    // Convert text date strings to actual date values
-    const dateValues = values.map(row => {
-      const val = row[0];
-      if (!val) return [val];
-
-      // If already a date, keep it
-      if (val instanceof Date) return [val];
-
-      // Parse text date string (format: "YYYY-MM-DD")
-      // Use noon time to avoid timezone issues
-      if (typeof val === 'string') {
-        const match = val.match(/^(\\d{4})-(\\d{2})-(\\d{2})/);
-        if (match) {
-          const year = parseInt(match[1]);
-          const month = parseInt(match[2]) - 1; // JS months are 0-indexed
-          const day = parseInt(match[3]);
-          return [new Date(year, month, day, 12, 0, 0)];
-        }
-      }
-
-      // Fallback for other date formats
-      const dateObj = new Date(val);
-      return [isNaN(dateObj.getTime()) ? val : dateObj];
-    });
-
-    dateRange.setValues(dateValues);
-    dateRange.setNumberFormat('yyyy-mm-dd');
-    Logger.log(\`[formatTransactionDateColumns] Formatted 'date' column (\${dateCol})\`);
+    // Leave dates as text in YYYY-MM-DD format
+    // Google Sheets formulas recognize this format natively
+    Logger.log(\`[formatTransactionDateColumns] Date column found at \${dateCol} - no conversion needed, YYYY-MM-DD text format works with formulas\`);
   }
 
   // Format 'authorized_date' column
   if (authorizedDateCol) {
-    const authDateRange = transactionsSheet.getRange(2, authorizedDateCol, lastRow - 1, 1);
-    const values = authDateRange.getValues();
-
-    // Convert text date strings to actual date values
-    const dateValues = values.map(row => {
-      const val = row[0];
-      if (!val) return [val];
-
-      // If already a date, keep it
-      if (val instanceof Date) return [val];
-
-      // Parse text date string (format: "YYYY-MM-DD")
-      // Use noon time to avoid timezone issues
-      if (typeof val === 'string') {
-        const match = val.match(/^(\\d{4})-(\\d{2})-(\\d{2})/);
-        if (match) {
-          const year = parseInt(match[1]);
-          const month = parseInt(match[2]) - 1; // JS months are 0-indexed
-          const day = parseInt(match[3]);
-          return [new Date(year, month, day, 12, 0, 0)];
-        }
-      }
-
-      // Fallback for other date formats
-      const dateObj = new Date(val);
-      return [isNaN(dateObj.getTime()) ? val : dateObj];
-    });
-
-    authDateRange.setValues(dateValues);
-    authDateRange.setNumberFormat('yyyy-mm-dd');
-    Logger.log(\`[formatTransactionDateColumns] Formatted 'authorized_date' column (\${authorizedDateCol})\`);
+    // Leave dates as text in YYYY-MM-DD format
+    // Google Sheets formulas recognize this format natively
+    Logger.log(\`[formatTransactionDateColumns] Authorized date column found at \${authorizedDateCol} - no conversion needed, YYYY-MM-DD text format works with formulas\`);
   }
 
   Logger.log('[formatTransactionDateColumns] Date formatting complete');
