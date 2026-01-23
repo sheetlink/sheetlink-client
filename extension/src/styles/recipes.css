@@ -113,8 +113,8 @@
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  background: linear-gradient(135deg, #023820 0%, #0B703A 100%);
-  color: white;
+  background: #d1fae5;
+  color: #023820;
 }
 
 .recipe-author {

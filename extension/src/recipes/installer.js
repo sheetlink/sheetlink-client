@@ -952,8 +952,14 @@ async function getInstalledRecipes(scriptId, token) {
       if (file.name.startsWith('recipe_')) {
         const recipeId = file.name.replace('recipe_', '');
         // Get recipe metadata to get the display name
+        // Try community folder first, then official as fallback
         try {
-          const metadata = await fetchRecipeMetadata(recipeId);
+          let metadata;
+          try {
+            metadata = await fetchRecipeMetadata(recipeId, 'community');
+          } catch {
+            metadata = await fetchRecipeMetadata(recipeId, 'official');
+          }
           installedRecipes.push({ id: recipeId, name: metadata.name });
         } catch (error) {
           console.log(`[installer] Could not fetch metadata for ${recipeId}`);
@@ -994,7 +1000,13 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
 
     // Step 5: Fetch new recipe metadata first (to get source folder)
     onProgress?.('Downloading recipe...');
-    const recipeMetadata = await fetchRecipeMetadata(recipeId);
+    // Try community folder first, then official as fallback
+    let recipeMetadata;
+    try {
+      recipeMetadata = await fetchRecipeMetadata(recipeId, 'community');
+    } catch {
+      recipeMetadata = await fetchRecipeMetadata(recipeId, 'official');
+    }
     const recipeSource = recipeMetadata.source || recipeMetadata.type || 'official';
 
     // Then fetch recipe code from the correct folder
@@ -1019,7 +1031,13 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
     const allRecipeFiles = [];
     for (const recipe of updatedRecipes) {
       // Fetch metadata to get source folder
-      const metadata = await fetchRecipeMetadata(recipe.id);
+      // Try community folder first, then official as fallback
+      let metadata;
+      try {
+        metadata = await fetchRecipeMetadata(recipe.id, 'community');
+      } catch {
+        metadata = await fetchRecipeMetadata(recipe.id, 'official');
+      }
       const source = metadata.source || metadata.type || 'official';
 
       // Fetch code from correct folder
