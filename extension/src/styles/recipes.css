@@ -210,11 +210,11 @@
 }
 
 .recipe-card.installing-state::before {
-  animation: traceBorder 3s linear infinite;
+  animation: traceBorder 2s linear infinite;
 }
 
 .recipe-card.installing-state::after {
-  animation: traceBorderOffset 3s linear infinite;
+  animation: traceBorderOffset 2s linear infinite;
 }
 
 @keyframes traceBorder {
@@ -347,7 +347,7 @@
 .recipe-card.installing-state .recipe-description,
 .recipe-card.installing-state .recipe-stats,
 .recipe-card.installing-state .recipe-actions {
-  animation: contentPulse 1.5s ease-in-out infinite;
+  animation: contentPulse 1s ease-in-out infinite;
 }
 
 @keyframes contentPulse {
