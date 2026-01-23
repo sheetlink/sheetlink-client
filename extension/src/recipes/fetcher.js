@@ -26,9 +26,10 @@ export async function fetchRecipeList() {
 /**
  * Fetch specific recipe metadata
  */
-export async function fetchRecipeMetadata(recipeId) {
+export async function fetchRecipeMetadata(recipeId, recipeSource = 'official') {
   try {
-    const url = `${GITHUB_BASE}/recipes/official/${recipeId}/metadata.json`;
+    const folder = recipeSource === 'community' ? 'community' : 'official';
+    const url = `${GITHUB_BASE}/recipes/${folder}/${recipeId}/metadata.json`;
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
@@ -42,9 +43,10 @@ export async function fetchRecipeMetadata(recipeId) {
 /**
  * Fetch recipe code
  */
-export async function fetchRecipeCode(recipeId) {
+export async function fetchRecipeCode(recipeId, recipeSource = 'official') {
   try {
-    const url = `${GITHUB_BASE}/recipes/official/${recipeId}/recipe.gs`;
+    const folder = recipeSource === 'community' ? 'community' : 'official';
+    const url = `${GITHUB_BASE}/recipes/${folder}/${recipeId}/recipe.gs`;
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 

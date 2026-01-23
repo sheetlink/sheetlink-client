@@ -992,10 +992,13 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
     onProgress?.('Checking installed recipes...');
     const installedRecipes = await getInstalledRecipes(scriptId, token);
 
-    // Step 5: Fetch new recipe code and metadata
+    // Step 5: Fetch new recipe metadata first (to get source folder)
     onProgress?.('Downloading recipe...');
-    const recipeFile = await fetchRecipeCode(recipeId);
     const recipeMetadata = await fetchRecipeMetadata(recipeId);
+    const recipeSource = recipeMetadata.source || recipeMetadata.type || 'official';
+
+    // Then fetch recipe code from the correct folder
+    const recipeFile = await fetchRecipeCode(recipeId, recipeSource);
 
     // Rename recipe file to include ID
     recipeFile.name = `recipe_${recipeId}`;
@@ -1015,7 +1018,12 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
     // instead of copying old installed code
     const allRecipeFiles = [];
     for (const recipe of updatedRecipes) {
-      const file = await fetchRecipeCode(recipe.id);
+      // Fetch metadata to get source folder
+      const metadata = await fetchRecipeMetadata(recipe.id);
+      const source = metadata.source || metadata.type || 'official';
+
+      // Fetch code from correct folder
+      const file = await fetchRecipeCode(recipe.id, source);
       file.name = `recipe_${recipe.id}`; // Rename to include ID
       allRecipeFiles.push(file);
     }
