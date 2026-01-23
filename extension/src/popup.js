@@ -1158,6 +1158,18 @@ async function updateTierDisplay() {
         autoSyncCard.style.display = 'block';
       }
     }
+
+    // Phase 3.25.7: Hide upgrade placeholder for PRO users (they have all features)
+    const upgradePlaceholders = document.querySelectorAll('.upgrade-placeholder');
+    if (upgradePlaceholders) {
+      upgradePlaceholders.forEach(placeholder => {
+        if (data.tier === 'pro') {
+          placeholder.style.display = 'none';
+        } else {
+          placeholder.style.display = 'block';
+        }
+      });
+    }
   } catch (error) {
     // Silently fail - keep default "Free (7 days)" and hide auto-sync
     debug('Tier status check failed, using default');
