@@ -191,75 +191,53 @@
 /* Installation States */
 .recipe-card.installing-state {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .recipe-card.installing-state::before {
   content: '';
   position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border-radius: 10px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    transparent 40%,
-    rgba(11, 112, 58, 0.6) 48%,
-    rgba(0, 196, 116, 0.8) 50%,
-    rgba(11, 112, 58, 0.6) 52%,
-    transparent 60%,
-    transparent 100%
-  );
-  background-size: 200% 200%;
-  animation: borderSpin 2s linear infinite;
-  z-index: 0;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #0B703A 0%, #00C474 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 196, 116, 0.8), 0 0 16px rgba(0, 196, 116, 0.4);
+  animation: traceBorder 3s linear infinite;
+  z-index: 10;
 }
 
-.recipe-card.installing-state::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border-radius: 10px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    transparent 40%,
-    rgba(11, 112, 58, 0.6) 48%,
-    rgba(0, 196, 116, 0.8) 50%,
-    rgba(11, 112, 58, 0.6) 52%,
-    transparent 60%,
-    transparent 100%
-  );
-  background-size: 200% 200%;
-  animation: borderSpinReverse 2s linear infinite;
-  z-index: 0;
-}
-
-@keyframes borderSpin {
+@keyframes traceBorder {
   0% {
-    transform: rotate(0deg);
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+  25% {
+    top: 0;
+    left: 100%;
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    top: 100%;
+    left: 100%;
+    transform: translate(-50%, -50%);
+  }
+  75% {
+    top: 100%;
+    left: 0;
+    transform: translate(-50%, -50%);
   }
   100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes borderSpinReverse {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(-360deg);
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
   }
 }
 
 .recipe-card.installing-state > * {
   position: relative;
   z-index: 1;
-  animation: contentPulse 2s ease-in-out infinite;
+  animation: contentPulse 3s ease-in-out infinite;
 }
 
 @keyframes contentPulse {
@@ -267,7 +245,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.7;
   }
 }
 
