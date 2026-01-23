@@ -962,6 +962,7 @@ async function getInstalledRecipes(scriptId, token) {
           }
           installedRecipes.push({ id: recipeId, name: metadata.name });
         } catch (error) {
+          // Silently skip if can't find metadata in either folder
           console.log(`[installer] Could not fetch metadata for ${recipeId}`);
         }
       }
@@ -1002,14 +1003,19 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
     onProgress?.('Downloading recipe...');
     // Try community folder first, then official as fallback
     let recipeMetadata;
+    let recipeSource;
     try {
       recipeMetadata = await fetchRecipeMetadata(recipeId, 'community');
-    } catch {
+      recipeSource = 'community';
+      console.log(`[installer] Found ${recipeId} in community folder`);
+    } catch (err) {
+      console.log(`[installer] Not in community, trying official folder for ${recipeId}`);
       recipeMetadata = await fetchRecipeMetadata(recipeId, 'official');
+      recipeSource = 'official';
     }
-    const recipeSource = recipeMetadata.source || recipeMetadata.type || 'official';
 
     // Then fetch recipe code from the correct folder
+    console.log(`[installer] Fetching ${recipeId} code from ${recipeSource} folder`);
     const recipeFile = await fetchRecipeCode(recipeId, recipeSource);
 
     // Rename recipe file to include ID
@@ -1032,13 +1038,14 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
     for (const recipe of updatedRecipes) {
       // Fetch metadata to get source folder
       // Try community folder first, then official as fallback
-      let metadata;
+      let source;
       try {
-        metadata = await fetchRecipeMetadata(recipe.id, 'community');
+        await fetchRecipeMetadata(recipe.id, 'community');
+        source = 'community';
       } catch {
-        metadata = await fetchRecipeMetadata(recipe.id, 'official');
+        await fetchRecipeMetadata(recipe.id, 'official');
+        source = 'official';
       }
-      const source = metadata.source || metadata.type || 'official';
 
       // Fetch code from correct folder
       const file = await fetchRecipeCode(recipe.id, source);
