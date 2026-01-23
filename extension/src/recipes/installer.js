@@ -736,16 +736,46 @@ function formatTransactionDateColumns(transactionsSheet, headerMap) {
 
   // Format 'date' column
   if (dateCol) {
-    // Leave dates as text in YYYY-MM-DD format
-    // Google Sheets formulas recognize this format natively
-    Logger.log(\`[formatTransactionDateColumns] Date column found at \${dateCol} - no conversion needed, YYYY-MM-DD text format works with formulas\`);
+    const dateRange = transactionsSheet.getRange(2, dateCol, lastRow - 1, 1);
+    const values = dateRange.getValues();
+
+    // Remove any leading apostrophes that force text format
+    const cleanedValues = values.map(row => {
+      const val = row[0];
+      if (!val) return [val];
+
+      // If it's a string starting with apostrophe, remove it
+      if (typeof val === 'string' && val.startsWith("'")) {
+        return [val.substring(1)];
+      }
+
+      return [val];
+    });
+
+    dateRange.setValues(cleanedValues);
+    Logger.log(\`[formatTransactionDateColumns] Cleaned 'date' column (\${dateCol})\`);
   }
 
   // Format 'authorized_date' column
   if (authorizedDateCol) {
-    // Leave dates as text in YYYY-MM-DD format
-    // Google Sheets formulas recognize this format natively
-    Logger.log(\`[formatTransactionDateColumns] Authorized date column found at \${authorizedDateCol} - no conversion needed, YYYY-MM-DD text format works with formulas\`);
+    const authDateRange = transactionsSheet.getRange(2, authorizedDateCol, lastRow - 1, 1);
+    const values = authDateRange.getValues();
+
+    // Remove any leading apostrophes that force text format
+    const cleanedValues = values.map(row => {
+      const val = row[0];
+      if (!val) return [val];
+
+      // If it's a string starting with apostrophe, remove it
+      if (typeof val === 'string' && val.startsWith("'")) {
+        return [val.substring(1)];
+      }
+
+      return [val];
+    });
+
+    authDateRange.setValues(cleanedValues);
+    Logger.log(\`[formatTransactionDateColumns] Cleaned 'authorized_date' column (\${authorizedDateCol})\`);
   }
 
   Logger.log('[formatTransactionDateColumns] Date formatting complete');
