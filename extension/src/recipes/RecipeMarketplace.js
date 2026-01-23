@@ -181,6 +181,7 @@ export class RecipeMarketplace {
 
   showProgress(recipeId) {
     const card = this.container.querySelector(`[data-recipe-id="${recipeId}"]`);
+    card.classList.add('installing-state');
     const actions = card.querySelector('.recipe-actions');
     const isInstalled = this.installedRecipeIds.includes(recipeId);
     const verb = isInstalled ? 'Reinstalling' : 'Installing';
@@ -195,6 +196,7 @@ export class RecipeMarketplace {
 
   showSuccess(recipeId, wasInstalled) {
     const card = this.container.querySelector(`[data-recipe-id="${recipeId}"]`);
+    card.classList.remove('installing-state');
     const actions = card.querySelector('.recipe-actions');
     const verb = wasInstalled ? 'Reinstalled' : 'Installed';
     actions.innerHTML = `
@@ -206,6 +208,7 @@ export class RecipeMarketplace {
 
   showInstallError(recipeId, message) {
     const card = this.container.querySelector(`[data-recipe-id="${recipeId}"]`);
+    card.classList.remove('installing-state');
     const actions = card.querySelector('.recipe-actions');
     actions.innerHTML = `
       <div class="error-message">❌ ${message}</div>
