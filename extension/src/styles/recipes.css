@@ -198,8 +198,8 @@
 .recipe-card.installing-state::after {
   content: '';
   position: absolute;
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   background: linear-gradient(135deg, #0B703A 0%, #00C474 100%);
   border-radius: 50%;
   box-shadow:
