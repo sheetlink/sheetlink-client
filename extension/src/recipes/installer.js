@@ -8,6 +8,29 @@ import { fetchRecipeCode, fetchRecipeMetadata } from './fetcher.js';
 
 const SCRIPT_API_BASE = 'https://script.googleapis.com/v1';
 const CONFIG_SHEET_NAME = '__SheetLink_Config__';
+const ANALYTICS_API_BASE = 'https://api.sheetlink.app';
+
+/**
+ * Track recipe install (anonymous analytics)
+ * Privacy: No user data is sent, only recipe ID
+ */
+async function trackRecipeInstall(recipeId) {
+  try {
+    const response = await fetch(`${ANALYTICS_API_BASE}/api/recipes/${recipeId}/install`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      console.log(`[installer] Install tracked for ${recipeId}`);
+    }
+  } catch (error) {
+    // Silent fail - don't block installation if analytics fail
+    console.warn(`[installer] Failed to track install for ${recipeId}:`, error);
+  }
+}
 
 /**
  * Get script ID from hidden config sheet
@@ -1064,10 +1087,83 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
     onProgress?.('Installing recipe...');
     await updateScriptProject(scriptId, allFiles, token);
 
+    // Step 9: Track install (anonymous analytics)
+    await trackRecipeInstall(recipeId);
+
     onProgress?.('Complete!');
     return { success: true, scriptId, installedRecipes: updatedRecipes.map(r => r.id) };
   } catch (error) {
     console.error(`[installer] Error installing ${recipeId}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Uninstall recipe from spreadsheet
+ */
+export async function uninstallRecipe(recipeId, spreadsheetId, onProgress) {
+  try {
+    // Step 1: Ensure permissions
+    onProgress?.('Checking permissions...');
+    const hasPermission = await ensureRecipePermissions();
+    if (!hasPermission) {
+      throw new Error('Recipe uninstallation requires Apps Script permissions');
+    }
+
+    // Step 2: Get auth token
+    onProgress?.('Authenticating...');
+    const token = await getRecipeAuthToken();
+
+    // Step 3: Get script project
+    onProgress?.('Loading project...');
+    const scriptId = await getOrCreateScriptProject(spreadsheetId, token);
+
+    // Step 4: Get currently installed recipes
+    onProgress?.('Checking installed recipes...');
+    const installedRecipes = await getInstalledRecipes(scriptId, token);
+
+    // Check if recipe is actually installed
+    if (!installedRecipes.find(r => r.id === recipeId)) {
+      throw new Error('Recipe is not installed');
+    }
+
+    // Step 5: Remove recipe from installed list
+    const updatedRecipes = installedRecipes.filter(r => r.id !== recipeId);
+
+    // Step 6: Create files array with manifest, utils, menu (without this recipe), and remaining recipes
+    onProgress?.('Removing recipe...');
+    const manifestFile = createManifest();
+    const utilsFile = createUtilsFile();
+    const menuFile = createMenuFile(updatedRecipes);
+
+    // Re-fetch ALL remaining recipe files from GitHub
+    const allRecipeFiles = [];
+    for (const recipe of updatedRecipes) {
+      // Fetch metadata to get source folder
+      let source;
+      try {
+        await fetchRecipeMetadata(recipe.id, 'community');
+        source = 'community';
+      } catch {
+        await fetchRecipeMetadata(recipe.id, 'official');
+        source = 'official';
+      }
+
+      const recipeFile = await fetchRecipeCode(recipe.id, source);
+      recipeFile.name = `recipe_${recipe.id}`;
+      allRecipeFiles.push(recipeFile);
+    }
+
+    const allFiles = [manifestFile, utilsFile, menuFile, ...allRecipeFiles];
+
+    // Step 7: Update project (this removes the uninstalled recipe file)
+    onProgress?.('Updating project...');
+    await updateScriptProject(scriptId, allFiles, token);
+
+    onProgress?.('Complete!');
+    return { success: true, scriptId, installedRecipes: updatedRecipes.map(r => r.id) };
+  } catch (error) {
+    console.error(`[installer] Error uninstalling ${recipeId}:`, error);
     throw error;
   }
 }

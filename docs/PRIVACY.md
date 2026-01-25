@@ -13,7 +13,7 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 - ✅ Rules/categorization runs client-side (in your browser, never sent anywhere)
 - ✅ We only store encrypted Plaid tokens on our backend (for sync purposes)
 - ✅ We never see, store, or access your Google Sheets
-- ✅ No analytics, no tracking, no selling of data
+- ✅ Only anonymous aggregate analytics (recipe install counts), no user tracking, no selling of data
 
 ---
 
@@ -156,6 +156,34 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 - Google OAuth access tokens (managed by Chrome Identity API)
 - Google OAuth ID tokens (sent to backend once, then discarded)
 
+### 7. Anonymous System Analytics
+
+**What we collect:**
+- Aggregate recipe installation counts (total installs per recipe across all users)
+- No personally identifiable information
+- No user-specific behavior tracking
+- No linkage to Google accounts, spreadsheets, or user identities
+
+**How we collect it:**
+- Anonymous POST request when a recipe is installed (no authentication required)
+- Only the recipe ID is sent (e.g., "financial-statements")
+- No user ID, email, spreadsheet ID, or timestamps stored
+
+**Where it's stored:**
+- Backend database with only: `recipe_id` + `install_count`
+- No user data whatsoever
+
+**Why we collect it:**
+- Product improvement and maintenance
+- Understanding which recipes are most valuable to users
+- Prioritizing recipe updates and new recipe development
+
+**What we DON'T collect:**
+- Which users installed which recipes
+- Installation timestamps or patterns
+- Any linkage to Google accounts or spreadsheets
+- Individual user behavior or analytics
+
 ---
 
 ## How We Use Your Information
@@ -228,9 +256,9 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 ### We DO NOT:
 - ❌ Sell your data to third parties
 - ❌ Share transaction details with anyone
-- ❌ Use your data for advertising or analytics
-- ❌ Track your usage or behavior
-- ❌ Send data to external analytics services
+- ❌ Use your data for advertising
+- ❌ Track individual user behavior or usage patterns
+- ❌ Send data to external analytics services (we run our own anonymous aggregate analytics)
 - ❌ Log personally identifiable information (PII)
 
 ### We MAY share data if:
@@ -411,6 +439,7 @@ We may update this Privacy Policy from time to time. Changes will be posted with
 | Email & User ID | ✅ Yes | Backend DB | ❌ No | ❌ No | ✅ Yes ("Disconnect") |
 | Sheet ID | ✅ Yes | Extension storage | ❌ No | ❌ No | ✅ Yes (uninstall) |
 | Rules | ✅ Yes | Your Google Sheet | ❌ No* | ❌ No | ✅ Yes (delete tab) |
+| Recipe installs | ✅ Yes (aggregate only) | Backend DB | ❌ No | ❌ No | N/A (anonymous) |
 | Usage analytics | ❌ No | N/A | N/A | N/A | N/A |
 
 *Google Sheets are encrypted by Google at rest and in transit.
