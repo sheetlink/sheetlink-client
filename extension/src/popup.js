@@ -343,7 +343,7 @@ function attachEventListeners() {
 }
 
 function initializeTooltips() {
-  // Find all info icons and attach hover listeners
+  // Sync button tooltip
   const infoIcons = document.querySelectorAll('.info-icon');
 
   infoIcons.forEach(icon => {
@@ -362,6 +362,24 @@ function initializeTooltips() {
     });
 
     // Hide tooltip when leaving icon
+    icon.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+  });
+
+  // Tier tooltip
+  const tierInfoIcons = document.querySelectorAll('.tier-info-icon');
+  tierInfoIcons.forEach(icon => {
+    const container = icon.closest('.user-tier-container');
+    if (!container) return;
+
+    const tooltip = container.querySelector('.tier-tooltip');
+    if (!tooltip) return;
+
+    icon.addEventListener('mouseenter', () => {
+      tooltip.classList.add('show');
+    });
+
     icon.addEventListener('mouseleave', () => {
       tooltip.classList.remove('show');
     });
@@ -3239,6 +3257,14 @@ async function initializeNavigation() {
     });
   });
 
+  // Phase 3.25.8: Header settings button listener
+  const headerSettingsBtn = document.getElementById('headerSettingsBtn');
+  if (headerSettingsBtn) {
+    headerSettingsBtn.addEventListener('click', () => {
+      switchTab('settings');
+    });
+  }
+
   // Phase 3.13: Hide initial loader after navigation is ready
   hideLoading();
 }
@@ -4114,6 +4140,9 @@ async function loadRecipesPage() {
       console.error('[Recipes] Error initializing marketplace:', error);
     }
   }
+
+  // Initialize tooltips
+  initializeTooltips();
 }
 
 /**

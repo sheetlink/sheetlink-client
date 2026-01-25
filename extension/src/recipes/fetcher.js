@@ -35,8 +35,8 @@ export async function fetchRecipeMetadata(recipeId, recipeSource = 'official') {
 
     return await response.json();
   } catch (error) {
-    console.error(`[fetcher] Error fetching metadata for ${recipeId}:`, error);
-    throw new Error(`Failed to load recipe details for ${recipeId}`);
+    // Don't log 404s - they're expected when checking community/official fallback
+    throw error;
   }
 }
 

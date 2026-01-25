@@ -280,6 +280,10 @@ class StateManager {
 
     const onboardingFlag = preserveOnboarding ? this.state.hasCompletedInitialOnboarding : false;
 
+    // Phase 3.25.0: Preserve recipesEnabled flag before clearing
+    const localData = await chrome.storage.local.get('recipesEnabled');
+    const recipesEnabled = localData.recipesEnabled;
+
     // Reset memory state
     this.state = {
       hasCompletedInitialOnboarding: onboardingFlag,
@@ -298,6 +302,12 @@ class StateManager {
     // Restore onboarding flag if needed
     if (onboardingFlag) {
       await chrome.storage.sync.set({ hasCompletedInitialOnboarding: true });
+    }
+
+    // Phase 3.25.0: Restore recipesEnabled flag if it existed
+    if (recipesEnabled) {
+      await chrome.storage.local.set({ recipesEnabled: true });
+      debug('[StateManager] Preserved recipesEnabled flag');
     }
 
     // Notify all subscribers of clear

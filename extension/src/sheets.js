@@ -778,6 +778,106 @@ async function sortSheetByDate(sheetId, tabName) {
 }
 
 /**
+ * Remove pending transactions that have been replaced by final posted transactions
+ * When Plaid sends a posted transaction, it includes pending_transaction_id linking to the pending version
+ * This function finds and removes those pending transactions to prevent duplicates
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} tabName - Tab name (usually 'Transactions')
+ * @param {array} incomingTransactions - New transactions being added
+ * @param {array} headers - Transaction headers
+ * @returns {Promise<number>} Number of pending transactions removed
+ */
+async function removePendingTransactions(sheetId, tabName, incomingTransactions, headers) {
+  const token = await getAuthToken();
+
+  // Find pending_transaction_id column index
+  const pendingTxnIdIndex = headers.indexOf('pending_transaction_id');
+  const txnIdIndex = headers.indexOf('transaction_id');
+
+  if (pendingTxnIdIndex === -1 || txnIdIndex === -1) {
+    debug('[removePendingTransactions] Required columns not found, skipping');
+    return 0;
+  }
+
+  // Collect all pending_transaction_ids from incoming transactions
+  const pendingIdsToRemove = new Set();
+  incomingTransactions.forEach(txn => {
+    if (txn.pending_transaction_id) {
+      pendingIdsToRemove.add(txn.pending_transaction_id);
+    }
+  });
+
+  if (pendingIdsToRemove.size === 0) {
+    debug('[removePendingTransactions] No pending transactions to remove');
+    return 0;
+  }
+
+  debug(`[removePendingTransactions] Found ${pendingIdsToRemove.size} pending transactions to remove:`, Array.from(pendingIdsToRemove));
+
+  // Read all transaction IDs from the sheet
+  const txnIdColumnLetter = columnNumberToLetter(txnIdIndex + 1);
+  const allTxnIds = await readRange(token, sheetId, `${tabName}!${txnIdColumnLetter}2:${txnIdColumnLetter}`);
+
+  if (allTxnIds.length === 0) {
+    debug('[removePendingTransactions] Sheet is empty, nothing to remove');
+    return 0;
+  }
+
+  // Find row indices to delete (rows that have transaction_id matching a pending_transaction_id)
+  const rowsToDelete = [];
+  for (let i = 0; i < allTxnIds.length; i++) {
+    const txnId = allTxnIds[i] && allTxnIds[i][0];
+    if (txnId && pendingIdsToRemove.has(txnId)) {
+      // Row number is i + 2 (i is 0-indexed, +1 for header, +1 for 1-indexed)
+      rowsToDelete.push(i + 2);
+    }
+  }
+
+  if (rowsToDelete.length === 0) {
+    debug('[removePendingTransactions] No matching pending transactions found in sheet');
+    return 0;
+  }
+
+  debug(`[removePendingTransactions] Deleting ${rowsToDelete.length} pending transactions at rows:`, rowsToDelete);
+
+  // Get sheet metadata to find the sheet ID
+  const metadata = await getSpreadsheetMetadata(token, sheetId);
+  const sheet = metadata.sheets?.find(s => s.properties.title === tabName);
+
+  if (!sheet) {
+    throw new Error(`Sheet '${tabName}' not found`);
+  }
+
+  const sheetIdNum = sheet.properties.sheetId;
+
+  // Delete rows in reverse order to maintain row indices
+  // Google Sheets API requires deleting from bottom to top
+  const requests = [];
+  rowsToDelete.sort((a, b) => b - a); // Sort descending
+
+  for (const rowNum of rowsToDelete) {
+    requests.push({
+      deleteDimension: {
+        range: {
+          sheetId: sheetIdNum,
+          dimension: 'ROWS',
+          startIndex: rowNum - 1, // 0-indexed
+          endIndex: rowNum // Exclusive end
+        }
+      }
+    });
+  }
+
+  // Execute all deletes in a single batch request
+  const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+  const body = { requests };
+  await sheetsApiRequest(token, url, 'POST', body);
+
+  debug(`[removePendingTransactions] Successfully removed ${rowsToDelete.length} pending transactions`);
+  return rowsToDelete.length;
+}
+
+/**
  * Write transactions data to the Transactions tab with deduplication
  * @param {string} sheetId - Spreadsheet ID
  * @param {array} transactionsData - Array of transaction objects from backend
@@ -799,6 +899,15 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
   // Ensure tab exists with proper headers
   await ensureTab(sheetId, tabName, headers);
   debug('[Sheets] Transactions tab ensured with headers');
+
+  // Remove pending transactions that have been replaced by final posted transactions
+  // This prevents duplicates when a pending transaction becomes final
+  if (!clearExisting && transactionsData.length > 0) {
+    const removedCount = await removePendingTransactions(sheetId, tabName, transactionsData, headers);
+    if (removedCount > 0) {
+      debug(`[Sheets] Removed ${removedCount} pending transactions that were replaced by posted transactions`);
+    }
+  }
 
   // Clear any existing data rows (including placeholder rows from tier changes)
   // Only clear if clearExisting is true (backfill mode)

@@ -3,24 +3,24 @@
  */
 
 .recipe-marketplace {
-  padding: 20px;
+  padding: 0;
   max-width: 100%;
 }
 
 .recipe-header {
   margin-bottom: 24px;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .recipe-header h2 {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
   color: #111827;
   margin: 0 0 8px 0;
 }
 
 .recipe-header p {
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
   margin: 0;
 }
@@ -29,7 +29,7 @@
 .recipe-filters {
   display: flex;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   padding: 0 4px;
 }
 
@@ -60,6 +60,12 @@
   box-shadow: 0 2px 8px rgba(11, 112, 58, 0.3);
 }
 
+/* Hide Installed Toggle */
+.hide-installed-toggle {
+  margin-bottom: 20px;
+  padding: 0 4px;
+}
+
 /* Recipe List */
 .recipe-list {
   display: flex;
@@ -88,7 +94,7 @@
 }
 
 .recipe-card-header h3 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
   margin: 0;
@@ -118,14 +124,16 @@
 }
 
 .recipe-author {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
   color: #6b7280;
   font-style: italic;
+  margin-top: 4px;
+  margin-bottom: 8px;
 }
 
 .recipe-description {
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
   margin: 0 0 12px 0;
   line-height: 1.5;
@@ -137,6 +145,7 @@
   margin-bottom: 12px;
   font-size: 13px;
   color: #6b7280;
+  align-items: center;
 }
 
 .recipe-stats span {
@@ -145,22 +154,42 @@
   gap: 4px;
 }
 
+.view-code-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 12px;
+  transition: color 0.2s;
+}
+
+.view-code-link:hover {
+  color: #0B703A;
+}
+
+.view-code-link svg {
+  flex-shrink: 0;
+}
+
 /* Recipe Actions */
 .recipe-actions {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .recipe-actions .btn-secondary,
 .recipe-actions .btn-primary {
-  flex: 1;
-  padding: 8px 16px;
+  width: 100%;
+  padding: 8px 12px;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
+  white-space: nowrap;
 }
 
 .recipe-actions .btn-secondary {
@@ -422,10 +451,6 @@
 
 /* Responsive adjustments */
 @media (max-width: 400px) {
-  .recipe-marketplace {
-    padding: 16px;
-  }
-
   .recipe-filters {
     flex-wrap: wrap;
   }
@@ -437,9 +462,5 @@
 
   .recipe-card {
     padding: 12px;
-  }
-
-  .recipe-actions {
-    flex-direction: column;
   }
 }

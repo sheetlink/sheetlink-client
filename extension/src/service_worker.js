@@ -269,21 +269,14 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
   if (message.type === 'OAUTH_SUCCESS') {
     debug('[Service Worker] Processing OAUTH_SUCCESS callback');
     const { accessToken, idToken, expiresIn, recipeScope } = message;  // Phase 3.16.0: ID token, Phase 3.25.0: recipe scope
+    debug('[Service Worker] recipeScope parameter:', recipeScope);
 
     // Cache the token with expiry
     const expiry = Date.now() + (parseInt(expiresIn) * 1000);
-    const storageData = {
+    await chrome.storage.local.set({
       googleAccessToken: accessToken,
       googleTokenExpiry: expiry
-    };
-
-    // Phase 3.25.0: If recipe scope was requested, mark it as enabled
-    if (recipeScope) {
-      debug('[Recipe Auth] Recipe scope granted, marking recipes as enabled');
-      storageData.recipesEnabled = true;
-    }
-
-    await chrome.storage.local.set(storageData);
+    });
 
     // Phase 3.8: Get Google user ID from Google's API using the access token
     try {
@@ -315,6 +308,10 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
           console.warn(`[Service Worker] New account: ${newEmail}`);
           console.warn('[Service Worker] Clearing all account-specific data...');
 
+          // Phase 3.25.0: Preserve recipesEnabled flag if recipe scope was just granted
+          const currentLocalData = await chrome.storage.local.get(['recipesEnabled']);
+          const recipesEnabledToPreserve = recipeScope || currentLocalData.recipesEnabled || false;
+
           // Clear all account data except onboarding flag
           await chrome.storage.sync.clear();
           await chrome.storage.local.clear();
@@ -323,6 +320,13 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
           if (currentData.hasCompletedInitialOnboarding) {
             await chrome.storage.sync.set({ hasCompletedInitialOnboarding: true });
             debug('[Service Worker] Preserved onboarding flag');
+          }
+
+          // Phase 3.25.0: Restore recipesEnabled flag if it was just granted
+          if (recipesEnabledToPreserve) {
+            await chrome.storage.local.set({ recipesEnabled: true });
+            await chrome.storage.sync.set({ recipesEnabled: true });
+            debug('[Service Worker] Preserved recipesEnabled flag');
           }
 
           debug('[Service Worker] ✅ Account data cleared - fresh start for new account');
@@ -398,13 +402,21 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
       console.error('[Service Worker] Failed to get Google user ID:', error);
     }
 
+    // Phase 3.25.0: If this was a recipe auth flow, mark recipes as enabled
+    // Check the recipeScope parameter from the OAuth callback instead of isRecipeAuthFlow flag
+    if (recipeScope) {
+      debug('[Recipe Auth] Recipe auth flow detected (from recipeScope parameter), enabling recipes');
+      await chrome.storage.local.set({ recipesEnabled: true });
+      await chrome.storage.sync.set({ recipesEnabled: true });
+      debug('[Recipe Auth] Stored recipesEnabled in both local and sync storage');
+    }
+
     // Call the pending callback if it exists
     if (pendingOAuthCallback) {
       // Recipe auth flow expects { success: true }, normal auth expects { token: accessToken }
-      if (isRecipeAuthFlow) {
+      if (recipeScope) {
         debug('[Recipe Auth] Recipe auth flow complete, sending success response');
         pendingOAuthCallback({ success: true });
-        isRecipeAuthFlow = false;
       } else {
         pendingOAuthCallback({ token: accessToken });
       }
@@ -671,4 +683,102 @@ async function checkAndRefreshToken() {
     console.error('[Token Monitor] Error checking token:', error);
   }
 }
+
+/**
+ * Phase 3.25.0: Message handler for recipe-related requests
+ */
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // Phase 3.25.0: Handle GET_AUTH_TOKEN requests for recipe installation
+  if (request.type === 'GET_AUTH_TOKEN') {
+    (async () => {
+      try {
+        const result = await chrome.storage.local.get('googleAccessToken');
+        if (result.googleAccessToken) {
+          sendResponse({ token: result.googleAccessToken });
+        } else {
+          sendResponse({ error: 'No token available' });
+        }
+      } catch (error) {
+        console.error('[Service Worker] Error getting auth token:', error);
+        sendResponse({ error: error.message });
+      }
+    })();
+    return true; // Keep channel open for async response
+  }
+
+  // Phase 3.25.0: Handle GET_SPREADSHEET_METADATA (bypasses CORS)
+  if (request.type === 'GET_SPREADSHEET_METADATA') {
+    (async () => {
+      try {
+        const { spreadsheetId, token } = request;
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/developerMetadata?metadataKey=sheetlink_recipe_script_id`;
+
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.metadata && data.metadata.length > 0) {
+            sendResponse({
+              success: true,
+              scriptId: data.metadata[0].metadataValue
+            });
+          } else {
+            sendResponse({ success: true, scriptId: null });
+          }
+        } else {
+          sendResponse({ success: false, error: `HTTP ${response.status}` });
+        }
+      } catch (error) {
+        console.error('[Service Worker] Error getting spreadsheet metadata:', error);
+        sendResponse({ success: false, error: error.message });
+      }
+    })();
+    return true; // Keep channel open for async response
+  }
+
+  // Phase 3.25.0: Handle SET_SPREADSHEET_METADATA (bypasses CORS)
+  if (request.type === 'SET_SPREADSHEET_METADATA') {
+    (async () => {
+      try {
+        const { spreadsheetId, scriptId, token } = request;
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`;
+
+        const metadataRequest = {
+          requests: [{
+            createDeveloperMetadata: {
+              developerMetadata: {
+                metadataKey: 'sheetlink_recipe_script_id',
+                metadataValue: scriptId,
+                location: { spreadsheet: true },
+                visibility: 'DOCUMENT'
+              }
+            }
+          }]
+        };
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(metadataRequest)
+        });
+
+        if (response.ok) {
+          sendResponse({ success: true });
+        } else {
+          const errorData = await response.json();
+          sendResponse({ success: false, error: errorData });
+        }
+      } catch (error) {
+        console.error('[Service Worker] Error setting spreadsheet metadata:', error);
+        sendResponse({ success: false, error: error.message });
+      }
+    })();
+    return true; // Keep channel open for async response
+  }
+});
 
