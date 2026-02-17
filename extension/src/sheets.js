@@ -467,11 +467,13 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
   debug(`[appendUniqueRows] Found ${existingIds.size} existing IDs in sheet`);
   debug(`[appendUniqueRows] Incoming rows to check: ${rows.length}`);
 
-  // Filter out rows with existing IDs
-  // Assuming the rows array has the same column order as headers
+  // Filter out rows with existing IDs, also dedup within the incoming batch itself
+  // (Plaid offset-pagination can return the same transaction_id twice in one sync)
   const newRows = rows.filter(row => {
     const rowId = row[idColumnIndex];
-    return rowId && !existingIds.has(rowId);
+    if (!rowId || existingIds.has(rowId)) return false;
+    existingIds.add(rowId); // mark as seen so a second occurrence in this batch is also rejected
+    return true;
   });
 
   debug(`[appendUniqueRows] After deduplication: ${newRows.length} unique rows to append`);
