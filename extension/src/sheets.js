@@ -454,25 +454,27 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
 
   debug(`[appendUniqueRows] Read ${idColumnData.length} existing IDs from column ${idColumnLetter}`);
 
-  // Use simple ID-based deduplication (Plaid transaction_ids are stable in production)
-  // Extract existing IDs
+  // Use case-insensitive ID-based deduplication
+  // Plaid occasionally returns the same transaction_id with different casing
   const existingIds = new Set();
   for (let i = 0; i < idColumnData.length; i++) {
     const idCell = idColumnData[i];
     if (idCell && idCell[0]) {
-      existingIds.add(idCell[0]);
+      existingIds.add(String(idCell[0]).toLowerCase().trim());
     }
   }
 
   debug(`[appendUniqueRows] Found ${existingIds.size} existing IDs in sheet`);
   debug(`[appendUniqueRows] Incoming rows to check: ${rows.length}`);
 
-  // Filter out rows with existing IDs, also dedup within the incoming batch itself
-  // (Plaid offset-pagination can return the same transaction_id twice in one sync)
+  // Filter out rows with existing IDs, also dedup within the incoming batch itself.
+  // Use case-insensitive comparison — Plaid occasionally returns the same transaction_id
+  // with different casing, which COUNTIF catches but JS Set.has() misses.
   const newRows = rows.filter(row => {
-    const rowId = row[idColumnIndex];
+    const rawId = row[idColumnIndex];
+    const rowId = rawId ? String(rawId).toLowerCase().trim() : null;
     if (!rowId || existingIds.has(rowId)) return false;
-    existingIds.add(rowId); // mark as seen so a second occurrence in this batch is also rejected
+    existingIds.add(rowId);
     return true;
   });
 
@@ -960,6 +962,21 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
       });
     });
   }
+
+  // Deduplicate transactionsData by transaction_id before anything else
+  // Guards against: Plaid pagination drift, two institutions returning same ID,
+  // or any other upstream source of duplicate transaction_ids
+  const seenTxnIds = new Set();
+  const beforeDedup = transactionsData.length;
+  transactionsData = transactionsData.filter(txn => {
+    // Normalize to lowercase for case-insensitive dedup
+    // Plaid occasionally returns the same transaction_id with different casing
+    const normalizedId = txn.transaction_id ? txn.transaction_id.toLowerCase().trim() : null;
+    if (!normalizedId || seenTxnIds.has(normalizedId)) return false;
+    seenTxnIds.add(normalizedId);
+    return true;
+  });
+  debug(`[Sheets] Dedup check: ${beforeDedup} in → ${transactionsData.length} out (${beforeDedup - transactionsData.length} duplicates removed)`);
 
   // Sort transactions by date in ascending order (oldest first)
   // This ensures chronological order when appending: older dates at top, newer at bottom
