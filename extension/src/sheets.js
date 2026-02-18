@@ -350,12 +350,13 @@ async function ensureTab(sheetId, tabName, headersArray) {
     await createTab(token, sheetId, tabName);
   }
 
-  // Check if headers exist and match expected count
-  // Read wider range (34 cols = PRO max) to detect downgrades with extra columns
-  const firstRow = await readRange(token, sheetId, `${tabName}!A1:AH1`);
+  // Check if headers exist and have at least the expected columns.
+  // Read a wide range to capture any user-added columns beyond the sync schema.
+  // We only rewrite headers if there are FEWER columns than expected (missing sync columns),
+  // NOT if there are MORE (user may have added custom columns to the right).
+  const firstRow = await readRange(token, sheetId, `${tabName}!A1:BZ1`);
 
-  // Write headers if they don't exist OR if count doesn't match (tier change)
-  if (firstRow.length === 0 || firstRow[0].length === 0 || firstRow[0].length !== headersArray.length) {
+  if (firstRow.length === 0 || firstRow[0].length === 0 || firstRow[0].length < headersArray.length) {
     // Clear entire header row first to remove any old columns
     const clearHeaderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(tabName + '!1:1')}:clear`;
     await sheetsApiRequest(token, clearHeaderUrl, 'POST', {});
