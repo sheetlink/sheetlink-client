@@ -4,7 +4,7 @@
 
 export const CONFIG = {
   // Environment (local dev - auto-set to production in build script)
-  ENV: "development",
+  ENV: "production",
 
   // Debug logging (true for local dev - auto-set to false in build script)
   DEBUG: true,
