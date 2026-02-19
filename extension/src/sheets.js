@@ -281,6 +281,8 @@ async function createTab(token, sheetId, tabName) {
 async function writeHeaders(token, sheetId, tabName, headers) {
   const lastColumn = columnNumberToLetter(headers.length);
   const range = `${tabName}!A1:${lastColumn}1`;
+  // Phase 3.23.0: Use RAW mode for fast writes (no parsing overhead)
+  // Apps Script recipes will format date columns when needed for formulas
   const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`;
 
   const body = {
@@ -315,6 +317,8 @@ async function appendRows(token, sheetId, tabName, rows) {
   if (rows.length === 0) return;
 
   const range = `${tabName}!A:A`;
+  // Phase 3.23.0: Use RAW mode for fast writes (no parsing overhead)
+  // Apps Script recipes will format date columns when needed for formulas
   const url = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`;
 
   const body = {
@@ -346,12 +350,13 @@ async function ensureTab(sheetId, tabName, headersArray) {
     await createTab(token, sheetId, tabName);
   }
 
-  // Check if headers exist and match expected count
-  // Read wider range (34 cols = PRO max) to detect downgrades with extra columns
-  const firstRow = await readRange(token, sheetId, `${tabName}!A1:AH1`);
+  // Check if headers exist and have at least the expected columns.
+  // Read a wide range to capture any user-added columns beyond the sync schema.
+  // We only rewrite headers if there are FEWER columns than expected (missing sync columns),
+  // NOT if there are MORE (user may have added custom columns to the right).
+  const firstRow = await readRange(token, sheetId, `${tabName}!A1:BZ1`);
 
-  // Write headers if they don't exist OR if count doesn't match (tier change)
-  if (firstRow.length === 0 || firstRow[0].length === 0 || firstRow[0].length !== headersArray.length) {
+  if (firstRow.length === 0 || firstRow[0].length === 0 || firstRow[0].length < headersArray.length) {
     // Clear entire header row first to remove any old columns
     const clearHeaderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${encodeURIComponent(tabName + '!1:1')}:clear`;
     await sheetsApiRequest(token, clearHeaderUrl, 'POST', {});
@@ -374,11 +379,59 @@ async function ensureTab(sheetId, tabName, headersArray) {
 async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
   if (rows.length === 0) return 0;
 
+  const perfStart = performance.now();
   const token = await getAuthToken();
 
+  // Phase 3.23.0: Fast path - check if sheet is empty with timeout fallback
+  // Some sheets have "phantom rows" that make reads extremely slow
+  debug(`[PERF] Checking if sheet is empty (with 5s timeout)...`);
+  const emptyCheckStart = performance.now();
+
+  try {
+    // Race between reading A2 and a 5-second timeout
+    const firstDataCell = await Promise.race([
+      readRange(token, sheetId, `${tabName}!A2:A2`),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
+    ]);
+
+    const checkTime = Math.round(performance.now() - emptyCheckStart);
+    debug(`[PERF] Empty check took ${checkTime}ms`);
+
+    const isEmpty = firstDataCell.length === 0 || !firstDataCell[0] || !firstDataCell[0][0];
+
+    if (isEmpty) {
+      // Sheet is empty, skip deduplication entirely
+      debug(`[appendUniqueRows] Sheet is empty, skipping deduplication`);
+      debug(`[PERF] Starting appendRows (${rows.length} rows)...`);
+      const appendStart = performance.now();
+      await appendRows(token, sheetId, tabName, rows);
+      debug(`[PERF] appendRows took ${Math.round(performance.now() - appendStart)}ms`);
+      debug(`[PERF] Total appendUniqueRows took ${Math.round(performance.now() - perfStart)}ms`);
+      return rows.length;
+    }
+  } catch (error) {
+    if (error.message === 'timeout') {
+      // Sheet read timed out - likely has phantom rows
+      // Skip deduplication and just append (user will need to clear duplicates manually)
+      debug(`[appendUniqueRows] WARNING: Sheet read timed out after 5s - skipping deduplication`);
+      debug(`[appendUniqueRows] This sheet may have "phantom rows". Consider creating a fresh sheet.`);
+      debug(`[PERF] Starting appendRows (${rows.length} rows)...`);
+      const appendStart = performance.now();
+      await appendRows(token, sheetId, tabName, rows);
+      debug(`[PERF] appendRows took ${Math.round(performance.now() - appendStart)}ms`);
+      debug(`[PERF] Total appendUniqueRows took ${Math.round(performance.now() - perfStart)}ms`);
+      return rows.length;
+    }
+    throw error; // Re-throw other errors
+  }
+
+  // Sheet has data, do full deduplication
   // Phase 3.22.0: Optimization - read only the header row and ID column for faster deduplication
   // Instead of reading A:ZZ (entire sheet), read just A1:ZZ1 (headers) and then just column A (IDs)
+  debug(`[PERF] Starting header read...`);
+  const headerStart = performance.now();
   const headersData = await readRange(token, sheetId, `${tabName}!A1:ZZ1`);
+  debug(`[PERF] Header read took ${Math.round(performance.now() - headerStart)}ms`);
 
   if (headersData.length === 0) {
     // No data at all, shouldn't happen if ensureTab was called
@@ -395,28 +448,32 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
   // Phase 3.22.0: Read only the ID column for much faster deduplication
   // Convert column index to column letter (0 = A, 1 = B, etc.)
   const idColumnLetter = columnNumberToLetter(idColumnIndex + 1);
+  debug(`[PERF] Starting ID column read (${idColumnLetter}2:${idColumnLetter})...`);
+  const idReadStart = performance.now();
   const idColumnData = await readRange(token, sheetId, `${tabName}!${idColumnLetter}2:${idColumnLetter}`);
+  debug(`[PERF] ID column read took ${Math.round(performance.now() - idReadStart)}ms`);
 
   debug(`[appendUniqueRows] Read ${idColumnData.length} existing IDs from column ${idColumnLetter}`);
 
-  // Use simple ID-based deduplication (Plaid transaction_ids are stable in production)
-  // Extract existing IDs
+  // Case-sensitive ID deduplication — Plaid IDs differing only by case are distinct transactions.
   const existingIds = new Set();
   for (let i = 0; i < idColumnData.length; i++) {
     const idCell = idColumnData[i];
     if (idCell && idCell[0]) {
-      existingIds.add(idCell[0]);
+      existingIds.add(String(idCell[0]));
     }
   }
 
   debug(`[appendUniqueRows] Found ${existingIds.size} existing IDs in sheet`);
   debug(`[appendUniqueRows] Incoming rows to check: ${rows.length}`);
 
-  // Filter out rows with existing IDs
-  // Assuming the rows array has the same column order as headers
+  // Filter out rows with existing IDs, also dedup within the incoming batch itself
+  // (guards against Plaid pagination drift returning the exact same ID twice).
   const newRows = rows.filter(row => {
-    const rowId = row[idColumnIndex];
-    return rowId && !existingIds.has(rowId);
+    const rowId = row[idColumnIndex] ? String(row[idColumnIndex]) : null;
+    if (!rowId || existingIds.has(rowId)) return false;
+    existingIds.add(rowId);
+    return true;
   });
 
   debug(`[appendUniqueRows] After deduplication: ${newRows.length} unique rows to append`);
@@ -424,9 +481,13 @@ async function appendUniqueRows(sheetId, tabName, rows, idColumnName) {
 
   // Append new rows
   if (newRows.length > 0) {
+    debug(`[PERF] Starting appendRows (${newRows.length} rows)...`);
+    const appendStart = performance.now();
     await appendRows(token, sheetId, tabName, newRows);
+    debug(`[PERF] appendRows took ${Math.round(performance.now() - appendStart)}ms`);
   }
 
+  debug(`[PERF] Total appendUniqueRows took ${Math.round(performance.now() - perfStart)}ms`);
   return newRows.length;
 }
 
@@ -576,6 +637,94 @@ async function writeAccounts(sheetId, accountsData) {
 }
 
 /**
+ * Format date columns to display as dates (not serial numbers)
+ * Phase 3.23.0: Ensures dates display correctly in Google Sheets
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} tabName - Tab name
+ */
+async function formatDateColumns(sheetId, tabName) {
+  const token = await getAuthToken();
+
+  // Get sheet metadata to find the sheet ID
+  const metadata = await getSpreadsheetMetadata(token, sheetId);
+  const sheet = metadata.sheets?.find(s => s.properties.title === tabName);
+
+  if (!sheet) {
+    throw new Error(`Sheet '${tabName}' not found`);
+  }
+
+  const sheetIdNum = sheet.properties.sheetId;
+
+  // Read headers to find date column indices
+  const headersData = await readRange(token, sheetId, `${tabName}!A1:ZZ1`);
+  if (headersData.length === 0) {
+    throw new Error('No headers found in sheet');
+  }
+
+  const headers = headersData[0];
+  const dateColumnIndex = headers.indexOf('date');
+  const authorizedDateColumnIndex = headers.indexOf('authorized_date');
+
+  if (dateColumnIndex === -1) {
+    debug('[Sheets] Date column not found, skipping date formatting');
+    return;
+  }
+
+  // Apply date formatting to date columns
+  const requests = [];
+
+  if (dateColumnIndex !== -1) {
+    requests.push({
+      repeatCell: {
+        range: {
+          sheetId: sheetIdNum,
+          startRowIndex: 1, // Skip header
+          startColumnIndex: dateColumnIndex,
+          endColumnIndex: dateColumnIndex + 1
+        },
+        cell: {
+          userEnteredFormat: {
+            numberFormat: {
+              type: 'DATE',
+              pattern: 'yyyy-mm-dd'
+            }
+          }
+        },
+        fields: 'userEnteredFormat.numberFormat'
+      }
+    });
+  }
+
+  if (authorizedDateColumnIndex !== -1) {
+    requests.push({
+      repeatCell: {
+        range: {
+          sheetId: sheetIdNum,
+          startRowIndex: 1, // Skip header
+          startColumnIndex: authorizedDateColumnIndex,
+          endColumnIndex: authorizedDateColumnIndex + 1
+        },
+        cell: {
+          userEnteredFormat: {
+            numberFormat: {
+              type: 'DATE',
+              pattern: 'yyyy-mm-dd'
+            }
+          }
+        },
+        fields: 'userEnteredFormat.numberFormat'
+      }
+    });
+  }
+
+  if (requests.length > 0) {
+    const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+    const body = { requests };
+    await sheetsApiRequest(token, url, 'POST', body);
+  }
+}
+
+/**
  * Sort a sheet by the 'date' column in ascending order (oldest first)
  * Phase 3.22.0: Maintains chronological order after appending data
  * @param {string} sheetId - Spreadsheet ID
@@ -631,6 +780,106 @@ async function sortSheetByDate(sheetId, tabName) {
 }
 
 /**
+ * Remove pending transactions that have been replaced by final posted transactions
+ * When Plaid sends a posted transaction, it includes pending_transaction_id linking to the pending version
+ * This function finds and removes those pending transactions to prevent duplicates
+ * @param {string} sheetId - Spreadsheet ID
+ * @param {string} tabName - Tab name (usually 'Transactions')
+ * @param {array} incomingTransactions - New transactions being added
+ * @param {array} headers - Transaction headers
+ * @returns {Promise<number>} Number of pending transactions removed
+ */
+async function removePendingTransactions(sheetId, tabName, incomingTransactions, headers) {
+  const token = await getAuthToken();
+
+  // Find pending_transaction_id column index
+  const pendingTxnIdIndex = headers.indexOf('pending_transaction_id');
+  const txnIdIndex = headers.indexOf('transaction_id');
+
+  if (pendingTxnIdIndex === -1 || txnIdIndex === -1) {
+    debug('[removePendingTransactions] Required columns not found, skipping');
+    return 0;
+  }
+
+  // Collect all pending_transaction_ids from incoming transactions
+  const pendingIdsToRemove = new Set();
+  incomingTransactions.forEach(txn => {
+    if (txn.pending_transaction_id) {
+      pendingIdsToRemove.add(txn.pending_transaction_id);
+    }
+  });
+
+  if (pendingIdsToRemove.size === 0) {
+    debug('[removePendingTransactions] No pending transactions to remove');
+    return 0;
+  }
+
+  debug(`[removePendingTransactions] Found ${pendingIdsToRemove.size} pending transactions to remove:`, Array.from(pendingIdsToRemove));
+
+  // Read all transaction IDs from the sheet
+  const txnIdColumnLetter = columnNumberToLetter(txnIdIndex + 1);
+  const allTxnIds = await readRange(token, sheetId, `${tabName}!${txnIdColumnLetter}2:${txnIdColumnLetter}`);
+
+  if (allTxnIds.length === 0) {
+    debug('[removePendingTransactions] Sheet is empty, nothing to remove');
+    return 0;
+  }
+
+  // Find row indices to delete (rows that have transaction_id matching a pending_transaction_id)
+  const rowsToDelete = [];
+  for (let i = 0; i < allTxnIds.length; i++) {
+    const txnId = allTxnIds[i] && allTxnIds[i][0];
+    if (txnId && pendingIdsToRemove.has(txnId)) {
+      // Row number is i + 2 (i is 0-indexed, +1 for header, +1 for 1-indexed)
+      rowsToDelete.push(i + 2);
+    }
+  }
+
+  if (rowsToDelete.length === 0) {
+    debug('[removePendingTransactions] No matching pending transactions found in sheet');
+    return 0;
+  }
+
+  debug(`[removePendingTransactions] Deleting ${rowsToDelete.length} pending transactions at rows:`, rowsToDelete);
+
+  // Get sheet metadata to find the sheet ID
+  const metadata = await getSpreadsheetMetadata(token, sheetId);
+  const sheet = metadata.sheets?.find(s => s.properties.title === tabName);
+
+  if (!sheet) {
+    throw new Error(`Sheet '${tabName}' not found`);
+  }
+
+  const sheetIdNum = sheet.properties.sheetId;
+
+  // Delete rows in reverse order to maintain row indices
+  // Google Sheets API requires deleting from bottom to top
+  const requests = [];
+  rowsToDelete.sort((a, b) => b - a); // Sort descending
+
+  for (const rowNum of rowsToDelete) {
+    requests.push({
+      deleteDimension: {
+        range: {
+          sheetId: sheetIdNum,
+          dimension: 'ROWS',
+          startIndex: rowNum - 1, // 0-indexed
+          endIndex: rowNum // Exclusive end
+        }
+      }
+    });
+  }
+
+  // Execute all deletes in a single batch request
+  const url = `${SHEETS_API_BASE}/${sheetId}:batchUpdate`;
+  const body = { requests };
+  await sheetsApiRequest(token, url, 'POST', body);
+
+  debug(`[removePendingTransactions] Successfully removed ${rowsToDelete.length} pending transactions`);
+  return rowsToDelete.length;
+}
+
+/**
  * Write transactions data to the Transactions tab with deduplication
  * @param {string} sheetId - Spreadsheet ID
  * @param {array} transactionsData - Array of transaction objects from backend
@@ -652,6 +901,15 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
   // Ensure tab exists with proper headers
   await ensureTab(sheetId, tabName, headers);
   debug('[Sheets] Transactions tab ensured with headers');
+
+  // Remove pending transactions that have been replaced by final posted transactions
+  // This prevents duplicates when a pending transaction becomes final
+  if (!clearExisting && transactionsData.length > 0) {
+    const removedCount = await removePendingTransactions(sheetId, tabName, transactionsData, headers);
+    if (removedCount > 0) {
+      debug(`[Sheets] Removed ${removedCount} pending transactions that were replaced by posted transactions`);
+    }
+  }
 
   // Clear any existing data rows (including placeholder rows from tier changes)
   // Only clear if clearExisting is true (backfill mode)
@@ -702,6 +960,19 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
       });
     });
   }
+
+  // Deduplicate transactionsData by transaction_id before anything else.
+  // Case-sensitive — Plaid IDs that differ only by case are distinct transactions.
+  // Guards against Plaid pagination drift returning the exact same ID twice.
+  const seenTxnIds = new Set();
+  const beforeDedup = transactionsData.length;
+  transactionsData = transactionsData.filter(txn => {
+    const id = txn.transaction_id;
+    if (!id || seenTxnIds.has(id)) return false;
+    seenTxnIds.add(id);
+    return true;
+  });
+  debug(`[Sheets] Dedup check: ${beforeDedup} in → ${transactionsData.length} out (${beforeDedup - transactionsData.length} exact duplicates removed)`);
 
   // Sort transactions by date in ascending order (oldest first)
   // This ensures chronological order when appending: older dates at top, newer at bottom
@@ -767,13 +1038,9 @@ async function writeTransactions(sheetId, transactionsData, accountsData = [], t
 
   debug('[Sheets] Wrote', newCount, 'new transactions (out of', rows.length, 'total)');
 
-  // Phase 3.22.0: Sort sheet by date after appending to maintain chronological order
-  // This is especially important when upgrading tiers (FREE → PRO adds historical data)
-  if (newCount > 0) {
-    debug('[Sheets] Sorting transactions by date...');
-    await sortSheetByDate(sheetId, tabName);
-    debug('[Sheets] Transactions sorted successfully');
-  }
+  // Phase 3.23.0: Removed sorting step for performance
+  // Transactions from Plaid API are already in reverse chronological order
+  // If users need sorting, they can manually sort in Google Sheets (Data > Sort range)
 
   return newCount;
 }
@@ -937,6 +1204,7 @@ async function clearTransactionsTab(sheetId, tier = 'free', skipPlaceholders = f
       placeholderData.push(row);
     }
 
+    // Phase 3.23.0: Use RAW mode for fast writes (no parsing overhead)
     const placeholderUrl = `${SHEETS_API_BASE}/${sheetId}/values/${tabName}!A2:append?valueInputOption=RAW`;
     await sheetsApiRequest(token, placeholderUrl, 'POST', { values: placeholderData });
     debug(`[Sheets] Added ${placeholderRows} placeholder rows for loading state`);

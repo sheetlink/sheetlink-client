@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SheetLink</title>
   <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="styles/recipes.css">
 </head>
 <body>
   <!-- Phase 3.13: Unified loading screen (hidden by JS when ready) -->
@@ -40,12 +41,13 @@
           <div class="user-tier-container">
             <span class="tier-badge hidden" id="tierBadge"></span>
             <span class="user-tier" id="userTier">Free (7 days)</span>
-            <span class="tier-info-icon">ⓘ</span>
-            <div class="tier-tooltip">
-              <div class="tier-tooltip-content">
-                Your plan allows syncing <strong id="tierDaysTooltip">7 days</strong> of transaction history.
-              </div>
-            </div>
+            <!-- Settings Icon -->
+            <button class="header-settings-btn" id="headerSettingsBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -408,6 +410,11 @@
         </div>
       </div>
 
+      <!-- Recipes Page -->
+      <div id="page-recipes" class="page hidden">
+        <div id="recipe-container"></div>
+      </div>
+
       <!-- Settings Page -->
       <div id="page-settings" class="page hidden">
         <h2 style="margin-bottom: 16px; font-size: 18px; font-weight: 600;">Settings</h2>
@@ -432,59 +439,7 @@
           </button>
         </div>
 
-        <!-- Sheet Defaults -->
-        <div class="card" style="margin-bottom: 16px;">
-          <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">Sheet Defaults</h3>
-
-          <div style="margin-bottom: 12px;">
-            <label for="settingsAccountsTabName" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
-              Accounts Tab Name
-            </label>
-            <input
-              type="text"
-              id="settingsAccountsTabName"
-              value="Accounts"
-              placeholder="Accounts"
-              style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; transition: border-color 0.2s;"
-            >
-            <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0;">
-              Name of the sheet tab where account balances will be written
-            </p>
-          </div>
-
-          <div>
-            <label for="settingsTransactionsTabName" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
-              Transactions Tab Name
-            </label>
-            <input
-              type="text"
-              id="settingsTransactionsTabName"
-              value="Transactions"
-              placeholder="Transactions"
-              style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; transition: border-color 0.2s;"
-            >
-            <p style="font-size: 11px; color: #6b7280; margin: 4px 0 0 0;">
-              Name of the sheet tab where transaction data will be written
-            </p>
-          </div>
-
-          <div style="margin-top: 12px; opacity: 0.6;">
-            <label for="settingsRulesTabName" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
-              Rules Tab Name 🔒
-            </label>
-            <input
-              type="text"
-              id="settingsRulesTabName"
-              value="Rules"
-              placeholder="Rules"
-              disabled
-              style="width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; cursor: not-allowed; background: #f9fafb;"
-            >
-            <p style="font-size: 11px; color: #9ca3af; margin: 4px 0 0 0; font-style: italic;">
-              Requires Pro plan - Name of the sheet tab for categorization rules
-            </p>
-          </div>
-        </div>
+        <!-- Sheet Defaults - Removed: Sheet names are now fixed as 'Transactions' and 'Accounts' for recipe compatibility -->
 
         <!-- Features -->
         <div class="card" style="margin-bottom: 16px;">
@@ -730,14 +685,16 @@
         </span>
         <span class="nav-label">Sheet</span>
       </button>
-      <button class="nav-tab" data-page="settings">
+      <button class="nav-tab" data-page="recipes">
         <span class="nav-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-            <circle cx="12" cy="12" r="3"/>
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            <path d="M8 7h8"/>
+            <path d="M8 11h8"/>
           </svg>
         </span>
-        <span class="nav-label">Settings</span>
+        <span class="nav-label">Recipes</span>
       </button>
     </footer>
 

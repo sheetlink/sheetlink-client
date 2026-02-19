@@ -1,6 +1,7 @@
 // popup.js - Main UI controller for extension popup
 
 import { CONFIG } from '../config.js';
+import { RecipeMarketplace } from './recipes/RecipeMarketplace.js';
 
 // Update global debug flag from CONFIG (in case it was changed)
 window.SHEETLINK_DEBUG = CONFIG.DEBUG;
@@ -64,12 +65,12 @@ let sheetErrorBanner, sheetErrorDetail, syncErrorBanner;
 
 // Phase 3.10: Post-onboarding navigation
 let footerNav, legacyFooter;
-let pageHome, pageBank, pageSheet, pageSettings;
+let pageHome, pageBank, pageSheet, pageRecipes, pageSettings;
 let homeSyncBtn, homeLastSync, homePlanTier, homeStatusPlaid, homeStatusSheet, homeSyncStatus;
 let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn;
 let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBtn;
 let settingsUserEmail, settingsUserPicture, settingsUserInitial, logoutBtn;
-let settingsAccountsTabName, settingsTransactionsTabName, settingsAppendOnly, saveSettingsBtn, settingsStatusMessage;
+let settingsAppendOnly, saveSettingsBtn, settingsStatusMessage;
 let currentTab = 'home';
 
 // User control panel header elements
@@ -201,6 +202,7 @@ function initializeElements() {
   pageHome = document.getElementById('page-home');
   pageBank = document.getElementById('page-bank');
   pageSheet = document.getElementById('page-sheet');
+  pageRecipes = document.getElementById('page-recipes');
   pageSettings = document.getElementById('page-settings');
 
   // Home page elements
@@ -230,8 +232,6 @@ function initializeElements() {
   settingsUserPicture = document.getElementById('settingsUserPicture');
   settingsUserInitial = document.getElementById('settingsUserInitial');
   logoutBtn = document.getElementById('logoutBtn');
-  settingsAccountsTabName = document.getElementById('settingsAccountsTabName');
-  settingsTransactionsTabName = document.getElementById('settingsTransactionsTabName');
   settingsAppendOnly = document.getElementById('settingsAppendOnly');
   saveSettingsBtn = document.getElementById('saveSettingsBtn');
   settingsStatusMessage = document.getElementById('settingsStatusMessage');
@@ -343,7 +343,7 @@ function attachEventListeners() {
 }
 
 function initializeTooltips() {
-  // Find all info icons and attach hover listeners
+  // Sync button tooltip
   const infoIcons = document.querySelectorAll('.info-icon');
 
   infoIcons.forEach(icon => {
@@ -362,6 +362,24 @@ function initializeTooltips() {
     });
 
     // Hide tooltip when leaving icon
+    icon.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('show');
+    });
+  });
+
+  // Tier tooltip
+  const tierInfoIcons = document.querySelectorAll('.tier-info-icon');
+  tierInfoIcons.forEach(icon => {
+    const container = icon.closest('.user-tier-container');
+    if (!container) return;
+
+    const tooltip = container.querySelector('.tier-tooltip');
+    if (!tooltip) return;
+
+    icon.addEventListener('mouseenter', () => {
+      tooltip.classList.add('show');
+    });
+
     icon.addEventListener('mouseleave', () => {
       tooltip.classList.remove('show');
     });
@@ -1157,6 +1175,18 @@ async function updateTierDisplay() {
       } else {
         autoSyncCard.style.display = 'block';
       }
+    }
+
+    // Phase 3.25.7: Hide upgrade placeholder for PRO users (they have all features)
+    const upgradePlaceholders = document.querySelectorAll('.upgrade-placeholder');
+    if (upgradePlaceholders) {
+      upgradePlaceholders.forEach(placeholder => {
+        if (data.tier === 'pro') {
+          placeholder.style.display = 'none';
+        } else {
+          placeholder.style.display = 'block';
+        }
+      });
     }
   } catch (error) {
     // Silently fail - keep default "Free (7 days)" and hide auto-sync
@@ -3129,7 +3159,7 @@ async function switchTab(tabName) {
   document.body.classList.remove('welcome-active');
 
   // Hide all pages
-  const pages = [pageHome, pageBank, pageSheet, pageSettings];
+  const pages = [pageHome, pageBank, pageSheet, pageRecipes, pageSettings];
   pages.forEach(page => {
     if (page) {
       page.classList.remove('active');
@@ -3142,6 +3172,7 @@ async function switchTab(tabName) {
   if (tabName === 'home') targetPage = pageHome;
   if (tabName === 'bank') targetPage = pageBank;
   if (tabName === 'sheet') targetPage = pageSheet;
+  if (tabName === 'recipes') targetPage = pageRecipes;
   if (tabName === 'settings') targetPage = pageSettings;
 
   if (targetPage) {
@@ -3166,6 +3197,7 @@ async function switchTab(tabName) {
   if (tabName === 'home') await loadHomePage();
   if (tabName === 'bank') await loadBankPage();
   if (tabName === 'sheet') await loadSheetPage();
+  if (tabName === 'recipes') await loadRecipesPage();
   if (tabName === 'settings') await loadSettingsPage();
 }
 
@@ -3224,6 +3256,14 @@ async function initializeNavigation() {
       switchTab(page);
     });
   });
+
+  // Phase 3.25.8: Header settings button listener
+  const headerSettingsBtn = document.getElementById('headerSettingsBtn');
+  if (headerSettingsBtn) {
+    headerSettingsBtn.addEventListener('click', () => {
+      switchTab('settings');
+    });
+  }
 
   // Phase 3.13: Hide initial loader after navigation is ready
   hideLoading();
@@ -4084,6 +4124,28 @@ function attachNavigationEventListeners() {
 }
 
 /**
+ * Load Recipes page
+ */
+let recipeMarketplace = null;
+
+async function loadRecipesPage() {
+  debug('[Recipes] Loading recipes page');
+
+  // Initialize recipe marketplace if not already done
+  if (!recipeMarketplace) {
+    recipeMarketplace = new RecipeMarketplace('recipe-container');
+    try {
+      await recipeMarketplace.init();
+    } catch (error) {
+      console.error('[Recipes] Error initializing marketplace:', error);
+    }
+  }
+
+  // Initialize tooltips
+  initializeTooltips();
+}
+
+/**
  * Load Settings page
  */
 async function loadSettingsPage() {
@@ -4118,8 +4180,7 @@ async function loadSettingsPage() {
     transactionsTabName: 'Transactions',
     appendOnly: true
   }, (settings) => {
-    if (settingsAccountsTabName) settingsAccountsTabName.value = settings.accountsTabName;
-    if (settingsTransactionsTabName) settingsTransactionsTabName.value = settings.transactionsTabName;
+    // Tab names are now fixed as 'Transactions' and 'Accounts' for recipe compatibility
     if (settingsAppendOnly) settingsAppendOnly.checked = settings.appendOnly;
   });
 }
@@ -4131,9 +4192,9 @@ async function handleSaveSettings() {
   debug('[Settings] Saving settings');
 
   try {
-    // Get values from inputs
-    const accountsTabName = settingsAccountsTabName?.value || 'Accounts';
-    const transactionsTabName = settingsTransactionsTabName?.value || 'Transactions';
+    // Tab names are now fixed as 'Transactions' and 'Accounts' for recipe compatibility
+    const accountsTabName = 'Accounts';
+    const transactionsTabName = 'Transactions';
     const appendOnly = settingsAppendOnly?.checked ?? true;
 
     // Save to storage

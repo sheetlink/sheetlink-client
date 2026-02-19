@@ -13,7 +13,63 @@ This Privacy Policy describes how the Plaid → Google Sheets Chrome Extension (
 - ✅ Rules/categorization runs client-side (in your browser, never sent anywhere)
 - ✅ We only store encrypted Plaid tokens on our backend (for sync purposes)
 - ✅ We never see, store, or access your Google Sheets
-- ✅ No analytics, no tracking, no selling of data
+- ✅ Only anonymous aggregate analytics (recipe install counts), no user tracking, no selling of data
+
+---
+
+## Google API OAuth Compliance Summary
+
+In compliance with the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy) and [Google APIs Terms of Service](https://developers.google.com/terms), this section summarizes how SheetLink accesses, uses, stores, and protects Google user data:
+
+### 1. Data Accessed
+SheetLink requests the following Google API scopes:
+- **`https://www.googleapis.com/auth/spreadsheets`** - Access to read and write data in your Google Sheets
+- **`https://www.googleapis.com/auth/script.projects`** - Access to create and manage Apps Script projects for recipe installation
+
+We access:
+- Google Sheets API: To write banking transaction data to spreadsheets you explicitly select
+- Apps Script API: To programmatically install analysis recipes (pre-built code) into container-bound Apps Script projects
+- Google OAuth user info: Your email and user ID for authentication and account management
+
+### 2. Data Usage
+- **Spreadsheets scope**: Used exclusively to write banking transaction data and account balances to your Google Sheets. All data processing happens client-side in the extension.
+- **Apps Script scope**: Used exclusively to create container-bound script projects, deploy recipe code, and manage custom menu functions. We only access the specific script project we create for your spreadsheet.
+- **User info**: Used for authentication, subscription tier management, and associating encrypted Plaid tokens with your account.
+
+### 3. Data Sharing
+We **DO NOT** share Google user data with any third parties. Specifically:
+- ❌ No selling of data
+- ❌ No sharing with advertisers or data brokers
+- ❌ No external analytics services receive Google user data
+- ❌ No access to your Google Sheets content (data stays in your Sheet under your control)
+
+We may only disclose data if required by law (court order, subpoena). See [Data Sharing & Disclosure](#data-sharing--disclosure) for details.
+
+### 4. Data Storage & Protection
+- **Google Sheets data**: NOT stored on our servers. Written directly to your Google Sheet and remains under your control.
+- **Apps Script projects**: Container-bound to your spreadsheet. We do not access or store your script project content.
+- **OAuth tokens**: Managed by Chrome extension storage (encrypted by Chrome). Google access tokens are stored locally and never transmitted to our backend.
+- **User info**: Google user ID and email stored in our backend database (PostgreSQL) for authentication purposes only.
+
+Security measures:
+- 🔒 HTTPS/TLS for all API communication
+- 🔒 Minimal permissions (scoped OAuth requests)
+- 🔒 Client-side data processing (no server-side access to sheet contents)
+- 🔒 Container-bound Apps Script projects only (no access to your other projects)
+
+See [Security Measures](#security-measures) for complete details.
+
+### 5. Data Retention & Deletion
+- **Google Sheets data**: Retained indefinitely in your Google Sheet (you control retention and deletion)
+- **Apps Script projects**: Retained as container-bound projects attached to your spreadsheet until you uninstall recipes
+- **User authentication data**: Retained until you revoke access or delete your account
+
+**How to delete your data:**
+- Revoke Google OAuth access: Visit [Google Account Permissions](https://myaccount.google.com/permissions) and remove SheetLink
+- Delete Google Sheets: Delete tabs or entire spreadsheet from Google Sheets
+- Uninstall extension: Remove extension from Chrome to clear all local storage
+
+See [Data Retention](#data-retention) and [Your Privacy Rights](#your-privacy-rights) for complete details.
 
 ---
 
@@ -212,6 +268,34 @@ See [Data Retention](#data-retention) and [Your Privacy Rights](#your-privacy-ri
 - Google OAuth access tokens (managed by Chrome Identity API)
 - Google OAuth ID tokens (sent to backend once, then discarded)
 
+### 7. Anonymous System Analytics
+
+**What we collect:**
+- Aggregate recipe installation counts (total installs per recipe across all users)
+- No personally identifiable information
+- No user-specific behavior tracking
+- No linkage to Google accounts, spreadsheets, or user identities
+
+**How we collect it:**
+- Anonymous POST request when a recipe is installed (no authentication required)
+- Only the recipe ID is sent (e.g., "financial-statements")
+- No user ID, email, spreadsheet ID, or timestamps stored
+
+**Where it's stored:**
+- Backend database with only: `recipe_id` + `install_count`
+- No user data whatsoever
+
+**Why we collect it:**
+- Product improvement and maintenance
+- Understanding which recipes are most valuable to users
+- Prioritizing recipe updates and new recipe development
+
+**What we DON'T collect:**
+- Which users installed which recipes
+- Installation timestamps or patterns
+- Any linkage to Google accounts or spreadsheets
+- Individual user behavior or analytics
+
 ---
 
 ## How We Use Your Information
@@ -284,9 +368,9 @@ See [Data Retention](#data-retention) and [Your Privacy Rights](#your-privacy-ri
 ### We DO NOT:
 - ❌ Sell your data to third parties
 - ❌ Share transaction details with anyone
-- ❌ Use your data for advertising or analytics
-- ❌ Track your usage or behavior
-- ❌ Send data to external analytics services
+- ❌ Use your data for advertising
+- ❌ Track individual user behavior or usage patterns
+- ❌ Send data to external analytics services (we run our own anonymous aggregate analytics)
 - ❌ Log personally identifiable information (PII)
 
 ### We MAY share data if:
@@ -467,6 +551,7 @@ We may update this Privacy Policy from time to time. Changes will be posted with
 | Email & User ID | ✅ Yes | Backend DB | ❌ No | ❌ No | ✅ Yes ("Disconnect") |
 | Sheet ID | ✅ Yes | Extension storage | ❌ No | ❌ No | ✅ Yes (uninstall) |
 | Rules | ✅ Yes | Your Google Sheet | ❌ No* | ❌ No | ✅ Yes (delete tab) |
+| Recipe installs | ✅ Yes (aggregate only) | Backend DB | ❌ No | ❌ No | N/A (anonymous) |
 | Usage analytics | ❌ No | N/A | N/A | N/A | N/A |
 
 *Google Sheets are encrypted by Google at rest and in transit.

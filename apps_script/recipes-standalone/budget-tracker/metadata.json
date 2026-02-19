@@ -1,0 +1,22 @@
+{
+  "id": "budget-tracker",
+  "name": "Budget Tracker",
+  "version": "2.1.0",
+  "author": "SheetLink",
+  "type": "official",
+  "description": "Track spending across categories with monthly actuals, budget targets, and variance analysis",
+  "longDescription": "Creates a comprehensive budget tracker that shows actual spending by category across multiple months, with editable budget targets and automatic variance calculations. Includes conditional formatting to highlight over/under budget categories.",
+  "requirements": {
+    "columns": ["date", "amount", "category_primary", "pending", "account_name"]
+  },
+  "outputs": ["Budget Monthly"],
+  "files": ["recipe.gs"],
+  "dependencies": [],
+  "menuName": "💰 Budget Tracker",
+  "entryFunction": "runBudgetRecipe",
+  "rating": 0,
+  "installs": 0,
+  "tags": ["budget", "spending", "categories", "variance"],
+  "screenshots": [],
+  "changelog": "2.1.0: Converted to standalone format"
+}

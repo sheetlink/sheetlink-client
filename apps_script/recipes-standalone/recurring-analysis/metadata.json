@@ -1,0 +1,37 @@
+{
+  "id": "recurring-analysis",
+  "name": "Recurring Analysis",
+  "version": "2.1.0",
+  "author": "SheetLink",
+  "type": "official",
+  "description": "Identifies subscriptions and recurring charges",
+  "longDescription": "Analyzes transaction patterns to identify likely subscriptions and recurring charges using merchant matching, amount similarity, and frequency analysis.",
+  "requirements": {
+    "columns": [
+      "date",
+      "amount",
+      "category_primary",
+      "pending",
+      "account_name"
+    ]
+  },
+  "outputs": [
+    "Recurring Analysis"
+  ],
+  "files": [
+    "recipe.gs"
+  ],
+  "dependencies": [],
+  "menuName": "Recurring Analysis",
+  "entryFunction": "runRecurringRecipe",
+  "rating": 0,
+  "installs": 0,
+  "tags": [
+    "recurring",
+    "subscriptions",
+    "analysis",
+    "patterns"
+  ],
+  "screenshots": [],
+  "changelog": "2.1.0: Converted to standalone format"
+}

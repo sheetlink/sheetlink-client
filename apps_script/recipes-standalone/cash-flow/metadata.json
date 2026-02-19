@@ -1,0 +1,37 @@
+{
+  "id": "cash-flow",
+  "name": "Cash Flow",
+  "version": "2.1.0",
+  "author": "SheetLink",
+  "type": "official",
+  "description": "Weekly cash flow forecast with balance tracking",
+  "longDescription": "Creates a rolling weekly cash flow view with income, expenses, net flow, and running balance calculations. Includes date-aware balance forecasting.",
+  "requirements": {
+    "columns": [
+      "date",
+      "amount",
+      "category_primary",
+      "pending",
+      "account_name"
+    ]
+  },
+  "outputs": [
+    "CashFlow Weekly"
+  ],
+  "files": [
+    "recipe.gs"
+  ],
+  "dependencies": [],
+  "menuName": "Cash Flow",
+  "entryFunction": "runCashFlowRecipe",
+  "rating": 0,
+  "installs": 0,
+  "tags": [
+    "cashflow",
+    "forecast",
+    "balance",
+    "weekly"
+  ],
+  "screenshots": [],
+  "changelog": "2.1.0: Converted to standalone format"
+}
