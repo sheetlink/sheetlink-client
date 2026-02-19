@@ -4,7 +4,7 @@
 
 export const CONFIG = {
   // Environment (local dev - auto-set to production in build script)
-  ENV: "development",
+  ENV: "production",
 
   // Debug logging (true for local dev - auto-set to false in build script)
   DEBUG: true,
@@ -19,5 +19,11 @@ export const CONFIG = {
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/userinfo.email"
+  ],
+  GOOGLE_RECIPE_SCOPES: [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/script.projects"
   ]
 };

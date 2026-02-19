@@ -31,6 +31,15 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <a
+                  href="/recipes"
+                  onClick={() => analytics.footerLinkClick('recipes')}
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Recipes
+                </a>
+              </li>
+              <li>
+                <a
                   href={URLS.firstSync}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >

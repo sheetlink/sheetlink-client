@@ -210,6 +210,108 @@ export default function Privacy() {
           </div>
         </section>
 
+        {/* Google API OAuth Compliance Summary */}
+        <section className="mx-auto max-w-4xl px-4 py-12">
+          <div className="prose prose-lg max-w-none">
+            <h2 className="text-3xl font-bold text-sheetlink-text mb-6">Google API OAuth Compliance Summary</h2>
+
+            <p className="text-gray-700">
+              In compliance with the{' '}
+              <a
+                href="https://developers.google.com/terms/api-services-user-data-policy"
+                className="text-sheetlink-green-700 underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Google API Services User Data Policy
+              </a>{' '}
+              and{' '}
+              <a
+                href="https://developers.google.com/terms"
+                className="text-sheetlink-green-700 underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Google APIs Terms of Service
+              </a>, this section summarizes how SheetLink accesses, uses, stores, and protects Google user data:
+            </p>
+
+            <h3 className="text-xl font-semibold text-sheetlink-text mt-8">1. Data Accessed</h3>
+            <p className="text-gray-700">
+              SheetLink requests the following Google API scopes:
+            </p>
+            <ul className="list-disc pl-6 space-y-1 text-gray-700">
+              <li><code className="text-sm bg-gray-100 px-2 py-1 rounded">https://www.googleapis.com/auth/spreadsheets</code> - Access to read and write data in your Google Sheets</li>
+              <li><code className="text-sm bg-gray-100 px-2 py-1 rounded">https://www.googleapis.com/auth/script.projects</code> - Access to create and manage Apps Script projects for recipe installation</li>
+            </ul>
+            <p className="text-gray-700 mt-4">We access:</p>
+            <ul className="list-disc pl-6 space-y-1 text-gray-700">
+              <li>Google Sheets API: To write banking transaction data to spreadsheets you explicitly select</li>
+              <li>Apps Script API: To programmatically install analysis recipes (pre-built code) into container-bound Apps Script projects</li>
+              <li>Google OAuth user info: Your email and user ID for authentication and account management</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold text-sheetlink-text mt-8">2. Data Usage</h3>
+            <ul className="list-disc pl-6 space-y-2 text-gray-700">
+              <li><strong>Spreadsheets scope:</strong> Used exclusively to write banking transaction data and account balances to your Google Sheets. All data processing happens client-side in the extension.</li>
+              <li><strong>Apps Script scope:</strong> Used exclusively to create container-bound script projects, deploy recipe code, and manage custom menu functions. We only access the specific script project we create for your spreadsheet.</li>
+              <li><strong>User info:</strong> Used for authentication, subscription tier management, and associating encrypted Plaid tokens with your account.</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold text-sheetlink-text mt-8">3. Data Sharing</h3>
+            <p className="text-gray-700">
+              We <strong>DO NOT</strong> share Google user data with any third parties. Specifically:
+            </p>
+            <ul className="list-disc pl-6 space-y-1 text-gray-700">
+              <li>❌ No selling of data</li>
+              <li>❌ No sharing with advertisers or data brokers</li>
+              <li>❌ No external analytics services receive Google user data</li>
+              <li>❌ No access to your Google Sheets content (data stays in your Sheet under your control)</li>
+            </ul>
+            <p className="text-gray-700 mt-4">
+              We may only disclose data if required by law (court order, subpoena). See the "Your rights and options" section for details.
+            </p>
+
+            <h3 className="text-xl font-semibold text-sheetlink-text mt-8">4. Data Storage & Protection</h3>
+            <ul className="list-disc pl-6 space-y-2 text-gray-700">
+              <li><strong>Google Sheets data:</strong> NOT stored on our servers. Written directly to your Google Sheet and remains under your control.</li>
+              <li><strong>Apps Script projects:</strong> Container-bound to your spreadsheet. We do not access or store your script project content.</li>
+              <li><strong>OAuth tokens:</strong> Managed by Chrome extension storage (encrypted by Chrome). Google access tokens are stored locally and never transmitted to our backend.</li>
+              <li><strong>User info:</strong> Google user ID and email stored in our backend database (PostgreSQL) for authentication purposes only.</li>
+            </ul>
+            <p className="text-gray-700 mt-4">Security measures:</p>
+            <ul className="list-disc pl-6 space-y-1 text-gray-700">
+              <li>🔒 HTTPS/TLS for all API communication</li>
+              <li>🔒 Minimal permissions (scoped OAuth requests)</li>
+              <li>🔒 Client-side data processing (no server-side access to sheet contents)</li>
+              <li>🔒 Container-bound Apps Script projects only (no access to your other projects)</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold text-sheetlink-text mt-8">5. Data Retention & Deletion</h3>
+            <ul className="list-disc pl-6 space-y-2 text-gray-700">
+              <li><strong>Google Sheets data:</strong> Retained indefinitely in your Google Sheet (you control retention and deletion)</li>
+              <li><strong>Apps Script projects:</strong> Retained as container-bound projects attached to your spreadsheet until you uninstall recipes</li>
+              <li><strong>User authentication data:</strong> Retained until you revoke access or delete your account</li>
+            </ul>
+            <p className="text-gray-700 mt-4"><strong>How to delete your data:</strong></p>
+            <ul className="list-disc pl-6 space-y-1 text-gray-700">
+              <li>Revoke Google OAuth access: Visit{' '}
+                <a
+                  href="https://myaccount.google.com/permissions"
+                  className="text-sheetlink-green-700 underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Google Account Permissions
+                </a>{' '}
+                and remove SheetLink
+              </li>
+              <li>Delete Google Sheets: Delete tabs or entire spreadsheet from Google Sheets</li>
+              <li>Uninstall extension: Remove extension from Chrome to clear all local storage</li>
+            </ul>
+          </div>
+        </section>
+
         {/* JWT Authentication & Session Management */}
         <section className="mx-auto max-w-4xl px-4 py-12">
           <h2 className="mb-6 text-3xl font-bold text-sheetlink-text">
@@ -529,7 +631,7 @@ export default function Privacy() {
         {/* PRD v0.7.4 section start: Contact */}
         <section className="mx-auto max-w-4xl px-4 py-12">
           <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-6">
-            <p className="mb-4 text-sm text-gray-500">Last updated: December 2025</p>
+            <p className="mb-4 text-sm text-gray-500">Last updated: February 2026</p>
             <p className="text-gray-600">
               This privacy policy may be updated from time to time. Material changes will be
                 communicated via email or through the extension. Continued use of SheetLink after

@@ -1,0 +1,37 @@
+{
+  "id": "financial-statements",
+  "name": "Financial Statements",
+  "version": "2.1.0",
+  "author": "SheetLink",
+  "type": "official",
+  "description": "Complete financial reporting suite with P&L, Balance Sheet, and Cash Flow",
+  "longDescription": "Generates comprehensive financial statements including Chart of Accounts, General Ledger, Profit & Loss, Balance Sheet, and Cash Flow Statement with monthly trending.",
+  "requirements": {
+    "columns": [
+      "date",
+      "amount",
+      "category_primary",
+      "pending",
+      "account_name"
+    ]
+  },
+  "outputs": [
+    "Chart of Accounts, General Ledger, Financial Statements"
+  ],
+  "files": [
+    "recipe.gs"
+  ],
+  "dependencies": [],
+  "menuName": "Financial Statements",
+  "entryFunction": "runFinancialsRecipe",
+  "rating": 0,
+  "installs": 0,
+  "tags": [
+    "financial-statements",
+    "accounting",
+    "reports",
+    "general-ledger"
+  ],
+  "screenshots": [],
+  "changelog": "2.1.0: Converted to standalone format"
+}

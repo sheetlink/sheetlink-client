@@ -12,8 +12,10 @@ export default function OAuthCallback() {
     const error = params.get('error');
 
     // Debug logging - check what Google OAuth returned
+    console.log('[OAuth Callback] Full URL:', window.location.href);
     console.log('[OAuth Callback] Full URL hash:', hash);
-    console.log('[OAuth Callback] All params:', Object.fromEntries(params));
+    console.log('[OAuth Callback] Query string:', window.location.search);
+    console.log('[OAuth Callback] All params from hash:', Object.fromEntries(params));
     console.log('[OAuth Callback] Access Token:', accessToken ? 'Present (length: ' + accessToken.length + ')' : 'MISSING');
     console.log('[OAuth Callback] ID Token:', idToken ? 'Present (length: ' + idToken.length + ')' : 'MISSING ⚠️');
     console.log('[OAuth Callback] Expires In:', expiresIn);
@@ -24,17 +26,34 @@ export default function OAuthCallback() {
     }
 
     if (accessToken) {
-      // Get extension ID from the state parameter (passed through by Google OAuth)
-      const state = params.get('state');
+      // Get extension ID and recipe scope flag from the state parameter
+      // State might be in hash OR query string depending on OAuth flow
+      let state = params.get('state');
+
+      // If not in hash, check query string
+      if (!state) {
+        const queryParams = new URLSearchParams(window.location.search);
+        state = queryParams.get('state');
+        console.log('[OAuth Callback] State not in hash, checking query string:', state);
+      }
+
       let extensionId = null;
+      let recipeScope = false;
 
       if (state) {
+        console.log('[OAuth Callback] Raw state parameter:', state);
         try {
           const stateData = JSON.parse(state);
+          console.log('[OAuth Callback] Parsed state data:', stateData);
           extensionId = stateData.extension_id;
+          recipeScope = stateData.recipe_scope || false;
+          console.log('[OAuth Callback] Extracted extensionId:', extensionId);
+          console.log('[OAuth Callback] Extracted recipeScope:', recipeScope);
         } catch (e) {
-          // Failed to parse state
+          console.error('[OAuth Callback] Failed to parse state:', e);
         }
+      } else {
+        console.error('[OAuth Callback] No state parameter found in hash or query string!');
       }
 
       // Check if we're in a browser extension context
@@ -50,7 +69,8 @@ export default function OAuthCallback() {
             type: 'OAUTH_SUCCESS',
             accessToken: accessToken,
             idToken: idToken,  // Phase 3.16.0: Send ID token for JWT auth
-            expiresIn: expiresIn
+            expiresIn: expiresIn,
+            recipeScope: recipeScope  // Phase 3.25.0: Pass recipe scope flag
           },
           (response: any) => {
             // @ts-ignore

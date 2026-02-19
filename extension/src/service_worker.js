@@ -40,6 +40,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       handleGetAuthToken(sendResponse, message.forceAuth || false);
       return true; // Keep channel open for async response
 
+    case 'REQUEST_RECIPE_SCOPE':
+      handleRequestRecipeScope(sendResponse);
+      return true;
+
     case 'EXCHANGE_PUBLIC_TOKEN':
       handleExchangePublicToken(message, sendResponse);
       return true;
@@ -147,6 +151,7 @@ async function handleExchangePublicToken(message, sendResponse) {
 
 // Store pending OAuth callback
 let pendingOAuthCallback = null;
+let isRecipeAuthFlow = false;
 
 // Helper function to clear expired token
 async function clearExpiredToken() {
@@ -155,11 +160,15 @@ async function clearExpiredToken() {
 }
 
 // Launch OAuth flow via regular window
-async function launchOAuthFlow(sendResponse) {
-  const scopes = CONFIG.GOOGLE_SCOPES.join(' ');
+async function launchOAuthFlow(sendResponse, includeRecipeScope = false) {
+  const scopeArray = includeRecipeScope ? CONFIG.GOOGLE_RECIPE_SCOPES : CONFIG.GOOGLE_SCOPES;
+  const scopes = scopeArray.join(' ');
   const extensionId = chrome.runtime.id;
   // Add extension_id as state parameter so it gets passed through OAuth
-  const state = JSON.stringify({ extension_id: extensionId });
+  const state = JSON.stringify({
+    extension_id: extensionId,
+    recipe_scope: includeRecipeScope
+  });
   // Generate nonce for ID token security (required by Google for implicit flow)
   const nonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
@@ -181,6 +190,20 @@ async function launchOAuthFlow(sendResponse) {
     height: 600,
     focused: true
   });
+}
+
+// Request recipe scope via OAuth flow with Apps Script included
+async function handleRequestRecipeScope(sendResponse) {
+  try {
+    debug('[Recipe Auth] Requesting Apps Script scope via OAuth');
+    isRecipeAuthFlow = true; // Mark this as a recipe auth flow
+    await clearExpiredToken();
+    await launchOAuthFlow(sendResponse, true); // true = include recipe scope
+  } catch (error) {
+    console.error('[Recipe Auth] Error requesting recipe scope:', error);
+    isRecipeAuthFlow = false;
+    sendResponse({ success: false, error: error.message });
+  }
 }
 
 // Get Google OAuth token using manual OAuth flow
@@ -245,7 +268,8 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
 
   if (message.type === 'OAUTH_SUCCESS') {
     debug('[Service Worker] Processing OAUTH_SUCCESS callback');
-    const { accessToken, idToken, expiresIn } = message;  // Phase 3.16.0: Also receive ID token
+    const { accessToken, idToken, expiresIn, recipeScope } = message;  // Phase 3.16.0: ID token, Phase 3.25.0: recipe scope
+    debug('[Service Worker] recipeScope parameter:', recipeScope);
 
     // Cache the token with expiry
     const expiry = Date.now() + (parseInt(expiresIn) * 1000);
@@ -284,6 +308,10 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
           console.warn(`[Service Worker] New account: ${newEmail}`);
           console.warn('[Service Worker] Clearing all account-specific data...');
 
+          // Phase 3.25.0: Preserve recipesEnabled flag if recipe scope was just granted
+          const currentLocalData = await chrome.storage.local.get(['recipesEnabled']);
+          const recipesEnabledToPreserve = recipeScope || currentLocalData.recipesEnabled || false;
+
           // Clear all account data except onboarding flag
           await chrome.storage.sync.clear();
           await chrome.storage.local.clear();
@@ -292,6 +320,13 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
           if (currentData.hasCompletedInitialOnboarding) {
             await chrome.storage.sync.set({ hasCompletedInitialOnboarding: true });
             debug('[Service Worker] Preserved onboarding flag');
+          }
+
+          // Phase 3.25.0: Restore recipesEnabled flag if it was just granted
+          if (recipesEnabledToPreserve) {
+            await chrome.storage.local.set({ recipesEnabled: true });
+            await chrome.storage.sync.set({ recipesEnabled: true });
+            debug('[Service Worker] Preserved recipesEnabled flag');
           }
 
           debug('[Service Worker] ✅ Account data cleared - fresh start for new account');
@@ -367,9 +402,24 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
       console.error('[Service Worker] Failed to get Google user ID:', error);
     }
 
+    // Phase 3.25.0: If this was a recipe auth flow, mark recipes as enabled
+    // Check the recipeScope parameter from the OAuth callback instead of isRecipeAuthFlow flag
+    if (recipeScope) {
+      debug('[Recipe Auth] Recipe auth flow detected (from recipeScope parameter), enabling recipes');
+      await chrome.storage.local.set({ recipesEnabled: true });
+      await chrome.storage.sync.set({ recipesEnabled: true });
+      debug('[Recipe Auth] Stored recipesEnabled in both local and sync storage');
+    }
+
     // Call the pending callback if it exists
     if (pendingOAuthCallback) {
-      pendingOAuthCallback({ token: accessToken });
+      // Recipe auth flow expects { success: true }, normal auth expects { token: accessToken }
+      if (recipeScope) {
+        debug('[Recipe Auth] Recipe auth flow complete, sending success response');
+        pendingOAuthCallback({ success: true });
+      } else {
+        pendingOAuthCallback({ token: accessToken });
+      }
       pendingOAuthCallback = null;
     }
 
@@ -633,4 +683,102 @@ async function checkAndRefreshToken() {
     console.error('[Token Monitor] Error checking token:', error);
   }
 }
+
+/**
+ * Phase 3.25.0: Message handler for recipe-related requests
+ */
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // Phase 3.25.0: Handle GET_AUTH_TOKEN requests for recipe installation
+  if (request.type === 'GET_AUTH_TOKEN') {
+    (async () => {
+      try {
+        const result = await chrome.storage.local.get('googleAccessToken');
+        if (result.googleAccessToken) {
+          sendResponse({ token: result.googleAccessToken });
+        } else {
+          sendResponse({ error: 'No token available' });
+        }
+      } catch (error) {
+        console.error('[Service Worker] Error getting auth token:', error);
+        sendResponse({ error: error.message });
+      }
+    })();
+    return true; // Keep channel open for async response
+  }
+
+  // Phase 3.25.0: Handle GET_SPREADSHEET_METADATA (bypasses CORS)
+  if (request.type === 'GET_SPREADSHEET_METADATA') {
+    (async () => {
+      try {
+        const { spreadsheetId, token } = request;
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/developerMetadata?metadataKey=sheetlink_recipe_script_id`;
+
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.metadata && data.metadata.length > 0) {
+            sendResponse({
+              success: true,
+              scriptId: data.metadata[0].metadataValue
+            });
+          } else {
+            sendResponse({ success: true, scriptId: null });
+          }
+        } else {
+          sendResponse({ success: false, error: `HTTP ${response.status}` });
+        }
+      } catch (error) {
+        console.error('[Service Worker] Error getting spreadsheet metadata:', error);
+        sendResponse({ success: false, error: error.message });
+      }
+    })();
+    return true; // Keep channel open for async response
+  }
+
+  // Phase 3.25.0: Handle SET_SPREADSHEET_METADATA (bypasses CORS)
+  if (request.type === 'SET_SPREADSHEET_METADATA') {
+    (async () => {
+      try {
+        const { spreadsheetId, scriptId, token } = request;
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`;
+
+        const metadataRequest = {
+          requests: [{
+            createDeveloperMetadata: {
+              developerMetadata: {
+                metadataKey: 'sheetlink_recipe_script_id',
+                metadataValue: scriptId,
+                location: { spreadsheet: true },
+                visibility: 'DOCUMENT'
+              }
+            }
+          }]
+        };
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(metadataRequest)
+        });
+
+        if (response.ok) {
+          sendResponse({ success: true });
+        } else {
+          const errorData = await response.json();
+          sendResponse({ success: false, error: errorData });
+        }
+      } catch (error) {
+        console.error('[Service Worker] Error setting spreadsheet metadata:', error);
+        sendResponse({ success: false, error: error.message });
+      }
+    })();
+    return true; // Keep channel open for async response
+  }
+});
 
