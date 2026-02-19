@@ -28,6 +28,14 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-6 md:flex">
             <Link
+              href="/recipes"
+              onClick={() => analytics.headerNavClick('recipes')}
+              className="inline-flex items-center gap-1 rounded-full bg-sheetlink-green-700/10 px-3 py-1 text-sm font-semibold text-sheetlink-green-700 transition-colors hover:bg-sheetlink-green-700/20"
+            >
+              Recipes
+              <span className="rounded-full bg-sheetlink-green-700 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">NEW</span>
+            </Link>
+            <Link
               href="/docs"
               onClick={() => analytics.headerNavClick('docs')}
               className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
@@ -101,6 +109,17 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="border-t border-gray-200 bg-white md:hidden">
           <div className="space-y-1 px-4 pb-3 pt-2">
+            <Link
+              href="/recipes"
+              onClick={() => {
+                analytics.headerNavClick('recipes');
+                setMobileMenuOpen(false);
+              }}
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-semibold text-sheetlink-green-700 hover:bg-gray-50"
+            >
+              Recipes
+              <span className="rounded-full bg-sheetlink-green-700 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">NEW</span>
+            </Link>
             <Link
               href="/docs"
               onClick={() => {
