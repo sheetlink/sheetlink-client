@@ -102,6 +102,9 @@ export class RecipeMarketplace {
         <div class="recipe-header">
           <h2>Recipe Marketplace</h2>
           <p>Install analysis recipes to your spreadsheet</p>
+          <a href="https://sheetlink.app/recipes#getting-started" target="_blank" class="recipe-header-guide-link">
+            Full guide →
+          </a>
         </div>
 
         <div class="recipe-filters">
