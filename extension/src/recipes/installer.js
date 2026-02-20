@@ -3,7 +3,7 @@
  * Installs recipes to user's Apps Script project using Apps Script API
  */
 
-import { ensureRecipePermissions, getRecipeAuthToken } from '../auth/recipeAuth.js';
+import { ensureRecipePermissions, getRecipeAuthToken, clearRecipePermissions, requestRecipePermissions } from '../auth/recipeAuth.js';
 import { fetchRecipeCode, fetchRecipeMetadata } from './fetcher.js';
 
 const SCRIPT_API_BASE = 'https://script.googleapis.com/v1';
@@ -999,6 +999,36 @@ async function getInstalledRecipes(scriptId, token) {
 }
 
 /**
+ * Check whether the error is "Apps Script API not enabled" in Google account settings.
+ * This is a one-time setup step that users must complete manually.
+ */
+function isAppsScriptAPIDisabledError(error) {
+  const msg = error?.message || '';
+  return msg.includes('User has not enabled the Apps Script API') ||
+    (msg.includes('HTTP 403') && msg.includes('script.google.com/home/usersettings'));
+}
+
+/**
+ * Check whether the error is a 404 that might be caused by recent Apps Script API enablement.
+ * Google's systems can take a few minutes to propagate the API enablement.
+ */
+function isAPINotPropagatedError(error) {
+  const msg = error?.message || '';
+  return msg.includes('HTTP 404') && msg.includes('Requested entity was not found');
+}
+
+/**
+ * Check whether an error is a missing-scope 403 from the Apps Script API.
+ * This happens when the stored token lacks the script.projects scope
+ * (e.g. after an account switch where recipesEnabled was stale).
+ */
+function isScopeInsufficientError(error) {
+  const msg = error?.message || '';
+  return msg.includes('ACCESS_TOKEN_SCOPE_INSUFFICIENT') ||
+    (msg.includes('HTTP 403') && msg.includes('insufficient'));
+}
+
+/**
  * Install recipe to spreadsheet
  */
 export async function installRecipe(recipeId, spreadsheetId, onProgress) {
@@ -1012,7 +1042,12 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
 
     // Step 2: Get auth token
     onProgress?.('Authenticating...');
-    const token = await getRecipeAuthToken();
+    let token;
+    try {
+      token = await getRecipeAuthToken();
+    } catch (tokenError) {
+      throw tokenError;
+    }
 
     // Step 3: Get or create script project
     onProgress?.('Setting up Apps Script project...');
@@ -1093,6 +1128,54 @@ export async function installRecipe(recipeId, spreadsheetId, onProgress) {
     onProgress?.('Complete!');
     return { success: true, scriptId, installedRecipes: updatedRecipes.map(r => r.id) };
   } catch (error) {
+    // Check if Apps Script API is disabled in Google account settings (one-time setup).
+    // This must be enabled manually by the user at script.google.com/home/usersettings.
+    if (isAppsScriptAPIDisabledError(error)) {
+      console.warn('[installer] Apps Script API is not enabled in user settings');
+      throw new Error(
+        'Apps Script API is disabled in your Google account.\n\n' +
+        'To enable it:\n' +
+        '1. Visit https://script.google.com/home/usersettings\n' +
+        '2. Toggle on "Google Apps Script API"\n' +
+        '3. Wait 2-3 minutes for changes to propagate\n' +
+        '4. Try installing again\n\n' +
+        'This is a one-time setup step required by Google.'
+      );
+    }
+
+    // Check if this is a 404 that might be caused by recent API enablement not yet propagated.
+    if (isAPINotPropagatedError(error)) {
+      console.warn('[installer] Got 404 - Apps Script API may not be fully propagated yet');
+      throw new Error(
+        'Apps Script API setup is still in progress.\n\n' +
+        'If you just enabled the Apps Script API:\n' +
+        '1. Wait 2-3 minutes for Google\'s systems to propagate the change\n' +
+        '2. Try installing again\n\n' +
+        'If you haven\'t enabled it yet:\n' +
+        '1. Visit https://script.google.com/home/usersettings\n' +
+        '2. Toggle on "Google Apps Script API"\n' +
+        '3. Wait a few minutes, then retry'
+      );
+    }
+
+    // Option B: auto-recover from stale token missing the script.projects scope.
+    // This happens when recipesEnabled was set for a previous account and the current
+    // account's token never included the Apps Script scope.
+    if (isScopeInsufficientError(error)) {
+      console.warn('[installer] Detected ACCESS_TOKEN_SCOPE_INSUFFICIENT — clearing stale permissions and re-authorizing');
+      onProgress?.('Re-authorizing Apps Script permissions...');
+
+      await clearRecipePermissions();
+      const reAuthed = await requestRecipePermissions();
+      if (!reAuthed) {
+        throw new Error('Apps Script authorization was not completed. Please try again.');
+      }
+
+      // Retry the install once with the fresh token
+      console.log('[installer] Re-auth successful, retrying install...');
+      return await installRecipe(recipeId, spreadsheetId, onProgress);
+    }
+
     console.error(`[installer] Error installing ${recipeId}:`, error);
     throw error;
   }
