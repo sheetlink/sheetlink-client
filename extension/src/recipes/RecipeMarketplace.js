@@ -316,6 +316,16 @@ export class RecipeMarketplace {
   }
 
   showInstallError(recipeId, message) {
+    // Check if this is a first-time setup error (404 for container-bound script creation)
+    const isFirstTimeSetupError = message.includes('Apps Script API setup is still in progress') ||
+      message.includes('Requested entity was not found');
+
+    if (isFirstTimeSetupError) {
+      this.showFirstTimeSetupModal(recipeId);
+      return;
+    }
+
+    // Show inline error for other errors
     const card = this.container.querySelector(`[data-recipe-id="${recipeId}"]`);
     card.classList.remove('installing-state');
     const actions = card.querySelector('.recipe-actions');
@@ -326,6 +336,117 @@ export class RecipeMarketplace {
       </button>
     `;
     this.attachEventListeners();
+  }
+
+  showFirstTimeSetupModal(recipeId) {
+    // Reset the card to not-installing state
+    const card = this.container.querySelector(`[data-recipe-id="${recipeId}"]`);
+    if (card) {
+      card.classList.remove('installing-state');
+      const actions = card.querySelector('.recipe-actions');
+      actions.innerHTML = `
+        <button class="btn-primary install-recipe" data-recipe-id="${recipeId}">
+          Install
+        </button>
+      `;
+    }
+
+    // Create modal overlay
+    const modalHTML = `
+      <div class="recipe-setup-modal-overlay" id="firstTimeSetupModal">
+        <div class="recipe-setup-modal">
+          <div class="recipe-setup-modal-header">
+            <h3>🔧 First-Time Setup Required</h3>
+          </div>
+          <div class="recipe-setup-modal-body">
+            <p class="setup-intro">
+              Before installing recipes, you need to initialize your spreadsheet's Apps Script project.
+              This is a <strong>one-time step</strong> that takes about 10 seconds.
+            </p>
+
+            <div class="setup-steps">
+              <h4>Follow these steps:</h4>
+              <ol>
+                <li>
+                  <strong>Open your spreadsheet</strong> in a new tab
+                  <button class="btn-link open-spreadsheet-btn" id="openSpreadsheetBtn">
+                    Open Spreadsheet →
+                  </button>
+                </li>
+                <li>
+                  In your spreadsheet, click <strong>Extensions → Apps Script</strong>
+                </li>
+                <li>
+                  Wait for the Apps Script editor to load (this creates the project)
+                </li>
+                <li>
+                  Close the Apps Script tab and come back here
+                </li>
+                <li>
+                  Click <strong>"Retry Installation"</strong> below
+                </li>
+              </ol>
+            </div>
+
+            <div class="setup-help">
+              <strong>Why is this needed?</strong>
+              <p>
+                Google's Apps Script API can't create container-bound projects programmatically.
+                Opening the Apps Script editor once initializes the project, then SheetLink can
+                install recipes automatically.
+              </p>
+              <a href="https://sheetlink.app/recipes#getting-started" target="_blank" class="setup-docs-link">
+                View full setup guide →
+              </a>
+            </div>
+          </div>
+          <div class="recipe-setup-modal-footer">
+            <button class="btn-secondary" id="setupModalCancelBtn">Cancel</button>
+            <button class="btn-primary" id="setupModalRetryBtn">Retry Installation</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Inject modal into DOM
+    const existingModal = document.getElementById('firstTimeSetupModal');
+    if (existingModal) {
+      existingModal.remove();
+    }
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Attach event listeners
+    const modal = document.getElementById('firstTimeSetupModal');
+    const cancelBtn = document.getElementById('setupModalCancelBtn');
+    const retryBtn = document.getElementById('setupModalRetryBtn');
+    const openSpreadsheetBtn = document.getElementById('openSpreadsheetBtn');
+
+    // Cancel button - close modal
+    cancelBtn.addEventListener('click', () => {
+      modal.remove();
+    });
+
+    // Click outside modal to close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
+
+    // Open spreadsheet button
+    openSpreadsheetBtn.addEventListener('click', async () => {
+      const { sheetId } = await chrome.storage.sync.get('sheetId');
+      if (sheetId) {
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
+        chrome.tabs.create({ url });
+      }
+    });
+
+    // Retry button - close modal and retry install
+    retryBtn.addEventListener('click', async () => {
+      modal.remove();
+      await this.handleInstall(recipeId);
+    });
   }
 
   async handleUninstall(recipeId) {
