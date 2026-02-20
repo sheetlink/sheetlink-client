@@ -545,9 +545,31 @@
   margin-bottom: 0;
 }
 
+.setup-steps .step-detail {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+  margin-left: 0;
+}
+
 .setup-steps strong {
   color: #111827;
   font-weight: 600;
+}
+
+.setup-steps .setup-docs-link {
+  display: block;
+  margin-top: 16px;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.setup-steps .setup-docs-link:hover {
+  color: #0B703A;
+  text-decoration: underline;
 }
 
 .btn-link {
@@ -566,47 +588,6 @@
 
 .btn-link:hover {
   color: #023820;
-  text-decoration: underline;
-}
-
-.open-spreadsheet-btn {
-  display: block;
-  margin-top: 8px;
-}
-
-.setup-help {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.setup-help strong {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: #1e40af;
-  margin-bottom: 8px;
-}
-
-.setup-help p {
-  font-size: 13px;
-  line-height: 1.5;
-  color: #1e3a8a;
-  margin: 0 0 12px 0;
-}
-
-.setup-docs-link {
-  font-size: 13px;
-  color: #1e40af;
-  font-weight: 500;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-}
-
-.setup-docs-link:hover {
-  color: #1e3a8a;
   text-decoration: underline;
 }
 

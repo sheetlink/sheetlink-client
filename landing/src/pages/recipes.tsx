@@ -350,7 +350,7 @@ export default function Recipes() {
               </div>
             </motion.div>
 
-            {/* Step 2: Install Recipe */}
+            {/* Step 2: Create Apps Script Project */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -362,27 +362,69 @@ export default function Recipes() {
                   2
                 </span>
                 <h3 className="text-xl font-semibold text-sheetlink-text">
-                  Install Your First Recipe
+                  Create Apps Script Project
                 </h3>
               </div>
               <p className="mb-4 text-gray-600">
-                Once the API is enabled, you can install recipes directly from the SheetLink
-                extension.
+                Initialize your Apps Script project to enable recipe installation.
               </p>
               <div className="space-y-4">
                 <div className="rounded-lg bg-gray-50 p-4">
                   <ol className="space-y-2 text-sm text-gray-700">
                     <li className="flex items-start gap-2">
                       <span className="mt-0.5 flex-shrink-0 text-sheetlink-green-700">▸</span>
-                      <span>Open the SheetLink extension popup and click the &quot;Recipes&quot; tab</span>
+                      <span>
+                        Visit{' '}
+                        <a
+                          href="https://script.google.com/u/0/home/my"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-sheetlink-green-700 underline hover:text-sheetlink-green-900"
+                        >
+                          script.google.com/home/my
+                        </a>
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="mt-0.5 flex-shrink-0 text-sheetlink-green-700">▸</span>
-                      <span>Click &quot;Install&quot; on any recipe</span>
+                      <span>Click the <strong>&quot;New Project&quot;</strong> button</span>
+                    </li>
+                  </ol>
+                </div>
+
+              </div>
+            </motion.div>
+
+            {/* Step 3: Install Recipe */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="rounded-xl border-2 border-gray-200 bg-white p-8"
+            >
+              <div className="mb-4 flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-sheetlink-green-700 text-lg font-bold text-white">
+                  3
+                </span>
+                <h3 className="text-xl font-semibold text-sheetlink-text">Install Your First Recipe</h3>
+              </div>
+              <p className="mb-4 text-gray-600">
+                Now you can install recipes from the SheetLink extension.
+              </p>
+              <div className="space-y-4">
+                <div className="rounded-lg bg-gray-50 p-4">
+                  <ol className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 flex-shrink-0 text-sheetlink-green-700">▸</span>
+                      <span>Open the SheetLink extension and go to the Recipes tab</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="mt-0.5 flex-shrink-0 text-sheetlink-green-700">▸</span>
-                      <span>You&apos;ll be prompted to authorize Apps Script permissions</span>
+                      <span>Click <strong>&quot;Install&quot;</strong> on any recipe</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 flex-shrink-0 text-sheetlink-green-700">▸</span>
+                      <span>The recipe will be added to your spreadsheet&apos;s &quot;SheetLink Recipes&quot; menu</span>
                     </li>
                   </ol>
                 </div>
@@ -421,46 +463,13 @@ export default function Recipes() {
                     </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
 
-            {/* Step 3: Run Recipe */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="rounded-xl border-2 border-gray-200 bg-white p-8"
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-sheetlink-green-700 text-lg font-bold text-white">
-                  3
-                </span>
-                <h3 className="text-xl font-semibold text-sheetlink-text">Run from Your Menu</h3>
-              </div>
-              <p className="mb-4 text-gray-600">
-                After installation, a new &quot;SheetLink Recipes&quot; menu appears in your Google Sheet.
-              </p>
-              <div className="rounded-lg bg-gray-50 p-4">
-                <ol className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start gap-2">
-                    <span className="mt-0.5 flex-shrink-0 text-sheetlink-green-700">▸</span>
-                    <span>Open your synced Google Sheet</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-0.5 flex-shrink-0 text-sheetlink-green-700">▸</span>
-                    <span>Look for the &quot;SheetLink Recipes&quot; menu in the top menu bar</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-0.5 flex-shrink-0 text-sheetlink-green-700">▸</span>
-                    <span>Click any installed recipe to run it</span>
-                  </li>
-                </ol>
-              </div>
-              <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-4">
-                <p className="text-sm text-green-800">
-                  <strong>Future installs are instant.</strong> Once you&apos;ve completed the
-                  authorization flow once, installing additional recipes requires no further setup.
-                </p>
+                <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                  <p className="text-sm text-green-800">
+                    <strong>Future installs are instant.</strong> Once you&apos;ve completed the
+                    authorization flow once, installing additional recipes requires no further setup.
+                  </p>
+                </div>
               </div>
             </motion.div>
 
@@ -497,9 +506,8 @@ export default function Recipes() {
                     Error: &quot;Requested entity was not found&quot; (404)
                   </dt>
                   <dd className="mt-1 text-gray-600">
-                    If you just enabled the API, wait a few more minutes. Google&apos;s systems take
-                    time to propagate. If this is your first recipe install on a new spreadsheet,
-                    open Extensions → Apps Script once to initialize the project, then retry.
+                    Make sure you completed Step 2 (creating a new Apps Script project). If you just
+                    enabled the API, wait a few more minutes for Google&apos;s systems to propagate.
                   </dd>
                 </div>
                 <div>

@@ -316,8 +316,9 @@ export class RecipeMarketplace {
   }
 
   showInstallError(recipeId, message) {
-    // Check if this is a first-time setup error (404 for container-bound script creation)
-    const isFirstTimeSetupError = message.includes('Apps Script API setup is still in progress') ||
+    // Check if this is a first-time setup error (API disabled or 404 for container-bound script creation)
+    const isFirstTimeSetupError = message.includes('Apps Script API is disabled') ||
+      message.includes('Apps Script API setup is still in progress') ||
       message.includes('Requested entity was not found');
 
     if (isFirstTimeSetupError) {
@@ -356,47 +357,32 @@ export class RecipeMarketplace {
       <div class="recipe-setup-modal-overlay" id="firstTimeSetupModal">
         <div class="recipe-setup-modal">
           <div class="recipe-setup-modal-header">
-            <h3>🔧 First-Time Setup Required</h3>
+            <h3>First-Time Setup Required</h3>
           </div>
           <div class="recipe-setup-modal-body">
             <p class="setup-intro">
-              Before installing recipes, you need to initialize your spreadsheet's Apps Script project.
-              This is a <strong>one-time step</strong> that takes about 10 seconds.
+              Your spreadsheet needs an Apps Script project initialized. This is a <strong>one-time step</strong> that takes 10 seconds.
             </p>
 
             <div class="setup-steps">
-              <h4>Follow these steps:</h4>
+              <h4>Quick setup:</h4>
               <ol>
                 <li>
-                  <strong>Open your spreadsheet</strong> in a new tab
-                  <button class="btn-link open-spreadsheet-btn" id="openSpreadsheetBtn">
-                    Open Spreadsheet →
-                  </button>
+                  <a href="https://script.google.com/u/0/home/usersettings" target="_blank" class="btn-link">
+                    Enable Apps Script API →
+                  </a>
+                  <span class="step-detail">Toggle "Google Apps Script API" to ON</span>
                 </li>
                 <li>
-                  In your spreadsheet, click <strong>Extensions → Apps Script</strong>
+                  <a href="https://script.google.com/u/0/home/my" target="_blank" class="btn-link">
+                    Open Apps Script →
+                  </a>
+                  <span class="step-detail">Click "New Project" button</span>
                 </li>
-                <li>
-                  Wait for the Apps Script editor to load (this creates the project)
-                </li>
-                <li>
-                  Close the Apps Script tab and come back here
-                </li>
-                <li>
-                  Click <strong>"Retry Installation"</strong> below
-                </li>
+                <li>Come back here and click <strong>"Retry Installation"</strong></li>
               </ol>
-            </div>
-
-            <div class="setup-help">
-              <strong>Why is this needed?</strong>
-              <p>
-                Google's Apps Script API can't create container-bound projects programmatically.
-                Opening the Apps Script editor once initializes the project, then SheetLink can
-                install recipes automatically.
-              </p>
               <a href="https://sheetlink.app/recipes#getting-started" target="_blank" class="setup-docs-link">
-                View full setup guide →
+                Full guide →
               </a>
             </div>
           </div>
@@ -419,7 +405,6 @@ export class RecipeMarketplace {
     const modal = document.getElementById('firstTimeSetupModal');
     const cancelBtn = document.getElementById('setupModalCancelBtn');
     const retryBtn = document.getElementById('setupModalRetryBtn');
-    const openSpreadsheetBtn = document.getElementById('openSpreadsheetBtn');
 
     // Cancel button - close modal
     cancelBtn.addEventListener('click', () => {
@@ -430,15 +415,6 @@ export class RecipeMarketplace {
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
         modal.remove();
-      }
-    });
-
-    // Open spreadsheet button
-    openSpreadsheetBtn.addEventListener('click', async () => {
-      const { sheetId } = await chrome.storage.sync.get('sheetId');
-      if (sheetId) {
-        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
-        chrome.tabs.create({ url });
       }
     });
 
