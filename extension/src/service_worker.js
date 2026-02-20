@@ -308,11 +308,10 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
           console.warn(`[Service Worker] New account: ${newEmail}`);
           console.warn('[Service Worker] Clearing all account-specific data...');
 
-          // Phase 3.25.0: Preserve recipesEnabled flag if recipe scope was just granted
-          const currentLocalData = await chrome.storage.local.get(['recipesEnabled']);
-          const recipesEnabledToPreserve = recipeScope || currentLocalData.recipesEnabled || false;
-
           // Clear all account data except onboarding flag
+          // Note: recipesEnabled is intentionally NOT preserved across account switches —
+          // the new account must go through its own recipe auth flow to get the script.projects scope.
+          // The scoped key (recipesEnabled_<email>) means each account tracks its own state.
           await chrome.storage.sync.clear();
           await chrome.storage.local.clear();
 
@@ -320,13 +319,6 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
           if (currentData.hasCompletedInitialOnboarding) {
             await chrome.storage.sync.set({ hasCompletedInitialOnboarding: true });
             debug('[Service Worker] Preserved onboarding flag');
-          }
-
-          // Phase 3.25.0: Restore recipesEnabled flag if it was just granted
-          if (recipesEnabledToPreserve) {
-            await chrome.storage.local.set({ recipesEnabled: true });
-            await chrome.storage.sync.set({ recipesEnabled: true });
-            debug('[Service Worker] Preserved recipesEnabled flag');
           }
 
           debug('[Service Worker] ✅ Account data cleared - fresh start for new account');
@@ -406,8 +398,17 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender, sendRespons
     // Check the recipeScope parameter from the OAuth callback instead of isRecipeAuthFlow flag
     if (recipeScope) {
       debug('[Recipe Auth] Recipe auth flow detected (from recipeScope parameter), enabling recipes');
-      await chrome.storage.local.set({ recipesEnabled: true });
-      await chrome.storage.sync.set({ recipesEnabled: true });
+      // Write both the global key (legacy compat) and the user-scoped key (prevents cross-account bleed).
+      // Use googleUserId (opaque numeric ID) rather than email to avoid storing PII in key names.
+      // Read from storage rather than userInfo (which is scoped to the inner try block above).
+      const recipeEnabledUpdates = { recipesEnabled: true };
+      const storedUserData = await chrome.storage.sync.get('googleUserId');
+      if (storedUserData.googleUserId) {
+        recipeEnabledUpdates[`recipesEnabled_${storedUserData.googleUserId}`] = true;
+        debug('[Recipe Auth] Writing scoped key for user ID:', storedUserData.googleUserId);
+      }
+      await chrome.storage.local.set(recipeEnabledUpdates);
+      await chrome.storage.sync.set(recipeEnabledUpdates);
       debug('[Recipe Auth] Stored recipesEnabled in both local and sync storage');
     }
 

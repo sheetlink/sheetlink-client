@@ -7,6 +7,23 @@ const RECIPE_SCOPE = 'https://www.googleapis.com/auth/script.projects';
 const RECIPE_ENABLED_KEY = 'recipesEnabled';
 
 /**
+ * Get the user-scoped storage key for recipesEnabled.
+ * Uses the Google user ID (opaque numeric string, not PII) to prevent cross-account bleed.
+ * Falls back to the global key if the user ID is not yet available.
+ */
+async function getRecipeEnabledKey() {
+  try {
+    const { googleUserId } = await chrome.storage.sync.get('googleUserId');
+    if (googleUserId) {
+      return `${RECIPE_ENABLED_KEY}_${googleUserId}`;
+    }
+  } catch (error) {
+    console.warn('[recipeAuth] Could not read googleUserId for scoped key:', error);
+  }
+  return RECIPE_ENABLED_KEY;
+}
+
+/**
  * Generate a random nonce for OpenID Connect
  */
 function generateNonce() {
@@ -16,20 +33,41 @@ function generateNonce() {
 }
 
 /**
- * Check if user has granted recipe OAuth scope
+ * Check if user has granted recipe OAuth scope.
+ * Checks the user-scoped key first, then falls back to the legacy global key
+ * so existing users are not forced to re-authorize.
  */
 export async function hasRecipePermissions() {
   try {
+    const scopedKey = await getRecipeEnabledKey();
+
     // Check both local and sync storage (belt and suspenders approach)
-    const localResult = await chrome.storage.local.get(RECIPE_ENABLED_KEY);
-    const syncResult = await chrome.storage.sync.get(RECIPE_ENABLED_KEY);
+    const localResult = await chrome.storage.local.get(scopedKey);
+    const syncResult = await chrome.storage.sync.get(scopedKey);
 
-    console.log('[recipeAuth] Checking permissions - local storage:', localResult);
-    console.log('[recipeAuth] Checking permissions - sync storage:', syncResult);
+    console.log('[recipeAuth] Checking permissions (key:', scopedKey, ') - local:', localResult, 'sync:', syncResult);
 
-    const hasPermission = localResult[RECIPE_ENABLED_KEY] === true || syncResult[RECIPE_ENABLED_KEY] === true;
-    console.log('[recipeAuth] Has permission:', hasPermission);
-    return hasPermission;
+    // Check scoped key first
+    if (localResult[scopedKey] === true || syncResult[scopedKey] === true) {
+      console.log('[recipeAuth] Has permission (scoped key):', true);
+      return true;
+    }
+
+    // Backwards compat: check legacy global key (only when scoped key differs)
+    if (scopedKey !== RECIPE_ENABLED_KEY) {
+      const legacyLocal = await chrome.storage.local.get(RECIPE_ENABLED_KEY);
+      const legacySync = await chrome.storage.sync.get(RECIPE_ENABLED_KEY);
+      if (legacyLocal[RECIPE_ENABLED_KEY] === true || legacySync[RECIPE_ENABLED_KEY] === true) {
+        console.log('[recipeAuth] Has permission (legacy key), migrating to scoped key');
+        // Migrate to scoped key so future checks are user-specific
+        await chrome.storage.local.set({ [scopedKey]: true });
+        await chrome.storage.sync.set({ [scopedKey]: true });
+        return true;
+      }
+    }
+
+    console.log('[recipeAuth] Has permission:', false);
+    return false;
   } catch (error) {
     console.error('[recipeAuth] Error checking permissions:', error);
     return false;
@@ -147,10 +185,27 @@ export async function getRecipeAuthToken() {
  */
 export async function revokeRecipePermissions() {
   try {
+    const scopedKey = await getRecipeEnabledKey();
+    await chrome.storage.local.set({ [scopedKey]: false });
     await chrome.storage.local.set({ [RECIPE_ENABLED_KEY]: false });
     return true;
   } catch (error) {
     console.error('[recipeAuth] Error revoking permissions:', error);
     return false;
+  }
+}
+
+/**
+ * Clear the recipe permissions flag for the current user.
+ * Called when a scope error is detected to force re-authorization.
+ */
+export async function clearRecipePermissions() {
+  try {
+    const scopedKey = await getRecipeEnabledKey();
+    await chrome.storage.local.remove([scopedKey, RECIPE_ENABLED_KEY]);
+    await chrome.storage.sync.remove([scopedKey, RECIPE_ENABLED_KEY]);
+    console.log('[recipeAuth] Cleared recipe permissions (scoped + legacy)');
+  } catch (error) {
+    console.error('[recipeAuth] Error clearing permissions:', error);
   }
 }
