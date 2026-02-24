@@ -46,6 +46,62 @@ export default function Home() {
     ]
   };
 
+  // FAQ Schema for AEO (Answer Engine Optimization)
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is SheetLink?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SheetLink is a Chrome extension that automatically syncs bank transactions to Google Sheets using Plaid. It's designed for budgeting, bookkeeping, and financial tracking. Connect your bank accounts securely through Plaid, and transactions sync in real-time to your spreadsheet. Free forever for the last 7 days of transactions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does SheetLink cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SheetLink is free forever for the last 7 days of transactions - perfect for weekly budget tracking. For unlimited transaction history and real-time auto-sync, it costs $2/month. This is significantly more affordable than alternatives like Tiller Money ($79/year) or YNAB ($14.99/month)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What banks work with SheetLink?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SheetLink supports 10,000+ banks through Plaid, including Chase, Bank of America, Wells Fargo, Citi, Capital One, US Bank, PNC, and virtually all credit unions. You can connect checking accounts, savings accounts, and credit cards. If your bank offers online banking, it likely works with Plaid."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is SheetLink safe and secure?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. SheetLink uses Plaid, the same bank connectivity infrastructure trusted by Venmo, Robinhood, and thousands of financial apps. Your bank credentials are handled exclusively by Plaid (SOC 2 Type II certified). SheetLink never stores your transaction history - data flows directly from Plaid to your Google Sheet. Plaid access tokens are encrypted at rest using Fernet encryption (AES-128-CBC + HMAC)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the difference between SheetLink and Tiller Money?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SheetLink costs $2/month for unlimited history vs Tiller's $79/year ($6.58/month). SheetLink offers financial templates through Recipes and supports both personal budgeting and small business bookkeeping use cases. Tiller focuses primarily on personal finance. Both sync bank transactions to Google Sheets using Plaid. SheetLink has a free tier (7 days of history) that Tiller doesn't offer."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use SheetLink for business bookkeeping?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. SheetLink works for both personal finance and small business bookkeeping. Many small business owners and freelancers use SheetLink to track business expenses, categorize transactions, and build P&L statements in Google Sheets. It's a simpler, more affordable alternative to QuickBooks for basic bookkeeping needs."
+        }
+      }
+    ]
+  };
+
   return (
     <>
       <Head>
@@ -58,6 +114,12 @@ export default function Home() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+
+        {/* FAQ Schema for AI Answer Engines */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
 
         {/* OpenGraph */}
