@@ -53,6 +53,16 @@ module.exports = {
       }
     }
 
+    // Hub pages for internal linking
+    if (path === '/use-cases' || path === '/comparisons') {
+      return {
+        loc: path,
+        changefreq: 'monthly',
+        priority: 0.85,
+        lastmod: new Date().toISOString(),
+      }
+    }
+
     // Comparison pages = very high priority (high-intent traffic)
     if (
       path.includes('sheetlink-vs-') ||

@@ -7,7 +7,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function YNABAlternative() {
   const seoTitle = 'Best YNAB Alternative - SheetLink for Google Sheets (2026)';
-  const seoDescription = 'Looking for a cheaper YNAB alternative? SheetLink syncs bank transactions to Google Sheets for $12-60/year vs YNAB\'s $180/year. Use YOUR budgeting method in spreadsheets. Save $120+/year.';
+  const seoDescription = 'Looking for a cheaper YNAB alternative? SheetLink syncs bank transactions to Google Sheets with a free tier and Pro option in beta. Use YOUR budgeting method in spreadsheets. More affordable than YNAB.';
   const seoUrl = 'https://sheetlink.app/ynab-alternative';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -21,7 +21,7 @@ export default function YNABAlternative() {
         'name': 'Why is YNAB so expensive?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'YNAB costs $14.99/month or $180/year because it\'s a full-featured budgeting platform with its own app, methodology, and support system. While YNAB is powerful, the price is high compared to alternatives like SheetLink which offers bank-to-spreadsheet syncing for $12-60/year - saving you $120-168 annually.',
+          'text': 'YNAB costs $14.99/month or $180/year because it\'s a full-featured budgeting platform with its own app, methodology, and support system. While YNAB is powerful, the price is high compared to alternatives like SheetLink which offers bank-to-spreadsheet syncing starting with a free tier (7 days) and Pro tier in beta.',
         },
       },
       {
@@ -29,7 +29,7 @@ export default function YNABAlternative() {
         'name': 'What is the best cheaper alternative to YNAB?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'SheetLink is one of the most affordable YNAB alternatives, starting at free forever (7 days of history) or $12-60/year for extended history. Unlike YNAB\'s prescriptive zero-based budgeting, SheetLink syncs transactions to Google Sheets so you can use ANY budgeting method you prefer - envelope system, 50/30/20 rule, zero-based, or your own custom approach.',
+          'text': 'SheetLink is one of the most affordable YNAB alternatives, starting at free forever (7 days of history) with Pro tier available for beta users. Unlike YNAB\'s prescriptive zero-based budgeting, SheetLink syncs transactions to Google Sheets so you can use ANY budgeting method you prefer - envelope system, 50/30/20 rule, zero-based, or your own custom approach.',
         },
       },
       {
@@ -45,7 +45,7 @@ export default function YNABAlternative() {
         'name': 'How do I switch from YNAB to SheetLink?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'Switching from YNAB to SheetLink: 1) Export your YNAB transaction history (YNAB supports CSV export). 2) Install SheetLink Chrome extension. 3) Create a Google Sheet budget - either build your own or replicate YNAB\'s methodology. 4) Import your historical YNAB data. 5) Connect your banks through Plaid in SheetLink to start syncing new transactions. 6) Cancel YNAB subscription to save $120-168/year.',
+          'text': 'Switching from YNAB to SheetLink: 1) Export your YNAB transaction history (YNAB supports CSV export). 2) Install SheetLink Chrome extension. 3) Create a Google Sheet budget - either build your own or replicate YNAB\'s methodology. 4) Import your historical YNAB data. 5) Connect your banks through Plaid in SheetLink to start syncing new transactions. 6) Cancel YNAB subscription to save on costs.',
         },
       },
     ],
@@ -96,7 +96,7 @@ export default function YNABAlternative() {
             >
               <div className="inline-flex items-center gap-2 rounded-full bg-sheetlink-green-700/10 px-4 py-2 text-sm font-semibold text-sheetlink-green-700">
                 <DollarSign className="h-4 w-4" />
-                Save $120-168 per year vs YNAB
+                More affordable than YNAB
               </div>
             </motion.div>
 
@@ -115,7 +115,7 @@ export default function YNABAlternative() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mx-auto mb-8 max-w-3xl text-center text-xl leading-relaxed text-gray-700"
             >
-              YNAB costs $180/year. That's expensive for budgeting software. SheetLink syncs your bank transactions to Google Sheets for $12-60/year - and you can use ANY budgeting method you want.
+              YNAB costs $180/year. That's expensive for budgeting software. SheetLink syncs your bank transactions to Google Sheets with a free tier and Pro option - and you can use ANY budgeting method you want.
             </motion.p>
 
             <motion.div
@@ -216,9 +216,9 @@ export default function YNABAlternative() {
                   <DollarSign className="h-6 w-6 text-sheetlink-green-700" />
                 </div>
                 <div>
-                  <h3 className="mb-2 text-xl font-bold text-sheetlink-text">3x Cheaper (Or Free!)</h3>
+                  <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Much More Affordable</h3>
                   <p className="text-gray-700">
-                    Free forever for 7 days of history. Basic plan $12/year. Pro plan $60/year. Even the most expensive plan is $120/year cheaper than YNAB. The free tier costs $0 forever.
+                    Free forever for 7 days of history. Pro tier with extended history available for beta/early access users. Contact for pricing details. The free tier costs $0 forever.
                   </p>
                 </div>
               </motion.div>
@@ -334,7 +334,7 @@ export default function YNABAlternative() {
                   <tr>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Price</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-700">$180/year</td>
-                    <td className="px-6 py-4 text-center text-sm font-semibold text-sheetlink-green-700">$0 - $60/year</td>
+                    <td className="px-6 py-4 text-center text-sm font-semibold text-sheetlink-green-700">Free (7 days), Pro in beta</td>
                   </tr>
                   <tr className="bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Free Tier</td>
@@ -419,10 +419,10 @@ export default function YNABAlternative() {
         <section className="px-4 py-20">
           <div className="mx-auto max-w-4xl">
             <h2 className="mb-4 text-center text-4xl font-bold text-sheetlink-text">
-              Pricing: Save $120-168/Year
+              Pricing Comparison
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              YNAB costs as much as 3-15 years of SheetLink
+              SheetLink offers a more affordable option
             </p>
             <div className="grid gap-6 md:grid-cols-2">
               <motion.div
@@ -469,23 +469,22 @@ export default function YNABAlternative() {
               >
                 <h3 className="mb-2 text-2xl font-bold">SheetLink</h3>
                 <div className="mb-4">
-                  <span className="text-5xl font-bold">$0</span>
-                  <span className="text-xl"> - $60</span>
-                  <span className="text-lg opacity-90">/year</span>
+                  <span className="text-5xl font-bold">Free</span>
+                  <span className="text-lg opacity-90"> Forever</span>
                 </div>
-                <p className="mb-4 text-sm opacity-90">($0 - $5/month)</p>
+                <p className="mb-4 text-sm opacity-90">(Pro tier in beta)</p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    <strong>Free forever:</strong> 7 days history
+                    <strong>Free tier:</strong> 7 days history
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    <strong>Basic $12/year:</strong> 90 days history
+                    <strong>Pro tier:</strong> Extended history (beta/early access)
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    <strong>Pro $60/year:</strong> 24 months history
+                    Pro pricing TBD - contact for early access
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
@@ -497,7 +496,7 @@ export default function YNABAlternative() {
                   </li>
                 </ul>
                 <div className="mt-6 rounded-lg bg-white/20 px-4 py-3 text-center">
-                  <p className="text-sm font-semibold">Save $120-180 per year vs YNAB</p>
+                  <p className="text-sm font-semibold">More affordable than YNAB</p>
                 </div>
               </motion.div>
             </div>
@@ -505,16 +504,10 @@ export default function YNABAlternative() {
             <div className="mt-8 space-y-4">
               <div className="rounded-xl border-2 border-gray-200 bg-gray-50 p-6 text-center">
                 <p className="text-lg font-semibold text-gray-900">
-                  Over 5 years: YNAB costs <span className="text-red-600">$900</span> vs SheetLink's <span className="text-sheetlink-green-700">$60-300</span>
+                  Start with the free tier and upgrade to Pro when you need extended history.
                 </p>
                 <p className="mt-2 text-sm text-gray-600">
-                  That's $600-840 saved over 5 years.
-                </p>
-              </div>
-
-              <div className="rounded-xl border-2 border-gray-200 bg-gray-50 p-6 text-center">
-                <p className="text-lg font-semibold text-gray-900">
-                  One year of YNAB = <span className="text-sheetlink-green-700">3 years</span> of SheetLink Pro or <span className="text-sheetlink-green-700">15 years</span> of Basic
+                  Pro tier pricing available for beta users - contact for early access.
                 </p>
               </div>
             </div>
@@ -610,9 +603,9 @@ export default function YNABAlternative() {
                   5
                 </div>
                 <div className="flex-1 rounded-xl border-2 border-gray-200 bg-white p-6">
-                  <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Cancel YNAB & Save $120+/Year</h3>
+                  <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Cancel YNAB & Start Saving</h3>
                   <p className="text-gray-700">
-                    Once SheetLink is syncing successfully, cancel your YNAB subscription. You'll immediately stop paying $14.99/month and save $120-168/year.
+                    Once SheetLink is syncing successfully, cancel your YNAB subscription. You'll immediately stop paying $14.99/month ($180/year).
                   </p>
                 </div>
               </motion.div>
@@ -630,7 +623,7 @@ export default function YNABAlternative() {
               <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
                 <h3 className="mb-2 text-lg font-bold text-gray-900">Tiller Money</h3>
                 <p className="mb-2 text-sm text-gray-700">
-                  Also syncs to Google Sheets at $79/year. Cheaper than YNAB but still expensive compared to SheetLink's $12-60/year. Includes pre-built templates.
+                  Also syncs to Google Sheets at $79/year. Cheaper than YNAB but more expensive than SheetLink. Includes pre-built templates.
                 </p>
                 <a href="/tiller-alternative" className="text-sm font-semibold text-sheetlink-green-700 hover:underline">
                   Learn more about Tiller alternatives →
@@ -679,7 +672,7 @@ export default function YNABAlternative() {
               >
                 <h3 className="mb-3 text-xl font-bold text-sheetlink-text">Why is YNAB so expensive?</h3>
                 <p className="text-gray-700">
-                  YNAB costs $14.99/month or $180/year because it's a full-featured budgeting platform with its own app, methodology, and support system. While YNAB is powerful, the price is high compared to alternatives like SheetLink which offers bank-to-spreadsheet syncing for $12-60/year - saving you $120-168 annually.
+                  YNAB costs $14.99/month or $180/year because it's a full-featured budgeting platform with its own app, methodology, and support system. While YNAB is powerful, the price is high compared to alternatives like SheetLink which offers bank-to-spreadsheet syncing starting with a free tier (7 days) and Pro tier in beta.
                 </p>
               </motion.div>
 
@@ -692,7 +685,7 @@ export default function YNABAlternative() {
               >
                 <h3 className="mb-3 text-xl font-bold text-sheetlink-text">What is the best cheaper alternative to YNAB?</h3>
                 <p className="text-gray-700">
-                  SheetLink is one of the most affordable YNAB alternatives, starting at free forever (7 days of history) or $12-60/year for extended history. Unlike YNAB's prescriptive zero-based budgeting, SheetLink syncs transactions to Google Sheets so you can use ANY budgeting method you prefer - envelope system, 50/30/20 rule, zero-based, or your own custom approach.
+                  SheetLink is one of the most affordable YNAB alternatives, starting at free forever (7 days of history) with Pro tier available for beta users. Unlike YNAB's prescriptive zero-based budgeting, SheetLink syncs transactions to Google Sheets so you can use ANY budgeting method you prefer - envelope system, 50/30/20 rule, zero-based, or your own custom approach.
                 </p>
               </motion.div>
 
@@ -718,7 +711,7 @@ export default function YNABAlternative() {
               >
                 <h3 className="mb-3 text-xl font-bold text-sheetlink-text">How do I switch from YNAB to SheetLink?</h3>
                 <p className="text-gray-700">
-                  Switching from YNAB to SheetLink: 1) Export your YNAB transaction history (YNAB supports CSV export). 2) Install SheetLink Chrome extension. 3) Create a Google Sheet budget - either build your own or replicate YNAB's methodology. 4) Import your historical YNAB data. 5) Connect your banks through Plaid in SheetLink to start syncing new transactions. 6) Cancel YNAB subscription to save $120-168/year.
+                  Switching from YNAB to SheetLink: 1) Export your YNAB transaction history (YNAB supports CSV export). 2) Install SheetLink Chrome extension. 3) Create a Google Sheet budget - either build your own or replicate YNAB's methodology. 4) Import your historical YNAB data. 5) Connect your banks through Plaid in SheetLink to start syncing new transactions. 6) Cancel YNAB subscription to save on costs.
                 </p>
               </motion.div>
             </div>
@@ -729,10 +722,10 @@ export default function YNABAlternative() {
         <section className="bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-4 py-20">
           <div className="mx-auto max-w-4xl text-center">
             <h2 className="mb-6 text-4xl font-bold text-white">
-              Ready to Save $120-168/Year?
+              Ready for a More Affordable Option?
             </h2>
             <p className="mb-8 text-xl text-white/90">
-              Start with SheetLink's free tier or upgrade for a fraction of YNAB's cost.
+              Start with SheetLink's free tier or contact us about Pro access.
             </p>
             <a
               href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"

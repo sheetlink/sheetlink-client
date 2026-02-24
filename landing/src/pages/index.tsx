@@ -64,7 +64,7 @@ export default function Home() {
         "name": "How much does SheetLink cost?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink is free forever for the last 7 days of transactions - perfect for weekly budget tracking. For unlimited transaction history and real-time auto-sync, it costs $2/month. This is significantly more affordable than alternatives like Tiller Money ($79/year) or YNAB ($14.99/month)."
+          "text": "SheetLink is free forever for the last 7 days of transactions - perfect for weekly budget tracking. Pro tier with extended history is available for beta/early access users. This is significantly more affordable than alternatives like Tiller Money ($79/year) or YNAB ($14.99/month)."
         }
       },
       {
@@ -88,7 +88,7 @@ export default function Home() {
         "name": "What's the difference between SheetLink and Tiller Money?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink costs $2/month for unlimited history vs Tiller's $79/year ($6.58/month). SheetLink offers financial templates through Recipes and supports both personal budgeting and small business bookkeeping use cases. Tiller focuses primarily on personal finance. Both sync bank transactions to Google Sheets using Plaid. SheetLink has a free tier (7 days of history) that Tiller doesn't offer."
+          "text": "SheetLink offers a free tier (7 days of history) and Pro tier in beta, while Tiller costs $79/year with no free tier. SheetLink offers financial templates through Recipes and supports both personal budgeting and small business bookkeeping use cases. Tiller focuses primarily on personal finance. Both sync bank transactions to Google Sheets using Plaid."
         }
       },
       {
@@ -269,6 +269,117 @@ export default function Home() {
 
         {/* Security & Privacy */}
         <SecurityPrivacy />
+
+        {/* Popular Use Cases */}
+        <section className="bg-gray-50 px-4 py-20">
+          <div className="mx-auto max-w-7xl">
+            <h2 className="mb-4 text-center text-4xl font-bold text-sheetlink-text">
+              Built for Your Use Case
+            </h2>
+            <p className="mb-12 text-center text-xl text-gray-600">
+              From freelancers to small businesses, SheetLink adapts to your needs
+            </p>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <a
+                href="/tax-prep-spreadsheet"
+                className="rounded-lg border-2 border-gray-200 bg-white p-6 transition-all hover:border-sheetlink-green-700 hover:shadow-lg"
+              >
+                <div className="mb-3 text-3xl">📊</div>
+                <h3 className="mb-2 text-lg font-bold text-sheetlink-text">Tax Prep</h3>
+                <p className="text-sm text-gray-600">Organize transactions for tax season</p>
+              </a>
+              <a
+                href="/freelance-income-tracker"
+                className="rounded-lg border-2 border-gray-200 bg-white p-6 transition-all hover:border-sheetlink-green-700 hover:shadow-lg"
+              >
+                <div className="mb-3 text-3xl">💼</div>
+                <h3 className="mb-2 text-lg font-bold text-sheetlink-text">Freelance Tracking</h3>
+                <p className="text-sm text-gray-600">Track income from multiple clients</p>
+              </a>
+              <a
+                href="/etsy-seller-finances"
+                className="rounded-lg border-2 border-gray-200 bg-white p-6 transition-all hover:border-sheetlink-green-700 hover:shadow-lg"
+              >
+                <div className="mb-3 text-3xl">🎨</div>
+                <h3 className="mb-2 text-lg font-bold text-sheetlink-text">Etsy Sellers</h3>
+                <p className="text-sm text-gray-600">Track sales, fees, and profit margins</p>
+              </a>
+              <a
+                href="/rental-property-cash-flow"
+                className="rounded-lg border-2 border-gray-200 bg-white p-6 transition-all hover:border-sheetlink-green-700 hover:shadow-lg"
+              >
+                <div className="mb-3 text-3xl">🏘️</div>
+                <h3 className="mb-2 text-lg font-bold text-sheetlink-text">Rental Property</h3>
+                <p className="text-sm text-gray-600">Monitor rental income and expenses</p>
+              </a>
+            </div>
+            <div className="mt-8 text-center">
+              <a
+                href="/use-cases"
+                className="inline-flex items-center gap-2 text-sheetlink-green-700 hover:underline"
+              >
+                View all use cases
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Compare SheetLink */}
+        <section className="px-4 py-20">
+          <div className="mx-auto max-w-7xl">
+            <h2 className="mb-4 text-center text-4xl font-bold text-sheetlink-text">
+              Compare SheetLink
+            </h2>
+            <p className="mb-12 text-center text-xl text-gray-600">
+              See how SheetLink stacks up against other tools
+            </p>
+            <div className="grid gap-6 md:grid-cols-3">
+              <a
+                href="/mint-alternative"
+                className="rounded-lg border-2 border-sheetlink-green-700 bg-sheetlink-green-50 p-6 transition-all hover:shadow-lg"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <div className="text-3xl">🚨</div>
+                  <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white">
+                    URGENT
+                  </span>
+                </div>
+                <h3 className="mb-2 text-lg font-bold text-sheetlink-text">Mint Shut Down</h3>
+                <p className="text-sm text-gray-600">Find the best Mint alternative</p>
+              </a>
+              <a
+                href="/tiller-alternative"
+                className="rounded-lg border-2 border-gray-200 bg-white p-6 transition-all hover:border-sheetlink-green-700 hover:shadow-lg"
+              >
+                <div className="mb-3 text-3xl">📊</div>
+                <h3 className="mb-2 text-lg font-bold text-sheetlink-text">vs Tiller Money</h3>
+                <p className="text-sm text-gray-600">More affordable Sheets sync</p>
+              </a>
+              <a
+                href="/sheetlink-vs-quickbooks"
+                className="rounded-lg border-2 border-gray-200 bg-white p-6 transition-all hover:border-sheetlink-green-700 hover:shadow-lg"
+              >
+                <div className="mb-3 text-3xl">📗</div>
+                <h3 className="mb-2 text-lg font-bold text-sheetlink-text">vs QuickBooks</h3>
+                <p className="text-sm text-gray-600">Simple bookkeeping alternative</p>
+              </a>
+            </div>
+            <div className="mt-8 text-center">
+              <a
+                href="/comparisons"
+                className="inline-flex items-center gap-2 text-sheetlink-green-700 hover:underline"
+              >
+                View all comparisons
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </section>
 
         <Footer />
       </div>

@@ -45,7 +45,7 @@ export default function MintAlternative() {
         'name': 'Is SheetLink cheaper than Mint was?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'Mint was free but ad-supported and shut down by Intuit. SheetLink is free forever for the last 7 days of transactions with no ads. For extended history, SheetLink costs just $12-60/year, which is significantly cheaper than Credit Karma\'s paid features or other Mint alternatives like YNAB ($180/year) or Tiller ($79/year).',
+          'text': 'Mint was free but ad-supported and shut down by Intuit. SheetLink is free forever for the last 7 days of transactions with no ads. For extended history, Pro tier is available in beta/early access. SheetLink is more affordable than many Mint alternatives like YNAB ($180/year) or Tiller ($79/year).',
         },
       },
     ],
@@ -235,7 +235,7 @@ export default function MintAlternative() {
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Free Forever Tier</h3>
                   <p className="text-gray-700">
-                    7 days of transaction history, free forever. No credit card. No ads. No bait-and-switch. If you need more history, it's just $12-60/year.
+                    7 days of transaction history, free forever. No credit card. No ads. No bait-and-switch. Pro tier with extended history available for beta users.
                   </p>
                 </div>
               </motion.div>
@@ -349,7 +349,7 @@ export default function MintAlternative() {
                   <tr className="bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Price</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-700">Free (with ads)</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">Free tier, $12-60/year for more</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">Free tier (7 days), Pro tier in beta</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Data Ownership</td>
@@ -415,22 +415,21 @@ export default function MintAlternative() {
               >
                 <h3 className="mb-2 text-2xl font-bold">SheetLink</h3>
                 <div className="mb-4">
-                  <span className="text-5xl font-bold">$0</span>
-                  <span className="text-xl"> - $60</span>
-                  <span className="text-lg opacity-90">/year</span>
+                  <span className="text-5xl font-bold">Free</span>
+                  <span className="text-lg opacity-90"> Forever</span>
                 </div>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    Free: 7 days of history
+                    <strong>Free tier:</strong> 7 days of history
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    Basic: $12/year (90 days)
+                    <strong>Pro tier:</strong> Extended history (beta/early access)
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    Pro: $60/year (24 months)
+                    Pro pricing TBD - contact for early access
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
@@ -451,7 +450,7 @@ export default function MintAlternative() {
                     <h4 className="text-lg font-bold text-gray-900">YNAB</h4>
                     <span className="text-2xl font-bold text-gray-900">$180/year</span>
                   </div>
-                  <p className="text-sm text-gray-600">3x more expensive than SheetLink Pro</p>
+                  <p className="text-sm text-gray-600">Premium budgeting platform</p>
                 </motion.div>
 
                 <motion.div
@@ -465,7 +464,7 @@ export default function MintAlternative() {
                     <h4 className="text-lg font-bold text-gray-900">Tiller Money</h4>
                     <span className="text-2xl font-bold text-gray-900">$79/year</span>
                   </div>
-                  <p className="text-sm text-gray-600">Still more than SheetLink Pro</p>
+                  <p className="text-sm text-gray-600">Sheets-based alternative</p>
                 </motion.div>
 
                 <motion.div
@@ -683,7 +682,7 @@ export default function MintAlternative() {
               >
                 <h3 className="mb-3 text-xl font-bold text-sheetlink-text">Is SheetLink cheaper than Mint was?</h3>
                 <p className="text-gray-700">
-                  Mint was free but ad-supported and shut down by Intuit. SheetLink is free forever for the last 7 days of transactions with no ads. For extended history, SheetLink costs just $12-60/year, which is significantly cheaper than Credit Karma's paid features or other Mint alternatives like YNAB ($180/year) or Tiller ($79/year).
+                  Mint was free but ad-supported and shut down by Intuit. SheetLink is free forever for the last 7 days of transactions with no ads. For extended history, Pro tier is available in beta/early access. SheetLink is more affordable than many Mint alternatives like YNAB ($180/year) or Tiller ($79/year).
                 </p>
               </motion.div>
             </div>

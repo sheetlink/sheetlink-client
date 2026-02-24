@@ -7,7 +7,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function TillerAlternative() {
   const seoTitle = 'Best Tiller Alternative - SheetLink for Google Sheets (2026)';
-  const seoDescription = 'Looking for a cheaper Tiller Money alternative? SheetLink syncs bank transactions to Google Sheets for $12-60/year (vs Tiller\'s $79/year). Free tier available. Same features, better price.';
+  const seoDescription = 'Looking for a cheaper Tiller Money alternative? SheetLink syncs bank transactions to Google Sheets with a free tier and Pro option in beta. Same features, better price.';
   const seoUrl = 'https://sheetlink.app/tiller-alternative';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -21,7 +21,7 @@ export default function TillerAlternative() {
         'name': 'Why choose SheetLink over Tiller Money?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'SheetLink offers similar bank-to-Google-Sheets syncing at a much lower price point. Tiller costs $79/year with no free tier, while SheetLink is free forever for 7 days of history, or $12-60/year for extended history. Both use Plaid for bank connections and sync to Google Sheets, but SheetLink is more affordable and offers a generous free tier.',
+          'text': 'SheetLink offers similar bank-to-Google-Sheets syncing at a much lower price point. Tiller costs $79/year with no free tier, while SheetLink is free forever for 7 days of history, with Pro tier available for beta users. Both use Plaid for bank connections and sync to Google Sheets, but SheetLink is more affordable and offers a generous free tier.',
         },
       },
       {
@@ -29,7 +29,7 @@ export default function TillerAlternative() {
         'name': 'Is SheetLink cheaper than Tiller Money?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'Yes. Tiller Money costs $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with paid plans at $12/year (Basic - 90 days) or $60/year (Pro - 24 months). Even the Pro plan is $19/year cheaper than Tiller, and the free tier is available permanently.',
+          'text': 'Yes. Tiller Money costs $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with Pro tier (extended history) available for beta users. The free tier is available permanently.',
         },
       },
       {
@@ -96,7 +96,7 @@ export default function TillerAlternative() {
             >
               <div className="inline-flex items-center gap-2 rounded-full bg-sheetlink-green-700/10 px-4 py-2 text-sm font-semibold text-sheetlink-green-700">
                 <DollarSign className="h-4 w-4" />
-                Save $19-67 per year vs Tiller
+                More affordable than Tiller
               </div>
             </motion.div>
 
@@ -218,7 +218,7 @@ export default function TillerAlternative() {
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Much More Affordable</h3>
                   <p className="text-gray-700">
-                    Free forever for 7 days of history. Basic plan at $12/year (90 days). Pro plan at $60/year (24 months). Even Pro is $19 cheaper than Tiller.
+                    Free forever for 7 days of history. Pro tier with extended history available for beta/early access users. Contact for pricing details.
                   </p>
                 </div>
               </motion.div>
@@ -334,7 +334,7 @@ export default function TillerAlternative() {
                   <tr>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Price</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-700">$79/year</td>
-                    <td className="px-6 py-4 text-center text-sm font-semibold text-sheetlink-green-700">$0 - $60/year</td>
+                    <td className="px-6 py-4 text-center text-sm font-semibold text-sheetlink-green-700">Free (7 days), Pro in beta</td>
                   </tr>
                   <tr className="bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Free Tier</td>
@@ -420,10 +420,10 @@ export default function TillerAlternative() {
         <section className="px-4 py-20">
           <div className="mx-auto max-w-4xl">
             <h2 className="mb-4 text-center text-4xl font-bold text-sheetlink-text">
-              Pricing Comparison: Save $19-67/Year
+              Pricing Comparison
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              SheetLink offers better value at every tier
+              SheetLink offers a more affordable option
             </p>
             <div className="grid gap-6 md:grid-cols-2">
               <motion.div
@@ -469,22 +469,21 @@ export default function TillerAlternative() {
               >
                 <h3 className="mb-2 text-2xl font-bold">SheetLink</h3>
                 <div className="mb-4">
-                  <span className="text-5xl font-bold">$0</span>
-                  <span className="text-xl"> - $60</span>
-                  <span className="text-lg opacity-90">/year</span>
+                  <span className="text-5xl font-bold">Free</span>
+                  <span className="text-lg opacity-90"> Forever</span>
                 </div>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    <strong>Free forever:</strong> 7 days history
+                    <strong>Free tier:</strong> 7 days history
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    <strong>Basic $12/year:</strong> 90 days history
+                    <strong>Pro tier:</strong> Extended history (beta/early access)
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    <strong>Pro $60/year:</strong> 24 months history
+                    Pro pricing TBD - contact for early access
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
@@ -496,17 +495,17 @@ export default function TillerAlternative() {
                   </li>
                 </ul>
                 <div className="mt-6 rounded-lg bg-white/20 px-4 py-3 text-center">
-                  <p className="text-sm font-semibold">Save $19-67 per year vs Tiller</p>
+                  <p className="text-sm font-semibold">More affordable than Tiller</p>
                 </div>
               </motion.div>
             </div>
 
             <div className="mt-8 rounded-xl border-2 border-gray-200 bg-gray-50 p-6 text-center">
               <p className="text-lg font-semibold text-gray-900">
-                Example: If you use SheetLink Pro ($60/year), you save <span className="text-sheetlink-green-700">$19/year</span> vs Tiller.
+                Start with the free tier and upgrade to Pro when you need extended history.
               </p>
               <p className="mt-2 text-sm text-gray-600">
-                Over 5 years, that's $95 saved. Over 10 years? $190 saved.
+                Pro tier pricing available for beta users - contact for early access.
               </p>
             </div>
           </div>
@@ -603,7 +602,7 @@ export default function TillerAlternative() {
                 <div className="flex-1 rounded-xl border-2 border-gray-200 bg-white p-6">
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Start Syncing & Cancel Tiller</h3>
                   <p className="text-gray-700">
-                    Once SheetLink is syncing properly, cancel your Tiller subscription to stop the $79/year charge. With SheetLink's free tier or Basic plan ($12/year), you'll start saving immediately.
+                    Once SheetLink is syncing properly, cancel your Tiller subscription to stop the $79/year charge. With SheetLink's free tier, you'll start saving immediately.
                   </p>
                 </div>
               </motion.div>
@@ -676,7 +675,7 @@ export default function TillerAlternative() {
               >
                 <h3 className="mb-3 text-xl font-bold text-sheetlink-text">Is SheetLink cheaper than Tiller Money?</h3>
                 <p className="text-gray-700">
-                  Yes. Tiller Money costs $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with paid plans at $12/year (Basic - 90 days) or $60/year (Pro - 24 months). Even the Pro plan is $19/year cheaper than Tiller, and the free tier is available permanently.
+                  Yes. Tiller Money costs $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with Pro tier (extended history) available for beta users. The free tier is available permanently.
                 </p>
               </motion.div>
 
@@ -713,10 +712,10 @@ export default function TillerAlternative() {
         <section className="bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-4 py-20">
           <div className="mx-auto max-w-4xl text-center">
             <h2 className="mb-6 text-4xl font-bold text-white">
-              Ready to Save $19-67/Year?
+              Ready for a More Affordable Option?
             </h2>
             <p className="mb-8 text-xl text-white/90">
-              Start with SheetLink's free tier (7 days) or upgrade for less than Tiller costs.
+              Start with SheetLink's free tier (7 days) or contact us about Pro access.
             </p>
             <a
               href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
