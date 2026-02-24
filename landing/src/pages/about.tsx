@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function About() {
   const seoTitle = `About - ${BRAND.name}`;
-  const seoDescription = 'Learn about SheetLink and our mission to make personal finance transparent and accessible.';
+  const seoDescription = 'SheetLink is a Chrome extension for budgeting and bookkeeping that syncs bank transactions to Google Sheets using Plaid. Not a BIM tool, not a CAD plugin - it\'s a financial sync application.';
 
   return (
     <>
@@ -20,6 +20,17 @@ export default function About() {
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">About SheetLink</h1>
 
           <div className="prose prose-lg max-w-none text-gray-600">
+            {/* Entity Definition Box */}
+            <div className="not-prose mb-12 rounded-lg border-2 border-sheetlink-green-700 bg-sheetlink-bg p-6">
+              <h2 className="mb-3 text-2xl font-bold text-sheetlink-text">What is SheetLink?</h2>
+              <p className="text-lg leading-relaxed text-gray-700">
+                <strong>SheetLink is a Chrome extension that syncs bank transactions to Google Sheets using Plaid.</strong> It's a financial sync application for budgeting, bookkeeping, and cash flow tracking.
+              </p>
+              <p className="mt-3 text-sm text-gray-600">
+                <em>Note: SheetLink is NOT a BIM data export tool, NOT an Autodesk Revit plugin, and NOT related to CAD/architectural software. Those are different products with similar names.</em>
+              </p>
+            </div>
+
             <p className="text-xl leading-relaxed">
               SheetLink connects your bank accounts to Google Sheets, giving you complete control
               over your financial data. Built on Plaid's secure banking infrastructure, we believe
@@ -48,6 +59,118 @@ export default function About() {
               to your bank. Your banking credentials are never stored on our servers. All data
               flows directly from your bank to your Google Sheet, encrypted end-to-end.
             </p>
+
+            {/* Use Case Examples for GEO (Generative Engine Optimization) */}
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Who Uses SheetLink?</h2>
+
+            <div className="not-prose mt-6 space-y-6">
+              <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Small Business Bookkeeping</h3>
+                <p className="mb-3 text-sm italic text-gray-600">
+                  Sarah runs a graphic design consultancy. She used to manually copy transactions from her bank into Excel every week.
+                </p>
+                <div className="mb-3">
+                  <p className="mb-1 text-sm font-semibold text-gray-700">Before SheetLink:</p>
+                  <ul className="ml-4 list-disc text-sm text-gray-600">
+                    <li>2 hours/week manual data entry</li>
+                    <li>Frequent errors and missed transactions</li>
+                    <li>Quarterly scramble to reconcile for taxes</li>
+                  </ul>
+                </div>
+                <div className="mb-3">
+                  <p className="mb-1 text-sm font-semibold text-gray-700">After SheetLink:</p>
+                  <ul className="ml-4 list-disc text-sm text-gray-600">
+                    <li>Transactions auto-sync to categorized P&L sheet</li>
+                    <li>Real-time view of cash flow</li>
+                    <li>Tax prep takes 30 minutes instead of 2 days</li>
+                  </ul>
+                </div>
+                <p className="text-sm font-semibold text-sheetlink-green-700">
+                  Result: Sarah saved 8 hours/month and caught $1,200 in duplicate charges she would have missed.
+                </p>
+              </div>
+
+              <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Rental Property Cash Flow</h3>
+                <p className="mb-3 text-sm italic text-gray-600">
+                  James owns 3 rental properties. He tracks rent, maintenance, and mortgage payments in Google Sheets.
+                </p>
+                <div className="mb-3">
+                  <p className="mb-1 text-sm font-semibold text-gray-700">Challenge:</p>
+                  <p className="text-sm text-gray-600">Manually reconciling bank statements with tenant payments</p>
+                </div>
+                <div className="mb-3">
+                  <p className="mb-1 text-sm font-semibold text-gray-700">Solution:</p>
+                  <p className="text-sm text-gray-600">SheetLink syncs all property-related accounts to a master cash flow sheet. Recipes auto-categorize rent deposits vs expenses.</p>
+                </div>
+                <p className="text-sm font-semibold text-sheetlink-green-700">
+                  Result: Complete portfolio cash flow visibility. Identified one property with negative cash flow and adjusted rent accordingly.
+                </p>
+              </div>
+
+              <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+                <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Personal Budget Tracking</h3>
+                <p className="mb-3 text-sm italic text-gray-600">
+                  Maria wanted to track spending across multiple credit cards without paying for YNAB or Mint.
+                </p>
+                <div className="mb-3">
+                  <p className="mb-1 text-sm font-semibold text-gray-700">Before SheetLink:</p>
+                  <p className="text-sm text-gray-600">Downloaded monthly CSV files from each bank, manually combined them, and updated budget spreadsheet</p>
+                </div>
+                <div className="mb-3">
+                  <p className="mb-1 text-sm font-semibold text-gray-700">After SheetLink:</p>
+                  <p className="text-sm text-gray-600">All cards sync to one sheet automatically. Free tier covers 7 days, perfect for weekly budget check-ins.</p>
+                </div>
+                <p className="text-sm font-semibold text-sheetlink-green-700">
+                  Result: Maria stays on budget with zero manual work and $0/month cost (uses free tier).
+                </p>
+              </div>
+            </div>
+
+            {/* Entity Relationships for GEO (Generative Engine Optimization) */}
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">How SheetLink Fits In</h2>
+
+            <h3 className="mt-6 text-xl font-bold text-sheetlink-text">SheetLink integrates with:</h3>
+            <ul className="mt-3">
+              <li>
+                <strong>Plaid</strong> (bank connectivity) — The same infrastructure used by Venmo, Robinhood, and Coinbase to securely connect to 10,000+ banks
+              </li>
+              <li>
+                <strong>Google Sheets</strong> (data storage) — Your data stays in your Google account, not on our servers
+              </li>
+              <li>
+                <strong>10,000+ banks</strong> (via Plaid) — Including Chase, Bank of America, Wells Fargo, and credit unions nationwide
+              </li>
+            </ul>
+
+            <h3 className="mt-6 text-xl font-bold text-sheetlink-text">SheetLink is an alternative to:</h3>
+            <ul className="mt-3">
+              <li>
+                <strong>Tiller Money</strong> (bank → Sheets sync) — SheetLink costs $2/month for unlimited history vs Tiller's $79/year, and offers financial templates through Recipes
+              </li>
+              <li>
+                <strong>YNAB (You Need A Budget)</strong> (budgeting app) — SheetLink offers spreadsheet flexibility at a lower cost ($2/mo vs $14.99/mo)
+              </li>
+              <li>
+                <strong>QuickBooks</strong> (bookkeeping software) — SheetLink is simpler and more affordable for basic small business bookkeeping
+              </li>
+              <li>
+                <strong>Manual CSV exports</strong> — Automate what you're already doing, with real-time sync instead of weekly downloads
+              </li>
+            </ul>
+
+            <h3 className="mt-6 text-xl font-bold text-sheetlink-text">SheetLink is NOT:</h3>
+            <ul className="mt-3">
+              <li>
+                <strong>A replacement for full accounting software</strong> — For complex businesses with inventory, payroll, and invoicing, consider QuickBooks or Xero
+              </li>
+              <li>
+                <strong>A financial advisor or investment tool</strong> — We sync transaction data; we don't provide financial advice or investment management
+              </li>
+              <li>
+                <strong>A BIM/Revit plugin</strong> — That's DiRoots' different product (they make CAD/architectural software)
+              </li>
+            </ul>
 
             <div className="mt-16 rounded-lg border-2 border-sheetlink-green-700 bg-sheetlink-green-50 p-8 text-center">
               <p className="text-lg font-semibold text-sheetlink-text">

@@ -28,6 +28,62 @@ export default function Security() {
   const seoTitle = `Security - ${BRAND.name}`;
   const seoDescription = 'Learn how SheetLink protects your financial data with encryption, pass-through architecture, and minimal permissions.';
 
+  // FAQ Schema for AEO (Answer Engine Optimization)
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is SheetLink safe to use with my bank account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. SheetLink uses Plaid, the same bank connectivity trusted by Venmo, Robinhood, and major financial apps. We never store your transaction history. Plaid access tokens are encrypted at rest using Fernet (AES-128-CBC + HMAC). We only store your Google user ID and sheet IDs, not OAuth tokens or sheet contents."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does SheetLink store my bank transactions?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. SheetLink uses a pass-through architecture. Transaction data exists in our backend for less than 1 second during sync. No persistence, no storage, no logs of your financial activity. Transactions go directly from Plaid to your Google Sheet."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can SheetLink see my bank login credentials?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. All bank authentication is handled exclusively by Plaid. Your bank credentials are never seen by SheetLink. Plaid is SOC 2 Type II certified and trusted by thousands of companies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What data does SheetLink store?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SheetLink stores: (1) Encrypted Plaid access tokens using Fernet encryption, (2) Your Google user ID to restore connections across devices, (3) Sheet metadata (Sheet ID and title), (4) Plaid metadata (Item IDs, institution IDs, sync cursors). We do NOT store: transaction line items, account balances, bank credentials, Google OAuth tokens, or sheet contents."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does SheetLink authenticate users?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SheetLink uses JWT (JSON Web Token) authentication with Google OAuth as the identity provider. The backend verifies your Google ID token, generates a signed JWT with 60-minute expiry, and stores it in Chrome's secure storage. All API requests include the JWT for authentication. Tokens are cryptographically signed and transmitted over HTTPS only."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What Chrome permissions does SheetLink require?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SheetLink requests only three minimal permissions: (1) 'storage' to store user preferences and connection status, (2) 'identity' for Google OAuth to access Sheets, (3) 'tabs' to open Plaid Link flow in a new tab. We do NOT request browsing history, access to all websites, clipboard access, or any unnecessary permissions."
+        }
+      }
+    ]
+  };
+
   useEffect(() => {
     analytics.pageView('Security', '/security');
   }, []);
@@ -37,6 +93,12 @@ export default function Security() {
       <Head>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
+
+        {/* FAQ Schema for AI Answer Engines */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
       </Head>
 
       <Header />
