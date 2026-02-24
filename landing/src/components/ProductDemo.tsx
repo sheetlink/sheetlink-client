@@ -57,12 +57,12 @@ export default function ProductDemo() {
           className="relative mx-auto max-w-5xl"
         >
           {/* Video Container with Poster */}
-          <div className="relative overflow-hidden rounded-xl shadow-2xl">
+          <div className="relative overflow-hidden rounded-md shadow-2xl md:rounded-xl">
             {/* Poster Image - Loads immediately */}
             <img
               src="/demo-poster.webp"
               alt="SheetLink Demo"
-              className="w-full rounded-xl"
+              className="w-full rounded-md md:rounded-xl"
               width="1200"
               height="750"
               loading="eager"
@@ -79,7 +79,7 @@ export default function ProductDemo() {
               preload="none"
               poster="/demo-poster.webp"
               onCanPlay={handleVideoCanPlay}
-              className={`w-full rounded-xl transition-opacity duration-400 ${
+              className={`w-full rounded-md md:rounded-xl transition-opacity duration-400 ${
                 videoLoaded ? 'opacity-100' : 'opacity-0'
               }`}
               style={{ display: videoLoaded ? 'block' : 'none' }}
