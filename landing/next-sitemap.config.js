@@ -43,7 +43,21 @@ module.exports = {
       }
     }
 
-    // Seasonal/niche pages (Phase 4.4 - future)
+    // Seasonal/niche use case pages = high priority
+    if (
+      path.includes('tax-prep-spreadsheet') ||
+      path.includes('etsy-seller-finances') ||
+      path.includes('rental-property-cash-flow')
+    ) {
+      return {
+        loc: path,
+        changefreq: 'monthly',
+        priority: 0.8,
+        lastmod: new Date().toISOString(),
+      }
+    }
+
+    // Future use case pages
     if (path.startsWith('/use-cases/')) {
       return {
         loc: path,
