@@ -43,11 +43,25 @@ module.exports = {
       }
     }
 
+    // AI info page for LLM optimization
+    if (path === '/ai-info') {
+      return {
+        loc: path,
+        changefreq: 'monthly',
+        priority: 0.9,
+        lastmod: new Date().toISOString(),
+      }
+    }
+
     // Seasonal/niche use case pages = high priority
     if (
       path.includes('tax-prep-spreadsheet') ||
       path.includes('etsy-seller-finances') ||
-      path.includes('rental-property-cash-flow')
+      path.includes('rental-property-cash-flow') ||
+      path.includes('freelance-income-tracker') ||
+      path.includes('gig-worker-bookkeeping') ||
+      path.includes('dropshipping-finance-tracker') ||
+      path.includes('real-estate-investment-tracker')
     ) {
       return {
         loc: path,
