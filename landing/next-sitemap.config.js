@@ -53,6 +53,19 @@ module.exports = {
       }
     }
 
+    // Comparison pages = very high priority (high-intent traffic)
+    if (
+      path.includes('sheetlink-vs-') ||
+      path.includes('-alternative')
+    ) {
+      return {
+        loc: path,
+        changefreq: 'monthly',
+        priority: 0.85,
+        lastmod: new Date().toISOString(),
+      }
+    }
+
     // Seasonal/niche use case pages = high priority
     if (
       path.includes('tax-prep-spreadsheet') ||
@@ -61,7 +74,11 @@ module.exports = {
       path.includes('freelance-income-tracker') ||
       path.includes('gig-worker-bookkeeping') ||
       path.includes('dropshipping-finance-tracker') ||
-      path.includes('real-estate-investment-tracker')
+      path.includes('real-estate-investment-tracker') ||
+      path.includes('amazon-fba-bookkeeping') ||
+      path.includes('airbnb-income-tracker') ||
+      path.includes('reseller-profit-tracker') ||
+      path.includes('consulting-income-tracker')
     ) {
       return {
         loc: path,
