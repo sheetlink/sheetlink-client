@@ -207,13 +207,16 @@ export default function FirstSync() {
                   Navigate to the <strong>Home</strong> tab in the extension and click <strong>"Sync Now"</strong>. You'll see status messages as SheetLink fetches and writes your transactions.
                 </p>
                 <p className="mb-4 text-lg text-gray-700">
-                  Your transaction data will appear in the <strong>Transactions</strong> tab with these columns:
+                  Your transaction data will appear in the <strong>Transactions</strong> tab with <strong>30+ comprehensive columns</strong> including:
                 </p>
                 <div className="overflow-x-auto rounded-lg border-2 border-gray-200 bg-white p-4">
                   <code className="block whitespace-nowrap text-sm text-gray-800">
-                    Date | Name | Amount | Category | Account | Institution | Transaction ID
+                    Date | Name | Amount | Category | Merchant | Location | Payment Channel | Account | Institution | and 20+ more fields
                   </code>
                 </div>
+                <p className="mt-3 text-sm text-gray-600">
+                  All available Plaid transaction fields are synced, giving you complete data for analysis, categorization, and custom reporting.
+                </p>
                 <p className="mt-4 text-lg text-gray-700">
                   SheetLink uses <strong>append-only mode</strong>, meaning new transactions are added to the bottom of your sheet. Existing rows are never modified or deleted.
                 </p>
@@ -254,7 +257,7 @@ export default function FirstSync() {
                 <ul className="mb-4 list-inside space-y-2 text-gray-700">
                   <li className="flex items-start gap-2">
                     <span className="mt-1 flex-shrink-0 text-sheetlink-green-700">•</span>
-                    <span>Date, Name, Amount, Category, Account, Institution, Transaction ID</span>
+                    <span>30+ comprehensive columns including Date, Name, Amount, Category, Merchant, Location, Payment Channel, and more</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 flex-shrink-0 text-sheetlink-green-700">•</span>

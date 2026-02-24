@@ -105,7 +105,7 @@ export default function UserGuide() {
             >
               <h2 className="mb-6 text-3xl font-bold text-sheetlink-text">Tabs in the Extension</h2>
               <p className="mb-6 text-lg text-gray-700">
-                SheetLink uses a modern 4-tab navigation system. Here's what each tab does:
+                SheetLink uses a modern 5-tab navigation system. Here's what each tab does:
               </p>
 
               <div className="space-y-6">
@@ -160,16 +160,35 @@ export default function UserGuide() {
                   </ul>
                 </div>
 
-                {/* Settings Tab */}
+                {/* Recipes Tab */}
+                <div className="rounded-lg border-2 border-sheetlink-green-200 bg-sheetlink-green-50 p-6">
+                  <div className="mb-3 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-600 text-white">
+                      📖
+                    </div>
+                    <h3 className="text-2xl font-bold text-sheetlink-text">Recipes Tab <span className="ml-2 rounded-full bg-sheetlink-green-700 px-2 py-1 text-xs text-white">NEW</span></h3>
+                  </div>
+                  <p className="mb-3 text-gray-700">
+                    Browse pre-built financial templates to instantly transform your transaction data:
+                  </p>
+                  <ul className="space-y-1 text-gray-700">
+                    <li>• Install P&L statements, cash flow trackers, and budget templates</li>
+                    <li>• One-click installation creates new tabs with formulas and formatting</li>
+                    <li>• Templates automatically reference your Transactions data</li>
+                    <li>• Free to use with your Free Tier account</li>
+                  </ul>
+                </div>
+
+                {/* Settings */}
                 <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
                   <div className="mb-3 flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-600 text-white">
                       ⚙️
                     </div>
-                    <h3 className="text-2xl font-bold text-sheetlink-text">Settings Tab</h3>
+                    <h3 className="text-2xl font-bold text-sheetlink-text">Settings (Gear Icon)</h3>
                   </div>
                   <p className="text-gray-700">
-                    View your Google account info and manage advanced settings. Includes logout option and future Free Tier benefits display.
+                    Access settings by clicking the <strong>gear icon</strong> under your username in the header. View your Google account info, manage advanced settings, and logout.
                   </p>
                 </div>
               </div>
