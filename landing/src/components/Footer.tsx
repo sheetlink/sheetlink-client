@@ -124,9 +124,6 @@ export default function Footer() {
           <p>
             &copy; {currentYear} {BRAND.name}. Open source. Independent. No VC funding.
           </p>
-          <p className="mt-2 text-xs">
-            Not affiliated with DiRoots SheetLink (Revit plugin). We are sheetlink.app - sync bank transactions to Google Sheets.
-          </p>
         </div>
       </div>
     </footer>
