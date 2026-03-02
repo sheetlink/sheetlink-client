@@ -4,8 +4,8 @@ import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
 
 export default function GoogleSheetsBookkeeping() {
-  const seoTitle = 'Google Sheets Bookkeeping - Automate Your Accounting with Bank Sync';
-  const seoDescription = 'Use Google Sheets for bookkeeping with automatic bank transaction sync. Track income, expenses, and cash flow in real-time. Free bookkeeping template with SheetLink.';
+  const seoTitle = 'Google Sheets Bookkeeping - Privacy-First Bank Sync for Small Business';
+  const seoDescription = 'Privacy-first Google Sheets bookkeeping. Sync bank transactions when YOU choose. Track income, expenses, and cash flow with manual sync control. Free bookkeeping template with SheetLink.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function GoogleSheetsBookkeeping() {
         "name": "Can I use Google Sheets for small business bookkeeping?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Google Sheets is excellent for small business bookkeeping. With SheetLink, you can automatically sync bank transactions to Google Sheets using Plaid, giving you real-time income and expense tracking. It's flexible, free, and powerful enough for small businesses that don't need complex features like inventory management or payroll."
+          "text": "Yes. Google Sheets is excellent for small business bookkeeping. With SheetLink, you can sync bank transactions to Google Sheets when you click sync (manual control for privacy). Perfect for weekly or monthly reviews. It's flexible, free, and powerful enough for small businesses that don't need complex features like inventory management or payroll."
         }
       },
       {
@@ -25,7 +25,7 @@ export default function GoogleSheetsBookkeeping() {
         "name": "How do I automatically sync bank transactions to Google Sheets for bookkeeping?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink Chrome extension, connect your bank account through Plaid (trusted by Venmo and Robinhood), and choose your Google Sheet. Transactions will sync automatically with date, merchant, amount, and category. Free for 7 days of history, or $2/month for unlimited transactions."
+          "text": "Install SheetLink Chrome extension, connect your bank account through Plaid (trusted by Venmo and Robinhood), and choose your Google Sheet. Transactions sync when you click sync (manual control for privacy) with date, merchant, amount, and category. Free for 7 days of history, or $3.99/month for unlimited."
         }
       },
       {
@@ -33,7 +33,7 @@ export default function GoogleSheetsBookkeeping() {
         "name": "Is SheetLink a good alternative to QuickBooks for bookkeeping?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink is a simpler, more affordable alternative to QuickBooks for basic bookkeeping. If you need automatic bank sync, expense categorization, and P&L statements in Google Sheets, SheetLink costs $2/month vs QuickBooks' $30-75/month. However, for complex needs like inventory, payroll, or invoicing, QuickBooks is better suited."
+          "text": "SheetLink is a simpler, more affordable alternative to QuickBooks for basic bookkeeping. If you need privacy-first bank sync, expense categorization, and P&L statements in Google Sheets, SheetLink costs $3.99/month vs QuickBooks' $30-75/month. However, for complex needs like inventory, payroll, or invoicing, QuickBooks is better suited."
         }
       },
       {
@@ -75,8 +75,8 @@ export default function GoogleSheetsBookkeeping() {
               business accounting. The only problem? Manually entering transaction data is tedious.
             </p>
             <p className="text-xl leading-relaxed">
-              <strong>SheetLink solves this</strong> by automatically syncing your bank transactions
-              to Google Sheets using Plaid, turning your spreadsheet into a real-time bookkeeping system.
+              <strong>SheetLink solves this</strong> by syncing your bank transactions when you click sync (manual control for privacy),
+              turning your spreadsheet into a privacy-first bookkeeping system. Perfect for weekly or monthly reviews.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -112,7 +112,7 @@ export default function GoogleSheetsBookkeeping() {
                 <strong>Choose Your Bookkeeping Sheet</strong> - Point to your existing template or create a new one
               </li>
               <li>
-                <strong>Auto-Sync Transactions</strong> - SheetLink writes each transaction as a row with date, amount, merchant, category
+                <strong>Sync Transactions When You Click</strong> - SheetLink writes each transaction as a row with date, amount, merchant, category (manual control for privacy)
               </li>
               <li>
                 <strong>Categorize & Reconcile</strong> - Use formulas to categorize expenses, track income, reconcile accounts
@@ -219,8 +219,7 @@ export default function GoogleSheetsBookkeeping() {
               Need longer history for annual tax prep or monthly reconciliation? Upgrade to:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Basic ($1.99/month)</strong> - 90 days of history, auto-sync every 24 hours</li>
-              <li><strong>Pro ($9.99/month)</strong> - 24 months of history, hourly sync, AI categorization, rules engine</li>
+              <li><strong>Pro ($3.99/month or $39.99/year)</strong> - Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features</li>
             </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">

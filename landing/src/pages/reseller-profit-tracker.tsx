@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function ResellerProfitTracker() {
   const seoTitle = 'Reseller Profit Tracker - Track Income & Expenses in Google Sheets | SheetLink';
-  const seoDescription = 'Automatically sync reseller income and expenses to Google Sheets. Track eBay, Poshmark, Mercari sales, platform fees, shipping costs, and sourcing expenses. Perfect for resellers managing inventory and profit margins.';
+  const seoDescription = 'Privacy-first reseller profit tracking. Sync eBay, Poshmark, Mercari sales to Google Sheets when YOU choose. Track platform fees, shipping costs, and sourcing expenses with manual sync control.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function ResellerProfitTracker() {
         "name": "How do resellers track profit per item?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink to sync your bank account where platforms deposit sales. Tag each deposit by item SKU or listing. Track sourcing cost (thrift/wholesale price), platform fees (eBay, Poshmark, Mercari), shipping costs, and supplies. Calculate profit: Sale Price - Sourcing Cost - Platform Fees - Shipping - Supplies = Net Profit per Item."
+          "text": "Install SheetLink to sync your bank account where platforms deposit sales when you click sync (manual control for privacy). Perfect for weekly or monthly reviews. Tag each deposit by item SKU or listing. Track sourcing cost, platform fees, shipping costs, and supplies. Calculate profit: Sale Price - Sourcing Cost - Platform Fees - Shipping - Supplies = Net Profit per Item."
         }
       },
       {
@@ -70,7 +70,7 @@ export default function ResellerProfitTracker() {
 
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-xl leading-relaxed">
-              Reselling on eBay, Poshmark, and Mercari means tracking sourcing costs, platform fees, shipping expenses, and inventory. <strong>SheetLink automatically syncs your bank account to Google Sheets</strong>, giving you real-time visibility into sales, costs, and profit per item—all in one spreadsheet.
+              Reselling on eBay, Poshmark, and Mercari means tracking sourcing costs, platform fees, shipping expenses, and inventory. <strong>SheetLink syncs your bank account to Google Sheets when you click sync</strong> (manual control for privacy), giving you visibility into sales, costs, and profit per item—all in one spreadsheet. Perfect for weekly or monthly reviews.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -103,7 +103,7 @@ export default function ResellerProfitTracker() {
               <li><strong>Monitor platform fees</strong> - See how much each marketplace takes from your sales</li>
               <li><strong>Track shipping expenses</strong> - USPS, UPS, FedEx charges and supplies (boxes, tape, labels)</li>
               <li><strong>Calculate profit per item</strong> - Know which categories and sourcing channels are most profitable</li>
-              <li><strong>Affordable pricing</strong> - $2/month vs List Perfectly ($30/month) or Vendoo ($40/month)</li>
+              <li><strong>Affordable pricing</strong> - $3.99/month vs List Perfectly ($30/month) or Vendoo ($40/month)</li>
             </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -391,7 +391,7 @@ export default function ResellerProfitTracker() {
                 <tbody>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">SheetLink</td>
-                    <td className="px-6 py-4">$2/month</td>
+                    <td className="px-6 py-4">$3.99/month</td>
                     <td className="px-6 py-4">Solo resellers, simple bookkeeping</td>
                   </tr>
                   <tr className="border-t border-gray-300">
@@ -476,12 +476,8 @@ export default function ResellerProfitTracker() {
               <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
             <p className="mt-4">
-              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+              <strong>Pro ($3.99/month or $39.99/year):</strong> Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features
             </p>
-            <ul className="list-disc pl-6 space-y-2 mt-2">
-              <li>Currently available through early access</li>
-              <li>Contact us for beta pricing</li>
-            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Reseller Profit Today

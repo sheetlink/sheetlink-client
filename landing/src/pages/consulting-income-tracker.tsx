@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function ConsultingIncomeTracker() {
   const seoTitle = 'Consulting Income Tracker - Track Income & Expenses in Google Sheets | SheetLink';
-  const seoDescription = 'Automatically sync consulting income and expenses to Google Sheets. Track client payments, project revenue, billable hours, business expenses, and quarterly taxes. Perfect for independent consultants managing finances.';
+  const seoDescription = 'Privacy-first consulting income tracker. Sync consulting income and expenses to Google Sheets when YOU choose. Track client payments, project revenue, billable hours, and quarterly taxes. Manual sync gives you control.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function ConsultingIncomeTracker() {
         "name": "How do consultants track income by client and project?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink to sync your business bank account. SheetLink automatically captures client payments from wire transfers, ACH, checks, and digital payments. Add custom columns to tag each payment by client name and project. Use pivot tables or filters to see revenue per client, monthly recurring revenue from retainers, and project profitability."
+          "text": "Install SheetLink to sync your business bank account. SheetLink syncs when you click sync (manual control for privacy), capturing client payments from wire transfers, ACH, checks, and digital payments. Add custom columns to tag each payment by client name and project. Use pivot tables or filters to see revenue per client, monthly recurring revenue from retainers, and project profitability. Perfect for weekly or monthly financial reviews."
         }
       },
       {
@@ -70,7 +70,7 @@ export default function ConsultingIncomeTracker() {
 
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-xl leading-relaxed">
-              Independent consulting means managing multiple clients, project-based revenue, retainers, and business expenses. <strong>SheetLink automatically syncs your bank account to Google Sheets</strong>, giving you real-time visibility into client payments, project profitability, and quarterly tax obligations—all in one spreadsheet.
+              Independent consulting means managing multiple clients, project-based revenue, retainers, and business expenses. <strong>SheetLink syncs your bank account to Google Sheets when you click sync</strong>, giving you full control over when your financial data updates. Perfect for weekly or monthly reviews—track client payments, project profitability, and quarterly tax obligations all in one spreadsheet.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -88,23 +88,36 @@ export default function ConsultingIncomeTracker() {
               <li><strong>Professional development</strong> - Ongoing investment in skills, certifications, training</li>
             </ul>
             <p className="mt-4">
-              <strong>SheetLink solves this</strong> by automatically syncing all bank transactions—client payments, expense reimbursements, business costs, and professional development—to Google Sheets where you can analyze profitability and plan for taxes.
+              <strong>SheetLink solves this</strong> by syncing all bank transactions—client payments, expense reimbursements, business costs, and professional development—to Google Sheets when you click sync. You control when your data updates, perfect for weekly or monthly business reviews.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               How SheetLink Helps Consultants
             </h2>
             <p>
-              Get automated consulting bookkeeping at a fraction of the cost of accounting software:
+              Get privacy-first consulting bookkeeping at a fraction of the cost of accounting software:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Auto-sync client payments</strong> - Track wire transfers, ACH, checks, digital payments</li>
+              <li><strong>Manual sync client payments</strong> (you control when) - Track wire transfers, ACH, checks, digital payments</li>
               <li><strong>Revenue by client</strong> - Tag payments to see which clients generate most revenue</li>
               <li><strong>Project profitability</strong> - Compare revenue to hours worked for effective hourly rate</li>
               <li><strong>Track retainer vs project income</strong> - Separate recurring revenue from one-time projects</li>
               <li><strong>Business expense tracking</strong> - Organize deductible expenses for tax time</li>
-              <li><strong>Affordable pricing</strong> - $2/month vs QuickBooks Self-Employed ($20/month) or FreshBooks ($19/month)</li>
+              <li><strong>Affordable pricing</strong> - $3.99/month vs QuickBooks Self-Employed ($20/month) or FreshBooks ($19/month)</li>
             </ul>
+
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
+              Why Manual Sync Works for Consultants
+            </h2>
+            <p>
+              SheetLink only syncs when you click the button. Unlike competitors that access your bank in the background, SheetLink gives you complete control over when your financial data flows to your spreadsheet. This is a privacy feature, not a limitation.
+            </p>
+            <div className="my-6 rounded-lg border-2 border-sheetlink-green-200 bg-sheetlink-green-50 p-6">
+              <h3 className="font-semibold text-sheetlink-text mb-2">Perfect for Weekly or Monthly Reviews</h3>
+              <p className="text-sm">
+                Most consultants review their finances weekly (to track client payments and cash flow) or monthly (to reconcile expenses and calculate quarterly taxes). Manual sync fits this workflow perfectly. Click sync during your financial review session, categorize new transactions, and you're done. No need for daily automatic updates.
+              </p>
+            </div>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               What to Track for Your Consulting Business
@@ -469,7 +482,7 @@ export default function ConsultingIncomeTracker() {
                 <tbody>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">SheetLink</td>
-                    <td className="px-6 py-4">$2/month</td>
+                    <td className="px-6 py-4">$3.99/month</td>
                     <td className="px-6 py-4">Solo consultants, simple bookkeeping</td>
                   </tr>
                   <tr className="border-t border-gray-300">
@@ -496,7 +509,7 @@ export default function ConsultingIncomeTracker() {
               </table>
             </div>
             <p>
-              <strong>SheetLink advantage:</strong> Automated bank sync with full spreadsheet control at 1/10th the cost. Perfect for solo consultants who handle invoicing separately (use Wave or Invoice Ninja for free). Upgrade to FreshBooks or QuickBooks only when you need integrated time tracking and invoicing.
+              <strong>SheetLink advantage:</strong> Privacy-first manual sync with full spreadsheet control at 1/10th the cost. Perfect for solo consultants who handle invoicing separately (use Wave or Invoice Ninja for free). Upgrade to FreshBooks or QuickBooks only when you need integrated time tracking and invoicing.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -538,12 +551,8 @@ export default function ConsultingIncomeTracker() {
               <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
             <p className="mt-4">
-              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+              <strong>Pro ($3.99/month or $39.99/year):</strong> Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features
             </p>
-            <ul className="list-disc pl-6 space-y-2 mt-2">
-              <li>Currently available through early access</li>
-              <li>Contact us for beta pricing</li>
-            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Consulting Income Today

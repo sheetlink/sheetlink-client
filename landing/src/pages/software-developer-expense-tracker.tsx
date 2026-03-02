@@ -7,7 +7,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function SoftwareDeveloperExpenseTracker() {
   const seoTitle = 'Software Developer Expense Tracker - Track 1099 Contractor Expenses in Google Sheets';
-  const seoDescription = 'Track freelance developer expenses, Stripe payouts, SaaS subscriptions, and hardware purchases in Google Sheets. Built for 1099 software engineers and technical contractors.';
+  const seoDescription = 'Privacy-first developer expense tracking. Sync Stripe payouts, SaaS subscriptions, and hardware purchases to Google Sheets when YOU choose. Manual sync for 1099 contractors.';
   const seoUrl = 'https://sheetlink.app/software-developer-expense-tracker';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -101,7 +101,7 @@ export default function SoftwareDeveloperExpenseTracker() {
               transition={{ delay: 0.2 }}
               className="mx-auto mb-8 max-w-3xl text-center text-xl text-gray-700"
             >
-              Track Stripe payouts, SaaS subscriptions, hardware purchases, and client income in Google Sheets. Built for freelance developers and 1099 contractors.
+              Track Stripe payouts, SaaS subscriptions, hardware purchases, and client income in Google Sheets. Manual sync gives you control. Built for freelance developers and 1099 contractors.
             </motion.p>
 
             <motion.div
@@ -163,7 +163,7 @@ export default function SoftwareDeveloperExpenseTracker() {
               Track All Your Developer Expenses
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Every transaction flows into one spreadsheet. Categorize, analyze, export for taxes.
+              Every transaction syncs when you choose. Categorize, analyze, export for taxes.
             </p>
 
             <div className="grid gap-6 md:grid-cols-2">
@@ -282,9 +282,9 @@ export default function SoftwareDeveloperExpenseTracker() {
                   2
                 </div>
                 <div className="flex-1 rounded-xl border-2 border-gray-200 bg-white p-6">
-                  <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Transactions Sync to Sheets</h3>
+                  <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Transactions Sync When You Click</h3>
                   <p className="text-gray-700">
-                    Every purchase, client payment, and subscription charge flows into your Google Sheet automatically. Date, merchant, amount, category.
+                    Every purchase, client payment, and subscription charge flows into your Google Sheet when you click sync. Manual control for privacy. Perfect for weekly or monthly reviews. Date, merchant, amount, category.
                   </p>
                 </div>
               </div>
@@ -334,7 +334,7 @@ export default function SoftwareDeveloperExpenseTracker() {
                 </li>
                 <li className="flex gap-3">
                   <span className="font-bold text-blue-700">2.</span>
-                  <span>Transactions sync into a shared Google Sheet you both can access</span>
+                  <span>Transactions sync into a shared Google Sheet when clicked (manual control for privacy)</span>
                 </li>
                 <li className="flex gap-3">
                   <span className="font-bold text-blue-700">3.</span>
@@ -363,7 +363,7 @@ export default function SoftwareDeveloperExpenseTracker() {
               Stop Scrambling at Tax Time
             </h2>
             <p className="mb-8 text-xl text-white/90">
-              Track every business expense automatically. Free for 7 days of history.
+              Track every business expense with manual sync control. Privacy-first approach. Free for 7 days of history.
             </p>
             <a
               href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"

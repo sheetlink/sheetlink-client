@@ -472,7 +472,7 @@ Exchange Deadline | Replacement Property | Purchase Price | Deferred Tax Gain
               <tbody>
                 <tr>
                   <td className="border border-gray-300 px-4 py-2"><strong>Cost</strong></td>
-                  <td className="border border-gray-300 px-4 py-2">$2-10/month</td>
+                  <td className="border border-gray-300 px-4 py-2">$3.99/month</td>
                   <td className="border border-gray-300 px-4 py-2">$50-300/month</td>
                   <td className="border border-gray-300 px-4 py-2">Free (your time)</td>
                 </tr>

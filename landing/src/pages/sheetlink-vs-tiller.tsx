@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsTiller() {
   const seoTitle = "SheetLink vs Tiller Money - Feature Comparison & Pricing 2026";
-  const seoDescription = "Compare SheetLink vs Tiller Money: SheetLink has a free tier (7 days history) with Pro tier in early access beta, while Tiller costs $79/year. Both sync bank transactions to Google Sheets.";
+  const seoDescription = "Compare SheetLink vs Tiller Money: SheetLink offers privacy-first manual sync with free tier (7 days) and Pro at $3.99/mo, while Tiller costs $6.58/mo with automatic sync. Both sync bank transactions to Google Sheets.";
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-tiller';
 
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function SheetLinkVsTiller() {
         "name": "What is the main difference between SheetLink and Tiller Money?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "The main differences are pricing and flexibility. SheetLink has a free tier (7 days of history) with Pro tier in early access beta, while Tiller costs $79/year ($6.58/month) with no free option. SheetLink is better for business bookkeeping use cases, while Tiller focuses primarily on personal finance with pre-built templates."
+          "text": "The main differences are pricing and sync method. SheetLink has manual sync (you control when) with a free tier (7 days) and Pro at $3.99/mo or $39.99/year, while Tiller has automatic daily sync for $6.58/month ($79/year) with no free option. SheetLink's manual sync is a privacy feature—you control when your accounts are accessed. Tiller focuses on personal finance templates, while SheetLink works well for both personal and business use."
         }
       },
       {
@@ -25,7 +25,7 @@ export default function SheetLinkVsTiller() {
         "name": "Is SheetLink cheaper than Tiller?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink has a free tier (7 days of history) that Tiller doesn't offer. For extended history and auto-sync, SheetLink Pro is in early access beta. Contact for early access pricing details."
+          "text": "Yes. SheetLink offers a free tier (7 days of history) that Tiller doesn't offer. SheetLink Pro costs $3.99/month or $39.99/year, which is 40% cheaper than Tiller's $6.58/month ($79/year). Both tiers include unlimited accounts and bank connections."
         }
       },
       {
@@ -78,7 +78,7 @@ export default function SheetLinkVsTiller() {
                 SheetLink vs Tiller Money
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Both sync bank transactions to Google Sheets. SheetLink has a free tier and better business features. Tiller offers Excel support and mature templates.
+                Both sync bank transactions to Google Sheets. SheetLink offers manual sync for privacy and control with a free tier. Tiller provides automatic daily sync with Excel support and mature templates.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -110,13 +110,13 @@ export default function SheetLinkVsTiller() {
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>You want a free tier or affordable pricing</span>
+                      <span>You want manual sync for privacy (you control when)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>You need a free tier to test before paying</span>
+                      <span>You want a free tier and more affordable pricing ($3.99/mo vs $6.58/mo)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -140,6 +140,12 @@ export default function SheetLinkVsTiller() {
                       <svg className="w-6 h-6 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
+                      <span>You prefer automatic daily sync (background access)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <svg className="w-6 h-6 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
                       <span>You need Microsoft Excel support</span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -152,13 +158,7 @@ export default function SheetLinkVsTiller() {
                       <svg className="w-6 h-6 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>You prefer a more established product (8+ years)</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <svg className="w-6 h-6 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>You value curated templates over price</span>
+                      <span>You prefer a more established product (10+ years)</span>
                     </li>
                   </ul>
                 </div>
@@ -189,8 +189,13 @@ export default function SheetLinkVsTiller() {
                     </tr>
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Paid Plan Price</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">Free + Pro (beta)</strong></td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700">$79/year</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">$3.99/mo or $39.99/year</strong></td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700">$6.58/mo ($79/year)</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">Sync Method</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">Manual (you control)</strong></td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700">Automatic (daily)</td>
                     </tr>
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Free Tier</td>
@@ -225,9 +230,9 @@ export default function SheetLinkVsTiller() {
                       <td className="px-6 py-4 text-center text-sm text-gray-700">Plaid (10,000+ banks)</td>
                     </tr>
                     <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">Auto-Sync Frequency</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5">Hourly (Pro plan)</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700">Daily</td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">Background Sync</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5">No (manual for privacy)</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700">Yes (daily automatic)</td>
                     </tr>
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Transaction History</td>
@@ -278,8 +283,8 @@ export default function SheetLinkVsTiller() {
                 <div className="border-2 border-sheetlink-green-700 rounded-lg p-8 bg-sheetlink-green-700/5">
                   <h3 className="text-2xl font-bold text-sheetlink-green-700 mb-2">SheetLink</h3>
                   <div className="mb-6">
-                    <div className="text-4xl font-bold text-sheetlink-text mb-2">Free<span className="text-xl text-gray-600"> + Pro Beta</span></div>
-                    <p className="text-gray-600">Start free, upgrade for more features</p>
+                    <div className="text-4xl font-bold text-sheetlink-text mb-2">Free<span className="text-xl text-gray-600"> + $3.99/mo</span></div>
+                    <p className="text-gray-600">Start free, upgrade for extended history</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-start gap-2">
@@ -292,19 +297,19 @@ export default function SheetLinkVsTiller() {
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Pro (beta):</strong> Extended history and auto-sync</span>
+                      <span><strong>Pro:</strong> $3.99/mo or $39.99/year</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>Early access available - contact for pricing</span>
+                      <span>Manual sync (you control when)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>Hourly auto-sync on Pro</span>
+                      <span>Privacy-first: no background access</span>
                     </li>
                   </ul>
                   <a
@@ -320,8 +325,8 @@ export default function SheetLinkVsTiller() {
                 <div className="border-2 border-gray-300 rounded-lg p-8">
                   <h3 className="text-2xl font-bold text-gray-700 mb-2">Tiller Money</h3>
                   <div className="mb-6">
-                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$79<span className="text-xl text-gray-600">/year</span></div>
-                    <p className="text-gray-600">Single annual plan ($6.58/month)</p>
+                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$6.58<span className="text-xl text-gray-600">/mo</span></div>
+                    <p className="text-gray-600">Single plan ($79/year)</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-start gap-2">
@@ -361,9 +366,9 @@ export default function SheetLinkVsTiller() {
               </div>
 
               <div className="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">Note:</h4>
+                <h4 className="font-semibold text-blue-900 mb-2">Why Manual Sync?</h4>
                 <p className="text-blue-800">
-                  SheetLink's free tier (7 days) is perfect for recent transaction tracking. For extended history and auto-sync features, Pro tier is currently in early access beta. Contact us for early access pricing details.
+                  SheetLink's manual sync is a privacy feature, not a limitation. You click "Sync" when you want to update your transactions—no background access to your accounts. Perfect for users who review finances weekly or monthly and value control over convenience.
                 </p>
               </div>
             </div>
@@ -377,9 +382,9 @@ export default function SheetLinkVsTiller() {
               </h2>
               <div className="space-y-6">
                 <div className="bg-white p-6 rounded-lg shadow-sm">
-                  <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You Want a Free Option to Start</h3>
+                  <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You Want Manual Sync for Privacy</h3>
                   <p className="text-gray-700">
-                    SheetLink's free tier (7 days of history) is perfect for weekly budget tracking and is free forever. For extended history and auto-sync, Pro tier is in early access beta. If you only need recent transactions, SheetLink's free tier offers unbeatable value.
+                    SheetLink syncs only when YOU click sync—no background access to your accounts. This privacy-first approach is perfect for users who review finances weekly or monthly and don't need daily automatic updates. You control when your financial data is accessed.
                   </p>
                 </div>
 
@@ -398,9 +403,9 @@ export default function SheetLinkVsTiller() {
                 </div>
 
                 <div className="bg-white p-6 rounded-lg shadow-sm">
-                  <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You Want to Test Before Committing</h3>
+                  <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You Want More Affordable Pricing</h3>
                   <p className="text-gray-700">
-                    The free tier lets you test SheetLink with real bank data before spending a dime. Connect your banks, sync the last 7 days of transactions, and see if it meets your needs. No credit card required, no time limits on the free tier.
+                    SheetLink offers a free tier (7 days) and Pro at $3.99/mo ($39.99/year)—40% cheaper than Tiller's $6.58/mo ($79/year). If you only need recent transactions, the free tier is unbeatable. Pro gives extended history at less than half the cost of Tiller.
                   </p>
                 </div>
               </div>
@@ -429,9 +434,9 @@ export default function SheetLinkVsTiller() {
                 </div>
 
                 <div className="bg-white p-6 rounded-lg shadow-sm border-2 border-gray-200">
-                  <h3 className="text-xl font-semibold text-gray-700 mb-3">You Need Unlimited Transaction History</h3>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-3">You Prefer Automatic Daily Sync</h3>
                   <p className="text-gray-700">
-                    Tiller includes unlimited transaction history in their $79/year plan. If you need to analyze years of spending patterns or do year-over-year comparisons, Tiller's unlimited history is more cost-effective than SheetLink Pro (which caps at 24 months and costs more for multiple accounts).
+                    Tiller syncs automatically every day without you clicking anything. If you want your transactions updated in the background and don't mind granting ongoing access to your accounts, Tiller's automatic sync is convenient. SheetLink requires manual sync for privacy.
                   </p>
                 </div>
 
@@ -546,7 +551,7 @@ export default function SheetLinkVsTiller() {
                     What is the main difference between SheetLink and Tiller Money?
                   </h3>
                   <p className="text-gray-700">
-                    The main differences are pricing and flexibility. SheetLink has a free tier (7 days of history) with Pro tier in early access beta, while Tiller costs $79/year ($6.58/month) with no free option. SheetLink is better for business bookkeeping use cases, while Tiller focuses primarily on personal finance with pre-built templates.
+                    The main differences are pricing and sync method. SheetLink has manual sync (you control when) with a free tier (7 days) and Pro at $3.99/mo or $39.99/year, while Tiller has automatic daily sync for $6.58/month ($79/year) with no free option. SheetLink's manual sync is a privacy feature—you control when your accounts are accessed. Tiller focuses on personal finance templates, while SheetLink works well for both personal and business use.
                   </p>
                 </div>
 
@@ -555,7 +560,16 @@ export default function SheetLinkVsTiller() {
                     Is SheetLink cheaper than Tiller?
                   </h3>
                   <p className="text-gray-700">
-                    SheetLink has a free tier (7 days of history) that Tiller doesn't offer. For extended history and auto-sync, SheetLink Pro is in early access beta. Contact for early access pricing details.
+                    Yes. SheetLink offers a free tier (7 days of history) that Tiller doesn't offer. SheetLink Pro costs $3.99/month or $39.99/year, which is 40% cheaper than Tiller's $6.58/month ($79/year). Both tiers include unlimited accounts and bank connections.
+                  </p>
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                  <h3 className="text-lg font-semibold text-sheetlink-text mb-3">
+                    Why manual sync instead of automatic?
+                  </h3>
+                  <p className="text-gray-700">
+                    SheetLink's manual sync is a privacy feature, not a limitation. You control when your bank accounts are accessed—just click "Sync" when you want to update transactions. This fits the workflow of users who review finances weekly or monthly rather than daily, and it means no ongoing background access to your accounts.
                   </p>
                 </div>
 

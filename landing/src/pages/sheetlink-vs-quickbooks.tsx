@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsQuickBooks() {
   const seoTitle = "SheetLink vs QuickBooks - Feature Comparison & Pricing 2026";
-  const seoDescription = "Compare SheetLink vs QuickBooks: SheetLink costs $2-10/month for simple bank syncing to Google Sheets, while QuickBooks costs $30-75/month for full accounting software. Perfect for freelancers and solopreneurs who don't need enterprise features.";
+  const seoDescription = "Compare SheetLink vs QuickBooks: SheetLink offers privacy-first manual sync to Google Sheets ($3.99/mo or $39.99/year), while QuickBooks costs $30-75/month for full accounting software. Perfect for freelancers and solopreneurs who don't need enterprise features.";
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-quickbooks';
 
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function SheetLinkVsQuickBooks() {
         "name": "What is the main difference between SheetLink and QuickBooks?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "QuickBooks is full accounting software with invoicing, payroll, inventory, and tax features ($30-75/month). SheetLink simply syncs bank transactions to Google Sheets for basic bookkeeping ($2-10/month). QuickBooks is for serious businesses with accounting needs. SheetLink is for freelancers and solopreneurs who need basic expense tracking."
+          "text": "QuickBooks is full accounting software with invoicing, payroll, inventory, and tax features ($30-75/month). SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets ($3.99/mo or $39.99/year). QuickBooks is for serious businesses with accounting needs. SheetLink is for freelancers and solopreneurs who need basic expense tracking with full data control."
         }
       },
       {
@@ -25,7 +25,7 @@ export default function SheetLinkVsQuickBooks() {
         "name": "Is SheetLink cheaper than QuickBooks?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes, dramatically cheaper. QuickBooks costs $30-75/month ($360-900/year). SheetLink costs $2-10/month ($24-120/year) - saving you $336-876/year. However, QuickBooks includes full accounting features that SheetLink doesn't offer."
+          "text": "Yes, dramatically cheaper. QuickBooks costs $30-75/month ($360-900/year). SheetLink costs $3.99/mo ($47.88/year) or $39.99/year - saving you $320-860/year. However, QuickBooks includes full accounting features that SheetLink doesn't offer."
         }
       },
       {
@@ -78,7 +78,7 @@ export default function SheetLinkVsQuickBooks() {
                 SheetLink vs QuickBooks
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                QuickBooks is full accounting software ($30-75/month). SheetLink syncs transactions to Google Sheets for basic bookkeeping ($2-10/month). Choose enterprise features or simplicity.
+                QuickBooks is full accounting software ($30-75/month). SheetLink uses privacy-first manual sync to bring transactions to Google Sheets ($3.99/mo or $39.99/year). Choose enterprise features or simplicity with data control.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -184,13 +184,18 @@ export default function SheetLinkVsQuickBooks() {
                   <tbody className="divide-y divide-gray-200">
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Starting Price</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">$0 (Free tier)</strong></td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">Free (7 days)</strong></td>
                       <td className="px-6 py-4 text-center text-sm text-gray-700">$30/month</td>
                     </tr>
                     <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">Full Price Range</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">$2-10/month</strong></td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">Pro Pricing</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">$3.99/mo or $39.99/year</strong></td>
                       <td className="px-6 py-4 text-center text-sm text-gray-700">$30-75/month</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">Sync Method</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5">Manual (you control)</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700">Automatic (background)</td>
                     </tr>
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Bank Transaction Sync</td>
@@ -308,8 +313,8 @@ export default function SheetLinkVsQuickBooks() {
                 <div className="border-2 border-sheetlink-green-700 rounded-lg p-8 bg-sheetlink-green-700/5">
                   <h3 className="text-2xl font-bold text-sheetlink-green-700 mb-2">SheetLink</h3>
                   <div className="mb-6">
-                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$0 - $10<span className="text-xl text-gray-600">/month</span></div>
-                    <p className="text-gray-600">Simple transaction syncing</p>
+                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$3.99<span className="text-xl text-gray-600">/month</span></div>
+                    <p className="text-gray-600">Privacy-first manual sync</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-start gap-2">
@@ -322,13 +327,13 @@ export default function SheetLinkVsQuickBooks() {
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Basic:</strong> $2/mo, 90 days history</span>
+                      <span><strong>Pro:</strong> $3.99/mo or $39.99/year</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Pro:</strong> $10/mo, 24 months history</span>
+                      <span>Manual sync (you control when)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -394,8 +399,8 @@ export default function SheetLinkVsQuickBooks() {
                 <h4 className="font-semibold text-blue-900 mb-2">Annual Cost Comparison:</h4>
                 <p className="text-blue-800">
                   QuickBooks Simple Start: $360/year | QuickBooks Plus: $900/year |
-                  SheetLink Basic: $24/year | SheetLink Pro: $120/year |
-                  <strong>Savings: $240-780/year with SheetLink</strong> (but you lose invoicing, payroll, and professional accounting features)
+                  SheetLink Pro: $39.99/year |
+                  <strong>Savings: $320-860/year with SheetLink</strong> (but you lose invoicing, payroll, and professional accounting features)
                 </p>
               </div>
             </div>
@@ -411,7 +416,7 @@ export default function SheetLinkVsQuickBooks() {
                 <div className="bg-white p-6 rounded-lg shadow-sm">
                   <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You're a Freelancer or Solopreneur with Simple Needs</h3>
                   <p className="text-gray-700">
-                    If you're a contractor, consultant, or freelancer who just needs to track business expenses and categorize transactions for tax time, SheetLink is perfect. You don't need payroll, you don't need inventory management, and you probably send invoices through other tools. SheetLink gives you the basics for $24-120/year vs QuickBooks at $360-900/year.
+                    If you're a contractor, consultant, or freelancer who just needs to track business expenses and categorize transactions for tax time, SheetLink is perfect. You don't need payroll, you don't need inventory management, and you probably send invoices through other tools. SheetLink gives you the basics for $39.99/year vs QuickBooks at $360-900/year.
                   </p>
                 </div>
 
@@ -432,7 +437,7 @@ export default function SheetLinkVsQuickBooks() {
                 <div className="bg-white p-6 rounded-lg shadow-sm">
                   <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You Just Started Your Business</h3>
                   <p className="text-gray-700">
-                    In the early days, every dollar counts. Start with SheetLink's free tier (7 days of transactions) to track initial expenses. Upgrade to Basic ($2/mo) as your business grows. You can always switch to QuickBooks later when you need professional accounting features - but many freelancers never need to.
+                    In the early days, every dollar counts. Start with SheetLink's free tier (7 days of transactions) to track initial expenses. Upgrade to Pro ($3.99/mo or $39.99/year) as your business grows. You can always switch to QuickBooks later when you need professional accounting features - but many freelancers never need to.
                   </p>
                 </div>
               </div>
@@ -544,7 +549,7 @@ export default function SheetLinkVsQuickBooks() {
                     What is the main difference between SheetLink and QuickBooks?
                   </h3>
                   <p className="text-gray-700">
-                    QuickBooks is full accounting software with invoicing, payroll, inventory, and tax features ($30-75/month). SheetLink simply syncs bank transactions to Google Sheets for basic bookkeeping ($2-10/month). QuickBooks is for serious businesses with accounting needs. SheetLink is for freelancers and solopreneurs who need basic expense tracking.
+                    QuickBooks is full accounting software with invoicing, payroll, inventory, and tax features ($30-75/month). SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets ($3.99/mo or $39.99/year). QuickBooks is for serious businesses with accounting needs. SheetLink is for freelancers and solopreneurs who need basic expense tracking with full data control.
                   </p>
                 </div>
 
@@ -553,7 +558,7 @@ export default function SheetLinkVsQuickBooks() {
                     Is SheetLink cheaper than QuickBooks?
                   </h3>
                   <p className="text-gray-700">
-                    Yes, dramatically cheaper. QuickBooks costs $30-75/month ($360-900/year). SheetLink costs $2-10/month ($24-120/year) - saving you $336-876/year. However, QuickBooks includes full accounting features that SheetLink doesn't offer.
+                    Yes, dramatically cheaper. QuickBooks costs $30-75/month ($360-900/year). SheetLink costs $3.99/mo ($47.88/year) or $39.99/year - saving you $320-860/year. However, QuickBooks includes full accounting features that SheetLink doesn't offer.
                   </p>
                 </div>
 
@@ -574,6 +579,15 @@ export default function SheetLinkVsQuickBooks() {
                     Yes. Some businesses use SheetLink for quick daily transaction monitoring in Google Sheets, while maintaining QuickBooks for official accounting and tax filing. SheetLink can complement QuickBooks for real-time expense visibility without logging into full accounting software.
                   </p>
                 </div>
+
+                <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                  <h3 className="text-lg font-semibold text-sheetlink-text mb-3">
+                    Why does SheetLink use manual sync instead of automatic?
+                  </h3>
+                  <p className="text-gray-700">
+                    Privacy and control. Manual sync means YOU decide when to fetch transactions - SheetLink doesn't continuously access your bank accounts in the background. Your bank credentials are only used when you click sync, giving you full control over data access. This privacy-first approach means no background monitoring, no stored credentials between syncs, and complete transparency about when your financial data is accessed.
+                  </p>
+                </div>
               </div>
             </div>
           </section>
@@ -582,10 +596,10 @@ export default function SheetLinkVsQuickBooks() {
           <section className="px-4 py-16 bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700">
             <div className="mx-auto max-w-4xl text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                Save $300-850/Year vs QuickBooks
+                Save $320-860/Year vs QuickBooks
               </h2>
               <p className="text-xl text-white/90 mb-8">
-                Perfect for freelancers and solopreneurs who don't need full accounting software. Start free, upgrade only if needed.
+                Perfect for freelancers and solopreneurs who don't need full accounting software. Privacy-first manual sync. Start free, upgrade only if needed.
               </p>
               <a
                 href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"

@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function FreelanceIncomeTracker() {
   const seoTitle = 'Freelance Income Tracker - Sync Bank to Google Sheets | SheetLink';
-  const seoDescription = 'Automatically sync freelance income and expenses to Google Sheets. Track 1099 income from multiple clients, organize deductible expenses, and prepare for quarterly taxes. Perfect for freelancers and contractors.';
+  const seoDescription = 'Privacy-first freelance income tracker. Sync income and expenses to Google Sheets when YOU choose. Track 1099 income from multiple clients, organize deductible expenses, and prepare for quarterly taxes. Manual sync gives you control.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function FreelanceIncomeTracker() {
         "name": "How do freelancers track income from multiple clients?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink Chrome extension and connect your business bank account via Plaid. SheetLink automatically syncs all client payments, invoices, and deposits to Google Sheets. Add a 'Client' column to tag each income transaction, making it easy to see revenue per client, track payment timing, and identify your most profitable relationships."
+          "text": "Install SheetLink Chrome extension and connect your business bank account via Plaid. SheetLink syncs all client payments, invoices, and deposits to Google Sheets when you click sync (manual control for privacy). Add a 'Client' column to tag each income transaction, making it easy to see revenue per client, track payment timing, and identify your most profitable relationships."
         }
       },
       {
@@ -33,7 +33,7 @@ export default function FreelanceIncomeTracker() {
         "name": "How do freelancers calculate quarterly estimated taxes?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Track gross income minus business expenses in Google Sheets with SheetLink. Your net profit is subject to both income tax (10-37%) and self-employment tax (15.3%). Quarterly estimated taxes are due April 15, June 15, Sept 15, and Jan 15. Calculate 25-30% of your net profit per quarter and pay via IRS Form 1040-ES to avoid penalties."
+          "text": "Track gross income minus business expenses in Google Sheets with SheetLink. Sync your transactions when you review finances (weekly or monthly). Your net profit is subject to both income tax (10-37%) and self-employment tax (15.3%). Quarterly estimated taxes are due April 15, June 15, Sept 15, and Jan 15. Calculate 25-30% of your net profit per quarter and pay via IRS Form 1040-ES to avoid penalties."
         }
       },
       {
@@ -41,7 +41,7 @@ export default function FreelanceIncomeTracker() {
         "name": "Can SheetLink help with Schedule C tax preparation?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. SheetLink automatically syncs all business income and expenses to Google Sheets. Categorize transactions by Schedule C categories (income, advertising, office expenses, travel, etc.). At tax time, generate totals for each category and transfer to Schedule C (Form 1040). SheetLink gives you organized, audit-ready records for your tax preparer or DIY filing."
+          "text": "Yes. SheetLink syncs all business income and expenses to Google Sheets when you click sync. Categorize transactions by Schedule C categories (income, advertising, office expenses, travel, etc.). At tax time, generate totals for each category and transfer to Schedule C (Form 1040). SheetLink gives you organized, audit-ready records for your tax preparer or DIY filing."
         }
       }
     ]
@@ -70,23 +70,36 @@ export default function FreelanceIncomeTracker() {
 
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-xl leading-relaxed">
-              Freelancing means juggling multiple clients, tracking 1099 income, and managing business expenses. <strong>SheetLink automatically syncs your bank account to Google Sheets</strong>, giving you real-time visibility into client payments, deductible expenses, and quarterly tax obligations—all in one spreadsheet.
+              Freelancing means juggling multiple clients, tracking 1099 income, and managing business expenses. <strong>SheetLink syncs your bank account to Google Sheets when you click sync</strong>, giving you full control over when your financial data updates. Perfect for weekly or monthly financial reviews—track client payments, deductible expenses, and quarterly tax obligations all in one spreadsheet.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Why Freelancers Choose SheetLink
             </h2>
             <p>
-              Most freelancers struggle with manual spreadsheets or pay for expensive accounting software. SheetLink gives you automated bookkeeping at a fraction of the cost:
+              Most freelancers struggle with manual spreadsheets or pay for expensive accounting software. SheetLink gives you privacy-first bookkeeping at a fraction of the cost:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Auto-sync client payments</strong> - Track deposits from Venmo, PayPal, direct deposit, and checks</li>
+              <li><strong>Manual sync client payments</strong> (you control when) - Track deposits from Venmo, PayPal, direct deposit, and checks</li>
               <li><strong>Track income by client</strong> - Tag transactions to see revenue per client relationship</li>
               <li><strong>Organize deductible expenses</strong> - Home office, software, equipment, meals, travel</li>
               <li><strong>Quarterly tax estimates</strong> - Calculate what you owe for estimated taxes</li>
               <li><strong>Schedule C preparation</strong> - Categorize expenses for easy tax filing</li>
-              <li><strong>Affordable pricing</strong> - $2/month vs QuickBooks Self-Employed at $20/month</li>
+              <li><strong>Affordable pricing</strong> - $3.99/month vs QuickBooks Self-Employed at $20/month</li>
             </ul>
+
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
+              Why Manual Sync Works for Freelancers
+            </h2>
+            <p>
+              SheetLink only syncs when you click the button. Unlike competitors that access your bank in the background, SheetLink gives you complete control over when your financial data flows to your spreadsheet. This is a privacy feature, not a limitation.
+            </p>
+            <div className="my-6 rounded-lg border-2 border-sheetlink-green-200 bg-sheetlink-green-50 p-6">
+              <h3 className="font-semibold text-sheetlink-text mb-2">Perfect for Weekly or Monthly Reviews</h3>
+              <p className="text-sm">
+                Most freelancers review their finances weekly (to track cash flow) or monthly (to reconcile books and prepare quarterly taxes). Manual sync fits this workflow perfectly. Click sync during your financial review session, categorize new transactions, and you're done. No need for daily automatic updates.
+              </p>
+            </div>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               How to Set Up Your Freelance Income Tracker
@@ -336,7 +349,7 @@ export default function FreelanceIncomeTracker() {
                 <tbody>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">SheetLink</td>
-                    <td className="px-6 py-4">$2/month</td>
+                    <td className="px-6 py-4">$3.99/month</td>
                     <td className="px-6 py-4">Solo freelancers, 1099 contractors</td>
                   </tr>
                   <tr className="border-t border-gray-300">
@@ -385,7 +398,7 @@ export default function FreelanceIncomeTracker() {
                   <strong>Challenge:</strong> David wasn't tracking business expenses properly and overpaid taxes by $4,000 last year.
                 </p>
                 <p className="text-sm mt-2">
-                  <strong>Solution:</strong> SheetLink auto-syncs all business credit card charges. David categorizes expenses by Schedule C line items throughout the year.
+                  <strong>Solution:</strong> SheetLink syncs all business credit card charges when he clicks sync (weekly reviews). David categorizes expenses by Schedule C line items throughout the year.
                 </p>
                 <p className="text-sm mt-2">
                   <strong>Result:</strong> Identified $12,000 in deductible expenses he previously missed (software, equipment, home office). Reduced tax bill by $3,600.
@@ -400,12 +413,8 @@ export default function FreelanceIncomeTracker() {
               <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
             <p className="mt-4">
-              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+              <strong>Pro ($3.99/month or $39.99/year):</strong> Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features
             </p>
-            <ul className="list-disc pl-6 space-y-2 mt-2">
-              <li>Currently available through early access</li>
-              <li>Contact us for beta pricing</li>
-            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Freelance Income Today

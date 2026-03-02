@@ -21,7 +21,7 @@ export default function YNABAlternative() {
         'name': 'Why is YNAB so expensive?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'YNAB costs $14.99/month or $180/year because it\'s a full-featured budgeting platform with its own app, methodology, and support system. While YNAB is powerful, the price is high compared to alternatives like SheetLink which offers bank-to-spreadsheet syncing starting with a free tier (7 days) and Pro tier in beta.',
+          'text': 'YNAB costs $14.99/month or $109/year because it\'s a full-featured budgeting platform with its own app, methodology, and support system. While YNAB is powerful, the price is high compared to alternatives like SheetLink which offers bank-to-spreadsheet syncing starting with a free tier (7 days) and Pro tier in beta.',
         },
       },
       {
@@ -218,7 +218,7 @@ export default function YNABAlternative() {
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Much More Affordable</h3>
                   <p className="text-gray-700">
-                    Free forever for 7 days of history. Pro tier with extended history available for beta/early access users. Contact for pricing details. The free tier costs $0 forever.
+                    Free forever for 7 days of history. Pro tier: $3.99/mo or $39.99/year with manual sync (you control when data is accessed). The free tier costs $0 forever.
                   </p>
                 </div>
               </motion.div>
@@ -480,7 +480,7 @@ export default function YNABAlternative() {
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    <strong>Pro tier:</strong> Extended history (beta/early access)
+                    <strong>Pro tier:</strong> $3.99/mo or $39.99/year
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
@@ -507,7 +507,7 @@ export default function YNABAlternative() {
                   Start with the free tier and upgrade to Pro when you need extended history.
                 </p>
                 <p className="mt-2 text-sm text-gray-600">
-                  Pro tier pricing available for beta users - contact for early access.
+                  Manual sync (you control when data is accessed).
                 </p>
               </div>
             </div>
@@ -672,7 +672,7 @@ export default function YNABAlternative() {
               >
                 <h3 className="mb-3 text-xl font-bold text-sheetlink-text">Why is YNAB so expensive?</h3>
                 <p className="text-gray-700">
-                  YNAB costs $14.99/month or $180/year because it's a full-featured budgeting platform with its own app, methodology, and support system. While YNAB is powerful, the price is high compared to alternatives like SheetLink which offers bank-to-spreadsheet syncing starting with a free tier (7 days) and Pro tier in beta.
+                  YNAB costs $14.99/month or $109/year because it's a full-featured budgeting platform with its own app, methodology, and support system. While YNAB is powerful, the price is high compared to alternatives like SheetLink which offers bank-to-spreadsheet syncing starting with a free tier (7 days) and Pro tier in beta.
                 </p>
               </motion.div>
 

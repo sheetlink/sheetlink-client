@@ -25,7 +25,7 @@ export const URLS = {
   security: '/security',
 } as const;
 
-// PRICING: Future pricing model - Coming Soon
+// PRICING: Simplified 2-tier model - Privacy-first manual sync
 export const PRICING = {
   free: {
     name: 'Free',
@@ -33,33 +33,28 @@ export const PRICING = {
     period: 'forever',
     banks: 'unlimited',
     historyDays: 7,
-    features: ['Unlimited banks', 'Last 7 days of transactions', 'Manual sync', 'Google Sheets integration'],
-  },
-  basic: {
-    name: 'Basic',
-    priceMonthly: '$1.99',
-    priceAnnual: '$0.99',
-    period: 'month',
-    banks: 'unlimited',
-    historyDays: 90,
-    features: ['Everything in Free', '90 days of history', 'Auto-sync every 24 hours', 'Per institution pricing'],
+    features: [
+      'Unlimited banks',
+      'Last 7 days of transactions',
+      'Manual sync (you control when)',
+      'Google Sheets integration',
+      'Open source & privacy-first',
+    ],
   },
   pro: {
     name: 'Pro',
-    priceMonthly: '$9.99',
-    priceAnnual: '$4.99',
+    priceMonthly: '$3.99',
+    priceAnnual: '$39.99',
     period: 'month',
     banks: 'unlimited',
     historyDays: 730,
     features: [
-      'Everything in Basic',
-      '24 months of history',
-      'Auto-sync hourly',
-      'AI categorization',
-      'Rules engine',
-      'Split transactions',
-      'Multi-institution dashboards',
-      'Priority support',
+      'Everything in Free',
+      'Unlimited transaction history (2+ years)',
+      'Historical backfill',
+      'Priority email support',
+      'Early access to new features',
+      'Support independent development',
     ],
   },
 } as const;
@@ -88,13 +83,13 @@ export const STEPS = [
 export const WHY_SHEETLINK = [
   {
     icon: '💸',
-    title: '$2/month',
+    title: '$3.99/month',
     description: 'Intentionally cheap. No venture capital. No growth-at-all-costs.',
   },
   {
     icon: '🔒',
     title: 'Privacy-First',
-    description: 'No tracking. No analytics. Your data stays in your Sheet.',
+    description: 'Manual sync only. You control when your bank data flows to your Sheet.',
   },
   {
     icon: '📖',

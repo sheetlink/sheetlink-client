@@ -6,8 +6,8 @@ import { TrendingUp, DollarSign, FileSpreadsheet, Zap, Check, AlertCircle, Credi
 import { BRAND, URLS } from '@/lib/constants';
 
 export default function MarketingAgencyExpenseTracker() {
-  const seoTitle = 'Marketing Agency Expense Tracker - Track Client Reimbursable Expenses in Google Sheets';
-  const seoDescription = 'Track ad spend, client reimbursable expenses, team subscriptions, and agency overhead automatically. Built for digital marketing agencies managing multiple client budgets.';
+  const seoTitle = 'Marketing Agency Expense Tracker - Privacy-First Client Expense Tracking';
+  const seoDescription = 'Privacy-first agency expense tracking. Sync ad spend, client costs, and agency overhead to Google Sheets when YOU choose. Manual sync for multi-client management.';
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -78,7 +78,7 @@ export default function MarketingAgencyExpenseTracker() {
               </h1>
 
               <p className="mb-8 text-xl text-gray-600 md:text-2xl">
-                Track ad spend, client reimbursable expenses, and team subscriptions across multiple clients and campaigns in Google Sheets.
+                Track ad spend, client reimbursable expenses, and team subscriptions across multiple clients and campaigns. Manual sync gives you control.
               </p>
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -161,7 +161,7 @@ export default function MarketingAgencyExpenseTracker() {
               Track Every Agency Expense
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              From ad spend to team tools, automatically in Google Sheets
+              From ad spend to team tools, syncs when you choose
             </p>
 
             <div className="grid gap-8 md:grid-cols-2">
@@ -275,7 +275,7 @@ export default function MarketingAgencyExpenseTracker() {
               How It Works
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Connect once, track everything automatically
+              Connect once, sync when you review client finances
             </p>
 
             <div className="space-y-8">
@@ -299,10 +299,10 @@ export default function MarketingAgencyExpenseTracker() {
                 </div>
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">
-                    Transactions Sync to Google Sheets
+                    Transactions Sync When You Click
                   </h3>
                   <p className="text-gray-600">
-                    Every ad charge, subscription payment, and expense appears in your spreadsheet with merchant name, amount, date, and account. No manual CSV downloads.
+                    Every ad charge, subscription payment, and expense appears in your spreadsheet when you click sync. Manual control for privacy. Perfect for weekly or monthly client reviews. No CSV downloads.
                   </p>
                 </div>
               </div>
@@ -371,7 +371,7 @@ export default function MarketingAgencyExpenseTracker() {
                   <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600">2</span>
                   <div>
                     <strong className="text-sheetlink-text">Transactions sync into a shared Google Sheet</strong>
-                    <p className="text-gray-600">All expenses across all accounts appear in one master spreadsheet. Real-time updates.</p>
+                    <p className="text-gray-600">All expenses across all accounts appear in one master spreadsheet when you click sync (manual control for privacy). Perfect for weekly or monthly reviews.</p>
                   </div>
                 </li>
                 <li className="flex gap-4">
@@ -413,7 +413,7 @@ export default function MarketingAgencyExpenseTracker() {
               Stop Hunting for Client Expenses
             </h2>
             <p className="mb-8 text-xl text-gray-600">
-              Track ad spend, reimbursable costs, and agency overhead across all clients automatically. Free for 7 days of history.
+              Track ad spend, reimbursable costs, and agency overhead across all clients with manual sync control. Privacy-first approach. Free for 7 days of history.
             </p>
             <a
               href={URLS.chromeStore}

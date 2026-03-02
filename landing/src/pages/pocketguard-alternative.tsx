@@ -7,7 +7,7 @@ import { BRAND, URLS } from '@/lib/constants';
 
 export default function PocketGuardAlternative() {
   const seoTitle = 'PocketGuard Alternative - SheetLink for Google Sheets (2026)';
-  const seoDescription = 'Looking for a PocketGuard alternative? SheetLink syncs bank transactions to Google Sheets with full data ownership. Free for 7 days, no $100/year subscription required.';
+  const seoDescription = 'Looking for a PocketGuard alternative? SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets with full data ownership. Free (7 days) or Pro ($3.99/mo, $39.99/year), no $100/year subscription required.';
   const seoUrl = 'https://sheetlink.app/pocketguard-alternative';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -29,7 +29,7 @@ export default function PocketGuardAlternative() {
         'name': 'How is SheetLink different from PocketGuard?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'SheetLink syncs your bank transactions directly to Google Sheets instead of a proprietary app. Your data lives in YOUR Google account forever, not locked in PocketGuard\'s database. SheetLink is free for 7 days of transaction history (perfect for budgeting) with Pro tier available in beta. You own your financial data—no vendor lock-in.',
+          'text': 'SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets instead of a proprietary app. Your data lives in YOUR Google account forever, not locked in PocketGuard\'s database. SheetLink is free for 7 days of transaction history with Pro tier at $3.99/mo or $39.99/year. Manual sync means you control when data is accessed - no background monitoring.',
         },
       },
       {
@@ -45,7 +45,15 @@ export default function PocketGuardAlternative() {
         'name': 'Is SheetLink cheaper than PocketGuard Plus?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'Yes. PocketGuard Plus costs $99.99/year. SheetLink is free forever for 7 days of transaction history with no ads. Pro tier with extended history is available in beta/early access at a more affordable price point. Even the Pro tier is significantly cheaper than PocketGuard Plus.',
+          'text': 'Yes. PocketGuard Plus costs $99.99/year. SheetLink is free forever for 7 days of transaction history with no ads. Pro tier is $3.99/mo or $39.99/year - significantly cheaper than PocketGuard Plus with privacy-first manual sync.',
+        },
+      },
+      {
+        '@type': 'Question',
+        'name': 'Why does SheetLink use manual sync instead of automatic?',
+        'acceptedAnswer': {
+          '@type': 'Answer',
+          'text': 'Privacy and control. Manual sync means YOU decide when to fetch transactions - SheetLink doesn\'t continuously access your bank accounts in the background. Your bank credentials are only used when you click sync, giving you full control over data access. This privacy-first approach means no background monitoring, no stored credentials between syncs, and complete transparency about when your financial data is accessed.',
         },
       },
     ],
@@ -105,7 +113,7 @@ export default function PocketGuardAlternative() {
             </h1>
 
             <p className="mb-8 text-center text-xl text-gray-600 md:text-2xl">
-              Stop paying $99.99/year for budget tracking. Sync your bank transactions to Google Sheets automatically. Free for 7 days of history.
+              Stop paying $99.99/year for budget tracking. Privacy-first manual sync brings bank transactions to Google Sheets. Free for 7 days, Pro at $3.99/mo or $39.99/year.
             </p>
 
             <div className="flex justify-center gap-4">
@@ -196,8 +204,20 @@ export default function PocketGuardAlternative() {
                 <tbody>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-medium text-sheetlink-text">Price</td>
-                    <td className="px-6 py-4 text-center text-sheetlink-green-700">Free for 7 days, Pro in beta</td>
+                    <td className="px-6 py-4 text-center text-sheetlink-green-700">Free (7 days), Pro $3.99/mo or $39.99/yr</td>
                     <td className="px-6 py-4 text-center text-gray-600">$99.99/year Plus</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 bg-gray-50">
+                    <td className="px-6 py-4 font-medium text-sheetlink-text">Sync Method</td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex justify-center">
+                        <Check className="h-5 w-5 text-sheetlink-green-700" />
+                      </div>
+                      <p className="text-sm text-gray-600">Manual (you control)</p>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <p className="text-sm text-gray-600">Automatic (background)</p>
+                    </td>
                   </tr>
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <td className="px-6 py-4 font-medium text-sheetlink-text">Data Ownership</td>
@@ -451,7 +471,11 @@ export default function PocketGuardAlternative() {
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-sheetlink-green-700" />
-                    <span className="text-gray-700"><strong>Pro tier:</strong> Extended history (beta/early access)</span>
+                    <span className="text-gray-700"><strong>Pro tier:</strong> $3.99/mo or $39.99/year</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-sheetlink-green-700" />
+                    <span className="text-gray-700">Manual sync (you control)</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-sheetlink-green-700" />

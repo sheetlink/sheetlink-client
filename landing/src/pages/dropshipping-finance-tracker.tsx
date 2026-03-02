@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function DropshippingFinanceTracker() {
   const seoTitle = 'Dropshipping Finance Tracker - Sync Shopify & Amazon to Sheets | SheetLink';
-  const seoDescription = 'Automatically sync dropshipping finances to Google Sheets. Track Shopify/Amazon revenue, supplier costs (COGS), shipping, ad spend, and profit margins. Perfect for ecommerce sellers and dropshippers.';
+  const seoDescription = 'Privacy-first dropshipping finance tracker. Sync dropshipping finances to Google Sheets when YOU choose. Track Shopify/Amazon revenue, supplier costs (COGS), shipping, ad spend, and profit margins. Manual sync gives you control.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function DropshippingFinanceTracker() {
         "name": "How do dropshippers track profit and expenses?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink Chrome extension and connect your business bank account (where Shopify/Amazon deposits payouts) via Plaid. SheetLink automatically syncs revenue deposits and expense charges (supplier payments, ad spend, shipping costs) to Google Sheets. Tag transactions as revenue, COGS, ads, or fees to calculate true profit margins per product or overall."
+          "text": "Install SheetLink Chrome extension and connect your business bank account (where Shopify/Amazon deposits payouts) via Plaid. SheetLink syncs when you click sync (manual control for privacy), capturing revenue deposits and expense charges (supplier payments, ad spend, shipping costs). Tag transactions as revenue, COGS, ads, or fees to calculate true profit margins per product or overall. Perfect for weekly or monthly financial reviews."
         }
       },
       {
@@ -70,7 +70,7 @@ export default function DropshippingFinanceTracker() {
 
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-xl leading-relaxed">
-              Running a dropshipping or ecommerce business means tracking revenue, supplier costs, shipping, ad spend, and fees across multiple platforms. <strong>SheetLink automatically syncs your bank account to Google Sheets</strong>, giving you real-time visibility into Shopify/Amazon payouts, COGS, expenses, and true profit margins—all in one spreadsheet.
+              Running a dropshipping or ecommerce business means tracking revenue, supplier costs, shipping, ad spend, and fees across multiple platforms. <strong>SheetLink syncs your bank account to Google Sheets when you click sync</strong>, giving you full control over when your financial data updates. Perfect for weekly or monthly reviews—track Shopify/Amazon payouts, COGS, expenses, and true profit margins all in one spreadsheet.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -80,13 +80,26 @@ export default function DropshippingFinanceTracker() {
               Most dropshippers track sales in Shopify/Amazon but lose visibility once money hits the bank. SheetLink connects the dots:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Auto-sync platform payouts</strong> - Track Shopify, Amazon, eBay deposits automatically</li>
+              <li><strong>Manual sync platform payouts</strong> (you control when) - Track Shopify, Amazon, eBay deposits</li>
               <li><strong>Track supplier costs (COGS)</strong> - Monitor payments to AliExpress, Alibaba, CJ Dropshipping</li>
               <li><strong>Monitor ad spend</strong> - Track Facebook Ads, Google Ads, TikTok Ads charges</li>
               <li><strong>Calculate real profit</strong> - Revenue minus COGS, fees, ads, shipping, refunds</li>
               <li><strong>Handle refunds & chargebacks</strong> - Track returns to see true net revenue</li>
               <li><strong>Tax-ready records</strong> - Organized for Schedule C tax filing</li>
             </ul>
+
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
+              Why Manual Sync Works for Dropshippers
+            </h2>
+            <p>
+              SheetLink only syncs when you click the button. Unlike competitors that access your bank in the background, SheetLink gives you complete control over when your financial data flows to your spreadsheet. This is a privacy feature, not a limitation.
+            </p>
+            <div className="my-6 rounded-lg border-2 border-sheetlink-green-200 bg-sheetlink-green-50 p-6">
+              <h3 className="font-semibold text-sheetlink-text mb-2">Perfect for Weekly or Monthly Reviews</h3>
+              <p className="text-sm">
+                Most dropshippers review their finances weekly (to monitor cash flow and ad performance) or monthly (to reconcile expenses and calculate taxes). Manual sync fits this workflow perfectly. Click sync during your financial review session, categorize new transactions, and you're done. No need for daily automatic updates.
+              </p>
+            </div>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               How to Set Up Your Dropshipping Finance Tracker
@@ -365,7 +378,7 @@ export default function DropshippingFinanceTracker() {
                 <tbody>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">SheetLink</td>
-                    <td className="px-6 py-4">$2/month</td>
+                    <td className="px-6 py-4">$3.99/month</td>
                     <td className="px-6 py-4">Solo dropshippers, small ecommerce stores</td>
                   </tr>
                   <tr className="border-t border-gray-300">
@@ -429,12 +442,8 @@ export default function DropshippingFinanceTracker() {
               <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
             <p className="mt-4">
-              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+              <strong>Pro ($3.99/month or $39.99/year):</strong> Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features
             </p>
-            <ul className="list-disc pl-6 space-y-2 mt-2">
-              <li>Currently available through early access</li>
-              <li>Contact us for beta pricing</li>
-            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Dropshipping Finances Today

@@ -4,8 +4,8 @@ import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
 
 export default function GoogleSheetsBudgeting() {
-  const seoTitle = 'Google Sheets Budgeting - Auto-Sync Bank Transactions for Budget Tracking';
-  const seoDescription = 'Build a budget in Google Sheets with automatic bank transaction sync. Track spending by category, monitor cash flow, and stay on budget. Free budgeting template with SheetLink.';
+  const seoTitle = 'Google Sheets Budgeting - Privacy-First Bank Sync for Budget Tracking';
+  const seoDescription = 'Privacy-first Google Sheets budgeting. Sync bank transactions when YOU choose. Track spending by category, monitor cash flow, and stay on budget. Manual sync gives you control.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function GoogleSheetsBudgeting() {
         "name": "Can I use Google Sheets for budgeting?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Google Sheets is excellent for budgeting. With SheetLink, you can automatically sync bank transactions to Google Sheets, making it easy to track spending by category, compare actual vs budgeted amounts, and monitor cash flow in real-time. It's free, flexible, and more customizable than apps like YNAB or Mint."
+          "text": "Yes. Google Sheets is excellent for budgeting. With SheetLink, you can sync bank transactions when you click sync (manual control for privacy), making it easy to track spending by category, compare actual vs budgeted amounts, and monitor cash flow. Perfect for weekly or monthly reviews. It's free, flexible, and more customizable than apps like YNAB or Mint."
         }
       },
       {
@@ -25,7 +25,7 @@ export default function GoogleSheetsBudgeting() {
         "name": "How do I automatically update my Google Sheets budget with bank transactions?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink Chrome extension, connect your bank accounts through Plaid, and select your budget spreadsheet. New transactions will sync automatically with date, merchant, amount, and category. Use formulas to categorize expenses and compare against your monthly budget targets. Free for 7 days of history."
+          "text": "Install SheetLink Chrome extension, connect your bank accounts through Plaid, and select your budget spreadsheet. New transactions sync when you click sync (manual control for privacy) with date, merchant, amount, and category. Perfect for weekly or monthly budget reviews. Use formulas to categorize expenses and compare against your budget targets. Free for 7 days of history."
         }
       },
       {
@@ -33,7 +33,7 @@ export default function GoogleSheetsBudgeting() {
         "name": "Is SheetLink better than YNAB or Mint for budgeting?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink offers more flexibility than YNAB ($14.99/mo) or Mint (discontinued) because you control the spreadsheet formulas and layout. SheetLink costs $2/month for unlimited history vs YNAB's $14.99/month. However, YNAB has a specific budgeting methodology and mobile app. SheetLink is best if you prefer spreadsheet control and lower cost."
+          "text": "SheetLink offers more flexibility than YNAB ($14.99/mo) or Mint (discontinued) because you control the spreadsheet formulas and layout. SheetLink costs $3.99/month for unlimited history vs YNAB's $14.99/month. Plus, manual sync gives you complete control over when your data updates (privacy-first). SheetLink is best if you prefer spreadsheet control, lower cost, and privacy."
         }
       },
       {
@@ -76,8 +76,8 @@ export default function GoogleSheetsBudgeting() {
             </p>
             <p className="text-xl leading-relaxed">
               <strong>SheetLink fixes this.</strong> Instead of typing in transactions by hand, SheetLink
-              automatically syncs your bank data to Google Sheets using Plaid. Your budget updates in
-              real-time as you spend.
+              syncs your bank data to Google Sheets when you click sync (manual control for privacy). Your budget updates
+              when you need it to—perfect for weekly or monthly reviews.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -112,7 +112,7 @@ export default function GoogleSheetsBudgeting() {
                 <strong>Choose Your Budget Sheet</strong> - Use your existing template or start fresh
               </li>
               <li>
-                <strong>Auto-Sync Transactions</strong> - SheetLink writes transactions to your Sheet automatically
+                <strong>Sync Transactions When You Click</strong> - SheetLink writes transactions to your Sheet when you sync (manual control for privacy)
               </li>
               <li>
                 <strong>Track Spending by Category</strong> - Use SUMIF formulas to compare actual vs. budgeted spending
@@ -294,8 +294,7 @@ export default function GoogleSheetsBudgeting() {
               Want to track monthly or annual budgets? Upgrade to:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Basic ($1.99/month)</strong> - 90 days of history, auto-sync every 24 hours</li>
-              <li><strong>Pro ($9.99/month)</strong> - 24 months of history, hourly sync, AI categorization</li>
+              <li><strong>Pro ($3.99/month or $39.99/year)</strong> - Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features</li>
             </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">

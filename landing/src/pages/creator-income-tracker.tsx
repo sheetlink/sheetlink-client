@@ -7,7 +7,7 @@ import { BRAND, URLS } from '@/lib/constants';
 
 export default function CreatorIncomeTracker() {
   const seoTitle = 'Creator Income Tracker - Track YouTube, Course Sales & Sponsorships in Google Sheets';
-  const seoDescription = 'Track YouTube AdSense, Patreon, course sales, and brand deals automatically. Built for content creators managing multiple revenue streams.';
+  const seoDescription = 'Privacy-first creator income tracker. Sync YouTube AdSense, Patreon, course sales, and brand deals to Google Sheets when YOU choose. Manual sync gives you control over your creator finances.';
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -18,7 +18,7 @@ export default function CreatorIncomeTracker() {
         'name': 'How do I track income from multiple creator platforms?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'SheetLink automatically syncs transactions from your bank account into Google Sheets. This captures YouTube AdSense payouts, Patreon subscriptions, course platform deposits (Gumroad, Teachable, Kajabi), brand sponsorship payments, and affiliate income. All revenue streams appear in one spreadsheet.'
+          'text': 'SheetLink syncs transactions when you click sync (manual control for privacy), capturing YouTube AdSense payouts, Patreon subscriptions, course platform deposits (Gumroad, Teachable, Kajabi), brand sponsorship payments, and affiliate income. Perfect for weekly or monthly financial reviews. All revenue streams appear in one spreadsheet.'
         }
       },
       {
@@ -78,7 +78,7 @@ export default function CreatorIncomeTracker() {
               </h1>
 
               <p className="mb-8 text-xl text-gray-600 md:text-2xl">
-                Track YouTube AdSense, Patreon, course sales, brand deals, and creator expenses automatically in Google Sheets.
+                Track YouTube AdSense, Patreon, course sales, brand deals, and creator expenses in Google Sheets. Manual sync gives you complete control.
               </p>
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -161,7 +161,7 @@ export default function CreatorIncomeTracker() {
               Track All Your Creator Revenue & Expenses
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Every income stream and business expense, automatically categorized
+              Every income stream and business expense, privacy-first sync on your schedule
             </p>
 
             <div className="grid gap-8 md:grid-cols-2">
@@ -279,7 +279,7 @@ export default function CreatorIncomeTracker() {
               How It Works
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Set up once, track all revenue streams automatically
+              Set up once, sync when you choose
             </p>
 
             <div className="space-y-8">
@@ -303,10 +303,10 @@ export default function CreatorIncomeTracker() {
                 </div>
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">
-                    Transactions Sync to Google Sheets
+                    Transactions Sync When You Click Sync
                   </h3>
                   <p className="text-gray-600">
-                    Every YouTube payout, Patreon batch, course sale, brand deal, and business expense appears in your spreadsheet automatically. No manual tracking.
+                    Every YouTube payout, Patreon batch, course sale, brand deal, and business expense appears in your spreadsheet when you click sync. Perfect for weekly or monthly reviews. You control when your data updates.
                   </p>
                 </div>
               </div>
@@ -375,7 +375,7 @@ export default function CreatorIncomeTracker() {
                   <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600">2</span>
                   <div>
                     <strong className="text-sheetlink-text">All transactions sync to shared Google Sheet</strong>
-                    <p className="text-gray-600">Income and expenses appear automatically. Real-time updates across all accounts.</p>
+                    <p className="text-gray-600">Income and expenses appear when you click sync. Manual control for privacy. Updates across all accounts.</p>
                   </div>
                 </li>
                 <li className="flex gap-4">
@@ -417,7 +417,7 @@ export default function CreatorIncomeTracker() {
               Stop Scrambling at Tax Time
             </h2>
             <p className="mb-8 text-xl text-gray-600">
-              Track YouTube, Patreon, course sales, and brand deals automatically. Free for 7 days of history.
+              Track YouTube, Patreon, course sales, and brand deals with manual sync. Free for 7 days of history. Pro: $3.99/month for unlimited history.
             </p>
             <a
               href={URLS.chromeStore}

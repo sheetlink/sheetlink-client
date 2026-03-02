@@ -7,7 +7,7 @@ import { BRAND, URLS } from '@/lib/constants';
 
 export default function PersonalCapitalAlternative() {
   const seoTitle = 'Personal Capital Alternative - SheetLink for Google Sheets (2026)';
-  const seoDescription = 'Looking for a Personal Capital (Empower) alternative? SheetLink syncs bank transactions to Google Sheets with full data ownership. Free for 7 days, no wealth management sales pitches.';
+  const seoDescription = 'Looking for a Personal Capital (Empower) alternative? SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets with full data ownership. Free (7 days) or Pro ($3.99/mo, $39.99/year), no wealth management sales pitches.';
   const seoUrl = 'https://sheetlink.app/personal-capital-alternative';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -29,7 +29,7 @@ export default function PersonalCapitalAlternative() {
         'name': 'How is SheetLink different from Personal Capital/Empower?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'SheetLink syncs your bank transactions directly to Google Sheets with no wealth management upsells. Your data lives in YOUR Google account forever, not in a company database designed to feed you into a sales funnel. SheetLink is pure expense tracking—no advisor calls, no $1M portfolio minimums, just your transactions in a spreadsheet you control.',
+          'text': 'SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets with no wealth management upsells. Your data lives in YOUR Google account forever, not in a company database designed to feed you into a sales funnel. Manual sync means you control when data is accessed. SheetLink is pure expense tracking—no advisor calls, no $1M portfolio minimums, just your transactions in a spreadsheet you control.',
         },
       },
       {
@@ -46,6 +46,14 @@ export default function PersonalCapitalAlternative() {
         'acceptedAnswer': {
           '@type': 'Answer',
           'text': 'No. SheetLink is an independent, open-source Chrome extension with no wealth management arm. We sync your bank transactions to Google Sheets. No advisor calls. No sales pitches. No VC funding. Just simple bank-to-spreadsheet automation.',
+        },
+      },
+      {
+        '@type': 'Question',
+        'name': 'Why does SheetLink use manual sync instead of automatic?',
+        'acceptedAnswer': {
+          '@type': 'Answer',
+          'text': 'Privacy and control. Manual sync means YOU decide when to fetch transactions - SheetLink doesn\'t continuously access your bank accounts in the background. Your bank credentials are only used when you click sync, giving you full control over data access. This privacy-first approach means no background monitoring, no stored credentials between syncs, and complete transparency about when your financial data is accessed.',
         },
       },
     ],
@@ -105,7 +113,7 @@ export default function PersonalCapitalAlternative() {
             </h1>
 
             <p className="mb-8 text-center text-xl text-gray-600 md:text-2xl">
-              Track bank transactions and investments without wealth management upsells. Sync everything to Google Sheets. No advisor calls.
+              Track bank transactions and investments without wealth management upsells. Privacy-first manual sync brings everything to Google Sheets. No advisor calls.
             </p>
 
             <div className="flex justify-center gap-4">
@@ -196,8 +204,20 @@ export default function PersonalCapitalAlternative() {
                 <tbody>
                   <tr className="border-b border-gray-200">
                     <td className="px-6 py-4 font-medium text-sheetlink-text">Price</td>
-                    <td className="px-6 py-4 text-center text-sheetlink-green-700">Free for 7 days, Pro in beta</td>
+                    <td className="px-6 py-4 text-center text-sheetlink-green-700">Free (7 days), Pro $3.99/mo or $39.99/yr</td>
                     <td className="px-6 py-4 text-center text-gray-600">Free app</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 bg-gray-50">
+                    <td className="px-6 py-4 font-medium text-sheetlink-text">Sync Method</td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex justify-center">
+                        <Check className="h-5 w-5 text-sheetlink-green-700" />
+                      </div>
+                      <p className="text-sm text-gray-600">Manual (you control)</p>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <p className="text-sm text-gray-600">Automatic (background)</p>
+                    </td>
                   </tr>
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <td className="px-6 py-4 font-medium text-sheetlink-text">Sales Calls</td>

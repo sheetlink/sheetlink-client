@@ -6,8 +6,8 @@ import { Briefcase, DollarSign, FileSpreadsheet, Zap, Check, AlertCircle, Credit
 import { BRAND, URLS } from '@/lib/constants';
 
 export default function IndependentConsultantBookkeeping() {
-  const seoTitle = 'Independent Consultant Bookkeeping - Track Consulting Income & Expenses in Google Sheets';
-  const seoDescription = 'Track client invoices, project expenses, travel costs, and consulting overhead automatically. Built for independent consultants managing multiple client engagements.';
+  const seoTitle = 'Independent Consultant Bookkeeping - Privacy-First Income & Expense Tracking';
+  const seoDescription = 'Privacy-first consultant bookkeeping. Sync client payments, project expenses, and travel costs to Google Sheets when YOU choose. Track multiple clients with manual sync control.';
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -78,7 +78,7 @@ export default function IndependentConsultantBookkeeping() {
               </h1>
 
               <p className="mb-8 text-xl text-gray-600 md:text-2xl">
-                Track client payments, project expenses, travel costs, and consulting overhead automatically in Google Sheets.
+                Track client payments, project expenses, travel costs, and consulting overhead in Google Sheets. Manual sync gives you control.
               </p>
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -161,7 +161,7 @@ export default function IndependentConsultantBookkeeping() {
               Track All Your Consulting Income & Expenses
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Every client payment and business expense, automatically in Google Sheets
+              Every client payment and business expense syncs when you choose
             </p>
 
             <div className="grid gap-8 md:grid-cols-2">
@@ -275,7 +275,7 @@ export default function IndependentConsultantBookkeeping() {
               How It Works
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Set up once, track all consulting finances automatically
+              Set up once, sync when you choose to review finances
             </p>
 
             <div className="space-y-8">
@@ -299,10 +299,10 @@ export default function IndependentConsultantBookkeeping() {
                 </div>
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">
-                    Transactions Sync to Google Sheets
+                    Transactions Sync When You Click
                   </h3>
                   <p className="text-gray-600">
-                    Every client payment, expense, and transaction appears in your spreadsheet with merchant name, amount, date, and account. No manual entry.
+                    Every client payment, expense, and transaction appears in your spreadsheet when you click sync. Manual control for privacy. Perfect for weekly or monthly reviews. No manual CSV entry.
                   </p>
                 </div>
               </div>
@@ -371,7 +371,7 @@ export default function IndependentConsultantBookkeeping() {
                   <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600">2</span>
                   <div>
                     <strong className="text-sheetlink-text">Transactions sync into a shared Google Sheet</strong>
-                    <p className="text-gray-600">All income and expenses appear automatically. Real-time updates across all accounts.</p>
+                    <p className="text-gray-600">All income and expenses appear when you click sync (manual control for privacy). Perfect for weekly or monthly reviews across all accounts.</p>
                   </div>
                 </li>
                 <li className="flex gap-4">
@@ -413,7 +413,7 @@ export default function IndependentConsultantBookkeeping() {
               Stop Chasing Client Payments
             </h2>
             <p className="mb-8 text-xl text-gray-600">
-              Track retainers, project payments, and business expenses automatically. Free for 7 days of history.
+              Track retainers, project payments, and business expenses with manual sync control. Privacy-first approach. Free for 7 days of history.
             </p>
             <a
               href={URLS.chromeStore}

@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function RentalPropertyCashFlow() {
   const seoTitle = 'Rental Property Cash Flow Tracker - Sync Bank to Google Sheets | SheetLink';
-  const seoDescription = 'Automatically sync rental property finances to Google Sheets. Track rent deposits, maintenance costs, mortgage payments, and cash flow across multiple properties. Perfect for landlords. Free for 7 days.';
+  const seoDescription = 'Privacy-first rental property tracking. Sync rent deposits, maintenance costs, and cash flow to Google Sheets when YOU choose. Manual sync for landlords. Free for 7 days.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function RentalPropertyCashFlow() {
         "name": "How do landlords track rental property cash flow?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink Chrome extension and connect the bank account(s) used for rental properties via Plaid. SheetLink automatically syncs rent deposits, maintenance expenses, mortgage payments, property taxes, insurance, and utilities to Google Sheets. Tag transactions by property to track cash flow per unit or across your entire portfolio."
+          "text": "Install SheetLink Chrome extension and connect the bank account(s) used for rental properties via Plaid. SheetLink syncs rent deposits, maintenance expenses, mortgage payments, property taxes, insurance, and utilities to Google Sheets when you click sync (manual control for privacy). Perfect for weekly or monthly reviews. Tag transactions by property to track cash flow per unit or across your entire portfolio."
         }
       },
       {
@@ -41,7 +41,7 @@ export default function RentalPropertyCashFlow() {
         "name": "Is SheetLink better than property management software for landlords?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink excels at financial tracking ($2/month) but doesn't handle tenant communication, lease management, or maintenance requests like full property management software ($50-150/month). For landlords who just need cash flow tracking and tax records, SheetLink is more affordable. Combine with free tenant portals if needed."
+          "text": "SheetLink excels at financial tracking ($3.99/month) but doesn't handle tenant communication, lease management, or maintenance requests like full property management software ($50-150/month). For landlords who just need cash flow tracking and tax records, SheetLink is more affordable. Combine with free tenant portals if needed."
         }
       }
     ]
@@ -70,7 +70,7 @@ export default function RentalPropertyCashFlow() {
 
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-xl leading-relaxed">
-              Managing rental properties means tracking rent deposits, maintenance costs, mortgages, and taxes across multiple units. <strong>SheetLink automatically syncs your bank accounts to Google Sheets</strong>, giving you real-time visibility into cash flow, expenses, and ROI—all in one master spreadsheet.
+              Managing rental properties means tracking rent deposits, maintenance costs, mortgages, and taxes across multiple units. <strong>SheetLink syncs your bank accounts to Google Sheets when you click sync</strong> (manual control for privacy), giving you visibility into cash flow, expenses, and ROI—all in one master spreadsheet. Perfect for weekly or monthly reviews.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -85,7 +85,7 @@ export default function RentalPropertyCashFlow() {
               <li><strong>Multi-property support</strong> - Manage multiple units in one spreadsheet</li>
               <li><strong>Cash flow analysis</strong> - See which properties are profitable and which need attention</li>
               <li><strong>Tax-ready records</strong> - Organized for Schedule E tax filing</li>
-              <li><strong>Affordable</strong> - $2/month vs property management software at $50-150/month</li>
+              <li><strong>Affordable</strong> - $3.99/month vs property management software at $50-150/month</li>
             </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -309,7 +309,7 @@ export default function RentalPropertyCashFlow() {
                   </tr>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">Pricing</td>
-                    <td className="px-6 py-4">$2/month</td>
+                    <td className="px-6 py-4">$3.99/month</td>
                     <td className="px-6 py-4">$50-150/month</td>
                   </tr>
                 </tbody>
@@ -358,12 +358,8 @@ export default function RentalPropertyCashFlow() {
               <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
             <p className="mt-4">
-              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+              <strong>Pro ($3.99/month or $39.99/year):</strong> Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features
             </p>
-            <ul className="list-disc pl-6 space-y-2 mt-2">
-              <li>Currently available through early access</li>
-              <li>Contact us for beta pricing</li>
-            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Rental Property Cash Flow Today

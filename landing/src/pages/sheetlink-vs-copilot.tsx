@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsCopilot() {
   const seoTitle = "SheetLink vs Copilot - Feature Comparison & Pricing 2026";
-  const seoDescription = "Compare SheetLink vs Copilot Money: Copilot costs $14.99/month (iOS only) for beautiful budgeting. SheetLink costs $2-10/month and works on Chrome with spreadsheet flexibility. See which is right for you.";
+  const seoDescription = "Compare SheetLink vs Copilot Money: Copilot costs $14.99/month (iOS only) for beautiful budgeting. SheetLink offers privacy-first manual sync at $3.99/mo or $39.99/year and works on Chrome with spreadsheet flexibility. See which is right for you.";
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-copilot';
 
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function SheetLinkVsCopilot() {
         "name": "What is the main difference between SheetLink and Copilot?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Copilot is a beautiful iOS-first budgeting app with a polished UI and simple workflows ($14.99/month). SheetLink syncs bank transactions to Google Sheets for DIY budgeting and analysis ($2-10/month). Copilot is iOS-only; SheetLink works on Chrome (cross-platform). Choose beautiful simplicity or spreadsheet power."
+          "text": "Copilot is a beautiful iOS-first budgeting app with a polished UI and simple workflows ($14.99/month). SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets for DIY budgeting and analysis ($3.99/mo or $39.99/year). Copilot is iOS-only; SheetLink works on Chrome (cross-platform). Choose beautiful simplicity or spreadsheet power with manual control."
         }
       },
       {
@@ -25,7 +25,7 @@ export default function SheetLinkVsCopilot() {
         "name": "Is SheetLink cheaper than Copilot?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes, significantly. Copilot costs $14.99/month ($179.88/year). SheetLink costs $2-10/month ($24-120/year) with a free tier. For most users, SheetLink is 60-90% cheaper than Copilot, though Copilot offers a more polished budgeting experience."
+          "text": "Yes, significantly. Copilot costs $14.99/month ($179.88/year). SheetLink costs $3.99/mo ($47.88/year) or $39.99/year with a free tier (7 days). SheetLink is 78% cheaper than Copilot annually, though Copilot offers a more polished budgeting experience."
         }
       },
       {
@@ -42,6 +42,14 @@ export default function SheetLinkVsCopilot() {
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "It depends on your needs. Copilot provides a beautiful, guided budgeting experience with native iOS apps. SheetLink gives you raw transaction data in Google Sheets - you build your own budgets. If you value UI/UX and mobile-first design, choose Copilot. If you want flexibility and lower cost, choose SheetLink."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does SheetLink use manual sync instead of automatic?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Privacy and control. Manual sync means YOU decide when to fetch transactions - SheetLink doesn't continuously access your bank accounts in the background. Your bank credentials are only used when you click sync, giving you full control over data access. This privacy-first approach means no background monitoring, no stored credentials between syncs, and complete transparency about when your financial data is accessed."
         }
       }
     ]
@@ -78,7 +86,7 @@ export default function SheetLinkVsCopilot() {
                 SheetLink vs Copilot Money
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Copilot is a beautiful iOS budgeting app ($14.99/month). SheetLink syncs transactions to Google Sheets for DIY budgeting ($2-10/month). Choose beautiful simplicity or spreadsheet flexibility.
+                Copilot is a beautiful iOS budgeting app ($14.99/month). SheetLink uses privacy-first manual sync to bring transactions to Google Sheets for DIY budgeting ($3.99/mo or $39.99/year). Choose beautiful simplicity or spreadsheet flexibility with data control.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -184,8 +192,13 @@ export default function SheetLinkVsCopilot() {
                   <tbody className="divide-y divide-gray-200">
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Price</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">$0-10/month</strong></td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">Free (7 days), Pro $3.99/mo or $39.99/yr</strong></td>
                       <td className="px-6 py-4 text-center text-sm text-gray-700">$14.99/month</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">Sync Method</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5">Manual (you control)</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700">Automatic (background)</td>
                     </tr>
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Free Tier</td>
@@ -330,13 +343,13 @@ export default function SheetLinkVsCopilot() {
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Basic:</strong> $2/mo per institution, 90 days</span>
+                      <span><strong>Pro:</strong> $3.99/mo or $39.99/year</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Pro:</strong> $10/mo per institution, 24 months</span>
+                      <span>Manual sync (you control)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -584,7 +597,7 @@ export default function SheetLinkVsCopilot() {
                     What is the main difference between SheetLink and Copilot?
                   </h3>
                   <p className="text-gray-700">
-                    Copilot is a beautiful iOS-first budgeting app with a polished UI and simple workflows ($14.99/month). SheetLink syncs bank transactions to Google Sheets for DIY budgeting and analysis ($2-10/month). Copilot is iOS-only; SheetLink works on Chrome (cross-platform). Choose beautiful simplicity or spreadsheet power.
+                    Copilot is a beautiful iOS-first budgeting app with a polished UI and simple workflows ($14.99/month). SheetLink syncs bank transactions to Google Sheets for DIY budgeting and analysis (free or $3.99/month). Copilot is iOS-only; SheetLink works on Chrome (cross-platform). Choose beautiful simplicity or spreadsheet power.
                   </p>
                 </div>
 
@@ -593,7 +606,7 @@ export default function SheetLinkVsCopilot() {
                     Is SheetLink cheaper than Copilot?
                   </h3>
                   <p className="text-gray-700">
-                    Yes, significantly. Copilot costs $14.99/month ($179.88/year). SheetLink costs $2-10/month ($24-120/year) with a free tier. For most users, SheetLink is 60-90% cheaper than Copilot, though Copilot offers a more polished budgeting experience.
+                    Yes, significantly. Copilot costs $14.99/month ($179.88/year). SheetLink has a free tier (7 days history) or $3.99/month ($39.99/year) for unlimited history. For most users, SheetLink is 73-100% cheaper than Copilot, though Copilot offers a more polished budgeting experience.
                   </p>
                 </div>
 

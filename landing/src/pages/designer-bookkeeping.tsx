@@ -7,7 +7,7 @@ import { BRAND, URLS } from '@/lib/constants';
 
 export default function DesignerBookkeeping() {
   const seoTitle = 'Designer Bookkeeping - Track Freelance Design Income in Google Sheets';
-  const seoDescription = 'Track Upwork, Fiverr, and PayPal payments automatically. Manage Adobe subscriptions, design tool expenses, and client invoices in Google Sheets. Built for freelance graphic designers.';
+  const seoDescription = 'Privacy-first designer bookkeeping. Sync Upwork, Fiverr, and PayPal payments to Google Sheets when YOU choose. Track Adobe subscriptions, design tool expenses, and client invoices. Manual sync gives you control.';
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -18,7 +18,7 @@ export default function DesignerBookkeeping() {
         'name': 'How do I track freelance design income from multiple platforms?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'SheetLink automatically syncs transactions from your bank account and PayPal into Google Sheets. This captures income from Upwork, Fiverr, direct client payments, and any other source that deposits into your accounts. All income appears in one spreadsheet for easy tracking and tax prep.'
+          'text': 'SheetLink syncs transactions when you click sync (manual control for privacy), capturing income from Upwork, Fiverr, direct client payments, and any other source that deposits into your accounts. Perfect for weekly or monthly financial reviews. All income appears in one spreadsheet for easy tracking and tax prep.'
         }
       },
       {
@@ -78,7 +78,7 @@ export default function DesignerBookkeeping() {
               </h1>
 
               <p className="mb-8 text-xl text-gray-600 md:text-2xl">
-                Track Upwork payouts, Fiverr payments, PayPal transfers, and Adobe subscriptions automatically in Google Sheets.
+                Track Upwork payouts, Fiverr payments, PayPal transfers, and Adobe subscriptions in Google Sheets. Manual sync gives you complete control.
               </p>
 
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -161,7 +161,7 @@ export default function DesignerBookkeeping() {
               Track All Your Designer Income & Expenses
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Every transaction, automatically categorized in Google Sheets
+              Every transaction syncs when you click, organized in Google Sheets
             </p>
 
             <div className="grid gap-8 md:grid-cols-2">
@@ -275,7 +275,7 @@ export default function DesignerBookkeeping() {
               How It Works
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Set up once, track automatically forever
+              Set up once, sync when you choose
             </p>
 
             <div className="space-y-8">
@@ -299,10 +299,10 @@ export default function DesignerBookkeeping() {
                 </div>
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">
-                    Transactions Sync to Google Sheets
+                    Transactions Sync When You Click
                   </h3>
                   <p className="text-gray-600">
-                    Every Upwork payout, Fiverr payment, PayPal transfer, and subscription charge appears in your spreadsheet automatically. No manual CSV downloads.
+                    Every Upwork payout, Fiverr payment, PayPal transfer, and subscription charge appears in your spreadsheet when you click sync. Manual control for privacy. Perfect for weekly or monthly reviews. No CSV downloads.
                   </p>
                 </div>
               </div>
@@ -333,6 +333,56 @@ export default function DesignerBookkeeping() {
                     Use <a href="/recipes" className="font-semibold underline hover:text-sheetlink-green-800">SheetLink Recipes</a> to instantly generate expense summaries, income reports by client, or tax categorization. One click turns raw transactions into professional reports for your accountant.
                   </p>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Why Manual Sync Works */}
+        <section className="bg-gray-50 px-4 py-20">
+          <div className="mx-auto max-w-4xl">
+            <h2 className="mb-4 text-center text-4xl font-bold text-sheetlink-text">
+              Why Manual Sync Works for Designers
+            </h2>
+            <p className="mb-12 text-center text-xl text-gray-600">
+              Control when your financial data updates
+            </p>
+
+            <div className="grid gap-8 md:grid-cols-2">
+              <div className="rounded-lg bg-white p-6 shadow-sm">
+                <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
+                  Privacy First
+                </h3>
+                <p className="text-gray-600">
+                  You decide when to sync your transactions. No background processes constantly monitoring your accounts. Manual sync gives you complete control over your financial data.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-white p-6 shadow-sm">
+                <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
+                  Fits Your Workflow
+                </h3>
+                <p className="text-gray-600">
+                  Most designers review finances weekly or monthly. Click sync during your financial review, categorize transactions, and you're done. No need for constant real-time updates.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-white p-6 shadow-sm">
+                <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
+                  Intentional Review
+                </h3>
+                <p className="text-gray-600">
+                  Manual sync encourages you to actually look at your finances. Review income, spot unusual expenses, and stay on top of your design business health.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-white p-6 shadow-sm">
+                <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
+                  Lower Cost
+                </h3>
+                <p className="text-gray-600">
+                  Privacy-first manual sync means lower infrastructure costs. SheetLink is $3.99/month vs competitors at $10-30/month for auto-sync features you might not need.
+                </p>
               </div>
             </div>
           </div>
@@ -371,7 +421,7 @@ export default function DesignerBookkeeping() {
                   <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600">2</span>
                   <div>
                     <strong className="text-sheetlink-text">Transactions sync into a shared Google Sheet</strong>
-                    <p className="text-gray-600">All income and expenses appear automatically. Real-time updates.</p>
+                    <p className="text-gray-600">All income and expenses appear when you click sync (manual control for privacy). Perfect for weekly or monthly reviews.</p>
                   </div>
                 </li>
                 <li className="flex gap-4">
@@ -413,7 +463,7 @@ export default function DesignerBookkeeping() {
               Stop Chasing Payments Across Platforms
             </h2>
             <p className="mb-8 text-xl text-gray-600">
-              Track every Upwork payout, Fiverr payment, and design tool subscription automatically. Free for 7 days of history.
+              Track every Upwork payout, Fiverr payment, and design tool subscription when you sync. Manual control, maximum privacy. Free for 7 days of history.
             </p>
             <a
               href={URLS.chromeStore}

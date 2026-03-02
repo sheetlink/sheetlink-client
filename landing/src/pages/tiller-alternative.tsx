@@ -21,7 +21,7 @@ export default function TillerAlternative() {
         'name': 'Why choose SheetLink over Tiller Money?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'SheetLink offers similar bank-to-Google-Sheets syncing at a much lower price point. Tiller costs $79/year with no free tier, while SheetLink is free forever for 7 days of history, with Pro tier available for beta users. Both use Plaid for bank connections and sync to Google Sheets, but SheetLink is more affordable and offers a generous free tier.',
+          'text': 'SheetLink offers similar bank-to-Google-Sheets syncing with privacy-first manual sync at a much lower price point. Tiller costs $6.58/mo or $79/year with no free tier, while SheetLink is free forever for 7 days of history, with Pro tier at $3.99/mo or $39.99/year. Both use Plaid for bank connections and sync to Google Sheets, but SheetLink is more affordable with manual sync control.',
         },
       },
       {
@@ -29,7 +29,7 @@ export default function TillerAlternative() {
         'name': 'Is SheetLink cheaper than Tiller Money?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'Yes. Tiller Money costs $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with Pro tier (extended history) available for beta users. The free tier is available permanently.',
+          'text': 'Yes. Tiller Money costs $6.58/mo or $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with Pro tier at $3.99/mo or $39.99/year. The free tier is available permanently with privacy-first manual sync.',
         },
       },
       {
@@ -38,6 +38,14 @@ export default function TillerAlternative() {
         'acceptedAnswer': {
           '@type': 'Answer',
           'text': 'Migrating from Tiller to SheetLink is straightforward: 1) Keep your existing Google Sheets with Tiller data as historical reference. 2) Install the SheetLink Chrome extension. 3) Create a new Google Sheet or use a new tab. 4) Connect your bank accounts through Plaid in SheetLink. 5) Start syncing transactions to your new sheet. You can reference your old Tiller data while building new workflows in SheetLink.',
+        },
+      },
+      {
+        '@type': 'Question',
+        'name': 'Why does SheetLink use manual sync instead of automatic?',
+        'acceptedAnswer': {
+          '@type': 'Answer',
+          'text': 'Privacy and control. Manual sync means YOU decide when to fetch transactions - SheetLink doesn\'t continuously access your bank accounts in the background. Your bank credentials are only used when you click sync, giving you full control over data access. This privacy-first approach means no background monitoring, no stored credentials between syncs, and complete transparency about when your financial data is accessed.',
         },
       },
       {
@@ -218,7 +226,7 @@ export default function TillerAlternative() {
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Much More Affordable</h3>
                   <p className="text-gray-700">
-                    Free forever for 7 days of history. Pro tier with extended history available for beta/early access users. Contact for pricing details.
+                    Free forever for 7 days of history. Pro tier: $3.99/mo or $39.99/year with manual sync (you control when data is accessed).
                   </p>
                 </div>
               </motion.div>
@@ -333,8 +341,13 @@ export default function TillerAlternative() {
                 <tbody className="divide-y divide-gray-200">
                   <tr>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Price</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">$79/year</td>
-                    <td className="px-6 py-4 text-center text-sm font-semibold text-sheetlink-green-700">Free (7 days), Pro in beta</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">$6.58/mo or $79/year</td>
+                    <td className="px-6 py-4 text-center text-sm font-semibold text-sheetlink-green-700">Free (7 days), Pro $3.99/mo or $39.99/yr</td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">Sync Method</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">Automatic (background)</td>
+                    <td className="px-6 py-4 text-center text-sm font-semibold text-sheetlink-green-700">Manual (you control)</td>
                   </tr>
                   <tr className="bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Free Tier</td>
@@ -479,7 +492,7 @@ export default function TillerAlternative() {
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    <strong>Pro tier:</strong> Extended history (beta/early access)
+                    <strong>Pro tier:</strong> $3.99/mo or $39.99/year
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
@@ -505,7 +518,7 @@ export default function TillerAlternative() {
                 Start with the free tier and upgrade to Pro when you need extended history.
               </p>
               <p className="mt-2 text-sm text-gray-600">
-                Pro tier pricing available for beta users - contact for early access.
+                Manual sync (you control when data is accessed).
               </p>
             </div>
           </div>

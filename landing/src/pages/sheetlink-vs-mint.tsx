@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsMint() {
   const seoTitle = "SheetLink vs Mint - Feature Comparison & Pricing 2026";
-  const seoDescription = "Mint was shut down by Intuit in January 2024. SheetLink is the perfect replacement: sync bank transactions to Google Sheets with a free tier (7 days) and paid plans starting at $2/month. Own your financial data.";
+  const seoDescription = "Mint was shut down by Intuit in January 2024. SheetLink is the perfect replacement: privacy-first manual sync brings bank transactions to Google Sheets. Free tier (7 days) or Pro ($3.99/mo, $39.99/year). Own your financial data.";
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-mint';
 
   const faqSchema = {
@@ -25,7 +25,7 @@ export default function SheetLinkVsMint() {
         "name": "Is SheetLink a good replacement for Mint?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. SheetLink syncs bank transactions to Google Sheets just like Mint synced to its platform. SheetLink has a free tier (7 days of history) and paid plans ($2-10/month). You get more control and flexibility with Google Sheets, plus your data isn't locked in a platform that could shut down."
+          "text": "Yes. SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets just like Mint synced to its platform. SheetLink has a free tier (7 days of history) and Pro tier ($3.99/mo or $39.99/year). You get more control and flexibility with Google Sheets, plus your data isn't locked in a platform that could shut down."
         }
       },
       {
@@ -33,7 +33,7 @@ export default function SheetLinkVsMint() {
         "name": "Does SheetLink cost money like Mint was free?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink has a free tier (7 days of transaction history, unlimited banks) that works forever. For more history, paid plans start at $2/month. Mint was 'free' but monetized through ads and selling your data to financial institutions. SheetLink is privacy-first with no ads or data selling."
+          "text": "SheetLink has a free tier (7 days of transaction history, unlimited banks) that works forever. Pro tier is $3.99/mo or $39.99/year. Mint was 'free' but monetized through ads and selling your data to financial institutions. SheetLink is privacy-first with manual sync, no ads, and no data selling."
         }
       },
       {
@@ -42,6 +42,14 @@ export default function SheetLinkVsMint() {
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "Since Mint shut down, you can't export new data from Mint. If you exported your Mint transaction history before the shutdown (as CSV), you can import that into Google Sheets manually. SheetLink will then sync new transactions going forward, continuing where Mint left off."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does SheetLink use manual sync instead of automatic?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Privacy and control. Manual sync means YOU decide when to fetch transactions - SheetLink doesn't continuously access your bank accounts in the background. Your bank credentials are only used when you click sync, giving you full control over data access. This privacy-first approach means no background monitoring, no stored credentials between syncs, and complete transparency about when your financial data is accessed."
         }
       }
     ]
@@ -81,7 +89,7 @@ export default function SheetLinkVsMint() {
                 SheetLink: The Best Mint Alternative
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Mint is gone. Intuit forced users to Credit Karma with limited features. SheetLink gives you a better option: bank transactions in Google Sheets you own. Free tier + paid plans from $2/month.
+                Mint is gone. Intuit forced users to Credit Karma with limited features. SheetLink gives you a better option: privacy-first manual sync brings bank transactions to Google Sheets you own. Free tier + Pro at $3.99/mo or $39.99/year.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -232,8 +240,13 @@ export default function SheetLinkVsMint() {
                     </tr>
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Price</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">$0-10/month</strong></td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">Free (7 days), Pro $3.99/mo or $39.99/yr</strong></td>
                       <td className="px-6 py-4 text-center text-sm text-gray-700">Free (ad-supported)</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">Sync Method</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5">Manual (you control)</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700">Automatic (background)</td>
                     </tr>
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Free Tier</td>
@@ -419,7 +432,7 @@ export default function SheetLinkVsMint() {
                 <h4 className="font-semibold text-blue-900 mb-2">The Real Cost of "Free":</h4>
                 <p className="text-blue-800">
                   Mint was free, but you paid with your privacy and data. Intuit monetized through ads and by selling your transaction data to banks and credit card companies.
-                  When they shut it down, you lost access to years of financial history. SheetLink costs $2-10/month (or $0 with free tier), but YOUR data stays in YOUR Google Sheet forever.
+                  When they shut it down, you lost access to years of financial history. SheetLink has a free tier (7 days history) or $3.99/month for unlimited history, but YOUR data stays in YOUR Google Sheet forever.
                 </p>
               </div>
             </div>
@@ -444,7 +457,7 @@ export default function SheetLinkVsMint() {
                   <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">Privacy-First, No Ads, No Data Selling</h3>
                   <p className="text-gray-700">
                     Mint was "free" because they sold your transaction data to banks, credit card companies, and financial partners. Their dashboard was filled with targeted ads.
-                    SheetLink charges a small fee ($2-10/month) instead of selling your data. No ads, no tracking, no data selling. Your financial privacy is protected.
+                    SheetLink charges a small fee (free or $3.99/month) instead of selling your data. No ads, no tracking, no data selling. Your financial privacy is protected.
                   </p>
                 </div>
 
@@ -572,7 +585,7 @@ export default function SheetLinkVsMint() {
                     Is SheetLink a good replacement for Mint?
                   </h3>
                   <p className="text-gray-700">
-                    Yes. SheetLink syncs bank transactions to Google Sheets just like Mint synced to its platform. SheetLink has a free tier (7 days of history) and paid plans ($2-10/month). You get more control and flexibility with Google Sheets, plus your data isn't locked in a platform that could shut down.
+                    Yes. SheetLink syncs bank transactions to Google Sheets just like Mint synced to its platform. SheetLink has a free tier (7 days of history) and Pro plan ($3.99/month for unlimited history). You get more control and flexibility with Google Sheets, plus your data isn't locked in a platform that could shut down.
                   </p>
                 </div>
 
@@ -581,7 +594,7 @@ export default function SheetLinkVsMint() {
                     Does SheetLink cost money like Mint was free?
                   </h3>
                   <p className="text-gray-700">
-                    SheetLink has a free tier (7 days of transaction history, unlimited banks) that works forever. For more history, paid plans start at $2/month. Mint was "free" but monetized through ads and selling your data to financial institutions. SheetLink is privacy-first with no ads or data selling.
+                    SheetLink has a free tier (7 days of transaction history, unlimited banks) that works forever. For more history, Pro is $3.99/month. Mint was "free" but monetized through ads and selling your data to financial institutions. SheetLink is privacy-first with no ads or data selling.
                   </p>
                 </div>
 

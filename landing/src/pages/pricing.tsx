@@ -14,7 +14,7 @@ export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('annual');
 
   const seoTitle = `Pricing - ${BRAND.name}`;
-  const seoDescription = 'SheetLink pricing: Free forever for 7 days of transactions. Upgrade for extended history, auto-sync, and AI categorization.';
+  const seoDescription = 'SheetLink pricing: Free forever for 7 days of transactions. Upgrade to Pro for unlimited history. Privacy-first manual sync — you control when data flows.';
 
   useEffect(() => {
     analytics.pageView('Pricing', '/pricing');
@@ -46,7 +46,7 @@ export default function Pricing() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mx-auto max-w-2xl text-xl text-gray-700"
             >
-              Start free forever. Upgrade when you need more history or automation.
+              Start free forever. Upgrade when you need unlimited history.
             </motion.p>
 
             {/* Billing Toggle */}
@@ -74,7 +74,7 @@ export default function Pricing() {
                 Annual
               </span>
               <span className="rounded-full bg-sheetlink-green-700 px-3 py-1 text-xs font-semibold text-white">
-                Save 50%
+                Save 17%
               </span>
             </motion.div>
           </div>
@@ -82,7 +82,7 @@ export default function Pricing() {
 
         {/* Pricing Cards */}
         <section className="px-4 py-20">
-          <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
+          <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
             {/* Free Plan */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -136,7 +136,7 @@ export default function Pricing() {
               </a>
             </motion.div>
 
-            {/* Basic Plan */}
+            {/* Pro Plan */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -149,17 +149,17 @@ export default function Pricing() {
               </div>
               <div className="mb-6">
                 <div className="mb-2 flex items-center gap-2">
-                  <Zap className="h-6 w-6 text-sheetlink-green-700" />
-                  <h3 className="text-2xl font-bold text-sheetlink-text">Basic</h3>
+                  <Star className="h-6 w-6 text-sheetlink-green-700" />
+                  <h3 className="text-2xl font-bold text-sheetlink-text">Pro</h3>
                 </div>
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-sheetlink-text">
-                    ${billingCycle === 'annual' ? '0.99' : '1.99'}
+                    ${billingCycle === 'annual' ? '3.33' : '3.99'}
                   </span>
                   <span className="text-gray-600">/month</span>
                 </div>
                 <p className="text-sm text-gray-600">
-                  {billingCycle === 'annual' ? 'Billed annually ($11.88/year)' : 'Billed monthly'}
+                  {billingCycle === 'annual' ? 'Billed annually ($39.99/year)' : 'Billed monthly'}
                 </p>
               </div>
 
@@ -170,91 +170,32 @@ export default function Pricing() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700"><strong>90 days</strong> of transaction history</span>
+                  <span className="text-sm text-gray-700"><strong>Unlimited history</strong> (2+ years)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700"><strong>Auto-sync</strong> every 24 hours</span>
+                  <span className="text-sm text-gray-700"><strong>Historical backfill</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700">Per institution pricing</span>
+                  <span className="text-sm text-gray-700"><strong>Priority email support</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
+                  <span className="text-sm text-gray-700">Early access to new features</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
+                  <span className="text-sm text-gray-700">Support independent development</span>
                 </li>
               </ul>
 
-              <button
-                disabled
-                className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-3 font-semibold text-white opacity-60"
+              <a
+                href="mailto:support@sheetlink.app?subject=Pro%20Beta%20Access"
+                className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg"
               >
-                Coming Soon
-              </button>
-            </motion.div>
-
-            {/* Pro Plan */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-col rounded-xl border-2 border-gray-200 bg-white p-8 shadow-sm"
-            >
-              <div className="mb-6">
-                <div className="mb-2 flex items-center gap-2">
-                  <Star className="h-6 w-6 text-sheetlink-green-700" />
-                  <h3 className="text-2xl font-bold text-sheetlink-text">Pro</h3>
-                </div>
-                <div className="mb-4">
-                  <span className="text-4xl font-bold text-sheetlink-text">
-                    ${billingCycle === 'annual' ? '4.99' : '9.99'}
-                  </span>
-                  <span className="text-gray-600">/month</span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  {billingCycle === 'annual' ? 'Billed annually ($59.88/year)' : 'Billed monthly'}
-                </p>
-              </div>
-
-              <ul className="mb-8 flex-1 space-y-3">
-                <li className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700"><strong>Everything in Basic</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700"><strong>24 months</strong> of transaction history</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700"><strong>Auto-sync hourly</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700"><strong>AI categorization</strong></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700">Rules engine</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700">Split transactions</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700">Multi-institution dashboards</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700"><strong>Priority support</strong></span>
-                </li>
-              </ul>
-
-              <button
-                disabled
-                className="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 bg-white px-6 py-3 font-semibold text-gray-400"
-              >
-                Coming Soon
-              </button>
+                Join Beta Waitlist
+              </a>
             </motion.div>
           </div>
         </section>
@@ -271,7 +212,6 @@ export default function Pricing() {
                   <tr className="border-b-2 border-gray-200">
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Feature</th>
                     <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Free</th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Basic</th>
                     <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Pro</th>
                   </tr>
                 </thead>
@@ -279,48 +219,30 @@ export default function Pricing() {
                   <tr>
                     <td className="px-6 py-4 text-sm text-gray-700">Transaction history</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-700">7 days</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">90 days</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">24 months</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">Unlimited (2+ years)</td>
                   </tr>
                   <tr className="bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-700">Manual sync</td>
-                    <td className="px-6 py-4 text-center"><Check className="mx-auto h-5 w-5 text-sheetlink-green-700" /></td>
-                    <td className="px-6 py-4 text-center"><Check className="mx-auto h-5 w-5 text-sheetlink-green-700" /></td>
-                    <td className="px-6 py-4 text-center"><Check className="mx-auto h-5 w-5 text-sheetlink-green-700" /></td>
+                    <td className="px-6 py-4 text-sm text-gray-700">Sync method</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">Manual (you control)</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">Manual (you control)</td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 text-sm text-gray-700">Auto-sync frequency</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-500">—</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">Daily</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">Hourly</td>
-                  </tr>
-                  <tr className="bg-gray-50">
                     <td className="px-6 py-4 text-sm text-gray-700">Bank connections</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-700">Unlimited</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-700">Unlimited</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">Unlimited</td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm text-gray-700">AI categorization</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-500">—</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-500">—</td>
-                    <td className="px-6 py-4 text-center"><Check className="mx-auto h-5 w-5 text-sheetlink-green-700" /></td>
                   </tr>
                   <tr className="bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-700">Rules engine</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-500">—</td>
+                    <td className="px-6 py-4 text-sm text-gray-700">Historical backfill</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-500">—</td>
                     <td className="px-6 py-4 text-center"><Check className="mx-auto h-5 w-5 text-sheetlink-green-700" /></td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 text-sm text-gray-700">Split transactions</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-500">—</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-500">—</td>
-                    <td className="px-6 py-4 text-center"><Check className="mx-auto h-5 w-5 text-sheetlink-green-700" /></td>
-                  </tr>
-                  <tr className="bg-gray-50">
                     <td className="px-6 py-4 text-sm text-gray-700">Priority support</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-500">—</td>
+                    <td className="px-6 py-4 text-center"><Check className="mx-auto h-5 w-5 text-sheetlink-green-700" /></td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="px-6 py-4 text-sm text-gray-700">Early access to features</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-500">—</td>
                     <td className="px-6 py-4 text-center"><Check className="mx-auto h-5 w-5 text-sheetlink-green-700" /></td>
                   </tr>
@@ -344,21 +266,21 @@ export default function Pricing() {
                 </p>
               </div>
               <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
-                <h3 className="mb-2 font-semibold text-sheetlink-text">When will Basic and Pro plans be available?</h3>
+                <h3 className="mb-2 font-semibold text-sheetlink-text">Why manual sync instead of automatic?</h3>
                 <p className="text-sm text-gray-700">
-                  We're currently live with the Free plan. Basic and Pro plans will launch in the future. Early users may receive special pricing.
+                  SheetLink only syncs when you click the button. We believe you should control when your bank data flows to your spreadsheet. Unlike competitors that access your accounts in the background, SheetLink requires your explicit action. This is a privacy feature, not a limitation.
+                </p>
+              </div>
+              <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
+                <h3 className="mb-2 font-semibold text-sheetlink-text">When will Pro be available?</h3>
+                <p className="text-sm text-gray-700">
+                  Pro is currently in beta. Join the waitlist by clicking "Join Beta Waitlist" above, and we'll notify you when it's available. Early adopters may receive special pricing.
                 </p>
               </div>
               <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
                 <h3 className="mb-2 font-semibold text-sheetlink-text">Can I upgrade or downgrade anytime?</h3>
                 <p className="text-sm text-gray-700">
                   Yes! You can upgrade, downgrade, or cancel anytime. When you downgrade, you'll retain access to your current plan until the end of your billing period.
-                </p>
-              </div>
-              <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
-                <h3 className="mb-2 font-semibold text-sheetlink-text">What payment methods do you accept?</h3>
-                <p className="text-sm text-gray-700">
-                  Once paid plans launch, we'll accept all major credit cards and debit cards. All payments are processed securely through Stripe.
                 </p>
               </div>
               <div className="rounded-xl border-2 border-gray-200 bg-white p-6">

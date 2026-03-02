@@ -4,8 +4,8 @@ import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
 
 export default function SyncBankToGoogleSheets() {
-  const seoTitle = 'Sync Bank to Google Sheets - Automatically Import Transactions with Plaid';
-  const seoDescription = 'Sync your bank account to Google Sheets automatically. SheetLink uses Plaid to import transactions from 10,000+ banks directly into your spreadsheet. Free for 7 days of history.';
+  const seoTitle = 'Sync Bank to Google Sheets - Privacy-First Manual Sync with Plaid';
+  const seoDescription = 'Privacy-first bank sync to Google Sheets. SheetLink uses Plaid to import transactions when YOU choose. Manual sync gives you control over your financial data. Free for 7 days.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function SyncBankToGoogleSheets() {
         "name": "How do I sync my bank account to Google Sheets?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink Chrome extension, connect your bank account through Plaid (supports 10,000+ banks), and select your Google Sheet. Transactions will sync automatically with date, merchant, amount, and category. Plaid handles bank authentication securely - SheetLink never sees your bank credentials. Free for the last 7 days of transactions."
+          "text": "Install SheetLink Chrome extension, connect your bank account through Plaid (supports 10,000+ banks), and select your Google Sheet. Transactions sync when you click sync (manual control for privacy) with date, merchant, amount, and category. Perfect for weekly or monthly reviews. Plaid handles bank authentication securely - SheetLink never sees your bank credentials. Free for the last 7 days of transactions."
         }
       },
       {
@@ -41,7 +41,7 @@ export default function SyncBankToGoogleSheets() {
         "name": "How much does it cost to sync bank transactions to Google Sheets?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink is free forever for the last 7 days of transactions (perfect for weekly budget tracking). For unlimited transaction history and real-time auto-sync, it's $2/month. This is significantly cheaper than alternatives like Tiller Money ($79/year) or YNAB ($14.99/month)."
+          "text": "SheetLink is free forever for the last 7 days of transactions (perfect for weekly budget tracking). For unlimited transaction history with privacy-first manual sync, it's $3.99/month or $39.99/year. This is significantly cheaper than alternatives like Tiller Money ($79/year) or YNAB ($14.99/month), plus you control when your data syncs."
         }
       }
     ]
@@ -71,9 +71,9 @@ export default function SyncBankToGoogleSheets() {
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-xl leading-relaxed">
               Looking to <strong>sync your bank account to Google Sheets</strong>? SheetLink makes it easy
-              to automatically import bank transactions into your spreadsheet using Plaid's secure API.
-              No manual CSV downloads, no copy-paste—just real-time transaction data flowing directly
-              into your Google Sheet.
+              to import bank transactions when you choose using Plaid's secure API (manual control for privacy).
+              No manual CSV downloads, no copy-paste—just privacy-first transaction data flowing directly
+              into your Google Sheet when you click sync. Perfect for weekly or monthly reviews.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -94,7 +94,7 @@ export default function SyncBankToGoogleSheets() {
                 <strong>Choose Your Google Sheet</strong> - Point SheetLink to any spreadsheet you own
               </li>
               <li>
-                <strong>Sync Transactions</strong> - Hit sync and watch your transactions populate in real-time
+                <strong>Sync Transactions When You Choose</strong> - Hit sync and watch your transactions populate (manual control for privacy)
               </li>
             </ol>
 
@@ -142,11 +142,11 @@ export default function SyncBankToGoogleSheets() {
                   </tr>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">Open Sheets, import CSV</td>
-                    <td className="px-6 py-4">Auto-writes to your Sheet</td>
+                    <td className="px-6 py-4">Writes when you click sync</td>
                   </tr>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">Repeat weekly</td>
-                    <td className="px-6 py-4">Auto-sync (paid tiers)</td>
+                    <td className="px-6 py-4">Click to sync (privacy-first)</td>
                   </tr>
                 </tbody>
               </table>
@@ -203,15 +203,15 @@ export default function SyncBankToGoogleSheets() {
               <li>Light personal finance tracking</li>
             </ul>
             <p>
-              Need more history? Upgrade to Basic ($1.99/month for 90 days) or Pro ($9.99/month for 24 months)
-              with hourly auto-sync, AI categorization, and advanced rules.
+              Need more history? Upgrade to Pro ($3.99/month or $39.99/year) for unlimited transaction history (2+ years),
+              historical backfill, priority support, and early access to new features.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Sync Your Bank to Google Sheets Today
             </h2>
             <p>
-              Stop manually downloading CSVs and start automating your financial data pipeline.
+              Stop manually downloading CSVs and start syncing your financial data with privacy-first manual control.
               Install SheetLink and sync your first bank transaction in under 2 minutes.
             </p>
 

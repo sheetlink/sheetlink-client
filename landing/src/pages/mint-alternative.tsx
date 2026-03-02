@@ -7,7 +7,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function MintAlternative() {
   const seoTitle = 'Best Mint Alternative - SheetLink for Google Sheets (2026)';
-  const seoDescription = 'Looking for a Mint alternative after the shutdown? SheetLink syncs your bank transactions to Google Sheets. Free forever, no ads, YOUR data in YOUR account. Best replacement for Mint in 2026.';
+  const seoDescription = 'Looking for a Mint alternative after the shutdown? SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets. Free (7 days) or Pro ($3.99/mo, $39.99/year). No ads, YOUR data in YOUR account. Best replacement for Mint in 2026.';
   const seoUrl = 'https://sheetlink.app/mint-alternative';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -29,7 +29,7 @@ export default function MintAlternative() {
         'name': 'Why is SheetLink a good Mint alternative?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'SheetLink syncs your bank transactions to Google Sheets, giving you full control over your financial data. Unlike Mint, your data stays in YOUR Google account forever. SheetLink has no ads, won\'t shut down on you, and offers a free tier with 7 days of transaction history. It\'s perfect for users who want flexibility and data ownership.',
+          'text': 'SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets, giving you full control over your financial data. Unlike Mint, your data stays in YOUR Google account forever. SheetLink has no ads, won\'t shut down on you, and offers a free tier (7 days) plus Pro ($3.99/mo or $39.99/year). Manual sync means you control when data is accessed - no background monitoring.',
         },
       },
       {
@@ -45,7 +45,7 @@ export default function MintAlternative() {
         'name': 'Is SheetLink cheaper than Mint was?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'Mint was free but ad-supported and shut down by Intuit. SheetLink is free forever for the last 7 days of transactions with no ads. For extended history, Pro tier is available in beta/early access. SheetLink is more affordable than many Mint alternatives like YNAB ($180/year) or Tiller ($79/year).',
+          'text': 'Mint was free but ad-supported and shut down by Intuit. SheetLink is free forever for the last 7 days of transactions with no ads. Pro tier is $3.99/mo or $39.99/year - more affordable than many Mint alternatives like YNAB ($14.99/mo or $109/year) or Tiller ($6.58/mo or $79/year).',
         },
       },
     ],
@@ -115,7 +115,7 @@ export default function MintAlternative() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mx-auto mb-8 max-w-3xl text-center text-xl leading-relaxed text-gray-700"
             >
-              Mint is gone. But your financial life goes on. SheetLink syncs your bank transactions to Google Sheets - giving you the flexibility Mint never could, with YOUR data in YOUR account.
+              Mint is gone. But your financial life goes on. SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets - giving you the flexibility Mint never could, with YOUR data in YOUR account.
             </motion.p>
 
             <motion.div
@@ -349,7 +349,12 @@ export default function MintAlternative() {
                   <tr className="bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Price</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-700">Free (with ads)</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">Free tier (7 days), Pro tier in beta</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">Free (7 days), Pro $3.99/mo or $39.99/yr</td>
+                  </tr>
+                  <tr>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">Sync Method</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-500">Automatic (background)</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">Manual (you control)</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Data Ownership</td>
@@ -425,11 +430,11 @@ export default function MintAlternative() {
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    <strong>Pro tier:</strong> Extended history (beta/early access)
+                    <strong>Pro tier:</strong> $3.99/mo or $39.99/year
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
-                    Pro pricing TBD - contact for early access
+                    Manual sync (you control)
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
@@ -448,7 +453,7 @@ export default function MintAlternative() {
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <h4 className="text-lg font-bold text-gray-900">YNAB</h4>
-                    <span className="text-2xl font-bold text-gray-900">$180/year</span>
+                    <span className="text-2xl font-bold text-gray-900">$14.99/mo or $109/yr</span>
                   </div>
                   <p className="text-sm text-gray-600">Premium budgeting platform</p>
                 </motion.div>
@@ -462,7 +467,7 @@ export default function MintAlternative() {
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <h4 className="text-lg font-bold text-gray-900">Tiller Money</h4>
-                    <span className="text-2xl font-bold text-gray-900">$79/year</span>
+                    <span className="text-2xl font-bold text-gray-900">$6.58/mo or $79/yr</span>
                   </div>
                   <p className="text-sm text-gray-600">Sheets-based alternative</p>
                 </motion.div>

@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function AmazonFBABookkeeping() {
   const seoTitle = 'Amazon FBA Bookkeeping - Track Income & Expenses in Google Sheets | SheetLink';
-  const seoDescription = 'Automatically sync Amazon FBA income and expenses to Google Sheets. Track product sales by ASIN, Amazon fees, PPC spend, inventory costs, and true profit. Perfect for FBA sellers managing complex bookkeeping.';
+  const seoDescription = 'Privacy-first Amazon FBA bookkeeping. Sync FBA income and expenses to Google Sheets when YOU choose. Track product sales by ASIN, Amazon fees, PPC spend, inventory costs, and true profit. Manual sync gives you control.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function AmazonFBABookkeeping() {
         "name": "How do I track Amazon FBA profit by product?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink to sync your bank account where Amazon deposits payments. Tag each deposit by ASIN or product SKU. Track inventory costs, Amazon fees (referral, FBA, storage), PPC spend, and returns. Calculate true profit per ASIN using formulas: Revenue - COGS - Amazon Fees - PPC - Returns = Net Profit per Product."
+          "text": "Install SheetLink to sync your bank account where Amazon deposits payments. SheetLink syncs when you click sync (manual control for privacy). Tag each deposit by ASIN or product SKU. Track inventory costs, Amazon fees (referral, FBA, storage), PPC spend, and returns. Calculate true profit per ASIN using formulas: Revenue - COGS - Amazon Fees - PPC - Returns = Net Profit per Product. Perfect for weekly or monthly financial reviews."
         }
       },
       {
@@ -41,7 +41,7 @@ export default function AmazonFBABookkeeping() {
         "name": "Can SheetLink help with Amazon FBA tax preparation?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. SheetLink automatically syncs Amazon deposits and business expenses to Google Sheets. Categorize transactions for Schedule C: inventory purchases (COGS), Amazon fees, advertising, shipping, software subscriptions. Track quarterly profit to calculate estimated taxes. Generate year-end totals for your accountant or tax software."
+          "text": "Yes. SheetLink syncs Amazon deposits and business expenses to Google Sheets when you click sync. Categorize transactions for Schedule C: inventory purchases (COGS), Amazon fees, advertising, shipping, software subscriptions. Track quarterly profit to calculate estimated taxes. Generate year-end totals for your accountant or tax software."
         }
       }
     ]
@@ -70,7 +70,7 @@ export default function AmazonFBABookkeeping() {
 
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-xl leading-relaxed">
-              Amazon FBA selling means complex bookkeeping: tracking COGS, multiple Amazon fees, PPC spend, inventory costs, and returns. <strong>SheetLink automatically syncs your bank account to Google Sheets</strong>, giving you real-time visibility into deposits, expenses, and true profit per ASIN—all in one spreadsheet.
+              Amazon FBA selling means complex bookkeeping: tracking COGS, multiple Amazon fees, PPC spend, inventory costs, and returns. <strong>SheetLink syncs your bank account to Google Sheets when you click sync</strong>, giving you full control over when your financial data updates. Perfect for weekly or monthly reviews—track deposits, expenses, and true profit per ASIN all in one spreadsheet.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -88,23 +88,36 @@ export default function AmazonFBABookkeeping() {
               <li><strong>Tax complexity</strong> - Nexus requirements, sales tax, quarterly estimates, COGS accounting</li>
             </ul>
             <p className="mt-4">
-              <strong>SheetLink solves this</strong> by automatically syncing all bank transactions—Amazon deposits, inventory purchases, PPC charges, and business expenses—to Google Sheets where you can build custom tracking for your FBA business.
+              <strong>SheetLink solves this</strong> by syncing all bank transactions—Amazon deposits, inventory purchases, PPC charges, and business expenses—to Google Sheets when you click sync. You control when your data updates, perfect for weekly or monthly business reviews.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               How SheetLink Helps Amazon FBA Sellers
             </h2>
             <p>
-              Get automated bookkeeping at a fraction of the cost of FBA-specific accounting software:
+              Get privacy-first bookkeeping at a fraction of the cost of FBA-specific accounting software:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Auto-sync Amazon deposits</strong> - Track bi-weekly payments to your bank account</li>
+              <li><strong>Manual sync Amazon deposits</strong> (you control when) - Track bi-weekly payments to your bank account</li>
               <li><strong>Track inventory costs</strong> - Sync supplier payments, shipping to FBA, prep services</li>
               <li><strong>Monitor Amazon fees</strong> - Capture referral fees, FBA fees, storage charges</li>
               <li><strong>Track PPC spend</strong> - Sync advertising charges and allocate to ASINs</li>
               <li><strong>Calculate profit by ASIN</strong> - See which products are actually profitable</li>
-              <li><strong>Affordable pricing</strong> - $2/month vs A2X ($19/month) or Taxomate ($29/month)</li>
+              <li><strong>Affordable pricing</strong> - $3.99/month vs A2X ($19/month) or Taxomate ($29/month)</li>
             </ul>
+
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
+              Why Manual Sync Works for FBA Sellers
+            </h2>
+            <p>
+              SheetLink only syncs when you click the button. Unlike competitors that access your bank in the background, SheetLink gives you complete control over when your financial data flows to your spreadsheet. This is a privacy feature, not a limitation.
+            </p>
+            <div className="my-6 rounded-lg border-2 border-sheetlink-green-200 bg-sheetlink-green-50 p-6">
+              <h3 className="font-semibold text-sheetlink-text mb-2">Perfect for Weekly or Monthly Reviews</h3>
+              <p className="text-sm">
+                Most FBA sellers review their finances weekly (to monitor inventory and cash flow) or monthly (to reconcile Amazon statements and calculate taxes). Manual sync fits this workflow perfectly. Click sync during your financial review session, update COGS and fees, and you're done. No need for daily automatic updates.
+              </p>
+            </div>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               What to Track for Your FBA Business
@@ -352,7 +365,7 @@ export default function AmazonFBABookkeeping() {
                 <tbody>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">SheetLink</td>
-                    <td className="px-6 py-4">$2/month</td>
+                    <td className="px-6 py-4">$3.99/month</td>
                     <td className="px-6 py-4">Solo FBA sellers, small catalogs</td>
                   </tr>
                   <tr className="border-t border-gray-300">
@@ -379,7 +392,7 @@ export default function AmazonFBABookkeeping() {
               </table>
             </div>
             <p>
-              <strong>SheetLink advantage:</strong> Automated bank sync with full spreadsheet flexibility at a fraction of the cost. Combine with Amazon Seller Central reports for complete FBA tracking. Upgrade to A2X or QuickBooks only when you need accrual accounting or CPA integration.
+              <strong>SheetLink advantage:</strong> Privacy-first manual sync with full spreadsheet flexibility at a fraction of the cost. Combine with Amazon Seller Central reports for complete FBA tracking. Upgrade to A2X or QuickBooks only when you need accrual accounting or CPA integration.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -408,7 +421,7 @@ export default function AmazonFBABookkeeping() {
                   <strong>Challenge:</strong> Jason sold 15 ASINs but didn't track profit per product. Couldn't tell which were winners vs losers.
                 </p>
                 <p className="text-sm mt-2">
-                  <strong>Solution:</strong> SheetLink syncs bank transactions. Jason tags each Amazon deposit by ASIN, tracks COGS from supplier invoices, and allocates PPC spend per product.
+                  <strong>Solution:</strong> SheetLink syncs bank transactions when he clicks sync (weekly reviews). Jason tags each Amazon deposit by ASIN, tracks COGS from supplier invoices, and allocates PPC spend per product.
                 </p>
                 <p className="text-sm mt-2">
                   <strong>Result:</strong> Discovered 5 products had negative profit after all fees. Discontinued losers, doubled down on top 3 products. Increased overall profit margin from 18% to 32%.
@@ -421,7 +434,7 @@ export default function AmazonFBABookkeeping() {
                   <strong>Challenge:</strong> Linda sourced from 20+ wholesalers with varying costs. Couldn't track which suppliers were most profitable.
                 </p>
                 <p className="text-sm mt-2">
-                  <strong>Solution:</strong> SheetLink auto-syncs all supplier payments. Linda tags each inventory purchase by supplier and product, calculates COGS per unit.
+                  <strong>Solution:</strong> SheetLink syncs all supplier payments when she clicks sync (weekly reviews). Linda tags each inventory purchase by supplier and product, calculates COGS per unit.
                 </p>
                 <p className="text-sm mt-2">
                   <strong>Result:</strong> Identified 3 suppliers with consistently better margins. Focused 70% of buying power on best suppliers, improved average margin by 9%.
@@ -436,12 +449,8 @@ export default function AmazonFBABookkeeping() {
               <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
             <p className="mt-4">
-              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+              <strong>Pro ($3.99/month or $39.99/year):</strong> Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features
             </p>
-            <ul className="list-disc pl-6 space-y-2 mt-2">
-              <li>Currently available through early access</li>
-              <li>Contact us for beta pricing</li>
-            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your FBA Profit Today

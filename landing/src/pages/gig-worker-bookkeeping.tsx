@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function GigWorkerBookkeeping() {
   const seoTitle = 'Gig Worker Bookkeeping - Track Uber, DoorDash & Delivery Income | SheetLink';
-  const seoDescription = 'Automatically sync gig economy income to Google Sheets. Track Uber, DoorDash, Instacart earnings, mileage deductions, and vehicle expenses. Perfect for gig workers and delivery drivers.';
+  const seoDescription = 'Privacy-first gig worker bookkeeping. Sync gig economy income to Google Sheets when YOU choose. Track Uber, DoorDash, Instacart earnings, mileage deductions, and vehicle expenses. Manual sync gives you control.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -85,7 +85,7 @@ export default function GigWorkerBookkeeping() {
               <li><strong>Calculate mileage deductions</strong> - Import mileage data and calculate 67 cents/mile deduction</li>
               <li><strong>Quarterly tax estimates</strong> - Know what you owe before tax season</li>
               <li><strong>Schedule C preparation</strong> - Organized records for tax filing</li>
-              <li><strong>Affordable pricing</strong> - $2/month vs Hurdlr at $10/month</li>
+              <li><strong>Affordable pricing</strong> - $3.99/month vs Hurdlr at $10/month</li>
             </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -347,7 +347,7 @@ export default function GigWorkerBookkeeping() {
                 <tbody>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">SheetLink</td>
-                    <td className="px-6 py-4">$2/month</td>
+                    <td className="px-6 py-4">$3.99/month</td>
                     <td className="px-6 py-4">Gig workers who want bank sync + spreadsheet flexibility</td>
                   </tr>
                   <tr className="border-t border-gray-300">

@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function EtsySellerFinances() {
   const seoTitle = 'Etsy Seller Profit Tracker - Sync Bank to Google Sheets | SheetLink';
-  const seoDescription = 'Automatically sync Etsy shop finances to Google Sheets. Track revenue, fees, shipping costs, and profit margins in real-time. Perfect for Etsy sellers managing bookkeeping. Free for 7 days.';
+  const seoDescription = 'Privacy-first Etsy seller finance tracker. Sync Etsy shop finances to Google Sheets when YOU choose. Track revenue, fees, shipping costs, and profit margins. Manual sync gives you control. Free for 7 days.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function EtsySellerFinances() {
         "name": "How do I track Etsy shop finances in Google Sheets?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink Chrome extension and connect your bank account (where Etsy deposits payments) via Plaid. SheetLink automatically syncs deposits from Etsy along with business expenses like supplies, shipping, and fees. You can then categorize transactions, calculate profit margins, and track cash flow in Google Sheets."
+          "text": "Install SheetLink Chrome extension and connect your bank account (where Etsy deposits payments) via Plaid. SheetLink syncs when you click sync (manual control for privacy), capturing deposits from Etsy along with business expenses like supplies, shipping, and fees. Perfect for weekly or monthly financial reviews. You can then categorize transactions, calculate profit margins, and track cash flow in Google Sheets."
         }
       },
       {
@@ -33,7 +33,7 @@ export default function EtsySellerFinances() {
         "name": "Do I need QuickBooks for my Etsy shop?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Not necessarily. For most Etsy sellers, Google Sheets with SheetLink is simpler and cheaper than QuickBooks. SheetLink costs $2/month vs QuickBooks' $30-75/month. You get automatic bank sync, expense tracking, and profit calculations without the complexity of full accounting software. Upgrade to QuickBooks only if you need advanced inventory management or multi-channel selling."
+          "text": "Not necessarily. For most Etsy sellers, Google Sheets with SheetLink is simpler and cheaper than QuickBooks. SheetLink costs $3.99/month vs QuickBooks' $30-75/month. You get manual sync (you control when), expense tracking, and profit calculations without the complexity of full accounting software. Upgrade to QuickBooks only if you need advanced inventory management or multi-channel selling."
         }
       },
       {
@@ -70,7 +70,7 @@ export default function EtsySellerFinances() {
 
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-xl leading-relaxed">
-              Running an Etsy shop means juggling revenue, fees, materials costs, and shipping expenses. <strong>SheetLink automatically syncs your bank account to Google Sheets</strong>, giving you real-time visibility into Etsy deposits, business expenses, and profit margins—all in one spreadsheet.
+              Running an Etsy shop means juggling revenue, fees, materials costs, and shipping expenses. <strong>SheetLink syncs your bank account to Google Sheets when you click sync</strong>, giving you full control over when your financial data updates. Perfect for weekly or monthly reviews—track Etsy deposits, business expenses, and profit margins all in one spreadsheet.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -80,13 +80,26 @@ export default function EtsySellerFinances() {
               Most Etsy sellers use manual spreadsheets or expensive accounting software. SheetLink bridges the gap:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Auto-sync Etsy deposits</strong> - Track revenue as Etsy pays out to your bank account</li>
+              <li><strong>Manual sync Etsy deposits</strong> (you control when) - Track revenue as Etsy pays out to your bank account</li>
               <li><strong>Track business expenses</strong> - Materials, shipping supplies, packaging, marketing costs</li>
               <li><strong>Calculate real profit</strong> - Subtract fees and costs to see actual profit per sale</li>
               <li><strong>Monitor cash flow</strong> - Know how much money is in your business account at all times</li>
               <li><strong>Tax-ready records</strong> - Organized transactions for Schedule C tax filing</li>
-              <li><strong>Affordable pricing</strong> - $2/month vs QuickBooks' $30-75/month</li>
+              <li><strong>Affordable pricing</strong> - $3.99/month vs QuickBooks' $30-75/month</li>
             </ul>
+
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
+              Why Manual Sync Works for Etsy Sellers
+            </h2>
+            <p>
+              SheetLink only syncs when you click the button. Unlike competitors that access your bank in the background, SheetLink gives you complete control over when your financial data flows to your spreadsheet. This is a privacy feature, not a limitation.
+            </p>
+            <div className="my-6 rounded-lg border-2 border-sheetlink-green-200 bg-sheetlink-green-50 p-6">
+              <h3 className="font-semibold text-sheetlink-text mb-2">Perfect for Weekly or Monthly Reviews</h3>
+              <p className="text-sm">
+                Most Etsy sellers review their finances weekly (to track sales and inventory needs) or monthly (to reconcile expenses and calculate taxes). Manual sync fits this workflow perfectly. Click sync during your financial review session, categorize new transactions, and you're done. No need for daily automatic updates.
+              </p>
+            </div>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               How to Set Up Your Etsy Shop Finance Tracker
@@ -257,7 +270,7 @@ export default function EtsySellerFinances() {
                 <tbody>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">SheetLink</td>
-                    <td className="px-6 py-4">$2/month</td>
+                    <td className="px-6 py-4">$3.99/month</td>
                     <td className="px-6 py-4">Solo Etsy sellers, side hustlers</td>
                   </tr>
                   <tr className="border-t border-gray-300">
@@ -332,12 +345,8 @@ export default function EtsySellerFinances() {
               <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
             <p className="mt-4">
-              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+              <strong>Pro ($3.99/month or $39.99/year):</strong> Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features
             </p>
-            <ul className="list-disc pl-6 space-y-2 mt-2">
-              <li>Currently available through early access</li>
-              <li>Contact us for beta pricing</li>
-            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Etsy Shop Finances Today

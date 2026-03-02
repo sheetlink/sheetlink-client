@@ -7,7 +7,7 @@ import { BRAND, URLS } from '@/lib/constants';
 
 export default function ExcelBudgetingTool() {
   const seoTitle = 'Excel Budgeting Tool - Automated Bank Sync for Google Sheets (2026)';
-  const seoDescription = 'Stop manually entering transactions into Excel. SheetLink automatically syncs bank transactions to Google Sheets. All the power of Excel budgeting with zero manual data entry.';
+  const seoDescription = 'Privacy-first Excel budgeting tool. Sync bank transactions to Google Sheets when YOU choose. All the power of Excel budgeting with manual sync control. Stop manual data entry.';
   const seoUrl = 'https://sheetlink.app/excel-budgeting-tool';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -29,7 +29,7 @@ export default function ExcelBudgetingTool() {
         'name': 'How is SheetLink different from manual Excel budgeting?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'Manual Excel budgeting requires downloading bank CSVs, copying transactions, and manually categorizing everything. SheetLink automatically syncs bank transactions to Google Sheets via Plaid—no downloads, no manual entry. You get all the spreadsheet power of Excel with zero data entry work.',
+          'text': 'Manual Excel budgeting requires downloading bank CSVs, copying transactions, and manually categorizing everything. SheetLink syncs bank transactions to Google Sheets via Plaid when you click sync (manual control for privacy)—no downloads, no tedious manual entry. Perfect for weekly or monthly budget reviews. You get all the spreadsheet power of Excel with control over when your data updates.',
         },
       },
       {
@@ -105,7 +105,7 @@ export default function ExcelBudgetingTool() {
             </h1>
 
             <p className="mb-8 text-center text-xl text-gray-600 md:text-2xl">
-              Stop manually entering transactions into spreadsheets. SheetLink syncs your bank transactions to Google Sheets automatically. All the power of Excel, zero data entry.
+              Stop manually entering transactions into spreadsheets. SheetLink syncs your bank transactions to Google Sheets when you click sync. All the power of Excel with manual control over your data.
             </p>
 
             <div className="flex justify-center gap-4">
@@ -200,7 +200,7 @@ export default function ExcelBudgetingTool() {
                       <div className="flex justify-center">
                         <Check className="h-5 w-5 text-sheetlink-green-700" />
                       </div>
-                      <p className="text-sm text-gray-600">Automatic sync</p>
+                      <p className="text-sm text-gray-600">Sync when you click</p>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex justify-center">
@@ -215,7 +215,7 @@ export default function ExcelBudgetingTool() {
                       <div className="flex justify-center">
                         <Check className="h-5 w-5 text-sheetlink-green-700" />
                       </div>
-                      <p className="text-sm text-gray-600">Automatic, real-time</p>
+                      <p className="text-sm text-gray-600">Manual sync (you control when)</p>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex justify-center">
@@ -230,7 +230,7 @@ export default function ExcelBudgetingTool() {
                       <div className="flex justify-center">
                         <Check className="h-5 w-5 text-sheetlink-green-700" />
                       </div>
-                      <p className="text-sm text-gray-600">Handled automatically</p>
+                      <p className="text-sm text-gray-600">Handled via sync</p>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex justify-center">
@@ -280,14 +280,64 @@ export default function ExcelBudgetingTool() {
           </div>
         </section>
 
-        {/* All the Power of Excel */}
+        {/* Why Manual Sync Works */}
         <section className="bg-gray-50 px-4 py-20">
           <div className="mx-auto max-w-4xl">
             <h2 className="mb-4 text-center text-4xl font-bold text-sheetlink-text">
-              All the Power of Excel Budgeting, Fully Automated
+              Why Manual Sync Works for Budgeting
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Keep your custom formulas, pivot tables, and charts—just skip the data entry
+              Privacy-first approach that fits your budget review schedule
+            </p>
+
+            <div className="grid gap-8 md:grid-cols-2">
+              <div className="rounded-lg bg-white p-6 shadow-sm">
+                <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
+                  Matches Your Review Cycle
+                </h3>
+                <p className="text-gray-600">
+                  Most people review their budget weekly or monthly. Sync when you sit down to review your finances, not constantly in the background. Your budget updates when you need it to.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-white p-6 shadow-sm">
+                <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
+                  You Control Your Data
+                </h3>
+                <p className="text-gray-600">
+                  Manual sync means no background processes accessing your accounts. You decide exactly when SheetLink connects to your bank. Maximum privacy, maximum control.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-white p-6 shadow-sm">
+                <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
+                  Intentional Budgeting
+                </h3>
+                <p className="text-gray-600">
+                  Clicking sync makes you actively engage with your finances. Review new transactions, update categories, check against budget targets. Manual sync encourages better financial habits.
+                </p>
+              </div>
+
+              <div className="rounded-lg bg-white p-6 shadow-sm">
+                <h3 className="mb-3 text-xl font-bold text-sheetlink-text">
+                  Lower Cost
+                </h3>
+                <p className="text-gray-600">
+                  Privacy-first manual sync means lower costs. SheetLink is $3.99/month vs competitors at $10-30/month with features you don't need.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* All the Power of Excel */}
+        <section className="px-4 py-20">
+          <div className="mx-auto max-w-4xl">
+            <h2 className="mb-4 text-center text-4xl font-bold text-sheetlink-text">
+              All the Power of Excel Budgeting, Privacy-First Sync
+            </h2>
+            <p className="mb-12 text-center text-xl text-gray-600">
+              Keep your custom formulas, pivot tables, and charts—sync when you choose
             </p>
 
             <div className="space-y-6">
@@ -296,7 +346,7 @@ export default function ExcelBudgetingTool() {
                 <div>
                   <h3 className="mb-2 text-lg font-bold text-sheetlink-text">Use Any Budget Template</h3>
                   <p className="text-gray-600">
-                    Already have an Excel budget template? Recreate it in Google Sheets. SheetLink syncs transactions automatically—you just add your budget formulas, categories, and formatting. SUMIF, VLOOKUP, pivot tables, conditional formatting—everything works.
+                    Already have an Excel budget template? Recreate it in Google Sheets. SheetLink syncs transactions when you click sync—you control when your data updates. Add your budget formulas, categories, and formatting. SUMIF, VLOOKUP, pivot tables, conditional formatting—everything works.
                   </p>
                 </div>
               </div>
@@ -351,7 +401,7 @@ export default function ExcelBudgetingTool() {
               How SheetLink Works
             </h2>
             <p className="mb-12 text-center text-xl text-gray-600">
-              Set up once, track automatically forever
+              Set up once, sync when you choose
             </p>
 
             <div className="space-y-8">
@@ -389,10 +439,10 @@ export default function ExcelBudgetingTool() {
                 </div>
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">
-                    Transactions Sync Automatically
+                    Transactions Sync When You Click Sync
                   </h3>
                   <p className="text-gray-600">
-                    Every transaction appears in your Google Sheet automatically. No manual entry. No copy/paste. Real-time updates as you spend.
+                    Every transaction appears in your Google Sheet when you click sync. Manual control for privacy. Perfect for weekly or monthly budget reviews. No manual entry. No copy/paste.
                   </p>
                 </div>
               </div>

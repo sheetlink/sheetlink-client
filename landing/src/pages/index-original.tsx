@@ -10,8 +10,8 @@ import { motion } from 'framer-motion';
 import { BRAND } from '@/lib/constants';
 
 export default function Home() {
-  const seoTitle = `${BRAND.name} - Privacy-First Bank Sync for Google Sheets | 10,000+ Banks`;
-  const seoDescription = `SheetLink syncs your bank transactions to Google Sheets only when YOU click sync. No background access. Privacy-first, manual control. Perfect for budgeting and bookkeeping. Free forever for 7 days.`;
+  const seoTitle = `${BRAND.name} - Free Bank to Google Sheets Sync | 10,000+ Banks Supported`;
+  const seoDescription = `SheetLink is a Chrome extension that syncs your bank transactions to Google Sheets using Plaid. Track spending, build budgets, and manage your finances in real-time. Free forever for 7 days of history.`;
   const seoUrl = 'https://sheetlink.app';
   const seoImage = `${seoUrl}/og-image.png`;
 
@@ -37,8 +37,8 @@ export default function Home() {
       "ratingCount": "12"
     },
     "featureList": [
-      "Privacy-first manual sync to Google Sheets",
-      "You control when transactions sync",
+      "Sync bank transactions to Google Sheets",
+      "Real-time transaction updates",
       "Plaid integration for 10,000+ banks",
       "Budget tracking and expense categorization",
       "Bookkeeping and accounting automation",
@@ -56,7 +56,7 @@ export default function Home() {
         "name": "What is SheetLink?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink is a Chrome extension that syncs bank transactions to Google Sheets using Plaid - but only when YOU click sync. It's privacy-first, designed for budgeting, bookkeeping, and financial tracking. You control when your bank data flows to your spreadsheet. Free forever for the last 7 days of transactions."
+          "text": "SheetLink is a Chrome extension that automatically syncs bank transactions to Google Sheets using Plaid. It's designed for budgeting, bookkeeping, and financial tracking. Connect your bank accounts securely through Plaid, and transactions sync in real-time to your spreadsheet. Free forever for the last 7 days of transactions."
         }
       },
       {
@@ -64,15 +64,7 @@ export default function Home() {
         "name": "How much does SheetLink cost?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink is free forever for the last 7 days of transactions - perfect for weekly budget tracking. Pro tier costs $3.99/month ($39.99/year) for unlimited history and is currently in beta. This is 73% cheaper than YNAB ($14.99/month) and 40% cheaper than Tiller Money ($6.58/month)."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Why manual sync instead of automatic?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "SheetLink only syncs when you click the button. We believe you should control when your bank data flows to your spreadsheet. Unlike competitors that access your accounts in the background, SheetLink requires your explicit action. This is a privacy feature, not a limitation. Manual sync fits the workflow of freelancers, contractors, and small businesses who review finances weekly or monthly, not daily."
+          "text": "SheetLink is free forever for the last 7 days of transactions - perfect for weekly budget tracking. Pro tier with extended history is available for beta/early access users. This is significantly more affordable than alternatives like Tiller Money ($79/year) or YNAB ($14.99/month)."
         }
       },
       {
@@ -96,7 +88,7 @@ export default function Home() {
         "name": "What's the difference between SheetLink and Tiller Money?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SheetLink offers a free tier (7 days of history) and Pro tier ($3.99/month), while Tiller costs $6.58/month ($79/year) with no free tier. SheetLink uses manual sync (you control when data flows), while Tiller syncs automatically in the background. SheetLink offers financial templates through Recipes and supports both personal budgeting and small business bookkeeping use cases. Both sync bank transactions to Google Sheets using Plaid."
+          "text": "SheetLink offers a free tier (7 days of history) and Pro tier in beta, while Tiller costs $79/year with no free tier. SheetLink offers financial templates through Recipes and supports both personal budgeting and small business bookkeeping use cases. Tiller focuses primarily on personal finance. Both sync bank transactions to Google Sheets using Plaid."
         }
       },
       {
@@ -195,8 +187,8 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mb-6 text-center text-5xl font-bold leading-tight text-sheetlink-text md:text-7xl"
             >
-              Privacy-first bank sync for Google Sheets.{' '}
-              <span className="text-sheetlink-green-700">You control when data flows.</span>
+              Track your spending,{' '}
+              <span className="text-sheetlink-green-700">build budgets, take control.</span>
             </motion.h1>
 
             {/* Subheadline */}
@@ -206,7 +198,7 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mx-auto mb-8 max-w-3xl text-center text-lg leading-relaxed text-gray-600"
             >
-              SheetLink syncs your bank transactions to Google Sheets only when YOU click sync. No background access. No surprises. Perfect for budgeting, bookkeeping, and expense tracking. Free forever for 7 days of history.
+              SheetLink syncs your bank transactions to Google Sheets in real-time. Perfect for budgeting, bookkeeping, and cash flow tracking. Free forever for 7 days of history.
             </motion.p>
 
             {/* CTAs */}

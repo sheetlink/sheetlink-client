@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsYNAB() {
   const seoTitle = "SheetLink vs YNAB - Feature Comparison & Pricing 2026";
-  const seoDescription = "Compare SheetLink vs YNAB (You Need A Budget): SheetLink costs $2-10/month with spreadsheet flexibility, while YNAB is $14.99/month with a dedicated budgeting methodology. See which is right for you.";
+  const seoDescription = "Compare SheetLink vs YNAB (You Need A Budget): SheetLink offers privacy-first manual sync with free tier and Pro at $3.99/mo, while YNAB is $14.99/mo with automatic sync and dedicated budgeting methodology.";
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-ynab';
 
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function SheetLinkVsYNAB() {
         "name": "What is the main difference between SheetLink and YNAB?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "YNAB is a full-featured budgeting app with its own methodology, mobile apps, and guided approach. SheetLink syncs bank transactions to Google Sheets, giving you spreadsheet flexibility to build your own budgets and analyses. YNAB costs $14.99/month, while SheetLink costs $2-10/month with a free tier."
+          "text": "YNAB is a full-featured budgeting app with automatic sync, mobile apps, and guided Zero-Based Budgeting methodology. SheetLink syncs bank transactions to Google Sheets with manual sync (you control when)—a privacy feature. YNAB costs $14.99/month with automatic sync, while SheetLink offers a free tier and Pro at $3.99/month with manual sync."
         }
       },
       {
@@ -25,7 +25,7 @@ export default function SheetLinkVsYNAB() {
         "name": "Is SheetLink cheaper than YNAB?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes, significantly. YNAB costs $14.99/month or $109/year. SheetLink costs $2-10/month depending on features needed, with a free tier for 7 days of transaction history. For most users, SheetLink is 75-85% cheaper than YNAB."
+          "text": "Yes, significantly. YNAB costs $14.99/month or $109/year. SheetLink offers a free tier (7 days) and Pro at $3.99/month or $39.99/year—almost 4x cheaper monthly and 2.7x cheaper annually than YNAB."
         }
       },
       {
@@ -78,7 +78,7 @@ export default function SheetLinkVsYNAB() {
                 SheetLink vs YNAB (You Need A Budget)
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                YNAB is a full budgeting app with methodology and mobile apps ($14.99/month). SheetLink syncs transactions to Google Sheets for DIY budgeting ($2-10/month). Choose structure or flexibility.
+                YNAB is a full budgeting app with automatic sync, methodology, and mobile apps ($14.99/month). SheetLink offers manual sync (privacy-first) to Google Sheets ($3.99/month Pro). Choose structure or flexibility.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -110,13 +110,19 @@ export default function SheetLinkVsYNAB() {
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
+                      <span>You want manual sync for privacy (you control when)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
                       <span>You want maximum flexibility with spreadsheets</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>You prefer to save 75-85% on cost</span>
+                      <span>You prefer to save 70% on cost ($3.99 vs $14.99/mo)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -136,6 +142,12 @@ export default function SheetLinkVsYNAB() {
                 <div className="p-6 border-2 border-gray-300 rounded-lg">
                   <h3 className="text-2xl font-bold text-gray-700 mb-4">Choose YNAB if...</h3>
                   <ul className="space-y-3 text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <svg className="w-6 h-6 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>You prefer automatic daily sync (background access)</span>
+                    </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -184,8 +196,13 @@ export default function SheetLinkVsYNAB() {
                   <tbody className="divide-y divide-gray-200">
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Price</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">$0-10/month</strong></td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">Free or $3.99/mo ($39.99/year)</strong></td>
                       <td className="px-6 py-4 text-center text-sm text-gray-700">$14.99/month or $109/year</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">Sync Method</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">Manual (you control)</strong></td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700">Automatic (daily)</td>
                     </tr>
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Free Tier</td>
@@ -289,33 +306,33 @@ export default function SheetLinkVsYNAB() {
                 <div className="border-2 border-sheetlink-green-700 rounded-lg p-8 bg-sheetlink-green-700/5">
                   <h3 className="text-2xl font-bold text-sheetlink-green-700 mb-2">SheetLink</h3>
                   <div className="mb-6">
-                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$0 - $10<span className="text-xl text-gray-600">/month</span></div>
-                    <p className="text-gray-600">Pay only for what you need</p>
+                    <div className="text-4xl font-bold text-sheetlink-text mb-2">Free<span className="text-xl text-gray-600"> + $3.99/mo</span></div>
+                    <p className="text-gray-600">Start free, upgrade for extended history</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Free:</strong> 7 days of history, unlimited banks</span>
+                      <span><strong>Free:</strong> 7 days of history</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Basic:</strong> $2/mo per institution, 90 days</span>
+                      <span><strong>Pro:</strong> $3.99/mo or $39.99/year</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Pro:</strong> $10/mo per institution, 24 months</span>
+                      <span>Manual sync (you control when)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>No commitment, cancel anytime</span>
+                      <span>Privacy-first: no background access</span>
                     </li>
                   </ul>
                   <a
@@ -372,11 +389,9 @@ export default function SheetLinkVsYNAB() {
               </div>
 
               <div className="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">Annual Cost Comparison:</h4>
+                <h4 className="font-semibold text-blue-900 mb-2">Why Manual Sync?</h4>
                 <p className="text-blue-800">
-                  YNAB: $109/year (monthly) or $109/year (annual plan) |
-                  SheetLink: $0/year (free tier) to $24/year (Basic, 2 banks) to $120/year (Pro, 1 bank) |
-                  <strong>Savings: $85-109/year with SheetLink for basic use</strong>
+                  SheetLink's manual sync is a privacy feature, not a limitation. You click "Sync" when you want to update transactions—no background access to your accounts. Perfect for users who review finances weekly or monthly and value control over convenience. YNAB's automatic sync is convenient but requires persistent account access.
                 </p>
               </div>
             </div>
@@ -404,9 +419,9 @@ export default function SheetLinkVsYNAB() {
                 </div>
 
                 <div className="bg-white p-6 rounded-lg shadow-sm">
-                  <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You Want to Save $100+/Year</h3>
+                  <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You Want Manual Sync for Privacy</h3>
                   <p className="text-gray-700">
-                    SheetLink costs 75-85% less than YNAB. For someone tracking 2-3 bank accounts, SheetLink costs $24-48/year (Basic) vs YNAB's $109/year. The free tier (7 days of history) is perfect for weekly budget tracking with zero cost. If budget is a concern, SheetLink is the clear winner.
+                    SheetLink syncs only when YOU click sync—no background access to your accounts. This privacy-first approach is perfect for users who review finances weekly or monthly and don't need daily automatic updates. You control when your financial data is accessed. SheetLink also costs 70% less: $3.99/mo vs YNAB's $14.99/mo.
                   </p>
                 </div>
 
@@ -431,6 +446,13 @@ export default function SheetLinkVsYNAB() {
                   <h3 className="text-xl font-semibold text-gray-700 mb-3">You Want a Structured Budgeting System</h3>
                   <p className="text-gray-700">
                     YNAB's "Four Rules" methodology is powerful for people who struggle with budgeting. The app guides you through zero-based budgeting, age of money tracking, and goal-based savings. If you need structure and accountability, YNAB's opinionated approach is better than SheetLink's blank-slate flexibility.
+                  </p>
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow-sm border-2 border-gray-200">
+                  <h3 className="text-xl font-semibold text-gray-700 mb-3">You Prefer Automatic Daily Sync</h3>
+                  <p className="text-gray-700">
+                    YNAB syncs transactions automatically every day without you clicking anything. If you want transactions updated in the background and don't mind granting ongoing access to your accounts, YNAB's automatic sync is convenient. SheetLink requires manual sync for privacy—you click to update.
                   </p>
                 </div>
 
@@ -558,7 +580,7 @@ export default function SheetLinkVsYNAB() {
                     What is the main difference between SheetLink and YNAB?
                   </h3>
                   <p className="text-gray-700">
-                    YNAB is a full-featured budgeting app with its own methodology, mobile apps, and guided approach. SheetLink syncs bank transactions to Google Sheets, giving you spreadsheet flexibility to build your own budgets and analyses. YNAB costs $14.99/month, while SheetLink costs $2-10/month with a free tier.
+                    YNAB is a full-featured budgeting app with its own methodology, mobile apps, and guided approach. SheetLink syncs bank transactions to Google Sheets, giving you spreadsheet flexibility to build your own budgets and analyses. YNAB costs $14.99/month, while SheetLink has a free tier or $3.99/month for Pro.
                   </p>
                 </div>
 
@@ -567,7 +589,7 @@ export default function SheetLinkVsYNAB() {
                     Is SheetLink cheaper than YNAB?
                   </h3>
                   <p className="text-gray-700">
-                    Yes, significantly. YNAB costs $14.99/month or $109/year. SheetLink costs $2-10/month depending on features needed, with a free tier for 7 days of transaction history. For most users, SheetLink is 75-85% cheaper than YNAB.
+                    Yes, significantly. YNAB costs $14.99/month or $109/year. SheetLink has a free tier (7 days history) or $3.99/month ($39.99/year) for unlimited history. For most users, SheetLink is 73-100% cheaper than YNAB.
                   </p>
                 </div>
 

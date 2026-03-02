@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function AirbnbIncomeTracker() {
   const seoTitle = 'Airbnb Income Tracker - Track Income & Expenses in Google Sheets | SheetLink';
-  const seoDescription = 'Automatically sync Airbnb rental income and expenses to Google Sheets. Track booking revenue, cleaning fees, platform fees, maintenance costs, and occupancy rates. Perfect for short-term rental hosts managing finances.';
+  const seoDescription = 'Privacy-first Airbnb rental income tracker. Sync rental income and expenses to Google Sheets when YOU choose. Track booking revenue, cleaning fees, maintenance costs, and occupancy rates. Manual sync gives you control.';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function AirbnbIncomeTracker() {
         "name": "How do I track Airbnb income for tax purposes?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Install SheetLink to sync your bank account where Airbnb deposits payments. SheetLink automatically captures booking revenue, cleaning fees, and all rental-related expenses. Tag transactions by property, categorize expenses (cleaning, maintenance, utilities), and calculate net rental income for Schedule E tax filing. Track year-to-date totals for accurate tax reporting."
+          "text": "Install SheetLink to sync your bank account where Airbnb deposits payments. SheetLink syncs when you click sync (manual control for privacy), capturing booking revenue, cleaning fees, and all rental-related expenses. Tag transactions by property, categorize expenses (cleaning, maintenance, utilities), and calculate net rental income for Schedule E tax filing. Perfect for weekly or monthly financial reviews."
         }
       },
       {
@@ -41,7 +41,7 @@ export default function AirbnbIncomeTracker() {
         "name": "Do I need QuickBooks for my Airbnb rental?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Not necessarily. For most Airbnb hosts with 1-3 properties, Google Sheets with SheetLink is simpler and cheaper. SheetLink costs $2/month vs QuickBooks $30+/month. You get automatic bank sync, expense tracking, and ROI calculations. Upgrade to QuickBooks only if you manage many properties or need full property management features."
+          "text": "Not necessarily. For most Airbnb hosts with 1-3 properties, Google Sheets with SheetLink is simpler and cheaper. SheetLink costs $3.99/month vs QuickBooks $30+/month. You get manual sync (you control when), expense tracking, and ROI calculations. Upgrade to QuickBooks only if you manage many properties or need full property management features."
         }
       }
     ]
@@ -70,7 +70,7 @@ export default function AirbnbIncomeTracker() {
 
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-xl leading-relaxed">
-              Airbnb hosting means tracking seasonal income, cleaning fees, platform fees, maintenance costs, and occupancy rates. <strong>SheetLink automatically syncs your bank account to Google Sheets</strong>, giving you real-time visibility into booking revenue, expenses, and true ROI—all in one spreadsheet.
+              Airbnb hosting means tracking seasonal income, cleaning fees, platform fees, maintenance costs, and occupancy rates. <strong>SheetLink syncs your bank account to Google Sheets when you click sync</strong>, giving you full control over when your financial data updates. Perfect for weekly or monthly reviews—track booking revenue, expenses, and true ROI all in one spreadsheet.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -88,23 +88,36 @@ export default function AirbnbIncomeTracker() {
               <li><strong>Tax complexity</strong> - Prorated deductions, rental vs personal use, local lodging taxes</li>
             </ul>
             <p className="mt-4">
-              <strong>SheetLink solves this</strong> by automatically syncing all bank transactions—Airbnb deposits, VRBO payouts, cleaning costs, and property expenses—to Google Sheets where you can track occupancy, revenue, and profit.
+              <strong>SheetLink solves this</strong> by syncing all bank transactions—Airbnb deposits, VRBO payouts, cleaning costs, and property expenses—to Google Sheets when you click sync. You control when your data updates, perfect for weekly or monthly property reviews.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               How SheetLink Helps Airbnb Hosts
             </h2>
             <p>
-              Get automated rental property bookkeeping at a fraction of the cost of property management software:
+              Get privacy-first rental property bookkeeping at a fraction of the cost of property management software:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Auto-sync booking revenue</strong> - Track deposits from Airbnb, VRBO, Booking.com</li>
+              <li><strong>Manual sync booking revenue</strong> (you control when) - Track deposits from Airbnb, VRBO, Booking.com</li>
               <li><strong>Track all expenses</strong> - Cleaning, maintenance, utilities, supplies, property costs</li>
               <li><strong>Calculate occupancy rate</strong> - Monitor nights booked vs available for pricing optimization</li>
               <li><strong>Revenue per available night</strong> - See true performance including vacant nights</li>
               <li><strong>Net income after expenses</strong> - Calculate actual profit after all costs</li>
-              <li><strong>Affordable pricing</strong> - $2/month vs Properly ($19/month) or Hospitable ($25/month)</li>
+              <li><strong>Affordable pricing</strong> - $3.99/month vs Properly ($19/month) or Hospitable ($25/month)</li>
             </ul>
+
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
+              Why Manual Sync Works for Airbnb Hosts
+            </h2>
+            <p>
+              SheetLink only syncs when you click the button. Unlike competitors that access your bank in the background, SheetLink gives you complete control over when your financial data flows to your spreadsheet. This is a privacy feature, not a limitation.
+            </p>
+            <div className="my-6 rounded-lg border-2 border-sheetlink-green-200 bg-sheetlink-green-50 p-6">
+              <h3 className="font-semibold text-sheetlink-text mb-2">Perfect for Weekly or Monthly Reviews</h3>
+              <p className="text-sm">
+                Most Airbnb hosts review their finances weekly (to monitor bookings and cash flow) or monthly (to reconcile expenses and calculate ROI). Manual sync fits this workflow perfectly. Click sync during your financial review session, categorize new transactions, and you're done. No need for daily automatic updates.
+              </p>
+            </div>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               What to Track for Your Short-Term Rental
@@ -365,7 +378,7 @@ export default function AirbnbIncomeTracker() {
                 <tbody>
                   <tr className="border-t border-gray-300">
                     <td className="px-6 py-4">SheetLink</td>
-                    <td className="px-6 py-4">$2/month</td>
+                    <td className="px-6 py-4">$3.99/month</td>
                     <td className="px-6 py-4">Solo hosts, 1-3 properties</td>
                   </tr>
                   <tr className="border-t border-gray-300">
@@ -392,7 +405,7 @@ export default function AirbnbIncomeTracker() {
               </table>
             </div>
             <p>
-              <strong>SheetLink advantage:</strong> Automated bank sync with full spreadsheet control at a fraction of the cost. Perfect for solo hosts who want simple, affordable bookkeeping. Upgrade to Properly or QuickBooks only when managing 5+ properties.
+              <strong>SheetLink advantage:</strong> Privacy-first manual sync with full spreadsheet control at a fraction of the cost. Perfect for solo hosts who want simple, affordable bookkeeping. Upgrade to Properly or QuickBooks only when managing 5+ properties.
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
@@ -406,7 +419,7 @@ export default function AirbnbIncomeTracker() {
                   <strong>Challenge:</strong> Rachel couldn't figure out if her beachfront condo was actually profitable. Expenses felt high but she had no clear picture.
                 </p>
                 <p className="text-sm mt-2">
-                  <strong>Solution:</strong> SheetLink syncs all Airbnb deposits and expenses (cleaning, maintenance, HOA). Rachel tracks monthly net income and occupancy rate.
+                  <strong>Solution:</strong> SheetLink syncs all Airbnb deposits and expenses when she clicks sync (monthly reviews). Rachel tracks monthly net income and occupancy rate.
                 </p>
                 <p className="text-sm mt-2">
                   <strong>Result:</strong> Discovered summer months were very profitable (70% margins) but winter was break-even. Increased winter pricing by 15% and added minimum stay requirements. Improved annual ROI from 4% to 9%.
@@ -434,12 +447,8 @@ export default function AirbnbIncomeTracker() {
               <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
             <p className="mt-4">
-              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+              <strong>Pro ($3.99/month or $39.99/year):</strong> Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features
             </p>
-            <ul className="list-disc pl-6 space-y-2 mt-2">
-              <li>Currently available through early access</li>
-              <li>Contact us for beta pricing</li>
-            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Airbnb Income Today
