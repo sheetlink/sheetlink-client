@@ -102,6 +102,19 @@ export default function Home() {
     ]
   };
 
+  // Organization Schema for brand name display in search results
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SheetLink",
+    "url": "https://sheetlink.app",
+    "logo": "https://sheetlink.app/sheetlink-logo.svg",
+    "sameAs": [
+      "https://github.com/sheetlink/sheetlink-client"
+    ],
+    "description": "Open-source Chrome extension for syncing bank transactions to Google Sheets using Plaid."
+  };
+
   return (
     <>
       <Head>
@@ -120,6 +133,12 @@ export default function Home() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+
+        {/* Organization Schema for brand name display */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
 
         {/* OpenGraph */}
