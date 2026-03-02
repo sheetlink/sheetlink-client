@@ -329,16 +329,15 @@ export default function EtsySellerFinances() {
               Pricing for Etsy Sellers
             </h2>
             <p>
-              SheetLink is designed to be affordable for side hustlers and small Etsy shops:
+              <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Free Tier</strong> - Last 7 days of transactions (great for weekly profit checks)</li>
-              <li><strong>Basic Plan</strong> - $2/month for 90 days of history (covers quarterly tax prep)</li>
-              <li><strong>Pro Plan</strong> - $10/month for 24 months of history (full business records)</li>
-            </ul>
             <p className="mt-4">
-              Compare to QuickBooks Self-Employed ($20/month) or QuickBooks Simple Start ($30/month). SheetLink gives you bank sync at a fraction of the cost.
+              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
             </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li>Currently available through early access</li>
+              <li>Contact us for beta pricing</li>
+            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Etsy Shop Finances Today

@@ -355,16 +355,15 @@ export default function RentalPropertyCashFlow() {
               Pricing for Landlords
             </h2>
             <p>
-              SheetLink is designed to be affordable for small landlords:
+              <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Free Tier</strong> - Last 7 days of transactions (weekly cash flow checks)</li>
-              <li><strong>Basic Plan</strong> - $2/month for 90 days of history (quarterly analysis)</li>
-              <li><strong>Pro Plan</strong> - $10/month for 24 months of history (full tax records)</li>
-            </ul>
             <p className="mt-4">
-              Compare to property management software: Buildium ($50-150/month), AppFolio ($280/month), TenantCloud ($18-60/month). SheetLink focuses on what landlords need most—financial tracking—at a fraction of the cost.
+              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
             </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li>Currently available through early access</li>
+              <li>Contact us for beta pricing</li>
+            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Rental Property Cash Flow Today

@@ -433,19 +433,15 @@ export default function AmazonFBABookkeeping() {
               Pricing for Amazon FBA Sellers
             </h2>
             <p>
-              SheetLink is designed to scale with your FBA business:
+              <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Free Tier</strong> - Last 7 days of transactions (great for testing or very small sellers)</li>
-              <li><strong>Basic Plan</strong> - $2/month for 90 days of history (recommended for most FBA sellers, covers quarterly analysis)</li>
-              <li><strong>Pro Plan</strong> - $10/month for 24 months of history (best for established sellers, full tax year + prior year records)</li>
+            <p className="mt-4">
+              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+            </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li>Currently available through early access</li>
+              <li>Contact us for beta pricing</li>
             </ul>
-            <p className="mt-4">
-              <strong>Recommended tier:</strong> Basic ($2/month) for sellers doing under $10k/month. Pro ($10/month) for sellers doing $10k+ monthly revenue who need year-over-year comparisons and full tax records.
-            </p>
-            <p className="mt-4">
-              Compare to A2X ($19/month minimum) or Taxomate ($29/month). SheetLink gives you automated bank sync at a fraction of the cost.
-            </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your FBA Profit Today

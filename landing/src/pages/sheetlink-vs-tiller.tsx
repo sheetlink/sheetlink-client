@@ -5,7 +5,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsTiller() {
   const seoTitle = "SheetLink vs Tiller Money - Feature Comparison & Pricing 2026";
-  const seoDescription = "Compare SheetLink vs Tiller Money: SheetLink starts at $2/month with a free tier, while Tiller costs $79/year. Both sync bank transactions to Google Sheets, but SheetLink offers better pricing and business use cases.";
+  const seoDescription = "Compare SheetLink vs Tiller Money: SheetLink has a free tier (7 days history) with Pro tier in early access beta, while Tiller costs $79/year. Both sync bank transactions to Google Sheets.";
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-tiller';
 
   const faqSchema = {
@@ -17,7 +17,7 @@ export default function SheetLinkVsTiller() {
         "name": "What is the main difference between SheetLink and Tiller Money?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "The main differences are pricing and flexibility. SheetLink costs $2-10/month with a free tier (7 days of history), while Tiller costs $79/year ($6.58/month) with no free option. SheetLink is better for business bookkeeping use cases, while Tiller focuses primarily on personal finance with pre-built templates."
+          "text": "The main differences are pricing and flexibility. SheetLink has a free tier (7 days of history) with Pro tier in early access beta, while Tiller costs $79/year ($6.58/month) with no free option. SheetLink is better for business bookkeeping use cases, while Tiller focuses primarily on personal finance with pre-built templates."
         }
       },
       {
@@ -25,7 +25,7 @@ export default function SheetLinkVsTiller() {
         "name": "Is SheetLink cheaper than Tiller?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. SheetLink's Basic plan costs $1.99/month ($0.99/month annual) for 90 days of history, compared to Tiller's $79/year ($6.58/month). SheetLink also has a free tier that Tiller doesn't offer. For most users, SheetLink is 3-7x cheaper than Tiller."
+          "text": "SheetLink has a free tier (7 days of history) that Tiller doesn't offer. For extended history and auto-sync, SheetLink Pro is in early access beta. Contact for early access pricing details."
         }
       },
       {
@@ -78,7 +78,7 @@ export default function SheetLinkVsTiller() {
                 SheetLink vs Tiller Money
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Both sync bank transactions to Google Sheets. SheetLink is 3-7x cheaper with a free tier and better business features. Tiller offers Excel support and mature templates.
+                Both sync bank transactions to Google Sheets. SheetLink has a free tier and better business features. Tiller offers Excel support and mature templates.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -110,7 +110,7 @@ export default function SheetLinkVsTiller() {
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>You want the cheapest option ($2-10/month)</span>
+                      <span>You want a free tier or affordable pricing</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -189,7 +189,7 @@ export default function SheetLinkVsTiller() {
                     </tr>
                     <tr className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">Paid Plan Price</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">$2-10/month</strong></td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 bg-sheetlink-green-700/5"><strong className="text-sheetlink-green-700">Free + Pro (beta)</strong></td>
                       <td className="px-6 py-4 text-center text-sm text-gray-700">$79/year</td>
                     </tr>
                     <tr className="hover:bg-gray-50">
@@ -278,27 +278,27 @@ export default function SheetLinkVsTiller() {
                 <div className="border-2 border-sheetlink-green-700 rounded-lg p-8 bg-sheetlink-green-700/5">
                   <h3 className="text-2xl font-bold text-sheetlink-green-700 mb-2">SheetLink</h3>
                   <div className="mb-6">
-                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$0 - $10<span className="text-xl text-gray-600">/month</span></div>
-                    <p className="text-gray-600">Flexible per-institution pricing</p>
+                    <div className="text-4xl font-bold text-sheetlink-text mb-2">Free<span className="text-xl text-gray-600"> + Pro Beta</span></div>
+                    <p className="text-gray-600">Start free, upgrade for more features</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Free:</strong> 7 days of history, unlimited banks</span>
+                      <span><strong>Free:</strong> 7 days of history (free forever)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Basic:</strong> $1.99/mo ($0.99 annual) per institution, 90 days history</span>
+                      <span><strong>Pro (beta):</strong> Extended history and auto-sync</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Pro:</strong> $9.99/mo ($4.99 annual) per institution, 24 months history</span>
+                      <span>Early access available - contact for pricing</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -361,11 +361,9 @@ export default function SheetLinkVsTiller() {
               </div>
 
               <div className="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">Cost Example:</h4>
+                <h4 className="font-semibold text-blue-900 mb-2">Note:</h4>
                 <p className="text-blue-800">
-                  For someone with 2 bank accounts: SheetLink costs $2-4/month ($24-48/year) on Basic vs Tiller at $79/year.
-                  However, Tiller includes unlimited history while SheetLink Basic caps at 90 days.
-                  For full 24-month history, SheetLink Pro would be $20/month ($240/year), making Tiller more economical for users needing extensive history.
+                  SheetLink's free tier (7 days) is perfect for recent transaction tracking. For extended history and auto-sync features, Pro tier is currently in early access beta. Contact us for early access pricing details.
                 </p>
               </div>
             </div>
@@ -379,9 +377,9 @@ export default function SheetLinkVsTiller() {
               </h2>
               <div className="space-y-6">
                 <div className="bg-white p-6 rounded-lg shadow-sm">
-                  <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You Want the Cheapest Option</h3>
+                  <h3 className="text-xl font-semibold text-sheetlink-green-700 mb-3">You Want a Free Option to Start</h3>
                   <p className="text-gray-700">
-                    SheetLink's free tier (7 days of history) is perfect for weekly budget tracking. Even the paid plans start at just $2/month for Basic, making it 3x cheaper than Tiller for most users. If you only need recent transactions and don't require years of history, SheetLink offers unbeatable value.
+                    SheetLink's free tier (7 days of history) is perfect for weekly budget tracking and is free forever. For extended history and auto-sync, Pro tier is in early access beta. If you only need recent transactions, SheetLink's free tier offers unbeatable value.
                   </p>
                 </div>
 
@@ -548,7 +546,7 @@ export default function SheetLinkVsTiller() {
                     What is the main difference between SheetLink and Tiller Money?
                   </h3>
                   <p className="text-gray-700">
-                    The main differences are pricing and flexibility. SheetLink costs $2-10/month with a free tier (7 days of history), while Tiller costs $79/year ($6.58/month) with no free option. SheetLink is better for business bookkeeping use cases, while Tiller focuses primarily on personal finance with pre-built templates.
+                    The main differences are pricing and flexibility. SheetLink has a free tier (7 days of history) with Pro tier in early access beta, while Tiller costs $79/year ($6.58/month) with no free option. SheetLink is better for business bookkeeping use cases, while Tiller focuses primarily on personal finance with pre-built templates.
                   </p>
                 </div>
 
@@ -557,7 +555,7 @@ export default function SheetLinkVsTiller() {
                     Is SheetLink cheaper than Tiller?
                   </h3>
                   <p className="text-gray-700">
-                    Yes. SheetLink's Basic plan costs $1.99/month ($0.99/month annual) for 90 days of history, compared to Tiller's $79/year ($6.58/month). SheetLink also has a free tier that Tiller doesn't offer. For most users, SheetLink is 3-7x cheaper than Tiller.
+                    SheetLink has a free tier (7 days of history) that Tiller doesn't offer. For extended history and auto-sync, SheetLink Pro is in early access beta. Contact for early access pricing details.
                   </p>
                 </div>
 

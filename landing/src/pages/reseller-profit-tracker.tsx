@@ -473,16 +473,15 @@ export default function ResellerProfitTracker() {
               Pricing for Resellers
             </h2>
             <p>
-              SheetLink is designed to scale with your resale business:
+              <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Free Tier</strong> - Last 7 days of transactions (good for new resellers testing viability)</li>
-              <li><strong>Basic Plan</strong> - $2/month for 90 days of history (recommended for part-time resellers)</li>
-              <li><strong>Pro Plan</strong> - $10/month for 24 months of history (best for full-time resellers, tax records)</li>
-            </ul>
             <p className="mt-4">
-              <strong>Recommended tier:</strong> Basic ($2/month) for side hustle resellers making under $3k/month. Pro ($10/month) for full-time resellers doing $3k+ monthly revenue who need complete tax records and year-over-year comparisons.
+              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
             </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li>Currently available through early access</li>
+              <li>Contact us for beta pricing</li>
+            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Reseller Profit Today

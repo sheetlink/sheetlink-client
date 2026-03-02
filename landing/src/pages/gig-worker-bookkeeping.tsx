@@ -408,16 +408,15 @@ export default function GigWorkerBookkeeping() {
               Pricing for Gig Workers
             </h2>
             <p>
-              SheetLink is designed to be affordable for gig economy workers:
+              <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Free Tier</strong> - Last 7 days of transactions (great for weekly income checks)</li>
-              <li><strong>Basic Plan</strong> - $2/month for 90 days of history (covers quarterly tax prep)</li>
-              <li><strong>Pro Plan</strong> - $10/month for 24 months of history (full tax year + prior year)</li>
-            </ul>
             <p className="mt-4">
-              Compare to Hurdlr ($10/month) or Everlance ($8/month). SheetLink gives you automated bank sync with full spreadsheet control at the lowest price.
+              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
             </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li>Currently available through early access</li>
+              <li>Contact us for beta pricing</li>
+            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Track Your Gig Income Today

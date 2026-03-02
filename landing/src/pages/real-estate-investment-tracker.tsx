@@ -544,18 +544,15 @@ Exchange Deadline | Replacement Property | Purchase Price | Deferred Tax Gain
               Pricing: Unlimited Property Tracking
             </h2>
             <p>
-              <strong>SheetLink is free forever for 7 days of transaction history.</strong> For real estate
-              investors tracking multiple properties, we recommend:
+              <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Basic ($1.99/month)</strong> - 90 days of history, perfect for small portfolios (1-3 properties)</li>
-              <li><strong>Pro ($9.99/month)</strong> - 24 months of history, auto-categorization rules, perfect for active
-              flippers or growing portfolios</li>
+            <p className="mt-4">
+              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
+            </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li>Currently available through early access</li>
+              <li>Contact us for beta pricing</li>
             </ul>
-            <p className="mt-3">
-              The Pro plan includes AI categorization (property A vs. property B expense tags) and rules engine,
-              so you spend less time organizing data and more time analyzing performance.
-            </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Take Control of Your Real Estate Investments

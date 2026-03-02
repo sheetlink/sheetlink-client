@@ -236,19 +236,18 @@ export default function TaxPrepSpreadsheet() {
             </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
-              Pricing: Free for Tax Season Prep
+              Pricing
             </h2>
             <p>
-              <strong>SheetLink is free forever for the last 7 days of transactions.</strong> For full tax year history:
+              <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
-            <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Free Tier</strong> - Last 7 days of transactions (great for weekly expense tracking)</li>
-              <li><strong>Basic Plan</strong> - $2/month for 90 days of history (covers quarterly tax prep)</li>
-              <li><strong>Pro Plan</strong> - $10/month for 24 months of history (full tax records + prior year)</li>
-            </ul>
             <p className="mt-4">
-              Much more affordable than tax software subscriptions ($50-200/year) or bookkeeping services ($200-500/month).
+              <strong>Pro (Beta):</strong> Extended transaction history, auto-sync, and advanced features
             </p>
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              <li>Currently available through early access</li>
+              <li>Contact us for beta pricing</li>
+            </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
               Get Started: Build Your Tax Prep Spreadsheet Today
