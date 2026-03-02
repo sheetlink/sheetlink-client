@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { BRAND } from '@/lib/constants';
 
 export default function Home() {
-  const seoTitle = `${BRAND.name} - Sync Bank Transactions to Google Sheets for Budgeting & Bookkeeping`;
+  const seoTitle = `${BRAND.name} - Free Bank to Google Sheets Sync | 10,000+ Banks Supported`;
   const seoDescription = `SheetLink is a Chrome extension that syncs your bank transactions to Google Sheets using Plaid. Track spending, build budgets, and manage your finances in real-time. Free forever for 7 days of history.`;
   const seoUrl = 'https://sheetlink.app';
   const seoImage = `${seoUrl}/og-image.png`;

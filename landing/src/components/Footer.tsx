@@ -7,10 +7,10 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-gray-200 bg-white px-4 py-12">
-      <div className="mx-auto max-w-6xl">
-        <div className="grid gap-8 md:grid-cols-4">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
-          <div className="md:col-span-2">
+          <div>
             <a href="/" className="mb-4 inline-block transition-opacity hover:opacity-80">
               <Image
                 src="/sheetlink-logo.svg"
@@ -31,27 +31,27 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <a
+                  href="/how-it-works"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  How It Works
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/pricing"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a
                   href="/recipes"
                   onClick={() => analytics.footerLinkClick('recipes')}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   Recipes
-                </a>
-              </li>
-              <li>
-                <a
-                  href={URLS.firstSync}
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  First Sync Guide
-                </a>
-              </li>
-              <li>
-                <a
-                  href={URLS.userGuide}
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  User Guide
                 </a>
               </li>
               <li>
@@ -76,7 +76,101 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Company */}
+          {/* Use Cases */}
+          <div>
+            <h4 className="mb-3 font-semibold text-sheetlink-text">Use Cases</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a
+                  href="/use-cases"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  All Use Cases
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/freelance-income-tracker"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Freelancers
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/software-developer-expense-tracker"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Developers
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/tax-prep-spreadsheet"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Tax Prep
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/rental-property-cash-flow"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Real Estate
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Compare */}
+          <div>
+            <h4 className="mb-3 font-semibold text-sheetlink-text">Compare</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a
+                  href="/comparisons"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  All Comparisons
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/tiller-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  vs Tiller Money
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/quicken-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  vs Quicken
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/ynab-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  vs YNAB
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/mint-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  vs Mint
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
           <div>
             <h4 className="mb-3 font-semibold text-sheetlink-text">Legal</h4>
             <ul className="space-y-2 text-sm">

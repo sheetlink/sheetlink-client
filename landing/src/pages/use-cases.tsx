@@ -85,6 +85,41 @@ export default function UseCases() {
       description: 'Project-based revenue, client profitability, retainer vs hourly tracking for consultants and coaches.',
       icon: '📈',
       audience: 'Consultants, Coaches'
+    },
+    {
+      title: 'Software Developer Expense Tracker',
+      slug: '/software-developer-expense-tracker',
+      description: 'Track SaaS subscriptions, hosting costs, hardware purchases, and client project expenses for 1099 developers.',
+      icon: '💻',
+      audience: 'Developers, Engineers, 1099 Contractors'
+    },
+    {
+      title: 'Designer Bookkeeping',
+      slug: '/designer-bookkeeping',
+      description: 'Track Upwork/Fiverr income, Adobe Creative Cloud subscriptions, design tool costs, and hardware expenses.',
+      icon: '🎨',
+      audience: 'Freelance Designers, Creatives'
+    },
+    {
+      title: 'Marketing Agency Expense Tracker',
+      slug: '/marketing-agency-expense-tracker',
+      description: 'Track ad spend across platforms, client budgets, tool subscriptions, and separate billable vs overhead costs.',
+      icon: '📱',
+      audience: 'Marketing Agencies, Growth Teams'
+    },
+    {
+      title: 'Creator Income Tracker',
+      slug: '/creator-income-tracker',
+      description: 'Track YouTube AdSense, Patreon subscriptions, course sales, brand deals, and production expenses.',
+      icon: '🎬',
+      audience: 'YouTubers, Content Creators, Course Sellers'
+    },
+    {
+      title: 'Independent Consultant Bookkeeping',
+      slug: '/independent-consultant-bookkeeping',
+      description: 'Track retainer payments, milestone billing, client-specific expenses, and project profitability.',
+      icon: '🤝',
+      audience: 'Independent Consultants, Advisors'
     }
   ];
 

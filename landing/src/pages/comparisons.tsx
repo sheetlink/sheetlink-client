@@ -72,6 +72,34 @@ export default function Comparisons() {
       description: 'Need a less expensive budgeting solution? SheetLink offers spreadsheet flexibility at a fraction of the cost.',
       badge: 'SAVE $$',
       icon: '💸'
+    },
+    {
+      title: 'Quicken Alternative',
+      slug: '/quicken-alternative',
+      description: 'Tired of expensive desktop software? SheetLink offers browser-based bank sync with full data ownership.',
+      badge: 'NO INSTALL',
+      icon: '💻'
+    },
+    {
+      title: 'PocketGuard Alternative',
+      slug: '/pocketguard-alternative',
+      description: 'Break free from the 2-account limit and data lock-in. Get unlimited accounts and full spreadsheet control.',
+      badge: 'UNLIMITED',
+      icon: '🔓'
+    },
+    {
+      title: 'Personal Capital Alternative',
+      slug: '/personal-capital-alternative',
+      description: 'Track investments and spending without wealth management upsells or advisor calls.',
+      badge: 'NO UPSELLS',
+      icon: '📈'
+    },
+    {
+      title: 'Excel Budgeting Tool',
+      slug: '/excel-budgeting-tool',
+      description: 'Stop manually downloading CSVs. Automate your Excel budgeting workflow with automatic bank sync.',
+      badge: 'AUTOMATE',
+      icon: '⚡'
     }
   ];
 
