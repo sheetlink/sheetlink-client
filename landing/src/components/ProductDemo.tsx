@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 
 export default function ProductDemo() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -41,15 +40,6 @@ export default function ProductDemo() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <div className="mb-6 flex justify-center">
-            <Image
-              src="/sheetlink-logo.svg"
-              alt="SheetLink"
-              width={200}
-              height={50}
-              priority
-            />
-          </div>
           <h2 className="mb-4 text-4xl font-bold text-sheetlink-text md:text-5xl">
             Build your P&L and cash flow in seconds
           </h2>
