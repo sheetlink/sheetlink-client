@@ -7,7 +7,7 @@ import { BRAND } from '@/lib/constants';
 
 export default function TillerAlternative() {
   const seoTitle = 'Best Tiller Alternative - SheetLink for Google Sheets (2026)';
-  const seoDescription = 'Looking for a cheaper Tiller Money alternative? SheetLink syncs bank transactions to Google Sheets with a free tier and Pro option in beta. Same features, better price.';
+  const seoDescription = 'Looking for a cheaper Tiller Money alternative? SheetLink syncs bank transactions to Google Sheets with a free tier and Pro at $3.99/mo or $39.99/year. Same features, better price.';
   const seoUrl = 'https://sheetlink.app/tiller-alternative';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -29,7 +29,7 @@ export default function TillerAlternative() {
         'name': 'Is SheetLink cheaper than Tiller Money?',
         'acceptedAnswer': {
           '@type': 'Answer',
-          'text': 'Yes. Tiller Money costs $6.58/mo or $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with Pro tier at $3.99/mo or $39.99/year. The free tier is available permanently with privacy-first manual sync.',
+          'text': 'Yes. Tiller Money costs $6.58/mo or $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with Pro tier at $3.99/mo or $39.99/year for extended history. The free tier is available permanently with privacy-first manual sync.',
         },
       },
       {
@@ -395,7 +395,7 @@ export default function TillerAlternative() {
                     <td className="px-6 py-4 text-center">
                       <Check className="mx-auto h-5 w-5 text-green-600" />
                     </td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">Coming soon (Recipes)</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">Recipes available</td>
                   </tr>
                   <tr className="bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">Transaction History</td>
@@ -493,10 +493,6 @@ export default function TillerAlternative() {
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
                     <strong>Pro tier:</strong> $3.99/mo or $39.99/year
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4" />
-                    Pro pricing TBD - contact for early access
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4" />
@@ -653,7 +649,7 @@ export default function TillerAlternative() {
               <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
                 <h3 className="mb-2 text-lg font-bold text-gray-900">Manual CSV Downloads</h3>
                 <p className="text-sm text-gray-700">
-                  Free but extremely time-consuming. Log into each bank, download CSV, import to Sheets. SheetLink automates all of this for less than $1/month.
+                  Free but extremely time-consuming. Log into each bank, download CSV, import to Sheets. SheetLink automates all of this starting at $3.99/month.
                 </p>
               </div>
             </div>
@@ -675,7 +671,7 @@ export default function TillerAlternative() {
               >
                 <h3 className="mb-3 text-xl font-bold text-sheetlink-text">Why choose SheetLink over Tiller Money?</h3>
                 <p className="text-gray-700">
-                  SheetLink offers similar bank-to-Google-Sheets syncing at a much lower price point. Tiller costs $79/year with no free tier, while SheetLink is free forever for 7 days of history, or $12-60/year for extended history. Both use Plaid for bank connections and sync to Google Sheets, but SheetLink is more affordable and offers a generous free tier.
+                  SheetLink offers similar bank-to-Google-Sheets syncing at a much lower price point. Tiller costs $79/year with no free tier, while SheetLink is free forever for 7 days of history, or $3.99/mo ($39.99/year) for extended history. Both use Plaid for bank connections and sync to Google Sheets, but SheetLink is more affordable and offers a generous free tier.
                 </p>
               </motion.div>
 
@@ -688,7 +684,7 @@ export default function TillerAlternative() {
               >
                 <h3 className="mb-3 text-xl font-bold text-sheetlink-text">Is SheetLink cheaper than Tiller Money?</h3>
                 <p className="text-gray-700">
-                  Yes. Tiller Money costs $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with Pro tier (extended history) available for beta users. The free tier is available permanently.
+                  Yes. Tiller Money costs $79/year with a 30-day free trial. SheetLink is free forever for 7 days of transaction history, with Pro tier at $3.99/mo or $39.99/year for extended history. The free tier is available permanently.
                 </p>
               </motion.div>
 
