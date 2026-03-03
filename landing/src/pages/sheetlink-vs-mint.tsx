@@ -351,8 +351,8 @@ export default function SheetLinkVsMint() {
                 <div className="border-2 border-sheetlink-green-700 rounded-lg p-8 bg-sheetlink-green-700/5">
                   <h3 className="text-2xl font-bold text-sheetlink-green-700 mb-2">SheetLink</h3>
                   <div className="mb-6">
-                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$0 - $10<span className="text-xl text-gray-600">/month</span></div>
-                    <p className="text-gray-600">Free tier + paid plans, no ads</p>
+                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$0 - $3.99<span className="text-xl text-gray-600">/month</span></div>
+                    <p className="text-gray-600">Free tier + Pro plan, no ads</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-start gap-2">
@@ -365,13 +365,13 @@ export default function SheetLinkVsMint() {
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Basic:</strong> $2/mo per institution, 90 days</span>
+                      <span><strong>Pro:</strong> $3.99/mo or $39.99/year, unlimited history</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Pro:</strong> $10/mo per institution, 24 months</span>
+                      <span>Manual sync (you control when data is accessed)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -432,7 +432,7 @@ export default function SheetLinkVsMint() {
                 <h4 className="font-semibold text-blue-900 mb-2">The Real Cost of "Free":</h4>
                 <p className="text-blue-800">
                   Mint was free, but you paid with your privacy and data. Intuit monetized through ads and by selling your transaction data to banks and credit card companies.
-                  When they shut it down, you lost access to years of financial history. SheetLink has a free tier (7 days history) or $3.99/month for unlimited history, but YOUR data stays in YOUR Google Sheet forever.
+                  When they shut it down, you lost access to years of financial history. SheetLink has a free tier (7 days history) or $3.99/mo ($39.99/year) for unlimited history, but YOUR data stays in YOUR Google Sheet forever.
                 </p>
               </div>
             </div>

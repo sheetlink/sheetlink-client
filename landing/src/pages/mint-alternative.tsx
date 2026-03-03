@@ -235,7 +235,7 @@ export default function MintAlternative() {
                 <div>
                   <h3 className="mb-2 text-xl font-bold text-sheetlink-text">Free Forever Tier</h3>
                   <p className="text-gray-700">
-                    7 days of transaction history, free forever. No credit card. No ads. No bait-and-switch. Pro tier with extended history available for beta users.
+                    7 days of transaction history, free forever. No credit card. No ads. No bait-and-switch. Pro tier at $3.99/mo or $39.99/year for extended history.
                   </p>
                 </div>
               </motion.div>
@@ -687,7 +687,7 @@ export default function MintAlternative() {
               >
                 <h3 className="mb-3 text-xl font-bold text-sheetlink-text">Is SheetLink cheaper than Mint was?</h3>
                 <p className="text-gray-700">
-                  Mint was free but ad-supported and shut down by Intuit. SheetLink is free forever for the last 7 days of transactions with no ads. For extended history, Pro tier is available in beta/early access. SheetLink is more affordable than many Mint alternatives like YNAB ($180/year) or Tiller ($79/year).
+                  Mint was free but ad-supported and shut down by Intuit. SheetLink is free forever for the last 7 days of transactions with no ads. Pro tier is $3.99/mo or $39.99/year for extended history. SheetLink is more affordable than many Mint alternatives like YNAB ($180/year) or Tiller ($79/year).
                 </p>
               </motion.div>
             </div>

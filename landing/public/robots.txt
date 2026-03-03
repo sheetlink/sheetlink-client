@@ -3,6 +3,9 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin/
+Disallow: /oauth/
+Disallow: /sandbox
+Disallow: /index-original
 
 # Host
 Host: https://sheetlink.app

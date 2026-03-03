@@ -329,8 +329,8 @@ export default function SheetLinkVsCopilot() {
                 <div className="border-2 border-sheetlink-green-700 rounded-lg p-8 bg-sheetlink-green-700/5">
                   <h3 className="text-2xl font-bold text-sheetlink-green-700 mb-2">SheetLink</h3>
                   <div className="mb-6">
-                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$0 - $10<span className="text-xl text-gray-600">/month</span></div>
-                    <p className="text-gray-600">Flexible per-institution pricing</p>
+                    <div className="text-4xl font-bold text-sheetlink-text mb-2">$0 - $3.99<span className="text-xl text-gray-600">/month</span></div>
+                    <p className="text-gray-600">Free tier + Pro plan</p>
                   </div>
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-start gap-2">
@@ -343,13 +343,13 @@ export default function SheetLinkVsCopilot() {
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span><strong>Pro:</strong> $3.99/mo or $39.99/year</span>
+                      <span><strong>Pro:</strong> $3.99/mo or $39.99/year, unlimited history</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>Manual sync (you control)</span>
+                      <span>Manual sync (you control when data is accessed)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <svg className="w-6 h-6 text-sheetlink-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -415,8 +415,8 @@ export default function SheetLinkVsCopilot() {
                 <h4 className="font-semibold text-blue-900 mb-2">Annual Cost Comparison:</h4>
                 <p className="text-blue-800">
                   Copilot: $179.88/year ($14.99/month, no annual discount) |
-                  SheetLink Basic: $24/year (2 banks) | SheetLink Pro: $120/year (1 bank) |
-                  <strong>Savings: $60-156/year with SheetLink</strong>
+                  SheetLink Free: $0/year (7 days history) | SheetLink Pro: $39.99/year (unlimited history) |
+                  <strong>Savings: $140-180/year with SheetLink</strong>
                 </p>
               </div>
             </div>
