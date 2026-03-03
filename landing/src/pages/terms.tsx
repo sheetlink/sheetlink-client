@@ -273,6 +273,24 @@ export default function Terms() {
               resolved in accordance with US law.
             </p>
 
+            <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Trademarks</h2>
+            <p>
+              All trademarks, logos, and brand names mentioned on this website and within SheetLink are the property of their respective owners. The following are registered trademarks of their respective companies:
+            </p>
+            <ul className="space-y-1">
+              <li>Plaid is a registered trademark of Plaid Inc.</li>
+              <li>Google, Google Sheets, and Google Drive are registered trademarks of Google LLC.</li>
+              <li>Chase is a registered trademark of JPMorgan Chase & Co.</li>
+              <li>Bank of America is a registered trademark of Bank of America Corporation.</li>
+              <li>Wells Fargo is a registered trademark of Wells Fargo & Company.</li>
+              <li>Citi and Citibank are registered trademarks of Citigroup Inc.</li>
+              <li>Capital One is a registered trademark of Capital One Financial Corporation.</li>
+              <li>All other bank and financial institution names and logos are the property of their respective owners.</li>
+            </ul>
+            <p>
+              Use of these names, logos, and brands does not imply endorsement by or affiliation with these companies. SheetLink is an independent service and is not endorsed by, affiliated with, or sponsored by any of the companies mentioned.
+            </p>
+
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">Contact</h2>
             <p>
               If you have questions about these Terms or need help with the sandbox, contact us at:

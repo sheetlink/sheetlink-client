@@ -10,6 +10,7 @@ module.exports = {
         'sheetlink-green': {
           900: '#023820',
           700: '#0B703A',
+          100: '#D1F4E0',
         },
         'sheetlink-bg': '#F6F7F5',
         'sheetlink-accent': '#00C474',

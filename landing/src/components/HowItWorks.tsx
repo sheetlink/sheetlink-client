@@ -82,10 +82,10 @@ export default function HowItWorks() {
           className="mb-16 text-center"
         >
           <h2 className="mb-4 text-4xl font-bold text-sheetlink-text md:text-5xl">
-            How it Works
+            Getting Started
           </h2>
           <p className="mx-auto max-w-2xl text-xl text-gray-600">
-            Get started in minutes with our simple 4-step process.
+            Connect your bank to Google Sheets in minutes.
           </p>
         </motion.div>
 

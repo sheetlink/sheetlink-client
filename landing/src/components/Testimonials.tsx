@@ -25,7 +25,7 @@ export default function Testimonials() {
   ];
 
   return (
-    <section className="bg-sheetlink-bg py-20">
+    <section className="bg-gray-50 py-20">
       <div className="mx-auto max-w-7xl px-4">
         {/* Header */}
         <motion.div
@@ -41,7 +41,7 @@ export default function Testimonials() {
               </svg>
             ))}
           </div>
-          <h2 className="text-3xl font-bold text-sheetlink-text md:text-4xl">
+          <h2 className="text-4xl font-bold text-sheetlink-text md:text-5xl">
             What our users are saying
           </h2>
         </motion.div>
