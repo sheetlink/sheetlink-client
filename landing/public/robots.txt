@@ -1,5 +1,11 @@
-# https://www.robotstxt.org/robotstxt.html
+# *
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /admin/
 
+# Host
+Host: https://sheetlink.app
+
+# Sitemaps
 Sitemap: https://sheetlink.app/sitemap.xml

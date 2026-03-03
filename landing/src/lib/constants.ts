@@ -23,6 +23,7 @@ export const URLS = {
   privacy: '/privacy',
   terms: '/terms',
   security: '/security',
+  api: process.env.NEXT_PUBLIC_API_URL || 'https://api.sheetlink.app',
 } as const;
 
 // PRICING: Simplified 2-tier model - Privacy-first manual sync
@@ -45,6 +46,9 @@ export const PRICING = {
     name: 'Pro',
     priceMonthly: '$3.99',
     priceAnnual: '$39.99',
+    priceMonthlyValue: 3.99,
+    priceAnnualValue: 39.99,
+    priceAnnualMonthly: '$3.33',
     period: 'month',
     banks: 'unlimited',
     historyDays: 730,
