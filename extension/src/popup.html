@@ -343,14 +343,19 @@
         <!-- Upgrade Placeholder -->
         <div class="upgrade-placeholder" style="margin-top: 16px; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-align: center;">
           <div style="font-size: 14px; font-weight: 600; color: white; margin-bottom: 8px;">
-            Want more history?
+            Want unlimited history?
           </div>
           <div style="font-size: 12px; color: rgba(255, 255, 255, 0.9); margin-bottom: 12px;">
-            Upgrade to get 90 days (Basic) or 2 years (Pro) of transaction history, plus auto-sync.
+            Upgrade to Pro for $3.99/month or $39.99/year and get unlimited transaction history (2+ years).
           </div>
-          <button id="homeUpgradeBtn" class="btn btn-secondary" disabled style="opacity: 0.7; cursor: not-allowed;">
-            Upgrade (coming soon)
-          </button>
+          <div style="display: flex; gap: 8px; justify-content: center;">
+            <button id="homeUpgradeBtnMonthly" class="btn btn-secondary" data-cycle="monthly" style="flex: 1; background: white; color: #667eea; font-weight: 600; font-size: 13px;">
+              Monthly
+            </button>
+            <button id="homeUpgradeBtnAnnual" class="btn btn-secondary" data-cycle="annual" style="flex: 1; background: white; color: #667eea; font-weight: 600; font-size: 13px;">
+              Annual
+            </button>
+          </div>
         </div>
       </div>
 
@@ -427,6 +432,19 @@
         </div>
 
         <!-- Sheet Defaults - Removed: Sheet names are now fixed as 'Transactions' and 'Accounts' for recipe compatibility -->
+
+        <!-- Billing Section (PRO users only) -->
+        <div id="settingsBillingSection" class="card hidden" style="margin-bottom: 16px;">
+          <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">Billing</h3>
+
+          <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">
+            Manage your subscription, update payment methods, or view billing history.
+          </p>
+
+          <button id="manageBillingBtn" class="btn btn-secondary" style="width: 100%;">
+            Manage Billing
+          </button>
+        </div>
 
         <!-- Features -->
         <div class="card" style="margin-bottom: 16px;">
@@ -521,14 +539,19 @@
         <!-- Upgrade Placeholder (Phase 3) -->
         <div class="upgrade-placeholder" style="margin-top: 16px; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-align: center;">
           <div style="font-size: 14px; font-weight: 600; color: white; margin-bottom: 8px;">
-            Want more history?
+            Want unlimited history?
           </div>
           <div style="font-size: 12px; color: rgba(255, 255, 255, 0.9); margin-bottom: 12px;">
-            Upgrade to get 90 days (Basic) or 2 years (Pro) of transaction history, plus auto-sync.
+            Upgrade to Pro for $3.99/month or $39.99/year and get unlimited transaction history (2+ years).
           </div>
-          <button id="upgradeBtn" class="btn btn-secondary" disabled style="opacity: 0.7; cursor: not-allowed;">
-            Upgrade (coming soon)
-          </button>
+          <div style="display: flex; gap: 8px; justify-content: center;">
+            <button id="upgradeBtnMonthly" class="btn btn-secondary" data-cycle="monthly" style="flex: 1; background: white; color: #667eea; font-weight: 600; font-size: 13px;">
+              Monthly
+            </button>
+            <button id="upgradeBtnAnnual" class="btn btn-secondary" data-cycle="annual" style="flex: 1; background: white; color: #667eea; font-weight: 600; font-size: 13px;">
+              Annual
+            </button>
+          </div>
         </div>
       </div>
 

@@ -67,10 +67,12 @@ let sheetErrorBanner, sheetErrorDetail, syncErrorBanner;
 let footerNav, legacyFooter;
 let pageHome, pageBank, pageSheet, pageRecipes, pageSettings;
 let homeSyncBtn, homeLastSync, homePlanTier, homeStatusPlaid, homeStatusSheet, homeSyncStatus;
+let homeUpgradeBtnMonthly, homeUpgradeBtnAnnual, upgradeBtnMonthly, upgradeBtnAnnual;  // Phase 6: Stripe subscription upgrade buttons
 let bankInstitutionName, bankAccountsList, updateBankConnectionBtn, addBankBtn;
 let sheetLink, sheetOwner, sheetLastWrite, changeSheetBtnPage, disconnectSheetBtn;
 let settingsUserEmail, settingsUserPicture, settingsUserInitial, logoutBtn;
 let settingsAppendOnly, saveSettingsBtn, settingsStatusMessage;
+let settingsBillingSection, manageBillingBtn;  // Phase 6: Billing management
 let currentTab = 'home';
 
 // User control panel header elements
@@ -95,6 +97,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   attachEventListeners();
   await loadState();
+
+  // Phase 6: Refresh subscription status on popup open
+  await refreshSubscriptionStatus();
+});
+
+// Phase 6: Refresh subscription status when user returns from Stripe checkout
+document.addEventListener('visibilitychange', async () => {
+  if (!document.hidden) {
+    debug('[Popup] Tab became visible, refreshing subscription status');
+    await refreshSubscriptionStatus();
+  }
 });
 
 // Phase 3.13.1: Listen for account switch events from service worker
@@ -212,6 +225,10 @@ function initializeElements() {
   homeStatusPlaid = document.getElementById('homeStatusPlaid');
   homeStatusSheet = document.getElementById('homeStatusSheet');
   homeSyncStatus = document.getElementById('homeSyncStatus');
+  homeUpgradeBtnMonthly = document.getElementById('homeUpgradeBtnMonthly');  // Phase 6: Stripe upgrade button (monthly)
+  homeUpgradeBtnAnnual = document.getElementById('homeUpgradeBtnAnnual');  // Phase 6: Stripe upgrade button (annual)
+  upgradeBtnMonthly = document.getElementById('upgradeBtnMonthly');  // Phase 6: Legacy upgrade button (monthly)
+  upgradeBtnAnnual = document.getElementById('upgradeBtnAnnual');  // Phase 6: Legacy upgrade button (annual)
 
   // Bank page elements
   bankInstitutionName = document.getElementById('bankInstitutionName');
@@ -235,6 +252,8 @@ function initializeElements() {
   settingsAppendOnly = document.getElementById('settingsAppendOnly');
   saveSettingsBtn = document.getElementById('saveSettingsBtn');
   settingsStatusMessage = document.getElementById('settingsStatusMessage');
+  settingsBillingSection = document.getElementById('settingsBillingSection');  // Phase 6: Billing section
+  manageBillingBtn = document.getElementById('manageBillingBtn');  // Phase 6: Manage billing button
 
   // User control panel header elements
   defaultHeader = document.getElementById('default-header');
@@ -303,6 +322,15 @@ function attachEventListeners() {
   // optionsBtn event listener removed - Phase 3.10 replaced with Settings page
   retryBtn.addEventListener('click', handleRetry);
   templatesBtn.addEventListener('click', handleShowTemplates);
+
+  // Phase 6: Stripe subscription upgrade buttons
+  if (homeUpgradeBtnMonthly) homeUpgradeBtnMonthly.addEventListener('click', handleUpgrade);
+  if (homeUpgradeBtnAnnual) homeUpgradeBtnAnnual.addEventListener('click', handleUpgrade);
+  if (upgradeBtnMonthly) upgradeBtnMonthly.addEventListener('click', handleUpgrade);
+  if (upgradeBtnAnnual) upgradeBtnAnnual.addEventListener('click', handleUpgrade);
+
+  // Phase 6: Billing management button
+  if (manageBillingBtn) manageBillingBtn.addEventListener('click', handleManageBilling);
 
   // Sheet success modal buttons
   if (syncSuccessOpenSheetBtn) {
@@ -388,6 +416,76 @@ function initializeTooltips() {
 
 function handleLearnMore() {
   chrome.tabs.create({ url: 'https://sheetlink.app' });
+}
+
+// Phase 6: Handle upgrade to Pro subscription
+async function handleUpgrade(event) {
+  try {
+    // Get user's email from storage (using googleEmail key)
+    const { googleEmail } = await chrome.storage.sync.get(['googleEmail']);
+
+    // Stripe Payment Link URLs (Production)
+    const STRIPE_PAYMENT_LINKS = {
+      monthly: 'https://buy.stripe.com/7sYaEWb7jgkc6Swcf0bjW00',
+      annual: 'https://buy.stripe.com/bJe28q7V73xq1yc6UGbjW01'
+    };
+
+    // Get billing cycle from button's data-cycle attribute
+    const billingCycle = event.target.dataset.cycle || 'annual';
+
+    // Get the appropriate payment link
+    let upgradeUrl = STRIPE_PAYMENT_LINKS[billingCycle];
+
+    // Add prefilled email if available
+    if (googleEmail) {
+      upgradeUrl += `?prefilled_email=${encodeURIComponent(googleEmail)}`;
+    }
+
+    // Open Stripe checkout in new tab
+    chrome.tabs.create({ url: upgradeUrl });
+
+    debug('[Upgrade] Opening Stripe checkout:', upgradeUrl, 'cycle:', billingCycle);
+  } catch (error) {
+    console.error('[Upgrade] Error opening checkout:', error);
+  }
+}
+
+// Phase 6: Refresh subscription status from backend
+async function refreshSubscriptionStatus() {
+  try {
+    const response = await authenticatedFetch(`${BACKEND_URL}/auth/user/me`);
+
+    if (response.ok) {
+      const userData = await response.json();
+
+      // Get current tier from storage
+      const { subscriptionTier: currentTier } = await chrome.storage.sync.get(['subscriptionTier']);
+
+      // Update subscription tier if it changed
+      if (currentTier !== userData.subscription_tier) {
+        debug('[Subscription] Tier updated:', currentTier, '→', userData.subscription_tier);
+        await chrome.storage.sync.set({ subscriptionTier: userData.subscription_tier });
+
+        // Update StateManager
+        window.StateManager.state.subscriptionTier = userData.subscription_tier;
+
+        // Reload state to refresh UI
+        await loadState();
+
+        debug('[Subscription] UI refreshed with new tier');
+      } else {
+        debug('[Subscription] Tier unchanged:', currentTier);
+      }
+    }
+  } catch (error) {
+    // Silently fail auth errors - user may not be logged in
+    if (error.code === 'AUTH_REQUIRED' || error.code === 'AUTH_EXPIRED') {
+      debug('[Subscription] Not authenticated, skipping status refresh');
+      return;
+    }
+    // Log other errors but don't disrupt user experience
+    debug('[Subscription] Failed to refresh status:', error);
+  }
 }
 
 // Load current state from storage
@@ -4174,6 +4272,33 @@ async function loadSettingsPage() {
     if (settingsUserPicture) settingsUserPicture.style.display = 'none';
   }
 
+  // Phase 6: Show billing section only for PRO users with ACTIVE Stripe subscriptions
+  // (Beta users who were manually upgraded won't have active subscriptions and shouldn't see billing)
+  const { subscriptionTier } = await chrome.storage.sync.get(['subscriptionTier']);
+
+  // Check if user has an ACTIVE Stripe subscription
+  // This handles edge cases like cancelled subscribers who were manually upgraded to PRO
+  let hasStripeSubscription = false;
+  try {
+    const response = await authenticatedFetch(`${BACKEND_URL}/auth/user/me`);
+    if (response.ok) {
+      const userData = await response.json();
+      hasStripeSubscription = userData.has_active_stripe_subscription;
+    }
+  } catch (error) {
+    debug('[Settings] Could not check Stripe subscription status:', error);
+  }
+
+  if (settingsBillingSection) {
+    if (subscriptionTier && subscriptionTier.toUpperCase() === 'PRO' && hasStripeSubscription) {
+      settingsBillingSection.classList.remove('hidden');
+      debug('[Settings] Billing section shown (PRO user with Stripe subscription)');
+    } else {
+      settingsBillingSection.classList.add('hidden');
+      debug(`[Settings] Billing section hidden (tier: ${subscriptionTier}, hasStripe: ${hasStripeSubscription})`);
+    }
+  }
+
   // Load settings from storage
   chrome.storage.sync.get({
     accountsTabName: 'Accounts',
@@ -4230,6 +4355,40 @@ async function handleSaveSettings() {
         settingsStatusMessage.classList.add('hidden');
       }, 3000);
     }
+  }
+}
+
+/**
+ * Handle manage billing (Phase 6: Stripe Customer Portal)
+ */
+async function handleManageBilling() {
+  debug('[Billing] Opening customer portal');
+
+  try {
+    // Call backend to get portal URL
+    const response = await authenticatedFetch(`${BACKEND_URL}/subscriptions/portal`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        return_url: 'https://sheetlink.app/account'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create portal session: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    // Open portal URL in new tab
+    chrome.tabs.create({ url: data.url });
+
+    debug('[Billing] Portal opened successfully');
+  } catch (error) {
+    console.error('[Billing] Error opening portal:', error);
+    alert('Failed to open billing portal. Please try again.');
   }
 }
 
