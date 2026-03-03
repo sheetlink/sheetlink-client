@@ -340,19 +340,6 @@
           <p id="homeTierMessage" class="tier-message" style="margin-top: 6px; font-size: 12px; color: #6b7280;"></p>
         </div>
 
-        <!-- Auto-Sync Section -->
-        <div class="auto-sync-section card" style="margin-top: 12px;">
-          <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Auto-Sync</h3>
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <span style="font-size: 13px; color: #6b7280;">Automatic daily syncs</span>
-            <label class="toggle-switch disabled" title="Upgrade required">
-              <input type="checkbox" disabled id="homeAutoSyncToggle">
-              <span class="slider"></span>
-            </label>
-          </div>
-          <p class="upgrade-note" style="margin-top: 8px; font-size: 12px; color: #9ca3af;">Available with paid plans</p>
-        </div>
-
         <!-- Upgrade Placeholder -->
         <div class="upgrade-placeholder" style="margin-top: 16px; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-align: center;">
           <div style="font-size: 14px; font-weight: 600; color: white; margin-bottom: 8px;">
@@ -456,67 +443,6 @@
               </label>
               <p style="font-size: 11px; color: #6b7280; margin: 0; line-height: 1.4;">
                 Only add new transactions, never update existing ones (Recommended)
-              </p>
-            </div>
-          </div>
-
-          <div style="display: flex; align-items: start; gap: 12px; margin-top: 16px; opacity: 0.6;">
-            <label class="toggle" style="position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px;">
-              <input type="checkbox" id="settingsFullTransactionDetails" disabled style="opacity: 0; width: 0; height: 0;">
-              <span class="slider" style="position: absolute; cursor: not-allowed; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: 0.3s; border-radius: 24px;"></span>
-            </label>
-            <div style="flex: 1;">
-              <label for="settingsFullTransactionDetails" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
-                Full Transaction Details 🔒
-              </label>
-              <p style="font-size: 11px; color: #9ca3af; margin: 0; line-height: 1.4; font-style: italic;">
-                Requires Pro plan - Unlock all 34 transaction fields
-                <span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; border: 1px solid #9ca3af; font-size: 9px; font-weight: 600; cursor: pointer; font-style: normal; margin-left: 2px;" title="Full list of Pro transaction fields:&#10;&#10;• transaction_id&#10;• account_id&#10;• persistent_account_id&#10;• account_name&#10;• account_mask&#10;• date&#10;• authorized_date&#10;• datetime&#10;• authorized_datetime&#10;• description_raw&#10;• merchant_name&#10;• merchant_entity_id&#10;• amount&#10;• iso_currency_code&#10;• unofficial_currency_code&#10;• pending&#10;• pending_transaction_id&#10;• check_number&#10;• plaid_category&#10;• personal_finance_category&#10;• payment_channel&#10;• transaction_type&#10;• transaction_code&#10;• location_address&#10;• location_city&#10;• location_region&#10;• location_postal_code&#10;• location_country&#10;• location_lat&#10;• location_lon&#10;• website&#10;• logo_url&#10;• source_institution&#10;• synced_at">i</span>
-              </p>
-            </div>
-          </div>
-
-          <div style="display: flex; align-items: start; gap: 12px; margin-top: 16px; opacity: 0.6;">
-            <label class="toggle" style="position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px;">
-              <input type="checkbox" id="settingsEnableRulesTab" disabled style="opacity: 0; width: 0; height: 0;">
-              <span class="slider" style="position: absolute; cursor: not-allowed; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: 0.3s; border-radius: 24px;"></span>
-            </label>
-            <div style="flex: 1;">
-              <label for="settingsEnableRulesTab" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
-                Enable Rules Tab 🔒
-              </label>
-              <p style="font-size: 11px; color: #9ca3af; margin: 0; line-height: 1.4; font-style: italic;">
-                Requires Pro plan
-              </p>
-            </div>
-          </div>
-
-          <div style="display: flex; align-items: start; gap: 12px; margin-top: 16px; opacity: 0.6;">
-            <label class="toggle" style="position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px;">
-              <input type="checkbox" id="settingsEnableMLAssist" disabled style="opacity: 0; width: 0; height: 0;">
-              <span class="slider" style="position: absolute; cursor: not-allowed; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: 0.3s; border-radius: 24px;"></span>
-            </label>
-            <div style="flex: 1;">
-              <label for="settingsEnableMLAssist" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
-                Enable AI Categorization 🔒
-              </label>
-              <p style="font-size: 11px; color: #9ca3af; margin: 0; line-height: 1.4; font-style: italic;">
-                Requires Pro plan
-              </p>
-            </div>
-          </div>
-
-          <div style="display: flex; align-items: start; gap: 12px; margin-top: 16px; opacity: 0.6;">
-            <label class="toggle" style="position: relative; width: 44px; height: 24px; flex-shrink: 0; margin-top: 2px;">
-              <input type="checkbox" id="settingsEnableSplitTransactions" disabled style="opacity: 0; width: 0; height: 0;">
-              <span class="slider" style="position: absolute; cursor: not-allowed; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d5db; transition: 0.3s; border-radius: 24px;"></span>
-            </label>
-            <div style="flex: 1;">
-              <label for="settingsEnableSplitTransactions" style="display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 4px;">
-                Enable Split Transactions 🔒
-              </label>
-              <p style="font-size: 11px; color: #9ca3af; margin: 0; line-height: 1.4; font-style: italic;">
-                Requires Pro plan (coming soon)
               </p>
             </div>
           </div>
