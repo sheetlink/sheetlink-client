@@ -1,24 +1,31 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Head from 'next/head';
-import Link from 'next/link';
-import { Check, Zap, Star, Gift } from 'lucide-react';
+import { Check, Star, Gift } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BRAND, URLS } from '@/lib/constants';
+import { BRAND, PRICING } from '@/lib/constants';
 import { analytics } from '@/lib/analytics';
 
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('annual');
 
   const seoTitle = `Pricing - ${BRAND.name}`;
-  const seoDescription = 'SheetLink pricing: Free forever for 7 days of transactions. Upgrade to Pro for unlimited history. Privacy-first manual sync — you control when data flows.';
+  const seoDescription = 'SheetLink pricing: Free forever for 7 days of transactions. Upgrade to Pro for full Plaid transaction history (2 years). Privacy-first manual sync — you control when data flows.';
+
+  // Stripe Payment Links (Production)
+  const paymentLinks = {
+    monthly: 'https://buy.stripe.com/7sYaEWb7jgkc6Swcf0bjW00',
+    annual: 'https://buy.stripe.com/bJe28q7V73xq1yc6UGbjW01'
+  };
 
   useEffect(() => {
     analytics.pageView('Pricing', '/pricing');
   }, []);
+
+  const handleSubscribe = () => {
+    window.location.href = paymentLinks[billingCycle];
+  };
 
   return (
     <>
@@ -46,7 +53,7 @@ export default function Pricing() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mx-auto max-w-2xl text-xl text-gray-700"
             >
-              Start free forever. Upgrade when you need unlimited history.
+              Start free forever. Upgrade when you need full transaction history.
             </motion.p>
 
             {/* Billing Toggle */}
@@ -130,7 +137,7 @@ export default function Pricing() {
                 href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-lg border-2 border-sheetlink-green-700 bg-white px-6 py-3 font-semibold text-sheetlink-green-700 transition-all hover:bg-sheetlink-bg"
+                className="inline-flex items-center justify-center rounded-lg border-2 border-sheetlink-green-700 bg-transparent px-6 py-3 font-semibold text-sheetlink-green-700 transition-all hover:bg-sheetlink-bg"
               >
                 Get Started Free
               </a>
@@ -154,12 +161,12 @@ export default function Pricing() {
                 </div>
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-sheetlink-text">
-                    ${billingCycle === 'annual' ? '3.33' : '3.99'}
+                    ${billingCycle === 'annual' ? PRICING.pro.priceAnnualMonthly.replace('$', '') : PRICING.pro.priceMonthly.replace('$', '')}
                   </span>
                   <span className="text-gray-600">/month</span>
                 </div>
                 <p className="text-sm text-gray-600">
-                  {billingCycle === 'annual' ? 'Billed annually ($39.99/year)' : 'Billed monthly'}
+                  {billingCycle === 'annual' ? `Billed annually (${PRICING.pro.priceAnnual}/year)` : 'Billed monthly'}
                 </p>
               </div>
 
@@ -170,7 +177,7 @@ export default function Pricing() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
-                  <span className="text-sm text-gray-700"><strong>Unlimited history</strong> (2+ years)</span>
+                  <span className="text-sm text-gray-700"><strong>Full Plaid transaction history</strong> (2 years)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" />
@@ -190,12 +197,13 @@ export default function Pricing() {
                 </li>
               </ul>
 
-              <a
-                href="mailto:support@sheetlink.app?subject=Pro%20Beta%20Access"
-                className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg"
+              <button
+                type="button"
+                onClick={handleSubscribe}
+                className="inline-flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg"
               >
-                Join Beta Waitlist
-              </a>
+                Upgrade to Pro
+              </button>
             </motion.div>
           </div>
         </section>
@@ -219,7 +227,7 @@ export default function Pricing() {
                   <tr>
                     <td className="px-6 py-4 text-sm text-gray-700">Transaction history</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-700">7 days</td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700">Unlimited (2+ years)</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-700">Full Plaid history (2 years)</td>
                   </tr>
                   <tr className="bg-gray-50">
                     <td className="px-6 py-4 text-sm text-gray-700">Sync method</td>
