@@ -36,27 +36,18 @@ export default function Header() {
               <span className="rounded-full bg-sheetlink-green-700 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">NEW</span>
             </Link>
             <Link
+              href="/pricing"
+              onClick={() => analytics.headerNavClick('pricing')}
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
+            >
+              Pricing
+            </Link>
+            <Link
               href="/docs"
               onClick={() => analytics.headerNavClick('docs')}
               className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
             >
               Docs
-            </Link>
-            <Link
-              href="/beta"
-              onClick={() => analytics.headerNavClick('beta')}
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
-            >
-              Beta
-            </Link>
-            <Link
-              href={URLS.github}
-              onClick={() => analytics.githubClick('header')}
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              GitHub
             </Link>
           </nav>
 
@@ -121,6 +112,16 @@ export default function Header() {
               <span className="rounded-full bg-sheetlink-green-700 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">NEW</span>
             </Link>
             <Link
+              href="/pricing"
+              onClick={() => {
+                analytics.headerNavClick('pricing');
+                setMobileMenuOpen(false);
+              }}
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
+            >
+              Pricing
+            </Link>
+            <Link
               href="/docs"
               onClick={() => {
                 analytics.headerNavClick('docs');
@@ -130,28 +131,6 @@ export default function Header() {
             >
               Docs
             </Link>
-            <Link
-              href="/beta"
-              onClick={() => {
-                analytics.headerNavClick('beta');
-                setMobileMenuOpen(false);
-              }}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
-            >
-              Beta
-            </Link>
-            <a
-              href={URLS.github}
-              onClick={() => {
-                analytics.githubClick('header');
-                setMobileMenuOpen(false);
-              }}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              GitHub
-            </a>
             <a
               href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
               target="_blank"

@@ -152,6 +152,8 @@ function AnimatedCheckbox({ checkDelay = 2300 }: { checkDelay?: number }) {
 }
 
 export default function Home() {
+  const [billingCycle, setBillingCycle] = React.useState<'monthly' | 'annual'>('annual');
+
   const seoTitle = `${BRAND.name} - Free Bank to Google Sheets Sync | Budgeting & Bookkeeping`;
   const seoDescription = `Track your spending, build budgets, take control. SheetLink syncs your bank transactions to Google Sheets in real-time. Perfect for budgeting, bookkeeping, and cash flow tracking. Free forever for 7 days.`;
   const seoUrl = 'https://sheetlink.app';
@@ -967,6 +969,204 @@ export default function Home() {
                   open-source on GitHub
                 </a>
                 {' '}— built by the community, for the community.
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Pricing Section */}
+        <section className="bg-gradient-to-b from-gray-50 to-white py-24">
+          <div className="mx-auto max-w-7xl px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="mb-16 text-center"
+            >
+              <h2 className="mb-4 text-4xl font-bold md:text-5xl">
+                <span className="text-sheetlink-text">Extend your history.</span>
+                <br />
+                <span className="text-sheetlink-green-700">Powered by Stripe.</span>
+              </h2>
+              <p className="mx-auto max-w-3xl text-lg text-gray-600">
+                Start free forever with 7 days of history. Upgrade to Pro for full transaction history and unlock the complete power of SheetLink.
+              </p>
+            </motion.div>
+
+            {/* Billing Cycle Toggle */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="mb-12 flex items-center justify-center gap-4"
+            >
+              <span className={`text-sm font-medium ${billingCycle === 'monthly' ? 'text-sheetlink-text' : 'text-gray-500'}`}>
+                Monthly
+              </span>
+              <button
+                onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly')}
+                className="relative inline-flex h-6 w-11 items-center rounded-full bg-sheetlink-accent transition-colors"
+                aria-label="Toggle billing cycle"
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    billingCycle === 'annual' ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+              <span className={`text-sm font-medium ${billingCycle === 'annual' ? 'text-sheetlink-text' : 'text-gray-500'}`}>
+                Annual
+              </span>
+              <span className="rounded-full bg-sheetlink-green-700 px-3 py-1 text-xs font-semibold text-white">
+                Save 17%
+              </span>
+            </motion.div>
+
+            {/* Pricing Cards */}
+            <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-2">
+              {/* Free Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="flex flex-col rounded-2xl border-2 border-gray-200 bg-white p-8 shadow-lg"
+              >
+                <div className="mb-6">
+                  <h3 className="mb-2 text-2xl font-bold text-sheetlink-text">Free</h3>
+                  <div className="mb-4">
+                    <span className="text-5xl font-bold text-sheetlink-text">$0</span>
+                    <span className="text-gray-600">/forever</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Perfect for getting started</p>
+                </div>
+
+                <ul className="mb-8 flex-1 space-y-3">
+                  <li className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-gray-700"><strong>7 days</strong> of transaction history</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-gray-700"><strong>Unlimited</strong> manual syncs</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-gray-700"><strong>Unlimited</strong> bank connections</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-gray-700">Direct-to-Google Sheets</span>
+                  </li>
+                </ul>
+
+                <a
+                  href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-lg border-2 border-sheetlink-green-700 bg-transparent px-6 py-3 font-semibold text-sheetlink-green-700 transition-all hover:bg-sheetlink-green-50"
+                >
+                  Get Started Free
+                </a>
+              </motion.div>
+
+              {/* Pro Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex flex-col rounded-2xl border-2 border-sheetlink-green-700 bg-gradient-to-br from-white to-sheetlink-green-50/30 p-8 shadow-xl"
+              >
+                <div className="mb-2 inline-block self-start rounded-full bg-sheetlink-green-700 px-3 py-1 text-xs font-semibold text-white">
+                  MOST POPULAR
+                </div>
+                <div className="mb-6">
+                  <h3 className="mb-2 text-2xl font-bold text-sheetlink-text">Pro</h3>
+                  <div className="mb-4">
+                    <span className="text-5xl font-bold text-sheetlink-text">
+                      ${billingCycle === 'annual' ? '3.33' : '3.99'}
+                    </span>
+                    <span className="text-gray-600">/month</span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    {billingCycle === 'annual' ? 'Billed annually ($39.99/year)' : 'Billed monthly'}
+                  </p>
+                </div>
+
+                <ul className="mb-8 flex-1 space-y-3">
+                  <li className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-gray-700"><strong>Everything in Free</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-gray-700"><strong>Full Plaid transaction history</strong> (2 years)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-gray-700"><strong>Historical backfill</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-gray-700"><strong>Priority email support</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-sheetlink-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm text-gray-700">Early access to new features</span>
+                  </li>
+                </ul>
+
+                <a
+                  href={billingCycle === 'annual' ? 'https://buy.stripe.com/bJe28q7V73xq1yc6UGbjW01' : 'https://buy.stripe.com/7sYaEWb7jgkc6Swcf0bjW00'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg"
+                >
+                  Upgrade to Pro
+                </a>
+              </motion.div>
+            </div>
+
+            {/* Trust Signal */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mt-12 text-center"
+            >
+              <p className="text-sm text-gray-600">
+                Secure billing powered by{' '}
+                <a
+                  href="https://stripe.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-sheetlink-green-700 underline hover:text-sheetlink-green-900"
+                >
+                  Stripe
+                </a>
+                {' '}• Cancel anytime • 14-day money-back guarantee
               </p>
             </motion.div>
           </div>

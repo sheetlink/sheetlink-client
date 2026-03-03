@@ -280,9 +280,9 @@ export default function Pricing() {
                 </p>
               </div>
               <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
-                <h3 className="mb-2 font-semibold text-sheetlink-text">When will Pro be available?</h3>
+                <h3 className="mb-2 font-semibold text-sheetlink-text">How does billing work?</h3>
                 <p className="text-sm text-gray-700">
-                  Pro is currently in beta. Join the waitlist by clicking "Join Beta Waitlist" above, and we'll notify you when it's available. Early adopters may receive special pricing.
+                  Billing is securely handled through Stripe. When you upgrade to Pro, you'll be redirected to Stripe's secure checkout. You can manage your subscription, update payment methods, or view billing history anytime through your account settings.
                 </p>
               </div>
               <div className="rounded-xl border-2 border-gray-200 bg-white p-6">
