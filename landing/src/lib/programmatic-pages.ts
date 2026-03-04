@@ -5,7 +5,7 @@ export interface ProgrammaticPage {
   title: string;
   slug: string;
   description: string;
-  category: 'pricing' | 'how-to' | 'integration';
+  category: 'pricing' | 'how-to' | 'integration' | 'comparison';
   keywords?: string[];
 }
 
@@ -62,6 +62,34 @@ export const programmaticPages: ProgrammaticPage[] = [
     category: 'how-to',
     keywords: ['amazon fba accounting', 'fba bookkeeping', 'amazon seller spreadsheet'],
   },
+  {
+    title: 'Sync Bank to Google Sheets',
+    slug: '/sync-bank-to-google-sheets',
+    description: 'Privacy-first guide to syncing bank transactions to Google Sheets. Manual sync gives you control over your financial data.',
+    category: 'how-to',
+    keywords: ['sync bank to google sheets', 'bank transactions google sheets', 'plaid google sheets integration'],
+  },
+  {
+    title: 'Google Sheets Bookkeeping Guide',
+    slug: '/google-sheets-bookkeeping',
+    description: 'Automate small business bookkeeping in Google Sheets with privacy-first bank sync. Track income, expenses, and cash flow.',
+    category: 'how-to',
+    keywords: ['google sheets bookkeeping', 'sheets accounting', 'small business bookkeeping'],
+  },
+  {
+    title: 'Google Sheets Budgeting Guide',
+    slug: '/google-sheets-budgeting',
+    description: 'Build automated budgets in Google Sheets. Track spending by category, monitor cash flow, and stay on budget with manual sync.',
+    category: 'how-to',
+    keywords: ['google sheets budgeting', 'budget template google sheets', 'track spending sheets'],
+  },
+  {
+    title: 'Excel Budgeting Tool Alternative',
+    slug: '/excel-budgeting-tool',
+    description: 'Excel-style budgeting in Google Sheets with automated bank sync. All the power of Excel with privacy-first manual sync control.',
+    category: 'how-to',
+    keywords: ['excel budgeting', 'google sheets budget', 'automated excel budget'],
+  },
 
   // Integration Guides
   {
@@ -77,6 +105,50 @@ export const programmaticPages: ProgrammaticPage[] = [
     description: 'Yes, Tiller Money uses Plaid for bank connections. Learn how it works and compare alternatives.',
     category: 'integration',
     keywords: ['tiller plaid', 'tiller bank connection', 'how tiller works'],
+  },
+
+  // Comparison & Alternative Pages
+  {
+    title: 'Tiller Money Alternative',
+    slug: '/tiller-alternative',
+    description: 'SheetLink is a more affordable alternative to Tiller Money. Compare pricing, features, and bank sync capabilities.',
+    category: 'comparison',
+    keywords: ['tiller alternative', 'tiller money alternative', 'cheaper than tiller', 'tiller competitor'],
+  },
+  {
+    title: 'YNAB Alternative',
+    slug: '/ynab-alternative',
+    description: 'Looking for a YNAB alternative? SheetLink offers flexible budgeting in Google Sheets at a fraction of the cost.',
+    category: 'comparison',
+    keywords: ['ynab alternative', 'you need a budget alternative', 'cheaper than ynab', 'ynab competitor'],
+  },
+  {
+    title: 'PocketGuard Alternative',
+    slug: '/pocketguard-alternative',
+    description: 'SheetLink is a powerful PocketGuard alternative with manual sync control and Google Sheets flexibility.',
+    category: 'comparison',
+    keywords: ['pocketguard alternative', 'pocketguard competitor', 'better than pocketguard'],
+  },
+  {
+    title: 'Quicken Alternative',
+    slug: '/quicken-alternative',
+    description: 'Modern Quicken alternative for Google Sheets. SheetLink syncs bank transactions at a lower cost.',
+    category: 'comparison',
+    keywords: ['quicken alternative', 'quicken competitor', 'cheaper than quicken', 'quicken replacement'],
+  },
+  {
+    title: 'Mint Alternative',
+    slug: '/mint-alternative',
+    description: 'Mint shut down in 2024. SheetLink is the best Mint alternative for Google Sheets budgeting.',
+    category: 'comparison',
+    keywords: ['mint alternative', 'mint replacement', 'mint shutdown', 'what replaced mint'],
+  },
+  {
+    title: 'Personal Capital Alternative',
+    slug: '/personal-capital-alternative',
+    description: 'SheetLink offers a simpler Personal Capital alternative focused on transaction tracking in Google Sheets.',
+    category: 'comparison',
+    keywords: ['personal capital alternative', 'personal capital competitor', 'empower alternative'],
   },
 ];
 
@@ -95,6 +167,57 @@ export const getRelatedPages = (currentSlug: string, limit: number = 4) => {
     .slice(0, limit);
 
   return sameCategoryPages;
+};
+
+// Smart related pages: uses keyword matching + category diversity for better internal linking
+export const getSmartRelatedPages = (currentSlug: string, limit: number = 4) => {
+  const currentPage = programmaticPages.find((page) => page.slug === currentSlug);
+  if (!currentPage) return [];
+
+  // Score each page based on keyword overlap and category diversity
+  const scoredPages = programmaticPages
+    .filter((page) => page.slug !== currentSlug)
+    .map((page) => {
+      let score = 0;
+
+      // Keyword overlap scoring (highest priority)
+      if (currentPage.keywords && page.keywords) {
+        const currentKeywords = currentPage.keywords.map(k => k.toLowerCase());
+        const pageKeywords = page.keywords.map(k => k.toLowerCase());
+
+        // Count matching keywords
+        const matches = currentKeywords.filter(k =>
+          pageKeywords.some(pk => pk.includes(k) || k.includes(pk))
+        ).length;
+
+        score += matches * 10; // 10 points per keyword match
+      }
+
+      // Slug-based keyword matching (e.g., "tiller" in both slugs)
+      const currentSlugWords = currentSlug.split(/[-\/]/).filter(w => w.length > 3);
+      const pageSlugWords = page.slug.split(/[-\/]/).filter(w => w.length > 3);
+      const slugMatches = currentSlugWords.filter(w =>
+        pageSlugWords.includes(w)
+      ).length;
+      score += slugMatches * 5; // 5 points per slug word match
+
+      // Category diversity bonus - prefer different categories for broader context
+      if (page.category !== currentPage.category) {
+        score += 3; // 3 point bonus for cross-category links
+      }
+
+      // Same category bonus - still valuable
+      if (page.category === currentPage.category) {
+        score += 2; // 2 points for same category
+      }
+
+      return { ...page, score };
+    })
+    .filter((page) => page.score > 0) // Only include pages with some relevance
+    .sort((a, b) => b.score - a.score) // Sort by score descending
+    .slice(0, limit);
+
+  return scoredPages;
 };
 
 export const categoryInfo = {
