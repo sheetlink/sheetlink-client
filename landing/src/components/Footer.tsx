@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-white px-4 py-12">
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-6">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
           {/* Brand */}
           <div>
             <a href="/" className="mb-4 inline-block transition-opacity hover:opacity-80">
@@ -47,6 +47,65 @@ export default function Footer() {
               </li>
               <li>
                 <a
+                  href="/recipes"
+                  onClick={() => analytics.footerLinkClick('recipes')}
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Recipes
+                </a>
+              </li>
+              <li>
+                <a
+                  href={URLS.docs}
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Documentation
+                </a>
+              </li>
+              <li>
+                <a
+                  href={URLS.github}
+                  onClick={() => analytics.githubClick('footer')}
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <h4 className="mb-3 font-semibold text-sheetlink-text">Resources</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a
+                  href="/pricing-guides"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Pricing Guides
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/how-to-guides"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  How-To Guides
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/integration-guides"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Integration Guides
+                </a>
+              </li>
+              <li>
+                <a
                   href="/sync-bank-to-google-sheets"
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
@@ -75,34 +134,6 @@ export default function Footer() {
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   Excel Budgeting
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/recipes"
-                  onClick={() => analytics.footerLinkClick('recipes')}
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  Recipes
-                </a>
-              </li>
-              <li>
-                <a
-                  href={URLS.docs}
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a
-                  href={URLS.github}
-                  onClick={() => analytics.githubClick('footer')}
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  GitHub
                 </a>
               </li>
             </ul>
