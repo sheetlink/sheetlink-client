@@ -974,8 +974,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Pricing Section - Temporarily hidden until Chrome extension approval */}
-        {false && (
+        {/* Pricing Section */}
         <section className="bg-gradient-to-b from-gray-50 to-white py-24">
           <div className="mx-auto max-w-7xl px-4">
             <motion.div
@@ -1172,7 +1171,6 @@ export default function Home() {
             </motion.div>
           </div>
         </section>
-        )}
 
         {/* How It Works */}
         <HowItWorks />
