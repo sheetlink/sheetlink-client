@@ -447,7 +447,7 @@ export default function AirbnbIncomeTracker() {
               <strong>Free Forever:</strong> Last 7 days of transaction history - perfect for weekly tracking
             </p>
             <p className="mt-4">
-              <strong>Pro ($3.99/month or $39.99/year):</strong> Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features
+              <strong>Pro ($3.99/month or $39.99/year):</strong> Full Plaid transaction history (2 years), historical backfill, priority support, and early access to new features
             </p>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">

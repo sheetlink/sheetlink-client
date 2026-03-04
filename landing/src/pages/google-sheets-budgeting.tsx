@@ -294,7 +294,7 @@ export default function GoogleSheetsBudgeting() {
               Want to track monthly or annual budgets? Upgrade to:
             </p>
             <ul className="list-disc pl-6 space-y-2">
-              <li><strong>Pro ($3.99/month or $39.99/year)</strong> - Unlimited transaction history (2+ years), historical backfill, priority support, and early access to new features</li>
+              <li><strong>Pro ($3.99/month or $39.99/year)</strong> - Full Plaid transaction history (2 years), historical backfill, priority support, and early access to new features</li>
             </ul>
 
             <h2 className="mt-12 text-3xl font-bold text-sheetlink-text">
