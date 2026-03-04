@@ -35,14 +35,13 @@ export default function Header() {
               Recipes
               <span className="rounded-full bg-sheetlink-green-700 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">NEW</span>
             </Link>
-            {/* Pricing temporarily hidden until Chrome extension approval */}
-            {/* <Link
+            <Link
               href="/pricing"
               onClick={() => analytics.headerNavClick('pricing')}
               className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
             >
               Pricing
-            </Link> */}
+            </Link>
             <Link
               href="/docs"
               onClick={() => analytics.headerNavClick('docs')}
@@ -112,8 +111,7 @@ export default function Header() {
               Recipes
               <span className="rounded-full bg-sheetlink-green-700 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">NEW</span>
             </Link>
-            {/* Pricing temporarily hidden until Chrome extension approval */}
-            {/* <Link
+            <Link
               href="/pricing"
               onClick={() => {
                 analytics.headerNavClick('pricing');
@@ -122,7 +120,7 @@ export default function Header() {
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
             >
               Pricing
-            </Link> */}
+            </Link>
             <Link
               href="/docs"
               onClick={() => {
