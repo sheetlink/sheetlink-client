@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-white px-4 py-12">
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-6">
           {/* Brand */}
           <div>
             <a href="/" className="mb-4 inline-block transition-opacity hover:opacity-80">
@@ -258,9 +258,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Comparisons */}
+          {/* Alternatives */}
           <div>
-            <h4 className="mb-3 font-semibold text-sheetlink-text">Comparisons</h4>
+            <h4 className="mb-3 font-semibold text-sheetlink-text">Alternatives</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <a
@@ -268,6 +268,54 @@ export default function Footer() {
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   All Comparisons
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/tiller-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Tiller Alternative
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/ynab-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  YNAB Alternative
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/quicken-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Quicken Alternative
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/mint-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Mint Alternative
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/personal-capital-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  Personal Capital Alternative
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/pocketguard-alternative"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  PocketGuard Alternative
                 </a>
               </li>
               <li>
@@ -288,14 +336,6 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="/sheetlink-vs-quickbooks"
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  SheetLink vs QuickBooks
-                </a>
-              </li>
-              <li>
-                <a
                   href="/sheetlink-vs-mint"
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
@@ -304,65 +344,18 @@ export default function Footer() {
               </li>
               <li>
                 <a
+                  href="/sheetlink-vs-quickbooks"
+                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
+                >
+                  SheetLink vs QuickBooks
+                </a>
+              </li>
+              <li>
+                <a
                   href="/sheetlink-vs-copilot"
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   SheetLink vs Copilot
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Alternatives */}
-          <div>
-            <h4 className="mb-3 font-semibold text-sheetlink-text">Alternatives</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a
-                  href="/tiller-alternative"
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  vs Tiller Money
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/ynab-alternative"
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  vs YNAB
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/quicken-alternative"
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  vs Quicken
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/mint-alternative"
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  vs Mint
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/personal-capital-alternative"
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  vs Personal Capital
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/pocketguard-alternative"
-                  className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
-                >
-                  vs PocketGuard
                 </a>
               </li>
             </ul>
