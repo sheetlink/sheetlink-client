@@ -39,6 +39,13 @@ export const programmaticPages: ProgrammaticPage[] = [
     category: 'pricing',
     keywords: ['mint pricing', 'mint cost', 'mint alternative'],
   },
+  {
+    title: 'PocketGuard Pricing 2026',
+    slug: '/pocketguard-pricing-2026',
+    description: 'PocketGuard pricing for free and premium plans. Compare costs and features with alternatives.',
+    category: 'pricing',
+    keywords: ['pocketguard pricing', 'pocketguard cost', 'pocketguard plus price'],
+  },
 
   // How-To Guides
   {
