@@ -189,7 +189,7 @@ export default function Footer() {
 
           {/* Use Cases Column 2 */}
           <div>
-            <h4 className="mb-3 font-semibold text-sheetlink-text">E-commerce & Real Estate</h4>
+            <h4 className="mb-3 font-semibold text-sheetlink-text">More Use Cases</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <a
@@ -258,9 +258,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Compare & Tools */}
+          {/* Alternatives */}
           <div>
-            <h4 className="mb-3 font-semibold text-sheetlink-text">Compare & Tools</h4>
+            <h4 className="mb-3 font-semibold text-sheetlink-text">Alternatives</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <a
