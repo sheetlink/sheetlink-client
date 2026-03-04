@@ -54,7 +54,23 @@ module.exports = {
     }
 
     // Hub pages for internal linking
-    if (path === '/use-cases' || path === '/comparisons') {
+    if (path === '/use-cases' || path === '/comparisons' || path === '/pricing-guides' || path === '/how-to-guides' || path === '/integration-guides') {
+      return {
+        loc: path,
+        changefreq: 'monthly',
+        priority: 0.85,
+        lastmod: new Date().toISOString(),
+      }
+    }
+
+    // Pricing guide pages = high priority (competitor research traffic)
+    if (
+      path.includes('-pricing-2026') ||
+      path.includes('does-tiller-use-plaid') ||
+      path.includes('plaid-google-sheets') ||
+      path.includes('track-dropshipping-expenses') ||
+      path.includes('amazon-fba-bookkeeping-spreadsheet')
+    ) {
       return {
         loc: path,
         changefreq: 'monthly',
