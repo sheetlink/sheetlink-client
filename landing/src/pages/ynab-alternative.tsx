@@ -89,15 +89,6 @@ export default function YNABAlternative() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoTitle} />
-        <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={seoImage} />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
-
       <div className="min-h-screen bg-white">
         <Header />
 
