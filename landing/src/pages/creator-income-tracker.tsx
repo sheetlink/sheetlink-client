@@ -117,6 +117,7 @@ export default function CreatorIncomeTracker() {
               </p>
             </motion.div>
           </div>
+          </div>
         </section>
 
         {/* The Creator Income Chaos */}
