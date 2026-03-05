@@ -125,7 +125,6 @@ export default function SoftwareDeveloperExpenseTracker() {
               </a>
             </motion.div>
           </div>
-          </div>
         </section>
 
         {/* The Developer Expense Chaos */}
