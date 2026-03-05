@@ -107,7 +107,7 @@ export default function Header() {
                     <div className="my-2 border-t border-gray-200"></div>
 
                     <div className="mb-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                      Alternatives
+                      Popular
                     </div>
                     <Link
                       href="/tiller-alternative"
@@ -129,12 +129,6 @@ export default function Header() {
                     >
                       YNAB Alternative
                     </Link>
-
-                    <div className="my-2 border-t border-gray-200"></div>
-
-                    <div className="mb-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                      Use Cases
-                    </div>
                     <Link
                       href="/amazon-fba-bookkeeping-spreadsheet"
                       onClick={() => {
@@ -245,7 +239,7 @@ export default function Header() {
             {/* Resources Section */}
             <div className="mt-4">
               <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Resources
+                Guides
               </div>
               <Link
                 href="/pricing-guides"
@@ -277,8 +271,8 @@ export default function Header() {
               >
                 Integration Guides
               </Link>
-              <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Alternatives
+              <div className="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Popular
               </div>
               <Link
                 href="/tiller-alternative"
@@ -300,10 +294,6 @@ export default function Header() {
               >
                 YNAB Alternative
               </Link>
-
-              <div className="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Use Cases
-              </div>
               <Link
                 href="/amazon-fba-bookkeeping-spreadsheet"
                 onClick={() => {
