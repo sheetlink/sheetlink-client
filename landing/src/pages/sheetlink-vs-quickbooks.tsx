@@ -110,6 +110,7 @@ export default function SheetLinkVsQuickBooks() {
                 </a>
               </div>
             </div>
+            </div>
           </section>
 
           {/* Quick Summary */}

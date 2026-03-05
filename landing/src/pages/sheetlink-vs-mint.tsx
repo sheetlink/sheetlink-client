@@ -121,6 +121,7 @@ export default function SheetLinkVsMint() {
                 </a>
               </div>
             </div>
+            </div>
           </section>
 
           {/* What Happened to Mint */}

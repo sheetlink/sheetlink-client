@@ -118,6 +118,7 @@ export default function SheetLinkVsCopilot() {
                 </a>
               </div>
             </div>
+            </div>
           </section>
 
           {/* Quick Summary */}

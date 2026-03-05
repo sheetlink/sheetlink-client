@@ -110,6 +110,7 @@ export default function SheetLinkVsTiller() {
                 </a>
               </div>
             </div>
+            </div>
           </section>
 
           {/* Quick Summary */}

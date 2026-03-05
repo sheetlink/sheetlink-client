@@ -110,6 +110,7 @@ export default function SheetLinkVsYNAB() {
                 </a>
               </div>
             </div>
+            </div>
           </section>
 
           {/* Quick Summary */}
