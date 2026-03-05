@@ -154,8 +154,8 @@ function AnimatedCheckbox({ checkDelay = 2300 }: { checkDelay?: number }) {
 export default function Home() {
   const [billingCycle, setBillingCycle] = React.useState<'monthly' | 'annual'>('annual');
 
-  const seoTitle = `${BRAND.name} - Free Bank to Google Sheets Sync | Budgeting & Bookkeeping`;
-  const seoDescription = `Track your spending, build budgets, take control. SheetLink syncs your bank transactions to Google Sheets in real-time. Perfect for budgeting, bookkeeping, and cash flow tracking. Free forever for 7 days.`;
+  const seoTitle = `${BRAND.name} - Free Enterprise-Grade Bank Feeds to Google Sheets | Privacy-First Manual Sync`;
+  const seoDescription = `Enterprise-grade bank feeds to Google Sheets—free for 7 days, $4/month for full history. Privacy-first alternative to Tiller ($79/yr), YNAB ($109/yr), and Mint. Manual sync gives you control. Powered by Plaid (11,000+ banks).`;
   const seoUrl = 'https://sheetlink.app';
   const seoImage = `${seoUrl}/og-image.png`;
 
