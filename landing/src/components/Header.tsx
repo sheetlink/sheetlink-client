@@ -8,6 +8,7 @@ import { analytics } from '@/lib/analytics';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-200/80 bg-white/95 backdrop-blur-sm">
@@ -49,6 +50,115 @@ export default function Header() {
             >
               Docs
             </Link>
+
+            {/* Resources Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setResourcesOpen(!resourcesOpen)}
+                onMouseEnter={() => setResourcesOpen(true)}
+                className="inline-flex items-center gap-1 text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
+              >
+                Resources
+                <svg className={`h-4 w-4 transition-transform ${resourcesOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {resourcesOpen && (
+                <div
+                  onMouseLeave={() => setResourcesOpen(false)}
+                  className="absolute right-0 top-full mt-2 w-64 rounded-lg border border-gray-200 bg-white shadow-lg"
+                >
+                  <div className="p-2">
+                    <div className="mb-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      Guides
+                    </div>
+                    <Link
+                      href="/pricing-guides"
+                      onClick={() => {
+                        analytics.headerNavClick('pricing-guides');
+                        setResourcesOpen(false);
+                      }}
+                      className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+                    >
+                      Pricing Guides
+                    </Link>
+                    <Link
+                      href="/how-to-guides"
+                      onClick={() => {
+                        analytics.headerNavClick('how-to-guides');
+                        setResourcesOpen(false);
+                      }}
+                      className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+                    >
+                      How-To Guides
+                    </Link>
+                    <Link
+                      href="/integration-guides"
+                      onClick={() => {
+                        analytics.headerNavClick('integration-guides');
+                        setResourcesOpen(false);
+                      }}
+                      className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+                    >
+                      Integration Guides
+                    </Link>
+
+                    <div className="my-2 border-t border-gray-200"></div>
+
+                    <div className="mb-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      Alternatives
+                    </div>
+                    <Link
+                      href="/tiller-alternative"
+                      onClick={() => {
+                        analytics.headerNavClick('tiller-alternative');
+                        setResourcesOpen(false);
+                      }}
+                      className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+                    >
+                      Tiller Alternative
+                    </Link>
+                    <Link
+                      href="/ynab-alternative"
+                      onClick={() => {
+                        analytics.headerNavClick('ynab-alternative');
+                        setResourcesOpen(false);
+                      }}
+                      className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+                    >
+                      YNAB Alternative
+                    </Link>
+
+                    <div className="my-2 border-t border-gray-200"></div>
+
+                    <div className="mb-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      Use Cases
+                    </div>
+                    <Link
+                      href="/amazon-fba-bookkeeping-spreadsheet"
+                      onClick={() => {
+                        analytics.headerNavClick('amazon-fba-bookkeeping');
+                        setResourcesOpen(false);
+                      }}
+                      className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+                    >
+                      Amazon FBA Bookkeeping
+                    </Link>
+                    <Link
+                      href="/track-dropshipping-expenses"
+                      onClick={() => {
+                        analytics.headerNavClick('dropshipping-expenses');
+                        setResourcesOpen(false);
+                      }}
+                      className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+                    >
+                      Dropshipping Expenses
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Desktop CTA */}
@@ -131,6 +241,91 @@ export default function Header() {
             >
               Docs
             </Link>
+
+            {/* Resources Section */}
+            <div className="mt-4">
+              <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Resources
+              </div>
+              <Link
+                href="/pricing-guides"
+                onClick={() => {
+                  analytics.headerNavClick('pricing-guides');
+                  setMobileMenuOpen(false);
+                }}
+                className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+              >
+                Pricing Guides
+              </Link>
+              <Link
+                href="/how-to-guides"
+                onClick={() => {
+                  analytics.headerNavClick('how-to-guides');
+                  setMobileMenuOpen(false);
+                }}
+                className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+              >
+                How-To Guides
+              </Link>
+              <Link
+                href="/integration-guides"
+                onClick={() => {
+                  analytics.headerNavClick('integration-guides');
+                  setMobileMenuOpen(false);
+                }}
+                className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+              >
+                Integration Guides
+              </Link>
+              <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Alternatives
+              </div>
+              <Link
+                href="/tiller-alternative"
+                onClick={() => {
+                  analytics.headerNavClick('tiller-alternative');
+                  setMobileMenuOpen(false);
+                }}
+                className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+              >
+                Tiller Alternative
+              </Link>
+              <Link
+                href="/ynab-alternative"
+                onClick={() => {
+                  analytics.headerNavClick('ynab-alternative');
+                  setMobileMenuOpen(false);
+                }}
+                className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+              >
+                YNAB Alternative
+              </Link>
+
+              <div className="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Use Cases
+              </div>
+              <Link
+                href="/amazon-fba-bookkeeping-spreadsheet"
+                onClick={() => {
+                  analytics.headerNavClick('amazon-fba-bookkeeping');
+                  setMobileMenuOpen(false);
+                }}
+                className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+              >
+                Amazon FBA Bookkeeping
+              </Link>
+              <Link
+                href="/track-dropshipping-expenses"
+                onClick={() => {
+                  analytics.headerNavClick('dropshipping-expenses');
+                  setMobileMenuOpen(false);
+                }}
+                className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
+              >
+                Dropshipping Expenses
+              </Link>
+            </div>
+
             <a
               href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
               target="_blank"

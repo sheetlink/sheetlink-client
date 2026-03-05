@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function TillerMoneyPricing2026() {
   const seoTitle = 'Tiller Money Pricing 2026: $79/Year for Automated Bank Sync to Sheets';
@@ -18,11 +19,7 @@ export default function TillerMoneyPricing2026() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
-          <nav className="mb-6 text-sm text-gray-600">
-            <a href="/pricing-guides" className="hover:text-sheetlink-green-700">Pricing Guides</a>
-            <span className="mx-2">›</span>
-            <span>Tiller Money Pricing 2026</span>
-          </nav>
+          <Breadcrumbs category="pricing" pageTitle="Tiller Money Pricing 2026" />
 
           <h1 className="mb-6 text-5xl font-bold text-sheetlink-text">
             Tiller Money Pricing 2026
