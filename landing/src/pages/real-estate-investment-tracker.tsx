@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function RealEstateInvestmentTracker() {
   const seoTitle = 'Real Estate Investment Tracker - Track ROI for Multiple Properties';
   const seoDescription = 'Track rental property ROI, cash-on-cash returns, and cap rates across multiple investment properties. Real estate spreadsheet with automatic expense tracking for fix-and-flip and BRRRR strategies.';
+  const slug = '/real-estate-investment-tracker';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function RealEstateInvestmentTracker() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="real estate investment tracker, track rental property roi, real estate spreadsheet, rental property tracker, fix and flip calculator, brrrr strategy tracker, real estate analysis spreadsheet" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="real estate investment tracker, track rental property roi, real estate spreadsheet, rental property tracker, fix and flip calculator, brrrr strategy tracker, real estate analysis spreadsheet"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Real Estate Investment Tracker: Track ROI Across All Your Properties', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

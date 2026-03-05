@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function AmazonFBABookkeeping() {
   const seoTitle = 'Amazon FBA Bookkeeping - Track Income & Expenses in Google Sheets | SheetLink';
   const seoDescription = 'Privacy-first Amazon FBA bookkeeping. Sync FBA income and expenses to Google Sheets when YOU choose. Track product sales by ASIN, Amazon fees, PPC spend, inventory costs, and true profit. Manual sync gives you control.';
+  const slug = '/amazon-fba-bookkeeping';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function AmazonFBABookkeeping() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="amazon fba profit tracker, fba bookkeeping spreadsheet, track amazon fees, amazon seller accounting, fba inventory tracker, amazon ppc tracker" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="amazon fba profit tracker, fba bookkeeping spreadsheet, track amazon fees, amazon seller accounting, fba inventory tracker, amazon ppc tracker"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Amazon FBA Bookkeeping - Track Your Seller Profit', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

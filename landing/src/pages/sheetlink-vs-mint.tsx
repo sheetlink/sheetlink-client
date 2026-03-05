@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function SheetLinkVsMint() {
   const seoTitle = "SheetLink vs Mint - Feature Comparison & Pricing 2026";
   const seoDescription = "Mint was shut down by Intuit in January 2024. SheetLink is the perfect replacement: privacy-first manual sync brings bank transactions to Google Sheets. Free tier (7 days) or Pro ($3.99/mo, $39.99/year). Own your financial data.";
+  const slug = '/sheetlink-vs-mint';
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-mint';
 
   const faqSchema = {
@@ -59,23 +61,29 @@ export default function SheetLinkVsMint() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="mint alternative, mint replacement, mint shut down, mint.com alternative, free budgeting app, mint migration, credit karma alternative" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="mint alternative, mint replacement, mint shut down, mint.com alternative, free budgeting app, mint migration, credit karma alternative"
+      />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="article" />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Comparisons', url: 'https://sheetlink.app/' },
+          { name: 'SheetLink: The Best Mint Alternative', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
@@ -8,14 +9,33 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function YNABPricing2026() {
   const seoTitle = 'YNAB Pricing 2026: $14.99/Month or $109/Year for Budget Software';
   const seoDescription = 'Complete YNAB (You Need A Budget) pricing guide for 2026. $14.99/month or $109/year. Student discount and 34-day trial. Compare with SheetLink\'s $39.99/year alternative.';
+  const slug = '/ynab-pricing-2026';
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="ynab pricing, ynab cost 2026, you need a budget price, ynab subscription, ynab annual cost" />
-      </Head>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="ynab pricing, ynab cost 2026, you need a budget price, ynab subscription, ynab annual cost"
+      />
+
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Pricing', url: 'https://sheetlink.app/pricing' },
+          { name: 'YNAB Pricing 2026', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

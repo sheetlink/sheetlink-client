@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
@@ -8,6 +9,7 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function SyncBankToGoogleSheets() {
   const seoTitle = 'Sync Bank to Google Sheets - Privacy-First Manual Sync with Plaid';
   const seoDescription = 'Privacy-first bank sync to Google Sheets. SheetLink uses Plaid to import transactions when YOU choose. Manual sync gives you control over your financial data. Free for 7 days.';
+  const slug = '/sync-bank-to-google-sheets';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function SyncBankToGoogleSheets() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="sync bank to google sheets, bank transactions google sheets, plaid google sheets, import bank data to sheets, automatic bank sync" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="sync bank to google sheets, bank transactions google sheets, plaid google sheets, import bank data to sheets, automatic bank sync"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Sync Bank Transactions to Google Sheets', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

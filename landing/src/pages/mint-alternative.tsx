@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import { motion } from 'framer-motion';
 import { Check, X, AlertCircle, TrendingDown, Lock, Gift } from 'lucide-react';
 import Header from '@/components/Header';
@@ -10,6 +11,7 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function MintAlternative() {
   const seoTitle = 'Best Mint Alternative - SheetLink for Google Sheets (2026)';
   const seoDescription = 'Looking for a Mint alternative after the shutdown? SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets. Free (7 days) or Pro ($3.99/mo, $39.99/year). No ads, YOUR data in YOUR account. Best replacement for Mint in 2026.';
+  const slug = '/mint-alternative';
   const seoUrl = 'https://sheetlink.app/mint-alternative';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -55,34 +57,29 @@ export default function MintAlternative() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="mint alternative, best alternative to mint, mint shutdown, mint replacement, mint discontinued, cheaper than mint, free budgeting app, google sheets budgeting" />
-        <meta name="author" content={BRAND.name} />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="mint alternative, best alternative to mint, mint shutdown, mint replacement, mint discontinued, cheaper than mint, free budgeting app, google sheets budgeting"
+      />
 
-        {/* FAQ Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        {/* OpenGraph */}
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={seoImage} />
-        <meta property="og:site_name" content={BRAND.name} />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoTitle} />
-        <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={seoImage} />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Alternatives', url: 'https://sheetlink.app/' },
+          { name: 'Best Mint Alternative - SheetLink for Google Sheets (2026)', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

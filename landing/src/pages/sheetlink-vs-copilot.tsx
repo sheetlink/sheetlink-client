@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function SheetLinkVsCopilot() {
   const seoTitle = "SheetLink vs Copilot - Feature Comparison & Pricing 2026";
   const seoDescription = "Compare SheetLink vs Copilot Money: Copilot costs $14.99/month (iOS only) for beautiful budgeting. SheetLink offers privacy-first manual sync at $3.99/mo or $39.99/year and works on Chrome with spreadsheet flexibility. See which is right for you.";
+  const slug = '/sheetlink-vs-copilot';
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-copilot';
 
   const faqSchema = {
@@ -59,23 +61,29 @@ export default function SheetLinkVsCopilot() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="copilot money alternative, sheetlink vs copilot, copilot competitor, budgeting app, ios budgeting app, copilot pricing, cheap budgeting app" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="copilot money alternative, sheetlink vs copilot, copilot competitor, budgeting app, ios budgeting app, copilot pricing, cheap budgeting app"
+      />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="article" />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Comparisons', url: 'https://sheetlink.app/' },
+          { name: 'SheetLink vs Copilot Money', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

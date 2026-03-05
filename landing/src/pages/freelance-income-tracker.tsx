@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function FreelanceIncomeTracker() {
   const seoTitle = 'Freelance Income Tracker - Sync Bank to Google Sheets | SheetLink';
   const seoDescription = 'Privacy-first freelance income tracker. Sync income and expenses to Google Sheets when YOU choose. Track 1099 income from multiple clients, organize deductible expenses, and prepare for quarterly taxes. Manual sync gives you control.';
+  const slug = '/freelance-income-tracker';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function FreelanceIncomeTracker() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="freelance income tracker, 1099 income tracking, freelance bookkeeping, track client payments, freelance expense tracker, quarterly tax calculator" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="freelance income tracker, 1099 income tracking, freelance bookkeeping, track client payments, freelance expense tracker, quarterly tax calculator"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Freelance Income Tracker - Track Client Payments & Expenses', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function SheetLinkVsTiller() {
   const seoTitle = "SheetLink vs Tiller Money - Feature Comparison & Pricing 2026";
   const seoDescription = "Compare SheetLink vs Tiller Money: SheetLink offers privacy-first manual sync with free tier (7 days) and Pro at $3.99/mo, while Tiller costs $6.58/mo with automatic sync. Both sync bank transactions to Google Sheets.";
+  const slug = '/sheetlink-vs-tiller';
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-tiller';
 
   const faqSchema = {
@@ -51,23 +53,29 @@ export default function SheetLinkVsTiller() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="tiller money alternative, sheetlink vs tiller, tiller competitor, bank sync google sheets, tiller money pricing, sheetlink pricing" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="tiller money alternative, sheetlink vs tiller, tiller competitor, bank sync google sheets, tiller money pricing, sheetlink pricing"
+      />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="article" />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Comparisons', url: 'https://sheetlink.app/' },
+          { name: 'SheetLink vs Tiller Money', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

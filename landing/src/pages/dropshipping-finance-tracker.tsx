@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function DropshippingFinanceTracker() {
   const seoTitle = 'Dropshipping Finance Tracker - Sync Shopify & Amazon to Sheets | SheetLink';
   const seoDescription = 'Privacy-first dropshipping finance tracker. Sync dropshipping finances to Google Sheets when YOU choose. Track Shopify/Amazon revenue, supplier costs (COGS), shipping, ad spend, and profit margins. Manual sync gives you control.';
+  const slug = '/dropshipping-finance-tracker';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function DropshippingFinanceTracker() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="dropshipping finance tracker, ecommerce bookkeeping spreadsheet, shopify profit tracker, amazon seller finances, track COGS, dropshipping expenses" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="dropshipping finance tracker, ecommerce bookkeeping spreadsheet, shopify profit tracker, amazon seller finances, track COGS, dropshipping expenses"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Dropshipping Finance Tracker - Track Shopify, Amazon & Ecommerce Profit', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

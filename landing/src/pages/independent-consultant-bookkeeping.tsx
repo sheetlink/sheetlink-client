@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -10,6 +11,7 @@ import { BRAND, URLS } from '@/lib/constants';
 export default function IndependentConsultantBookkeeping() {
   const seoTitle = 'Independent Consultant Bookkeeping - Privacy-First Income & Expense Tracking';
   const seoDescription = 'Privacy-first consultant bookkeeping. Sync client payments, project expenses, and travel costs to Google Sheets when YOU choose. Track multiple clients with manual sync control.';
+  const slug = '/independent-consultant-bookkeeping';
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -44,20 +46,28 @@ export default function IndependentConsultantBookkeeping() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://sheetlink.app/independent-consultant-bookkeeping" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content="https://sheetlink.app/independent-consultant-bookkeeping" />
-        <meta property="og:type" content="website" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+      />
+
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Independent Consultant Bookkeeping', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
 

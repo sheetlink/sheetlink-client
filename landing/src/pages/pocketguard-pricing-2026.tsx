@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
@@ -8,14 +9,33 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function PocketGuardPricing2026() {
   const seoTitle = 'PocketGuard Pricing 2026: Free or $12.99/Month for Plus Features';
   const seoDescription = 'Complete PocketGuard pricing breakdown for 2026. Free plan available, PocketGuard Plus at $12.99/month or $74.99/year. Compare with SheetLink\'s $39.99/year alternative.';
+  const slug = '/pocketguard-pricing-2026';
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="pocketguard pricing, pocketguard cost 2026, pocketguard plus price, pocketguard subscription" />
-      </Head>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="pocketguard pricing, pocketguard cost 2026, pocketguard plus price, pocketguard subscription"
+      />
+
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Pricing', url: 'https://sheetlink.app/pricing' },
+          { name: 'PocketGuard Pricing 2026', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

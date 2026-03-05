@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function AirbnbIncomeTracker() {
   const seoTitle = 'Airbnb Income Tracker - Track Income & Expenses in Google Sheets | SheetLink';
   const seoDescription = 'Privacy-first Airbnb rental income tracker. Sync rental income and expenses to Google Sheets when YOU choose. Track booking revenue, cleaning fees, maintenance costs, and occupancy rates. Manual sync gives you control.';
+  const slug = '/airbnb-income-tracker';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function AirbnbIncomeTracker() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="airbnb income tracker, short term rental accounting, vacation rental bookkeeping, airbnb profit calculator, vrbo income tracker, rental property finances" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="airbnb income tracker, short term rental accounting, vacation rental bookkeeping, airbnb profit calculator, vrbo income tracker, rental property finances"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Airbnb Income Tracker - Track Your Short-Term Rental Finances', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

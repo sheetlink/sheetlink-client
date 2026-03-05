@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
@@ -7,14 +8,33 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 export default function TillerMoneyPricing2026() {
   const seoTitle = 'Tiller Money Pricing 2026: $79/Year for Automated Bank Sync to Sheets';
   const seoDescription = 'Complete Tiller Money pricing breakdown for 2026. $79/year for automated bank sync to Google Sheets. Compare with SheetLink\'s $39.99/year alternative.';
+  const slug = '/tiller-money-pricing-2026';
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="tiller money pricing, tiller cost 2026, tiller money price, tiller annual cost, tiller subscription" />
-      </Head>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="tiller money pricing, tiller cost 2026, tiller money price, tiller annual cost, tiller subscription"
+      />
+
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Pricing', url: 'https://sheetlink.app/pricing' },
+          { name: 'Tiller Money Pricing 2026', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

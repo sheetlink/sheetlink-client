@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function SheetLinkVsYNAB() {
   const seoTitle = "SheetLink vs YNAB - Feature Comparison & Pricing 2026";
   const seoDescription = "Compare SheetLink vs YNAB (You Need A Budget): SheetLink offers privacy-first manual sync with free tier and Pro at $3.99/mo, while YNAB is $14.99/mo with automatic sync and dedicated budgeting methodology.";
+  const slug = '/sheetlink-vs-ynab';
   const seoUrl = 'https://sheetlink.app/sheetlink-vs-ynab';
 
   const faqSchema = {
@@ -51,23 +53,29 @@ export default function SheetLinkVsYNAB() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="ynab alternative, sheetlink vs ynab, you need a budget alternative, ynab competitor, budget app google sheets, ynab pricing" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="ynab alternative, sheetlink vs ynab, you need a budget alternative, ynab competitor, budget app google sheets, ynab pricing"
+      />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="article" />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Comparisons', url: 'https://sheetlink.app/' },
+          { name: 'SheetLink vs YNAB (You Need A Budget)', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

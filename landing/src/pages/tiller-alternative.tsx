@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import { motion } from 'framer-motion';
 import { Check, X, DollarSign, Zap, Sparkles, Users } from 'lucide-react';
 import Header from '@/components/Header';
@@ -8,7 +9,8 @@ import { BRAND } from '@/lib/constants';
 export default function TillerAlternative() {
   const seoTitle = 'Best Tiller Alternative - SheetLink for Google Sheets (2026)';
   const seoDescription = 'Looking for a cheaper Tiller Money alternative? SheetLink syncs bank transactions to Google Sheets with a free tier and Pro at $3.99/mo or $39.99/year. Same features, better price.';
-  const seoUrl = 'https://sheetlink.app/tiller-alternative';
+  const slug = '/tiller-alternative';
+  const seoUrl = `https://sheetlink.app${slug}`;
   const seoImage = 'https://sheetlink.app/og-image.png';
 
   // FAQ Schema
@@ -61,34 +63,37 @@ export default function TillerAlternative() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="tiller alternative, best alternative to tiller, cheaper than tiller, tiller money alternative, google sheets bank sync, affordable tiller, tiller competitor" />
-        <meta name="author" content={BRAND.name} />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={seoUrl}
+        keywords="tiller alternative, best alternative to tiller, cheaper than tiller, tiller money alternative, google sheets bank sync, affordable tiller, tiller competitor"
+        ogImage={seoImage}
+        ogType="article"
+      />
 
-        {/* FAQ Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={seoUrl}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        {/* OpenGraph */}
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={seoImage} />
-        <meta property="og:site_name" content={BRAND.name} />
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Alternatives', url: 'https://sheetlink.app' },
+          { name: 'Tiller Alternative', url: seoUrl }
+        ]}
+      />
 
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoTitle} />
-        <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={seoImage} />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      {/* FAQ Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function EtsySellerFinances() {
   const seoTitle = 'Etsy Seller Profit Tracker - Sync Bank to Google Sheets | SheetLink';
   const seoDescription = 'Privacy-first Etsy seller finance tracker. Sync Etsy shop finances to Google Sheets when YOU choose. Track revenue, fees, shipping costs, and profit margins. Manual sync gives you control. Free for 7 days.';
+  const slug = '/etsy-seller-finances';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function EtsySellerFinances() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="etsy seller finances, etsy profit tracker, etsy bookkeeping, track etsy sales, etsy expense tracker, etsy shop finances spreadsheet" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="etsy seller finances, etsy profit tracker, etsy bookkeeping, track etsy sales, etsy expense tracker, etsy shop finances spreadsheet"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Resources', url: 'https://sheetlink.app/' },
+          { name: 'Etsy Seller Profit Tracker - Track Your Shop Finances', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

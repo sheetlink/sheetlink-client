@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import { motion } from 'framer-motion';
 import { Check, X, DollarSign, TrendingUp, Sparkles, BookOpen } from 'lucide-react';
 import Header from '@/components/Header';
@@ -10,7 +11,8 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function YNABAlternative() {
   const seoTitle = 'Best YNAB Alternative - SheetLink for Google Sheets (2026)';
   const seoDescription = 'Looking for a cheaper YNAB alternative? SheetLink syncs bank transactions to Google Sheets with a free tier and Pro at $3.99/mo or $39.99/year. Use YOUR budgeting method in spreadsheets. More affordable than YNAB.';
-  const seoUrl = 'https://sheetlink.app/ynab-alternative';
+  const slug = '/ynab-alternative';
+  const seoUrl = `https://sheetlink.app${slug}`;
   const seoImage = 'https://sheetlink.app/og-image.png';
 
   // FAQ Schema
@@ -55,25 +57,37 @@ export default function YNABAlternative() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="ynab alternative, best alternative to ynab, cheaper than ynab, you need a budget alternative, ynab too expensive, affordable budgeting app, google sheets budgeting" />
-        <meta name="author" content={BRAND.name} />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={seoUrl}
+        keywords="ynab alternative, best alternative to ynab, cheaper than ynab, you need a budget alternative, ynab too expensive, affordable budgeting app, google sheets budgeting"
+        ogImage={seoImage}
+        ogType="article"
+      />
 
-        {/* FAQ Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={seoUrl}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        {/* OpenGraph */}
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={seoImage} />
-        <meta property="og:site_name" content={BRAND.name} />
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Alternatives', url: 'https://sheetlink.app' },
+          { name: 'YNAB Alternative', url: seoUrl }
+        ]}
+      />
+
+      {/* FAQ Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />

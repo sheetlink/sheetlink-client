@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import { motion } from 'framer-motion';
 import { Check, Code, DollarSign, FileText, Zap } from 'lucide-react';
 import Header from '@/components/Header';
@@ -10,6 +11,7 @@ import { BRAND } from '@/lib/constants';
 export default function SoftwareDeveloperExpenseTracker() {
   const seoTitle = 'Software Developer Expense Tracker - Track 1099 Contractor Expenses in Google Sheets';
   const seoDescription = 'Privacy-first developer expense tracking. Sync Stripe payouts, SaaS subscriptions, and hardware purchases to Google Sheets when YOU choose. Manual sync for 1099 contractors.';
+  const slug = '/software-developer-expense-tracker';
   const seoUrl = 'https://sheetlink.app/software-developer-expense-tracker';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -46,30 +48,29 @@ export default function SoftwareDeveloperExpenseTracker() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="software developer expense tracker, freelance developer bookkeeping, 1099 contractor expenses, track developer income, software engineer taxes, contractor bookkeeping" />
-        <meta name="author" content={BRAND.name} />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="software developer expense tracker, freelance developer bookkeeping, 1099 contractor expenses, track developer income, software engineer taxes, contractor bookkeeping"
+      />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={seoImage} />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoTitle} />
-        <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={seoImage} />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Software Developer Expense Tracker - Track 1099 Contractor Expenses in Google Sheets', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

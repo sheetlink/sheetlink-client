@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function GigWorkerBookkeeping() {
   const seoTitle = 'Gig Worker Bookkeeping - Track Uber, DoorDash & Delivery Income | SheetLink';
   const seoDescription = 'Privacy-first gig worker bookkeeping. Sync gig economy income to Google Sheets when YOU choose. Track Uber, DoorDash, Instacart earnings, mileage deductions, and vehicle expenses. Manual sync gives you control.';
+  const slug = '/gig-worker-bookkeeping';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function GigWorkerBookkeeping() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="uber driver bookkeeping, gig worker expenses, doordash profit tracker, instacart income tracking, delivery driver taxes, gig economy bookkeeping" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="uber driver bookkeeping, gig worker expenses, doordash profit tracker, instacart income tracking, delivery driver taxes, gig economy bookkeeping"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Gig Worker Bookkeeping - Track Uber, DoorDash & Delivery Income', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

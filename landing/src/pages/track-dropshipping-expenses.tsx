@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
@@ -8,14 +9,33 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function TrackDropshippingExpenses() {
   const seoTitle = 'How to Track Dropshipping Expenses in Google Sheets (2026 Guide)';
   const seoDescription = 'Complete guide to tracking dropshipping business expenses in Google Sheets with automated bank sync. Track COGS, ads, software, and calculate profit margins.';
+  const slug = '/track-dropshipping-expenses';
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="track dropshipping expenses, dropshipping accounting, dropshipping bookkeeping, dropshipping spreadsheet" />
-      </Head>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="track dropshipping expenses, dropshipping accounting, dropshipping bookkeeping, dropshipping spreadsheet"
+      />
+
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'How to Track Dropshipping Expenses in Google Sheets', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

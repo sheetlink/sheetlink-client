@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import { motion } from 'framer-motion';
 import { Check, X, DollarSign, TrendingUp, AlertCircle, FileSpreadsheet } from 'lucide-react';
 import Header from '@/components/Header';
@@ -10,6 +11,7 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function PersonalCapitalAlternative() {
   const seoTitle = 'Personal Capital Alternative - SheetLink for Google Sheets (2026)';
   const seoDescription = 'Looking for a Personal Capital (Empower) alternative? SheetLink uses privacy-first manual sync to bring bank transactions to Google Sheets with full data ownership. Free (7 days) or Pro ($3.99/mo, $39.99/year), no wealth management sales pitches.';
+  const slug = '/personal-capital-alternative';
   const seoUrl = 'https://sheetlink.app/personal-capital-alternative';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -63,34 +65,29 @@ export default function PersonalCapitalAlternative() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="personal capital alternative, empower alternative, personal capital replacement, best alternative to personal capital, free investment tracking, google sheets portfolio tracking, no sales calls" />
-        <meta name="author" content={BRAND.name} />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="personal capital alternative, empower alternative, personal capital replacement, best alternative to personal capital, free investment tracking, google sheets portfolio tracking, no sales calls"
+      />
 
-        {/* FAQ Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        {/* OpenGraph */}
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={seoImage} />
-        <meta property="og:site_name" content={BRAND.name} />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoTitle} />
-        <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={seoImage} />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Alternatives', url: 'https://sheetlink.app/' },
+          { name: 'The Personal Capital Alternative Without the Sales Calls', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

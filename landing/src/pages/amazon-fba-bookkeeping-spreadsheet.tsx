@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
@@ -8,14 +9,33 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function AmazonFBABookkeepingSpreadsheet() {
   const seoTitle = 'Amazon FBA Bookkeeping Spreadsheet Guide (2026) - Google Sheets Setup';
   const seoDescription = 'Complete guide to setting up Amazon FBA bookkeeping in Google Sheets. Track sales, COGS, Amazon fees, advertising, and calculate true profit margins.';
+  const slug = '/amazon-fba-bookkeeping-spreadsheet';
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="amazon fba bookkeeping, fba spreadsheet, amazon seller accounting, fba profit tracking" />
-      </Head>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="amazon fba bookkeeping, fba spreadsheet, amazon seller accounting, fba profit tracking"
+      />
+
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Amazon FBA Bookkeeping in Google Sheets', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

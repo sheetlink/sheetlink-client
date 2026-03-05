@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -10,6 +11,7 @@ import { BRAND, URLS } from '@/lib/constants';
 export default function CreatorIncomeTracker() {
   const seoTitle = 'Creator Income Tracker - Track YouTube, Course Sales & Sponsorships in Google Sheets';
   const seoDescription = 'Privacy-first creator income tracker. Sync YouTube AdSense, Patreon, course sales, and brand deals to Google Sheets when YOU choose. Manual sync gives you control over your creator finances.';
+  const slug = '/creator-income-tracker';
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -44,20 +46,28 @@ export default function CreatorIncomeTracker() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://sheetlink.app/creator-income-tracker" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content="https://sheetlink.app/creator-income-tracker" />
-        <meta property="og:type" content="website" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+      />
+
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Creator Income Tracker', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
 

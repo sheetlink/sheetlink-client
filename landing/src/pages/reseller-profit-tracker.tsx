@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function ResellerProfitTracker() {
   const seoTitle = 'Reseller Profit Tracker - Track Income & Expenses in Google Sheets | SheetLink';
   const seoDescription = 'Privacy-first reseller profit tracking. Sync eBay, Poshmark, Mercari sales to Google Sheets when YOU choose. Track platform fees, shipping costs, and sourcing expenses with manual sync control.';
+  const slug = '/reseller-profit-tracker';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function ResellerProfitTracker() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="ebay reseller bookkeeping, poshmark profit tracker, reseller accounting spreadsheet, mercari seller finances, resale business tracker, thrift flip profit" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="ebay reseller bookkeeping, poshmark profit tracker, reseller accounting spreadsheet, mercari seller finances, resale business tracker, thrift flip profit"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Reseller Profit Tracker - Track Your Resale Business Finances', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

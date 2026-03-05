@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -10,6 +11,7 @@ import { BRAND, URLS } from '@/lib/constants';
 export default function MarketingAgencyExpenseTracker() {
   const seoTitle = 'Marketing Agency Expense Tracker - Privacy-First Client Expense Tracking';
   const seoDescription = 'Privacy-first agency expense tracking. Sync ad spend, client costs, and agency overhead to Google Sheets when YOU choose. Manual sync for multi-client management.';
+  const slug = '/marketing-agency-expense-tracker';
 
   const faqSchema = {
     '@context': 'https://schema.org',
@@ -44,20 +46,28 @@ export default function MarketingAgencyExpenseTracker() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://sheetlink.app/marketing-agency-expense-tracker" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content="https://sheetlink.app/marketing-agency-expense-tracker" />
-        <meta property="og:type" content="website" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+      />
+
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Marketing Agency Expense Tracker', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
 

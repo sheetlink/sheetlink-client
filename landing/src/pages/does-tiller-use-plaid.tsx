@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
@@ -8,14 +9,33 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function DoesTillerUsePlaid() {
   const seoTitle = 'Does Tiller Use Plaid? Yes - How Tiller Connects to Banks in 2026';
   const seoDescription = 'Yes, Tiller Money uses Plaid to connect to 10,000+ banks for automated transaction syncing. Learn how it works and compare alternatives.';
+  const slug = '/does-tiller-use-plaid';
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="does tiller use plaid, tiller bank connection, tiller plaid integration, how tiller works" />
-      </Head>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="does tiller use plaid, tiller bank connection, tiller plaid integration, how tiller works"
+      />
+
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Integration Guides', url: 'https://sheetlink.app/integration-guides' },
+          { name: 'Does Tiller Use Plaid?', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

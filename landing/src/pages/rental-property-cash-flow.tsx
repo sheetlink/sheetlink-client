@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -8,6 +9,7 @@ import { BRAND } from '@/lib/constants';
 export default function RentalPropertyCashFlow() {
   const seoTitle = 'Rental Property Cash Flow Tracker - Sync Bank to Google Sheets | SheetLink';
   const seoDescription = 'Privacy-first rental property tracking. Sync rent deposits, maintenance costs, and cash flow to Google Sheets when YOU choose. Manual sync for landlords. Free for 7 days.';
+  const slug = '/rental-property-cash-flow';
 
   // FAQ Schema for AEO (Answer Engine Optimization)
   const faqSchema = {
@@ -51,17 +53,29 @@ export default function RentalPropertyCashFlow() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="rental property cash flow, landlord bookkeeping, rental income tracker, property management spreadsheet, track rental expenses" />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="rental property cash flow, landlord bookkeeping, rental income tracker, property management spreadsheet, track rental expenses"
+      />
 
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
+
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'Resources', url: 'https://sheetlink.app/' },
+          { name: 'Rental Property Cash Flow Tracker for Landlords', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <Header />
       <main className="pt-16">

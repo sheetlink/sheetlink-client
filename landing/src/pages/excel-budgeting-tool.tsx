@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import { motion } from 'framer-motion';
 import { Check, X, Zap, FileSpreadsheet, TrendingUp, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header';
@@ -10,6 +11,7 @@ import SmartRelatedPages from '@/components/SmartRelatedPages';
 export default function ExcelBudgetingTool() {
   const seoTitle = 'Excel Budgeting Tool - Automated Bank Sync for Google Sheets (2026)';
   const seoDescription = 'Privacy-first Excel budgeting tool. Sync bank transactions to Google Sheets when YOU choose. All the power of Excel budgeting with manual sync control. Stop manual data entry.';
+  const slug = '/excel-budgeting-tool';
   const seoUrl = 'https://sheetlink.app/excel-budgeting-tool';
   const seoImage = 'https://sheetlink.app/og-image.png';
 
@@ -55,34 +57,29 @@ export default function ExcelBudgetingTool() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="excel budgeting, google sheets budget, automated excel budget, bank sync for excel, best excel budget template, spreadsheet budget tool, automatic transaction import" />
-        <meta name="author" content={BRAND.name} />
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://sheetlink.app${slug}`}
+        keywords="excel budgeting, google sheets budget, automated excel budget, bank sync for excel, best excel budget template, spreadsheet budget tool, automatic transaction import"
+      />
 
-        {/* FAQ Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+      <StructuredData
+        type="article"
+        headline={seoTitle}
+        description={seoDescription}
+        url={`https://sheetlink.app${slug}`}
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
-        {/* OpenGraph */}
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={seoImage} />
-        <meta property="og:site_name" content={BRAND.name} />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoTitle} />
-        <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={seoImage} />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      <StructuredData
+        type="breadcrumb"
+        items={[
+          { name: 'Home', url: 'https://sheetlink.app' },
+          { name: 'How-To Guides', url: 'https://sheetlink.app/how-to-guides' },
+          { name: 'Excel Budgeting With Automatic Bank Sync', url: `https://sheetlink.app${slug}` }
+        ]}
+      />
 
       <div className="min-h-screen bg-white">
         <Header />
