@@ -4,6 +4,8 @@ import { Check, X, Zap, FileSpreadsheet, TrendingUp, AlertCircle } from 'lucide-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND, URLS } from '@/lib/constants';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function ExcelBudgetingTool() {
   const seoTitle = 'Excel Budgeting Tool - Automated Bank Sync for Google Sheets (2026)';
@@ -88,6 +90,7 @@ export default function ExcelBudgetingTool() {
         {/* Hero Section */}
         <section className="px-4 pb-12 pt-28">
           <div className="mx-auto max-w-5xl">
+            <Breadcrumbs category="how-to" pageTitle="Excel Budgeting Tool Alternative" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -545,6 +548,10 @@ export default function ExcelBudgetingTool() {
             </p>
           </div>
         </section>
+
+        <div className="mx-auto max-w-4xl px-4 pb-20">
+          <SmartRelatedPages currentSlug="/excel-budgeting-tool" />
+        </div>
 
         <Footer />
       </div>

@@ -2,6 +2,8 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function DoesTillerUsePlaid() {
   const seoTitle = 'Does Tiller Use Plaid? Yes - How Tiller Connects to Banks in 2026';
@@ -18,11 +20,7 @@ export default function DoesTillerUsePlaid() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
-          <nav className="mb-6 text-sm text-gray-600">
-            <a href="/integration-guides" className="hover:text-sheetlink-green-700">Integration Guides</a>
-            <span className="mx-2">›</span>
-            <span>Does Tiller Use Plaid?</span>
-          </nav>
+          <Breadcrumbs category="integration" pageTitle="Does Tiller Use Plaid?" />
 
           <h1 className="mb-6 text-5xl font-bold text-sheetlink-text">
             Does Tiller Use Plaid?
@@ -211,6 +209,7 @@ export default function DoesTillerUsePlaid() {
             </div>
 
             <RelatedPages currentSlug="/does-tiller-use-plaid" />
+            <SmartRelatedPages currentSlug="/does-tiller-use-plaid" />
           </div>
         </section>
         <Footer />

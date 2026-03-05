@@ -4,6 +4,8 @@ import { Check, X, DollarSign, TrendingUp, AlertCircle, FileSpreadsheet } from '
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND, URLS } from '@/lib/constants';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function PersonalCapitalAlternative() {
   const seoTitle = 'Personal Capital Alternative - SheetLink for Google Sheets (2026)';
@@ -96,6 +98,7 @@ export default function PersonalCapitalAlternative() {
         {/* Hero Section */}
         <section className="px-4 pb-12 pt-28">
           <div className="mx-auto max-w-5xl">
+            <Breadcrumbs category="comparison" pageTitle="Personal Capital Alternative" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -517,6 +520,10 @@ export default function PersonalCapitalAlternative() {
             </p>
           </div>
         </section>
+
+        <div className="mx-auto max-w-4xl px-4 pb-20">
+          <SmartRelatedPages currentSlug="/personal-capital-alternative" />
+        </div>
 
         <Footer />
       </div>

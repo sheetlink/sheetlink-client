@@ -2,6 +2,8 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function AmazonFBABookkeepingSpreadsheet() {
   const seoTitle = 'Amazon FBA Bookkeeping Spreadsheet Guide (2026) - Google Sheets Setup';
@@ -18,11 +20,7 @@ export default function AmazonFBABookkeepingSpreadsheet() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
-          <nav className="mb-6 text-sm text-gray-600">
-            <a href="/how-to-guides" className="hover:text-sheetlink-green-700">How-To Guides</a>
-            <span className="mx-2">›</span>
-            <span>Amazon FBA Bookkeeping Spreadsheet</span>
-          </nav>
+          <Breadcrumbs category="how-to" pageTitle="Amazon FBA Bookkeeping in Spreadsheets" />
 
           <h1 className="mb-6 text-5xl font-bold text-sheetlink-text">
             Amazon FBA Bookkeeping in Google Sheets
@@ -365,6 +363,7 @@ export default function AmazonFBABookkeepingSpreadsheet() {
             </div>
 
             <RelatedPages currentSlug="/amazon-fba-bookkeeping-spreadsheet" />
+            <SmartRelatedPages currentSlug="/amazon-fba-bookkeeping-spreadsheet" />
           </div>
         </section>
         <Footer />

@@ -2,6 +2,8 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function SyncBankToGoogleSheets() {
   const seoTitle = 'Sync Bank to Google Sheets - Privacy-First Manual Sync with Plaid';
@@ -64,6 +66,7 @@ export default function SyncBankToGoogleSheets() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
+          <Breadcrumbs category="how-to" pageTitle="Sync Bank to Google Sheets" />
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">
             Sync Bank Transactions to Google Sheets
           </h1>
@@ -235,6 +238,7 @@ export default function SyncBankToGoogleSheets() {
               </a>
             </div>
           </div>
+          <SmartRelatedPages currentSlug="/sync-bank-to-google-sheets" />
         </section>
         <Footer />
       </main>

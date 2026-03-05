@@ -2,6 +2,8 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function YNABPricing2026() {
   const seoTitle = 'YNAB Pricing 2026: $14.99/Month or $109/Year for Budget Software';
@@ -18,11 +20,7 @@ export default function YNABPricing2026() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
-          <nav className="mb-6 text-sm text-gray-600">
-            <a href="/pricing-guides" className="hover:text-sheetlink-green-700">Pricing Guides</a>
-            <span className="mx-2">›</span>
-            <span>YNAB Pricing 2026</span>
-          </nav>
+          <Breadcrumbs category="pricing" pageTitle="YNAB Pricing 2026" />
 
           <h1 className="mb-6 text-5xl font-bold text-sheetlink-text">
             YNAB Pricing 2026
@@ -182,6 +180,7 @@ export default function YNABPricing2026() {
             </div>
 
             <RelatedPages currentSlug="/ynab-pricing-2026" />
+            <SmartRelatedPages currentSlug="/ynab-pricing-2026" />
           </div>
         </section>
         <Footer />

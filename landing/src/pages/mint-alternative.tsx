@@ -4,6 +4,8 @@ import { Check, X, AlertCircle, TrendingDown, Lock, Gift } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function MintAlternative() {
   const seoTitle = 'Best Mint Alternative - SheetLink for Google Sheets (2026)';
@@ -88,6 +90,7 @@ export default function MintAlternative() {
         {/* Hero Section */}
         <section className="px-4 pb-12 pt-28">
           <div className="mx-auto max-w-5xl">
+            <Breadcrumbs category="comparison" pageTitle="Mint Alternative" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -713,6 +716,10 @@ export default function MintAlternative() {
             </a>
           </div>
         </section>
+
+        <div className="mx-auto max-w-4xl px-4 pb-20">
+          <SmartRelatedPages currentSlug="/mint-alternative" />
+        </div>
 
         <Footer />
       </div>

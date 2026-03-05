@@ -2,6 +2,8 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function GoogleSheetsBudgeting() {
   const seoTitle = 'Google Sheets Budgeting - Privacy-First Bank Sync for Budget Tracking';
@@ -64,6 +66,7 @@ export default function GoogleSheetsBudgeting() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
+          <Breadcrumbs category="how-to" pageTitle="Google Sheets Budgeting Guide" />
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">
             Google Sheets Budgeting: Track Spending Automatically
           </h1>
@@ -325,6 +328,7 @@ export default function GoogleSheetsBudgeting() {
               </a>
             </div>
           </div>
+          <SmartRelatedPages currentSlug="/google-sheets-budgeting" />
         </section>
         <Footer />
       </main>

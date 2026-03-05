@@ -2,6 +2,8 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function TrackDropshippingExpenses() {
   const seoTitle = 'How to Track Dropshipping Expenses in Google Sheets (2026 Guide)';
@@ -18,11 +20,7 @@ export default function TrackDropshippingExpenses() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
-          <nav className="mb-6 text-sm text-gray-600">
-            <a href="/how-to-guides" className="hover:text-sheetlink-green-700">How-To Guides</a>
-            <span className="mx-2">›</span>
-            <span>Track Dropshipping Expenses</span>
-          </nav>
+          <Breadcrumbs category="how-to" pageTitle="How to Track Dropshipping Expenses" />
 
           <h1 className="mb-6 text-5xl font-bold text-sheetlink-text">
             How to Track Dropshipping Expenses in Google Sheets
@@ -313,6 +311,7 @@ IF(ISNUMBER(SEARCH("Shopify", B2)), "Platform Fees", "Other"))`}
             </div>
 
             <RelatedPages currentSlug="/track-dropshipping-expenses" />
+            <SmartRelatedPages currentSlug="/track-dropshipping-expenses" />
           </div>
         </section>
         <Footer />

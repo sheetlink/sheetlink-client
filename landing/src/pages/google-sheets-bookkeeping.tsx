@@ -2,6 +2,8 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function GoogleSheetsBookkeeping() {
   const seoTitle = 'Google Sheets Bookkeeping - Privacy-First Bank Sync for Small Business';
@@ -64,6 +66,7 @@ export default function GoogleSheetsBookkeeping() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
+          <Breadcrumbs category="how-to" pageTitle="Google Sheets Bookkeeping Guide" />
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">
             Google Sheets Bookkeeping: Automate Your Accounting
           </h1>
@@ -250,6 +253,7 @@ export default function GoogleSheetsBookkeeping() {
               </a>
             </div>
           </div>
+          <SmartRelatedPages currentSlug="/google-sheets-bookkeeping" />
         </section>
         <Footer />
       </main>

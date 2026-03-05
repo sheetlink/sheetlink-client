@@ -4,6 +4,8 @@ import { Check, X, DollarSign, TrendingUp, Sparkles, BookOpen } from 'lucide-rea
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function YNABAlternative() {
   const seoTitle = 'Best YNAB Alternative - SheetLink for Google Sheets (2026)';
@@ -88,6 +90,7 @@ export default function YNABAlternative() {
         {/* Hero Section */}
         <section className="px-4 pb-12 pt-28">
           <div className="mx-auto max-w-5xl">
+            <Breadcrumbs category="comparison" pageTitle="YNAB Alternative" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -733,6 +736,10 @@ export default function YNABAlternative() {
             </a>
           </div>
         </section>
+
+        <div className="mx-auto max-w-4xl px-4 pb-20">
+          <SmartRelatedPages currentSlug="/ynab-alternative" />
+        </div>
 
         <Footer />
       </div>

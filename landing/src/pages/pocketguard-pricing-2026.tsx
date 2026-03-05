@@ -2,6 +2,8 @@ import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function PocketGuardPricing2026() {
   const seoTitle = 'PocketGuard Pricing 2026: Free or $12.99/Month for Plus Features';
@@ -18,11 +20,7 @@ export default function PocketGuardPricing2026() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
-          <nav className="mb-6 text-sm text-gray-600">
-            <a href="/pricing-guides" className="hover:text-sheetlink-green-700">Pricing Guides</a>
-            <span className="mx-2">›</span>
-            <span>PocketGuard Pricing 2026</span>
-          </nav>
+          <Breadcrumbs category="pricing" pageTitle="PocketGuard Pricing 2026" />
 
           <h1 className="mb-6 text-5xl font-bold text-sheetlink-text">
             PocketGuard Pricing 2026
@@ -243,6 +241,7 @@ export default function PocketGuardPricing2026() {
             </div>
 
             <RelatedPages currentSlug="/pocketguard-pricing-2026" />
+            <SmartRelatedPages currentSlug="/pocketguard-pricing-2026" />
           </div>
         </section>
         <Footer />

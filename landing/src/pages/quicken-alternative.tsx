@@ -4,6 +4,8 @@ import { Check, X, DollarSign, TrendingUp, Lock, FileSpreadsheet } from 'lucide-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND, URLS } from '@/lib/constants';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 
 export default function QuickenAlternative() {
   const seoTitle = 'Quicken Alternative - SheetLink for Google Sheets (2026)';
@@ -96,6 +98,7 @@ export default function QuickenAlternative() {
         {/* Hero Section */}
         <section className="px-4 pb-12 pt-28">
           <div className="mx-auto max-w-5xl">
+            <Breadcrumbs category="comparison" pageTitle="Quicken Alternative" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -512,6 +515,10 @@ export default function QuickenAlternative() {
             </p>
           </div>
         </section>
+
+        <div className="mx-auto max-w-4xl px-4 pb-20">
+          <SmartRelatedPages currentSlug="/quicken-alternative" />
+        </div>
 
         <Footer />
       </div>
