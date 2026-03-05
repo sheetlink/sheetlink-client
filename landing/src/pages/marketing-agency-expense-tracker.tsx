@@ -117,6 +117,7 @@ export default function MarketingAgencyExpenseTracker() {
               </p>
             </motion.div>
           </div>
+          </div>
         </section>
 
         {/* The Agency Expense Chaos */}

@@ -117,6 +117,7 @@ export default function IndependentConsultantBookkeeping() {
               </p>
             </motion.div>
           </div>
+          </div>
         </section>
 
         {/* The Consultant Finance Chaos */}

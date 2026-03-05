@@ -117,6 +117,7 @@ export default function DesignerBookkeeping() {
               </p>
             </motion.div>
           </div>
+          </div>
         </section>
 
         {/* The Designer Payment Chaos */}
