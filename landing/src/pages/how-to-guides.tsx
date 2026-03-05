@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getPagesByCategory, categoryInfo } from '@/lib/programmatic-pages';
@@ -13,11 +14,21 @@ export default function HowToGuides() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="finance how-to, bookkeeping guide, expense tracking tutorial, google sheets finance" />
-      </Head>
+      <SEOHead
+        title="How-To Guides - Financial Tracking with Google Sheets"
+        description="Step-by-step guides for tracking finances, bookkeeping, and budgeting in Google Sheets. Learn how to sync bank data and automate your financial tracking."
+        canonical="https://sheetlink.app/how-to-guides"
+        keywords="google sheets finance, bookkeeping guides, budget tutorials"
+        ogType="website"
+      />
+
+      <StructuredData
+        type="article"
+        headline="How-To Guides - Financial Tracking with Google Sheets"
+        description="Step-by-step guides for tracking finances, bookkeeping, and budgeting in Google Sheets. Learn how to sync bank data and automate your financial tracking."
+        url="https://sheetlink.app/how-to-guides"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">

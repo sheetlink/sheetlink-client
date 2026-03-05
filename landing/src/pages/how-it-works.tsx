@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
@@ -9,10 +10,21 @@ export default function HowItWorks() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-      </Head>
+      <SEOHead
+        title="How SheetLink Works - Secure Bank Sync to Sheets"
+        description="Learn how SheetLink securely syncs bank transactions to Google Sheets using Plaid. Privacy-first, manual sync, bank-level security."
+        canonical="https://sheetlink.app/how-it-works"
+        keywords="how sheetlink works, bank sync process, plaid security"
+        ogType="article"
+      />
+
+      <StructuredData
+        type="article"
+        headline="How SheetLink Works - Secure Bank Sync to Sheets"
+        description="Learn how SheetLink securely syncs bank transactions to Google Sheets using Plaid. Privacy-first, manual sync, bank-level security."
+        url="https://sheetlink.app/how-it-works"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">

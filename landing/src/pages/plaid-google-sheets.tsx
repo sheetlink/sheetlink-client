@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedPages from '@/components/RelatedPages';
@@ -11,11 +12,21 @@ export default function PlaidGoogleSheets() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="plaid google sheets, plaid integration, bank sync sheets, plaid api google sheets" />
-      </Head>
+      <SEOHead
+        title="Plaid + Google Sheets Integration - Auto-Sync Bank Transactions"
+        description="Connect Plaid to Google Sheets with SheetLink. Automatically sync bank transactions from 10,000+ financial institutions to your own spreadsheets."
+        canonical="https://sheetlink.app/plaid-google-sheets"
+        keywords="plaid google sheets, plaid integration, bank api google sheets, plaid spreadsheet"
+        ogType="article"
+      />
+
+      <StructuredData
+        type="article"
+        headline="Plaid + Google Sheets Integration - Auto-Sync Bank Transactions"
+        description="Connect Plaid to Google Sheets with SheetLink. Automatically sync bank transactions from 10,000+ financial institutions to your own spreadsheets."
+        url="https://sheetlink.app/plaid-google-sheets"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">

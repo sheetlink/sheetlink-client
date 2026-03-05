@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Link from 'next/link';
 import { Rocket, Book, Lock, Shield } from 'lucide-react';
 import Header from '@/components/Header';
@@ -11,10 +12,21 @@ export default function Docs() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-      </Head>
+      <SEOHead
+        title="SheetLink Documentation - Getting Started Guide"
+        description="Complete SheetLink documentation. Learn how to install, connect banks, sync transactions, and get the most out of your financial spreadsheets."
+        canonical="https://sheetlink.app/docs"
+        keywords="sheetlink docs, setup guide, user manual"
+        ogType="article"
+      />
+
+      <StructuredData
+        type="article"
+        headline="SheetLink Documentation - Getting Started Guide"
+        description="Complete SheetLink documentation. Learn how to install, connect banks, sync transactions, and get the most out of your financial spreadsheets."
+        url="https://sheetlink.app/docs"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">

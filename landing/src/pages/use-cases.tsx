@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
@@ -125,11 +126,21 @@ export default function UseCases() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="robots" content="index, follow" />
-      </Head>
+      <SEOHead
+        title="Use Cases - Financial Tracking for Every Need"
+        description="See how freelancers, small businesses, real estate investors, and more use SheetLink for custom financial tracking in Google Sheets."
+        canonical="https://sheetlink.app/use-cases"
+        keywords="freelance bookkeeping, small business finance, financial tracking use cases"
+        ogType="website"
+      />
+
+      <StructuredData
+        type="article"
+        headline="Use Cases - Financial Tracking for Every Need"
+        description="See how freelancers, small businesses, real estate investors, and more use SheetLink for custom financial tracking in Google Sheets."
+        url="https://sheetlink.app/use-cases"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">

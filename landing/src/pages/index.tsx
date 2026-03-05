@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -269,47 +270,21 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="sync bank to google sheets, bank transaction sync, google sheets budgeting, google sheets bookkeeping, personal finance, plaid google sheets, spreadsheet accounting, chrome extension" />
-        <meta name="author" content={BRAND.name} />
+      <SEOHead
+        title="SheetLink - Sync Bank Transactions to Google Sheets"
+        description="Privacy-first bank transaction sync for Google Sheets. Connect 10,000+ banks via Plaid. Free for last 7 days, $39.99/year for unlimited history. Your data stays in YOUR Google account."
+        canonical="https://sheetlink.app"
+        keywords="bank sync google sheets, plaid google sheets, financial tracking, budget spreadsheet, transaction sync"
+        ogType="website"
+      />
 
-        {/* JSON-LD Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-
-        {/* FAQ Schema for AI Answer Engines */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-
-        {/* Organization Schema for brand name display */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-        />
-
-        {/* OpenGraph */}
-        <meta property="og:url" content={seoUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={seoImage} />
-        <meta property="og:site_name" content={BRAND.name} />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@sheetlink" />
-        <meta name="twitter:title" content={seoTitle} />
-        <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={seoImage} />
-
-        <link rel="canonical" href={seoUrl} />
-      </Head>
+      <StructuredData
+        type="article"
+        headline="SheetLink - Sync Bank Transactions to Google Sheets"
+        description="Privacy-first bank transaction sync for Google Sheets. Connect 10,000+ banks via Plaid. Free for last 7 days, $39.99/year for unlimited history. Your data stays in YOUR Google account."
+        url="https://sheetlink.app"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

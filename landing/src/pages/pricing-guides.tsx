@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getPagesByCategory, categoryInfo } from '@/lib/programmatic-pages';
@@ -13,11 +14,21 @@ export default function PricingGuides() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="personal finance pricing, budget app costs, tiller pricing, ynab cost, quicken price" />
-      </Head>
+      <SEOHead
+        title="Pricing Guides - Compare Financial App Costs (2026)"
+        description="Detailed pricing comparisons for financial apps and tools. Compare Tiller, YNAB, Mint alternatives, and more. Find the best value for your budget."
+        canonical="https://sheetlink.app/pricing-guides"
+        keywords="finance app pricing, budget app costs, financial tool comparison"
+        ogType="website"
+      />
+
+      <StructuredData
+        type="article"
+        headline="Pricing Guides - Compare Financial App Costs (2026)"
+        description="Detailed pricing comparisons for financial apps and tools. Compare Tiller, YNAB, Mint alternatives, and more. Find the best value for your budget."
+        url="https://sheetlink.app/pricing-guides"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">

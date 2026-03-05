@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import { Check, Star, Gift } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -29,10 +30,21 @@ export default function Pricing() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-      </Head>
+      <SEOHead
+        title="SheetLink Pricing - $39.99/Year or Free for 7 Days"
+        description="SheetLink pricing: Free forever for last 7 days of transactions. Pro plan just $39.99/year ($3.33/mo) for unlimited history. No hidden fees."
+        canonical="https://sheetlink.app/pricing"
+        keywords="sheetlink pricing, bank sync cost, google sheets budget pricing"
+        ogType="website"
+      />
+
+      <StructuredData
+        type="article"
+        headline="SheetLink Pricing - $39.99/Year or Free for 7 Days"
+        description="SheetLink pricing: Free forever for last 7 days of transactions. Pro plan just $39.99/year ($3.33/mo) for unlimited history. No hidden fees."
+        url="https://sheetlink.app/pricing"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">

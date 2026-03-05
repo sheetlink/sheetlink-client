@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -136,18 +137,21 @@ export default function Recipes() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta
-          name="keywords"
-          content="google sheets automation, google sheets budget template, google apps script recipes, subscription tracker sheets, cash flow google sheets, spending analysis"
-        />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:url" content="https://sheetlink.app/recipes" />
-        <link rel="canonical" href="https://sheetlink.app/recipes" />
-      </Head>
+      <SEOHead
+        title="SheetLink Recipes - Pre-Built Financial Spreadsheets"
+        description="Ready-to-use Google Sheets templates for budgeting, expense tracking, and financial analysis. One-click install with bank sync."
+        canonical="https://sheetlink.app/recipes"
+        keywords="budget templates, financial spreadsheets, google sheets recipes"
+        ogType="website"
+      />
+
+      <StructuredData
+        type="article"
+        headline="SheetLink Recipes - Pre-Built Financial Spreadsheets"
+        description="Ready-to-use Google Sheets templates for budgeting, expense tracking, and financial analysis. One-click install with bank sync."
+        url="https://sheetlink.app/recipes"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
 

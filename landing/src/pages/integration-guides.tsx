@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getPagesByCategory, categoryInfo } from '@/lib/programmatic-pages';
@@ -13,11 +14,21 @@ export default function IntegrationGuides() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content="plaid google sheets, bank integration, sync bank to sheets, financial api" />
-      </Head>
+      <SEOHead
+        title="Integration Guides - Connect Banks to Google Sheets"
+        description="Integration guides for connecting financial services to Google Sheets. Learn about Plaid, bank APIs, and automated data syncing."
+        canonical="https://sheetlink.app/integration-guides"
+        keywords="bank integration, plaid setup, google sheets api"
+        ogType="website"
+      />
+
+      <StructuredData
+        type="article"
+        headline="Integration Guides - Connect Banks to Google Sheets"
+        description="Integration guides for connecting financial services to Google Sheets. Learn about Plaid, bank APIs, and automated data syncing."
+        url="https://sheetlink.app/integration-guides"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">

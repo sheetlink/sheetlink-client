@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
@@ -105,11 +106,21 @@ export default function Comparisons() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="robots" content="index, follow" />
-      </Head>
+      <SEOHead
+        title="Financial App Comparisons - Find the Best Alternative"
+        description="Compare financial tracking apps and tools. See how SheetLink stacks up against Tiller, YNAB, Mint, Quicken, and other budgeting solutions."
+        canonical="https://sheetlink.app/comparisons"
+        keywords="budget app comparison, financial tool alternatives, mint vs ynab"
+        ogType="website"
+      />
+
+      <StructuredData
+        type="article"
+        headline="Financial App Comparisons - Find the Best Alternative"
+        description="Compare financial tracking apps and tools. See how SheetLink stacks up against Tiller, YNAB, Mint, Quicken, and other budgeting solutions."
+        url="https://sheetlink.app/comparisons"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">

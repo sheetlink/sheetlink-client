@@ -1,4 +1,5 @@
-import Head from 'next/head';
+import SEOHead from '@/components/SEOHead';
+import StructuredData from '@/components/StructuredData';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
@@ -9,10 +10,21 @@ export default function About() {
 
   return (
     <>
-      <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-      </Head>
+      <SEOHead
+        title="About SheetLink - Privacy-First Financial Tracking"
+        description="Learn about SheetLink's mission to provide privacy-first, affordable financial tracking. Your data stays in YOUR Google account, forever."
+        canonical="https://sheetlink.app/about"
+        keywords="about sheetlink, company info, privacy first finance"
+        ogType="website"
+      />
+
+      <StructuredData
+        type="article"
+        headline="About SheetLink - Privacy-First Financial Tracking"
+        description="Learn about SheetLink's mission to provide privacy-first, affordable financial tracking. Your data stays in YOUR Google account, forever."
+        url="https://sheetlink.app/about"
+        datePublished="2026-03-05T00:00:00Z"
+      />
 
       <Header />
       <main className="pt-16">
