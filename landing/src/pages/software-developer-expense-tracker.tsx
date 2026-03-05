@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Check, Code, DollarSign, FileText, Zap } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function SoftwareDeveloperExpenseTracker() {
@@ -75,6 +77,8 @@ export default function SoftwareDeveloperExpenseTracker() {
         {/* Hero */}
         <section className="px-4 pb-12 pt-28">
           <div className="mx-auto max-w-5xl">
+            <Breadcrumbs category="how-to" pageTitle="Software Developer Expense Tracker" />
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -375,6 +379,10 @@ export default function SoftwareDeveloperExpenseTracker() {
             </a>
           </div>
         </section>
+
+        <div className="mx-auto max-w-5xl px-4 py-8">
+          <SmartRelatedPages currentSlug="/software-developer-expense-tracker" />
+        </div>
 
         <Footer />
       </div>

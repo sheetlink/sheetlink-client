@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function GigWorkerBookkeeping() {
@@ -64,6 +66,8 @@ export default function GigWorkerBookkeeping() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
+          <Breadcrumbs category="how-to" pageTitle="Gig Worker Bookkeeping" />
+
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">
             Gig Worker Bookkeeping - Track Uber, DoorDash & Delivery Income
           </h1>
@@ -445,6 +449,8 @@ export default function GigWorkerBookkeeping() {
               </a>
             </div>
           </div>
+
+          <SmartRelatedPages currentSlug="/gig-worker-bookkeeping" />
         </section>
         <Footer />
       </main>

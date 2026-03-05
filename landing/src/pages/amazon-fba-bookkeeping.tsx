@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function AmazonFBABookkeeping() {
@@ -64,6 +66,8 @@ export default function AmazonFBABookkeeping() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
+          <Breadcrumbs category="how-to" pageTitle="Amazon FBA Bookkeeping" />
+
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">
             Amazon FBA Bookkeeping - Track Your Seller Profit
           </h1>
@@ -479,6 +483,8 @@ export default function AmazonFBABookkeeping() {
               </a>
             </div>
           </div>
+
+          <SmartRelatedPages currentSlug="/amazon-fba-bookkeeping" />
         </section>
         <Footer />
       </main>

@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function TaxPrepSpreadsheet() {
@@ -64,6 +66,8 @@ export default function TaxPrepSpreadsheet() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
+          <Breadcrumbs category="how-to" pageTitle="Tax Prep Spreadsheet" />
+
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">
             Tax Prep Spreadsheet - Organize Transactions for Tax Season
           </h1>
@@ -276,6 +280,8 @@ export default function TaxPrepSpreadsheet() {
               </a>
             </div>
           </div>
+
+          <SmartRelatedPages currentSlug="/tax-prep-spreadsheet" />
         </section>
         <Footer />
       </main>

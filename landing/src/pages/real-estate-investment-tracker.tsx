@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function RealEstateInvestmentTracker() {
@@ -64,6 +66,8 @@ export default function RealEstateInvestmentTracker() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
+          <Breadcrumbs category="how-to" pageTitle="Real Estate Investment Tracker" />
+
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">
             Real Estate Investment Tracker: Track ROI Across All Your Properties
           </h1>
@@ -587,6 +591,8 @@ Exchange Deadline | Replacement Property | Purchase Price | Deferred Tax Gain
               </a>
             </div>
           </div>
+
+          <SmartRelatedPages currentSlug="/real-estate-investment-tracker" />
         </section>
         <Footer />
       </main>

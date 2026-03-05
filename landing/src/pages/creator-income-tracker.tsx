@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { motion } from 'framer-motion';
 import { Video, DollarSign, FileSpreadsheet, Zap, Check, AlertCircle, CreditCard, TrendingUp, Users } from 'lucide-react';
 import { BRAND, URLS } from '@/lib/constants';
@@ -62,20 +64,23 @@ export default function CreatorIncomeTracker() {
       <main className="pt-16">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-white to-gray-50 px-4 py-20">
-          <div className="mx-auto max-w-4xl text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700">
-                <Video className="h-4 w-4" />
-                Built for Content Creators
-              </div>
+          <div className="mx-auto max-w-4xl">
+            <Breadcrumbs category="how-to" pageTitle="Creator Income Tracker" />
 
-              <h1 className="mb-6 text-5xl font-bold leading-tight text-sheetlink-text md:text-6xl">
-                Creator <span className="text-sheetlink-green-700">Income Tracker</span>
-              </h1>
+            <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700">
+                  <Video className="h-4 w-4" />
+                  Built for Content Creators
+                </div>
+
+                <h1 className="mb-6 text-5xl font-bold leading-tight text-sheetlink-text md:text-6xl">
+                  Creator <span className="text-sheetlink-green-700">Income Tracker</span>
+                </h1>
 
               <p className="mb-8 text-xl text-gray-600 md:text-2xl">
                 Track YouTube AdSense, Patreon, course sales, brand deals, and creator expenses in Google Sheets. Manual sync gives you complete control.
@@ -431,6 +436,10 @@ export default function CreatorIncomeTracker() {
             </p>
           </div>
         </section>
+
+        <div className="mx-auto max-w-4xl px-4 py-8">
+          <SmartRelatedPages currentSlug="/creator-income-tracker" />
+        </div>
       </main>
 
       <Footer />

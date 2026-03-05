@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsTiller() {
@@ -73,10 +75,13 @@ export default function SheetLinkVsTiller() {
         <main className="pt-24 pb-16">
           {/* Hero Section */}
           <section className="px-4 py-16 bg-gradient-to-b from-sheetlink-green-700/5 to-white">
-            <div className="mx-auto max-w-4xl text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-sheetlink-text mb-6">
-                SheetLink vs Tiller Money
-              </h1>
+            <div className="mx-auto max-w-4xl">
+              <Breadcrumbs category="comparison" pageTitle="SheetLink vs Tiller" />
+
+              <div className="text-center">
+                <h1 className="text-4xl md:text-5xl font-bold text-sheetlink-text mb-6">
+                  SheetLink vs Tiller Money
+                </h1>
               <p className="text-xl text-gray-600 mb-8">
                 Both sync bank transactions to Google Sheets. SheetLink offers manual sync for privacy and control with a free tier. Tiller provides automatic daily sync with Excel support and mature templates.
               </p>
@@ -613,6 +618,10 @@ export default function SheetLinkVsTiller() {
               </a>
             </div>
           </section>
+
+          <div className="mx-auto max-w-4xl px-4 py-8">
+            <SmartRelatedPages currentSlug="/sheetlink-vs-tiller" />
+          </div>
         </main>
 
         <Footer />

@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { motion } from 'framer-motion';
 import { TrendingUp, DollarSign, FileSpreadsheet, Zap, Check, AlertCircle, CreditCard, Users, Receipt } from 'lucide-react';
 import { BRAND, URLS } from '@/lib/constants';
@@ -62,16 +64,19 @@ export default function MarketingAgencyExpenseTracker() {
       <main className="pt-16">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-white to-gray-50 px-4 py-20">
-          <div className="mx-auto max-w-4xl text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
-                <TrendingUp className="h-4 w-4" />
-                Built for Marketing Agencies
-              </div>
+          <div className="mx-auto max-w-4xl">
+            <Breadcrumbs category="how-to" pageTitle="Marketing Agency Expense Tracker" />
+
+            <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
+                  <TrendingUp className="h-4 w-4" />
+                  Built for Marketing Agencies
+                </div>
 
               <h1 className="mb-6 text-5xl font-bold leading-tight text-sheetlink-text md:text-6xl">
                 Marketing Agency <span className="text-sheetlink-green-700">Expense Tracker</span>
@@ -427,6 +432,10 @@ export default function MarketingAgencyExpenseTracker() {
             </p>
           </div>
         </section>
+
+        <div className="mx-auto max-w-4xl px-4 py-8">
+          <SmartRelatedPages currentSlug="/marketing-agency-expense-tracker" />
+        </div>
       </main>
 
       <Footer />

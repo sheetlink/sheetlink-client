@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { motion } from 'framer-motion';
 import { Palette, DollarSign, FileSpreadsheet, Zap, Check, AlertCircle, CreditCard, TrendingUp, Users } from 'lucide-react';
 import { BRAND, URLS } from '@/lib/constants';
@@ -62,20 +64,23 @@ export default function DesignerBookkeeping() {
       <main className="pt-16">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-white to-gray-50 px-4 py-20">
-          <div className="mx-auto max-w-4xl text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-sm font-semibold text-purple-700">
-                <Palette className="h-4 w-4" />
-                Built for Freelance Designers
-              </div>
+          <div className="mx-auto max-w-4xl">
+            <Breadcrumbs category="how-to" pageTitle="Designer Bookkeeping" />
 
-              <h1 className="mb-6 text-5xl font-bold leading-tight text-sheetlink-text md:text-6xl">
-                Designer <span className="text-sheetlink-green-700">Bookkeeping</span>
-              </h1>
+            <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-sm font-semibold text-purple-700">
+                  <Palette className="h-4 w-4" />
+                  Built for Freelance Designers
+                </div>
+
+                <h1 className="mb-6 text-5xl font-bold leading-tight text-sheetlink-text md:text-6xl">
+                  Designer <span className="text-sheetlink-green-700">Bookkeeping</span>
+                </h1>
 
               <p className="mb-8 text-xl text-gray-600 md:text-2xl">
                 Track Upwork payouts, Fiverr payments, PayPal transfers, and Adobe subscriptions in Google Sheets. Manual sync gives you complete control.
@@ -477,6 +482,10 @@ export default function DesignerBookkeeping() {
             </p>
           </div>
         </section>
+
+        <div className="mx-auto max-w-4xl px-4 py-8">
+          <SmartRelatedPages currentSlug="/designer-bookkeeping" />
+        </div>
       </main>
 
       <Footer />

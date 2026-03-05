@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsQuickBooks() {
@@ -73,10 +75,13 @@ export default function SheetLinkVsQuickBooks() {
         <main className="pt-24 pb-16">
           {/* Hero Section */}
           <section className="px-4 py-16 bg-gradient-to-b from-sheetlink-green-700/5 to-white">
-            <div className="mx-auto max-w-4xl text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-sheetlink-text mb-6">
-                SheetLink vs QuickBooks
-              </h1>
+            <div className="mx-auto max-w-4xl">
+              <Breadcrumbs category="comparison" pageTitle="SheetLink vs QuickBooks" />
+
+              <div className="text-center">
+                <h1 className="text-4xl md:text-5xl font-bold text-sheetlink-text mb-6">
+                  SheetLink vs QuickBooks
+                </h1>
               <p className="text-xl text-gray-600 mb-8">
                 QuickBooks is full accounting software ($30-75/month). SheetLink uses privacy-first manual sync to bring transactions to Google Sheets ($3.99/mo or $39.99/year). Choose enterprise features or simplicity with data control.
               </p>
@@ -611,6 +616,10 @@ export default function SheetLinkVsQuickBooks() {
               </a>
             </div>
           </section>
+
+          <div className="mx-auto max-w-4xl px-4 py-8">
+            <SmartRelatedPages currentSlug="/sheetlink-vs-quickbooks" />
+          </div>
         </main>
 
         <Footer />

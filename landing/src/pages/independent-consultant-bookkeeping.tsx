@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { motion } from 'framer-motion';
 import { Briefcase, DollarSign, FileSpreadsheet, Zap, Check, AlertCircle, CreditCard, TrendingUp, Users } from 'lucide-react';
 import { BRAND, URLS } from '@/lib/constants';
@@ -62,16 +64,19 @@ export default function IndependentConsultantBookkeeping() {
       <main className="pt-16">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-white to-gray-50 px-4 py-20">
-          <div className="mx-auto max-w-4xl text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700">
-                <Briefcase className="h-4 w-4" />
-                Built for Independent Consultants
-              </div>
+          <div className="mx-auto max-w-4xl">
+            <Breadcrumbs category="how-to" pageTitle="Independent Consultant Bookkeeping" />
+
+            <div className="text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700">
+                  <Briefcase className="h-4 w-4" />
+                  Built for Independent Consultants
+                </div>
 
               <h1 className="mb-6 text-5xl font-bold leading-tight text-sheetlink-text md:text-6xl">
                 Independent Consultant <span className="text-sheetlink-green-700">Bookkeeping</span>
@@ -427,6 +432,10 @@ export default function IndependentConsultantBookkeeping() {
             </p>
           </div>
         </section>
+
+        <div className="mx-auto max-w-4xl px-4 py-8">
+          <SmartRelatedPages currentSlug="/independent-consultant-bookkeeping" />
+        </div>
       </main>
 
       <Footer />

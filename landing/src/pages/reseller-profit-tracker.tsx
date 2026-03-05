@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function ResellerProfitTracker() {
@@ -64,6 +66,8 @@ export default function ResellerProfitTracker() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
+          <Breadcrumbs category="how-to" pageTitle="Reseller Profit Tracker" />
+
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">
             Reseller Profit Tracker - Track Your Resale Business Finances
           </h1>
@@ -506,6 +510,8 @@ export default function ResellerProfitTracker() {
               </a>
             </div>
           </div>
+
+          <SmartRelatedPages currentSlug="/reseller-profit-tracker" />
         </section>
         <Footer />
       </main>

@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function FreelanceIncomeTracker() {
@@ -64,6 +66,8 @@ export default function FreelanceIncomeTracker() {
       <Header />
       <main className="pt-16">
         <section className="mx-auto max-w-4xl px-4 py-20">
+          <Breadcrumbs category="how-to" pageTitle="Freelance Income Tracker" />
+
           <h1 className="mb-8 text-5xl font-bold text-sheetlink-text">
             Freelance Income Tracker - Track Client Payments & Expenses
           </h1>
@@ -443,6 +447,8 @@ export default function FreelanceIncomeTracker() {
               </a>
             </div>
           </div>
+
+          <SmartRelatedPages currentSlug="/freelance-income-tracker" />
         </section>
         <Footer />
       </main>

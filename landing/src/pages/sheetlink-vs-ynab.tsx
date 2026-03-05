@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsYNAB() {
@@ -73,10 +75,13 @@ export default function SheetLinkVsYNAB() {
         <main className="pt-24 pb-16">
           {/* Hero Section */}
           <section className="px-4 py-16 bg-gradient-to-b from-sheetlink-green-700/5 to-white">
-            <div className="mx-auto max-w-4xl text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-sheetlink-text mb-6">
-                SheetLink vs YNAB (You Need A Budget)
-              </h1>
+            <div className="mx-auto max-w-4xl">
+              <Breadcrumbs category="comparison" pageTitle="SheetLink vs YNAB" />
+
+              <div className="text-center">
+                <h1 className="text-4xl md:text-5xl font-bold text-sheetlink-text mb-6">
+                  SheetLink vs YNAB (You Need A Budget)
+                </h1>
               <p className="text-xl text-gray-600 mb-8">
                 YNAB is a full budgeting app with automatic sync, methodology, and mobile apps ($14.99/month). SheetLink offers manual sync (privacy-first) to Google Sheets ($3.99/month Pro). Choose structure or flexibility.
               </p>
@@ -633,6 +638,10 @@ export default function SheetLinkVsYNAB() {
               </a>
             </div>
           </section>
+
+          <div className="mx-auto max-w-4xl px-4 py-8">
+            <SmartRelatedPages currentSlug="/sheetlink-vs-ynab" />
+          </div>
         </main>
 
         <Footer />

@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import SmartRelatedPages from '@/components/SmartRelatedPages';
 import { BRAND } from '@/lib/constants';
 
 export default function SheetLinkVsMint() {
@@ -81,8 +83,11 @@ export default function SheetLinkVsMint() {
         <main className="pt-24 pb-16">
           {/* Hero Section */}
           <section className="px-4 py-16 bg-gradient-to-b from-sheetlink-green-700/5 to-white">
-            <div className="mx-auto max-w-4xl text-center">
-              <div className="inline-block mb-6 px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
+            <div className="mx-auto max-w-4xl">
+              <Breadcrumbs category="comparison" pageTitle="SheetLink vs Mint" />
+
+              <div className="text-center">
+                <div className="inline-block mb-6 px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
                 Mint.com shut down January 2024
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-sheetlink-text mb-6">
@@ -629,6 +634,9 @@ export default function SheetLinkVsMint() {
               </a>
             </div>
           </section>
+          <div className="mx-auto max-w-4xl px-4 py-8">
+            <SmartRelatedPages currentSlug="/sheetlink-vs-mint" />
+          </div>
         </main>
 
         <Footer />
