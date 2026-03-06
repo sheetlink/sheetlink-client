@@ -43,3 +43,15 @@ export const trackGithubClick = (location: string) => {
     location,
   });
 };
+
+export const trackHeaderNavClick = (navItem: string) => {
+  trackEvent('click_header_nav', {
+    nav_item: navItem,
+  });
+};
+
+export const trackCtaClick = (location: string) => {
+  trackEvent('click_cta', {
+    location,
+  });
+};

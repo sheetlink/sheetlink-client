@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { URLS } from '@/lib/constants';
-import { analytics } from '@/lib/analytics';
+import { trackHeaderNavClick, trackCtaClick } from '@/lib/analytics';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,7 +30,7 @@ export default function Header() {
           <nav className="hidden items-center gap-6 md:flex">
             <Link
               href="/recipes"
-              onClick={() => analytics.headerNavClick('recipes')}
+              onClick={() => trackHeaderNavClick('recipes')}
               className="inline-flex items-center gap-1 rounded-full bg-sheetlink-green-700/10 px-3 py-1 text-sm font-semibold text-sheetlink-green-700 transition-colors hover:bg-sheetlink-green-700/20"
             >
               Recipes
@@ -38,14 +38,14 @@ export default function Header() {
             </Link>
             <Link
               href="/pricing"
-              onClick={() => analytics.headerNavClick('pricing')}
+              onClick={() => trackHeaderNavClick('pricing')}
               className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
             >
               Pricing
             </Link>
             <Link
               href="/docs"
-              onClick={() => analytics.headerNavClick('docs')}
+              onClick={() => trackHeaderNavClick('docs')}
               className="text-sm font-medium text-gray-600 transition-colors hover:text-sheetlink-green-700"
             >
               Docs
@@ -76,7 +76,7 @@ export default function Header() {
                     <Link
                       href="/pricing-guides"
                       onClick={() => {
-                        analytics.headerNavClick('pricing-guides');
+                        trackHeaderNavClick('pricing-guides');
                         setResourcesOpen(false);
                       }}
                       className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -86,7 +86,7 @@ export default function Header() {
                     <Link
                       href="/how-to-guides"
                       onClick={() => {
-                        analytics.headerNavClick('how-to-guides');
+                        trackHeaderNavClick('how-to-guides');
                         setResourcesOpen(false);
                       }}
                       className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -96,7 +96,7 @@ export default function Header() {
                     <Link
                       href="/integration-guides"
                       onClick={() => {
-                        analytics.headerNavClick('integration-guides');
+                        trackHeaderNavClick('integration-guides');
                         setResourcesOpen(false);
                       }}
                       className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -112,7 +112,7 @@ export default function Header() {
                     <Link
                       href="/tiller-alternative"
                       onClick={() => {
-                        analytics.headerNavClick('tiller-alternative');
+                        trackHeaderNavClick('tiller-alternative');
                         setResourcesOpen(false);
                       }}
                       className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -122,7 +122,7 @@ export default function Header() {
                     <Link
                       href="/ynab-alternative"
                       onClick={() => {
-                        analytics.headerNavClick('ynab-alternative');
+                        trackHeaderNavClick('ynab-alternative');
                         setResourcesOpen(false);
                       }}
                       className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -132,7 +132,7 @@ export default function Header() {
                     <Link
                       href="/amazon-fba-bookkeeping-spreadsheet"
                       onClick={() => {
-                        analytics.headerNavClick('amazon-fba-bookkeeping');
+                        trackHeaderNavClick('amazon-fba-bookkeeping');
                         setResourcesOpen(false);
                       }}
                       className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -142,7 +142,7 @@ export default function Header() {
                     <Link
                       href="/track-dropshipping-expenses"
                       onClick={() => {
-                        analytics.headerNavClick('dropshipping-expenses');
+                        trackHeaderNavClick('dropshipping-expenses');
                         setResourcesOpen(false);
                       }}
                       className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -160,7 +160,7 @@ export default function Header() {
             href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => analytics.ctaJoinBetaClick('header')}
+            onClick={() => trackCtaClick('header')}
             className="hidden md:inline-flex items-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg"
           >
             Add to Chrome
@@ -207,7 +207,7 @@ export default function Header() {
             <Link
               href="/recipes"
               onClick={() => {
-                analytics.headerNavClick('recipes');
+                trackHeaderNavClick('recipes');
                 setMobileMenuOpen(false);
               }}
               className="flex items-center gap-2 rounded-md px-3 py-2 text-base font-semibold text-sheetlink-green-700 hover:bg-gray-50"
@@ -218,7 +218,7 @@ export default function Header() {
             <Link
               href="/pricing"
               onClick={() => {
-                analytics.headerNavClick('pricing');
+                trackHeaderNavClick('pricing');
                 setMobileMenuOpen(false);
               }}
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -228,7 +228,7 @@ export default function Header() {
             <Link
               href="/docs"
               onClick={() => {
-                analytics.headerNavClick('docs');
+                trackHeaderNavClick('docs');
                 setMobileMenuOpen(false);
               }}
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -244,7 +244,7 @@ export default function Header() {
               <Link
                 href="/pricing-guides"
                 onClick={() => {
-                  analytics.headerNavClick('pricing-guides');
+                  trackHeaderNavClick('pricing-guides');
                   setMobileMenuOpen(false);
                 }}
                 className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -254,7 +254,7 @@ export default function Header() {
               <Link
                 href="/how-to-guides"
                 onClick={() => {
-                  analytics.headerNavClick('how-to-guides');
+                  trackHeaderNavClick('how-to-guides');
                   setMobileMenuOpen(false);
                 }}
                 className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -264,7 +264,7 @@ export default function Header() {
               <Link
                 href="/integration-guides"
                 onClick={() => {
-                  analytics.headerNavClick('integration-guides');
+                  trackHeaderNavClick('integration-guides');
                   setMobileMenuOpen(false);
                 }}
                 className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -277,7 +277,7 @@ export default function Header() {
               <Link
                 href="/tiller-alternative"
                 onClick={() => {
-                  analytics.headerNavClick('tiller-alternative');
+                  trackHeaderNavClick('tiller-alternative');
                   setMobileMenuOpen(false);
                 }}
                 className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -287,7 +287,7 @@ export default function Header() {
               <Link
                 href="/ynab-alternative"
                 onClick={() => {
-                  analytics.headerNavClick('ynab-alternative');
+                  trackHeaderNavClick('ynab-alternative');
                   setMobileMenuOpen(false);
                 }}
                 className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -297,7 +297,7 @@ export default function Header() {
               <Link
                 href="/amazon-fba-bookkeeping-spreadsheet"
                 onClick={() => {
-                  analytics.headerNavClick('amazon-fba-bookkeeping');
+                  trackHeaderNavClick('amazon-fba-bookkeeping');
                   setMobileMenuOpen(false);
                 }}
                 className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -307,7 +307,7 @@ export default function Header() {
               <Link
                 href="/track-dropshipping-expenses"
                 onClick={() => {
-                  analytics.headerNavClick('dropshipping-expenses');
+                  trackHeaderNavClick('dropshipping-expenses');
                   setMobileMenuOpen(false);
                 }}
                 className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-sheetlink-green-700"
@@ -321,7 +321,7 @@ export default function Header() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {
-                analytics.ctaJoinBetaClick('header');
+                trackCtaClick('header');
                 setMobileMenuOpen(false);
               }}
               className="mt-4 flex items-center justify-center rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:shadow-lg"
