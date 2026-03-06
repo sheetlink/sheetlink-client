@@ -61,3 +61,11 @@ export const trackBetaSignupSuccess = (email: string) => {
     email,
   });
 };
+
+export const pageview = (url: string) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('config', 'G-B4RLTK3194', {
+      page_path: url,
+    });
+  }
+};
