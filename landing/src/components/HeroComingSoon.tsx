@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { analytics } from '@/lib/analytics';
+import { trackBetaSignupSuccess } from '@/lib/analytics';
 
 export default function HeroComingSoon() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function HeroComingSoon() {
       const data = await response.json();
 
       if (data.status === 'ok') {
-        analytics.betaSignupSuccess(email.trim());
+        trackBetaSignupSuccess(email.trim());
         router.push('/success');
       } else {
         throw new Error('Unexpected response');

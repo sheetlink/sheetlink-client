@@ -55,3 +55,9 @@ export const trackCtaClick = (location: string) => {
     location,
   });
 };
+
+export const trackBetaSignupSuccess = (email: string) => {
+  trackEvent('beta_signup_success', {
+    email,
+  });
+};
