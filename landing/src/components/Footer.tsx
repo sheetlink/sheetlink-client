@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { BRAND, URLS } from '@/lib/constants';
-import { analytics } from '@/lib/analytics';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
