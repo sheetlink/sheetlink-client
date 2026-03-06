@@ -195,7 +195,6 @@ export default function Recipes() {
                 href={CHROME_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => }
                 className="inline-flex items-center rounded-lg border-2 border-sheetlink-green-700 px-8 py-3 text-base font-semibold text-sheetlink-green-700 transition-all duration-200 hover:bg-sheetlink-bg"
               >
                 Get the Extension
@@ -705,7 +704,6 @@ export default function Recipes() {
                 href={CHROME_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => }
                 className="inline-flex items-center rounded-lg bg-white px-8 py-3.5 text-base font-semibold text-sheetlink-green-900 transition-all duration-200 hover:shadow-xl"
               >
                 Get SheetLink Free

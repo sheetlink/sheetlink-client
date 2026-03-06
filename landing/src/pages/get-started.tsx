@@ -66,7 +66,6 @@ export default function GetStarted() {
                 href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => }
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-lg"
               >
                 <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
@@ -198,7 +197,6 @@ export default function GetStarted() {
             </p>
             <a
               href="mailto:support@sheetlink.app?subject=Beta Feedback"
-              onClick={() => }
               className="inline-flex items-center gap-2 rounded-lg border-2 border-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-sheetlink-green-700 transition-all duration-200 hover:bg-sheetlink-green-700 hover:text-white"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
