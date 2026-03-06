@@ -7,14 +7,13 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND, URLS } from '@/lib/constants';
-import { analytics } from '@/lib/analytics';
 
 export default function FirstSync() {
   const seoTitle = `First Sync Guide - ${BRAND.name}`;
   const seoDescription = 'Complete your first sync: connect your bank, link your Google Sheet, and start pulling transactions.';
 
   useEffect(() => {
-    analytics.pageView('First Sync Guide', '/first-sync');
+    
   }, []);
 
   return (

@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND, URLS } from '@/lib/constants';
-import { analytics, trackEvent } from '@/lib/analytics';
+import { trackEvent } from '@/lib/analytics';
 import { Download, Zap, Sparkles, Shield, Github, Users, ExternalLink } from 'lucide-react';
 
 const CHROME_STORE_URL =
@@ -132,7 +132,7 @@ export default function Recipes() {
     'Browse and install pre-built analysis recipes for Google Sheets. Monthly budgets, recurring spend detection, cash flow forecasts — one-click install via SheetLink.';
 
   useEffect(() => {
-    analytics.pageView('Recipes', '/recipes');
+    
   }, []);
 
   return (
@@ -195,7 +195,7 @@ export default function Recipes() {
                 href={CHROME_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => analytics.ctaJoinBetaClick?.('recipes-hero')}
+                onClick={() => }
                 className="inline-flex items-center rounded-lg border-2 border-sheetlink-green-700 px-8 py-3 text-base font-semibold text-sheetlink-green-700 transition-all duration-200 hover:bg-sheetlink-bg"
               >
                 Get the Extension
@@ -705,7 +705,7 @@ export default function Recipes() {
                 href={CHROME_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => analytics.ctaJoinBetaClick?.('recipes-bottom')}
+                onClick={() => }
                 className="inline-flex items-center rounded-lg bg-white px-8 py-3.5 text-base font-semibold text-sheetlink-green-900 transition-all duration-200 hover:shadow-xl"
               >
                 Get SheetLink Free

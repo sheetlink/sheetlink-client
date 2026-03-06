@@ -8,14 +8,13 @@ import { Wrench, RefreshCw, Save } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND } from '@/lib/constants';
-import { analytics } from '@/lib/analytics';
 
 export default function UserGuide() {
   const seoTitle = `User Guide - ${BRAND.name}`;
   const seoDescription = 'Learn how to use SheetLink to manage your bank connections, sync transactions, and get the most out of the Free Tier.';
 
   useEffect(() => {
-    analytics.pageView('User Guide', '/user-guide');
+    
   }, []);
 
   return (

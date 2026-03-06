@@ -7,7 +7,6 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND, URLS } from '@/lib/constants';
-import { analytics } from '@/lib/analytics';
 import {
   Building2,
   Zap,
@@ -85,7 +84,7 @@ export default function Security() {
   };
 
   useEffect(() => {
-    analytics.pageView('Security', '/security');
+    
   }, []);
 
   return (

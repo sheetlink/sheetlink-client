@@ -6,7 +6,6 @@ import { Check, Star, Gift } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BRAND, PRICING } from '@/lib/constants';
-import { analytics } from '@/lib/analytics';
 
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('annual');
@@ -21,7 +20,7 @@ export default function Pricing() {
   };
 
   useEffect(() => {
-    analytics.pageView('Pricing', '/pricing');
+    
   }, []);
 
   const handleSubscribe = () => {
