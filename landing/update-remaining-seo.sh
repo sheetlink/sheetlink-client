@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# List of files to manually update with proper SEO
+echo "Remaining pages needing SEO components:"
+echo "CRITICAL (Core pages):"
+echo "  - index.tsx (homepage)"
+echo "  - pricing.tsx"
+echo "  - plaid-google-sheets.tsx"
+echo ""
+echo "HIGH (Hub pages):"
+echo "  - how-to-guides.tsx"
+echo "  - pricing-guides.tsx"  
+echo "  - integration-guides.tsx"
+echo "  - comparisons.tsx"
+echo "  - use-cases.tsx"
+echo ""
+echo "MEDIUM (Info pages):"
+echo "  - docs.tsx"
+echo "  - how-it-works.tsx"
+echo "  - about.tsx"
+echo "  - recipes.tsx"
+echo ""
+echo "Total: 12 pages"

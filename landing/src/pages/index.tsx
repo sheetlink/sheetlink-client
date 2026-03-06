@@ -10,6 +10,7 @@ import HowItWorks from '@/components/HowItWorks';
 import SecurityPrivacy from '@/components/SecurityPrivacy';
 import { motion, useInView } from 'framer-motion';
 import { BRAND } from '@/lib/constants';
+import { trackAddToChromeClick, trackUpgradeClick } from '@/lib/analytics';
 import React from 'react';
 
 // Helper component for counting animation that triggers on viewport
@@ -339,6 +340,7 @@ export default function Home() {
                 href="https://chromewebstore.google.com/detail/sheetlink-sync-bank-trans/niehncndbonfankgokhandgbaebdbpch"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackAddToChromeClick('hero')}
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sheetlink-green-900 to-sheetlink-green-700 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:shadow-xl"
               >
                 <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
