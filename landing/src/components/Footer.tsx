@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { BRAND, URLS } from '@/lib/constants';
+import { trackFooterLinkClick, trackGithubClick } from '@/lib/analytics';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -47,7 +48,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/recipes"
-                  onClick={() => analytics.footerLinkClick('recipes')}
+                  onClick={() => trackFooterLinkClick('recipes')}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   Recipes
@@ -64,7 +65,7 @@ export default function Footer() {
               <li>
                 <a
                   href={URLS.github}
-                  onClick={() => analytics.githubClick('footer')}
+                  onClick={() => trackGithubClick('footer')}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -398,7 +399,7 @@ export default function Footer() {
               <li>
                 <a
                   href={URLS.privacy}
-                  onClick={() => analytics.footerLinkClick('privacy')}
+                  onClick={() => trackFooterLinkClick('privacy')}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   Privacy Policy
@@ -407,7 +408,7 @@ export default function Footer() {
               <li>
                 <a
                   href={URLS.terms}
-                  onClick={() => analytics.footerLinkClick('terms')}
+                  onClick={() => trackFooterLinkClick('terms')}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   Terms of Service
@@ -416,7 +417,7 @@ export default function Footer() {
               <li>
                 <a
                   href={URLS.security}
-                  onClick={() => analytics.footerLinkClick('security')}
+                  onClick={() => trackFooterLinkClick('security')}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   Security
@@ -425,7 +426,7 @@ export default function Footer() {
               <li>
                 <a
                   href={URLS.support}
-                  onClick={() => analytics.footerLinkClick('support')}
+                  onClick={() => trackFooterLinkClick('support')}
                   className="text-gray-600 transition-colors hover:text-sheetlink-green-700"
                 >
                   Support

@@ -31,3 +31,15 @@ export const trackComparisonPageClick = (competitor: string) => {
     competitor,
   });
 };
+
+export const trackFooterLinkClick = (linkName: string) => {
+  trackEvent('click_footer_link', {
+    link_name: linkName,
+  });
+};
+
+export const trackGithubClick = (location: string) => {
+  trackEvent('click_github', {
+    location,
+  });
+};
